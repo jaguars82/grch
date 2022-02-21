@@ -2,7 +2,7 @@
 -----------------
 
 ~~~
-git clone git@bitbucket.org:arcticlab_team/newbuildings.git
+git clone https://github.com/jaguars82/grch
 cd <корень проекта>
 php composer install
 ~~~
@@ -53,7 +53,7 @@ yii migrate
 yii migrate --migrationPath=@yii/rbac/migrations
 ~~~
 
-Изменить если требуется данные для пользователя с ролью администратор(по умолчанию это пользователь с email developer@arcticlab.ru) в файле `<корень проекта>/commands/InitController.php` (функция `addUser`).
+Изменить если требуется данные для пользователя с ролью администратор(по умолчанию это пользователь с email ts-working@yandex.ru) в файле `<корень проекта>/commands/InitController.php` (функция `addUser`).
 
 ~~~
 cd <корень проекта>

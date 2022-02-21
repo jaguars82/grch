@@ -70,10 +70,10 @@ class InitController extends Controller
     {
         $user = new User();
         
-        $user->first_name = "Ivan";
-        $user->middle_name = "Ivanovich";
-        $user->last_name = "Ivanov";
-        $user->email = 'developer@arcticlab.ru';
+        $user->first_name = "Egor";
+        $user->middle_name = "Anatolevich";
+        $user->last_name = "Sechin";
+        $user->email = 'ts-working@yandex.ru';
 
         if ($user->save()) {
             $auth = \Yii::$app->authManager;
