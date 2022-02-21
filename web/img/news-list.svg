@@ -1,0 +1,10 @@
+<svg width="130" height="130" viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M93.4375 105.589V18.2812C93.4328 16.6665 92.7893 15.1193 91.6475 13.9775C90.5057 12.8357 88.9585 12.1922 87.3438 12.1875H18.2812C16.6665 12.1922 15.1193 12.8357 13.9775 13.9775C12.8357 15.1193 12.1922 16.6665 12.1875 18.2812V107.656C12.1955 110.347 13.2681 112.926 15.1711 114.829C17.074 116.732 19.6526 117.804 22.3438 117.812H105.625" stroke="#DAE2E8" stroke-opacity="0.2" stroke-width="8" stroke-linejoin="round"/>
+<path d="M105.625 117.812C102.393 117.812 99.2927 116.528 97.0071 114.243C94.7215 111.957 93.4375 108.857 93.4375 105.625V32.5H111.719C113.335 32.5 114.885 33.142 116.028 34.2848C117.17 35.4276 117.812 36.9776 117.812 38.5938V105.625C117.812 108.857 116.528 111.957 114.243 114.243C111.957 116.528 108.857 117.812 105.625 117.812Z" stroke="#DAE2E8" stroke-opacity="0.2" stroke-width="8" stroke-linejoin="round"/>
+<path d="M60.9375 32.5H77.1875" stroke="#DAE2E8" stroke-opacity="0.2" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M60.9375 48.75H77.1875" stroke="#DAE2E8" stroke-opacity="0.2" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M28.4375 65H77.1875" stroke="#DAE2E8" stroke-opacity="0.2" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M28.4375 81.25H77.1875" stroke="#DAE2E8" stroke-opacity="0.2" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M28.4375 97.5H77.1875" stroke="#DAE2E8" stroke-opacity="0.2" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M44.6875 52.8125H28.4375C27.3601 52.8125 26.3267 52.3845 25.5649 51.6226C24.803 50.8608 24.375 49.8274 24.375 48.75V32.5C24.375 31.4226 24.803 30.3892 25.5649 29.6274C26.3267 28.8655 27.3601 28.4375 28.4375 28.4375H44.6875C45.7649 28.4375 46.7983 28.8655 47.5601 29.6274C48.322 30.3892 48.75 31.4226 48.75 32.5V48.75C48.75 49.8274 48.322 50.8608 47.5601 51.6226C46.7983 52.3845 45.7649 52.8125 44.6875 52.8125Z" fill="#DAE2E8" fill-opacity="0.2"/>
+</svg>

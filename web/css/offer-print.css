@@ -1,0 +1,24 @@
+.format-block,
+#edit-price,
+a .edit-price-btn,
+.alert,
+.breadcrumb,
+.breadcrumbs,
+.footer,
+.header,
+.navbar
+{
+    display: none !important;
+}
+
+a[href]:after {
+    content: none !important;
+}
+
+.price-interactive {
+    display: none;
+}
+
+.price-print {
+    display: block!important;
+}
