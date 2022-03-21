@@ -238,6 +238,11 @@ class XmlImportService implements ImportServiceInterface
                 }
 
                 foreach ($house->Apps->App as $flat) {
+
+                    if ($flat->Rooms == 'ст') { 
+                        continue;
+                    }
+
                     $unitPrice = ($flat->Square != 0) ? ((int)$flat->BaseAmount / (float)$flat->Square) : 0;
 
                     $currentFlatNumber = (int)$flat->AppNumber;
