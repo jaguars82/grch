@@ -2,11 +2,16 @@
 
 namespace app\controllers\user;
 
-class ProfileController extends \yii\web\Controller
+use app\models\User;
+use yii\web\Controller;
+
+class ProfileController extends Controller
 {
     public function actionIndex()
     {
-        return $this->render('index');
+        return $this->render('index', [
+            'user' => \Yii::$app->user->identity
+        ]);
     }
 
 }

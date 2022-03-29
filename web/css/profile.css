@@ -1,0 +1,70 @@
+.person {
+    width: 400px;
+    float: left;
+}
+  
+.person .image {
+  width: 85px;
+  height: 100px;
+  text-align: center;
+  float: left;
+}
+
+.person .image img {
+  max-width: 100%;
+  max-height: 100px;
+}
+
+.person .content {
+  padding-left: 11px;
+}
+
+.person .content b {
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 24px;
+  color: #000000;
+  padding-right: 15px;
+  margin-bottom: 3px;
+}
+
+.person .content .name {
+  font-size: 14px;
+  line-height: 24px;
+  color: #000000;
+  margin-bottom: 3px;
+}
+
+.person .phone,
+.person .email {
+  display: block;
+  padding-left: 35px;
+  position: relative;
+  font-size: 14px;
+  line-height: 24px;
+  color: #0078ce;
+  margin-bottom: 8px;
+}
+
+.person .phone .icon,
+.person .email .icon {
+  /*display: block;*/
+  /*width: 30px;*/
+  /*height: 30px;*/
+  /*position: absolute;*/
+  /*left: 0;*/
+  /*top: -3px;*/
+  text-align: center;
+}
+
+.person .phone .icon svg,
+.person .email .icon svg {
+  max-width: 100%;
+  max-height: 30px;
+}
+
+.agency-image {
+  margin-right: 39px;
+  margin-left: auto;
+  width: 100px;
+}
