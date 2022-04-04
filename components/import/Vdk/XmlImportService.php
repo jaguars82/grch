@@ -81,10 +81,10 @@ class XmlImportService implements ImportServiceInterface
      * @param int $flatRow Row of cell
      * @return boolean
      */
-    protected function getStatus($value)
+    /* protected function getStatus($value)
     {
         return (isset($this->status[$value])) ? $this->status[$value] : Flat::STATUS_SOLD;
-    }
+    } */
 
     /**
      * Check that object data is valid
@@ -263,7 +263,8 @@ class XmlImportService implements ImportServiceInterface
 		                'rooms' => (int)$flat->room,
 		                'unit_price_cash' => $unitPrice,
 		                'price_cash' => (float)$flat->price,
-		                'status' => $this->getStatus((string)$flat->window_view),
+		                // 'status' => $this->getStatus((string)$flat->window_view),
+		                'status' => Flat::STATUS_SALE,
 						'layout' => $layout,
 		            ];
 
