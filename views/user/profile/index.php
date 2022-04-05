@@ -5,6 +5,7 @@ use yii\helpers\Html;
 
 $imagePath = isset($path) ? $path : '';
 
+ProfileAsset::register($this);
 ?>
 
 <?php if(!\Yii::$app->user->isGuest): ?>
