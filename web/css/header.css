@@ -1,0 +1,24 @@
+#profile-button {
+    display: flex;
+    align-items: center;
+    cursor: default;
+}
+
+#profile-button .avatar-container {
+    width: 80px;
+}
+
+#profile-button .contact-name,
+#profile-button .contact-position {
+    margin: 0;
+    color: #fff;
+}
+
+.contact-name {
+    font-weight: 600;
+    font-size: 1em;
+}
+
+.contact-position {
+    font-size: 0.9em;
+}

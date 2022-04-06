@@ -5,17 +5,17 @@ namespace app\assets;
 use yii\web\AssetBundle;
 
 /**
- * Asset bundle for user Profile
+ * Asset bundle for Header
  */
-class ProfileAsset extends AssetBundle
+class HeaderAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        'css/profile.css'
+        'css/header.css'
     ];
     public $js = [
-        'js/profile.js',
+        'js/header.js',
     ];
     public $depends = [
         'yii\web\JqueryAsset',
