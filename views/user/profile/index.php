@@ -29,6 +29,7 @@ ProfileAsset::register($this);
                         <span class="name">
                             <?= $user->fullName ?>
                         </span>
+                        <div id="kendoVersion"></div>
                     </div>
                     <?php if(!is_null($user->phone)): ?>
                     <a href="tel:<?= $user->phone ?>" class="phone">

@@ -15,8 +15,7 @@ class ProfileAsset extends AssetBundle
         'css/profile.css'
     ];
     public $js = [
-        // 'https://projects.davidlynch.org/maphilight/jquery.maphilight.min.js',
-        // 'js/offer-make.js',
+        'js/profile.js',
     ];
     public $depends = [
         'yii\web\JqueryAsset',
