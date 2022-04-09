@@ -1,8 +1,11 @@
 <?php
+use app\assets\HeaderAsset;
 use yii\widgets\Menu;
 use yii\helpers\Html;
 use app\models\City;
 use app\components\widgets\LocationSelect;
+
+HeaderAsset::register($this);
 
 $mainMenuItems = [
     ['label' => 'Новости', 'url' => ['/news']],
@@ -37,7 +40,39 @@ $mainMenuItems = [
             ]
         ]);?>
 
+        <?php if(Yii::$app->user->can('admin') || Yii::$app->user->can('agent')): ?>
+        <div id="profile-button">
+            <!--<div class="avatar avatar-margin-right-5"></div>-->
+            <div class="avatar-container">
+                <img src="/img/user-nofoto.jpg" class="avatar hidden">
+            </div>
+            <div class="avatar-margin-left-10">
+                <p class="contact-name">
+                    <?= Yii::$app->user->identity->first_name ?> <?= Yii::$app->user->identity->last_name ?>
+                </p>
+                <p class="contact-position">
+                    <?= Yii::$app->user->identity->roleLabel ?>
+                </p>
+            </div>
+            <!--<ul>
+            <li>Профиль</li>
+            <li>Админка</li>
+            <li>Избранное</li>
+            <li>Выход</li>
+            </ul>-->
+        </div>
+        <?php endif; ?>
+
         <div class="header--user">
+            <!--<?php if(Yii::$app->user->can('admin') || Yii::$app->user->can('agent')): ?>
+            <a href="/user/profile/index">
+                <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" />
+                    <path d="M12 14C8.13401 14 5 17.134 5 21H19C19 17.134 15.866 14 12 14Z" />
+                </svg>
+                
+            </a>
+            <?php endif; ?>-->
             <?php if(Yii::$app->user->can('admin')): ?>
             <a href="/admin/index">
                 <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">

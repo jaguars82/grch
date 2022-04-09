@@ -18,6 +18,8 @@ class NewAsset extends AssetBundle
         'vendor/bootstrap-3.4.1/css/bootstrap.min.css',
         'vendor/scrollbar/simplebar.min.css',
         'vendor/fancybox/jquery.fancybox.min.css',
+        'vendor/kendoui/kendo.common.min.css',
+        'vendor/kendoui/kendo.default.min.css',
         'css/style.css',
     ];
     public $js = [
@@ -29,6 +31,7 @@ class NewAsset extends AssetBundle
         'vendor/scrollbar/simplebar.min.js',
         'vendor/match-height/jquery.matchHeight-min.js',
         'vendor/fancybox/jquery.fancybox.min.js',
+        'vendor/kendoui/kendo.all.min.js',
         'js/common.js',
     ];
     public $depends = [
