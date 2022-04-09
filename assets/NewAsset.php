@@ -13,6 +13,8 @@ class NewAsset extends AssetBundle
     public $baseUrl = '@web';
     public $css = [
         'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap',
+        'https://fonts.googleapis.com/css2?family=Material+Icons',
+        'https://fonts.googleapis.com/css2?family=Material+Icons+Outlined',
         'vendor/swiper/swiper-bundle.min.css',
         'vendor/select2/select2.min.css',
         'vendor/bootstrap-3.4.1/css/bootstrap.min.css',

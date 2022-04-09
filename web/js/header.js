@@ -1,15 +1,25 @@
 $(function (){
-    $('#profile-button .avatar').kendoAvatar({
+    /*$('#profile-button .avatar').kendoAvatar({
         type: 'image',
         // image: "https://demos.telerik.com/kendo-ui/content/web/Customers/GOURL.jpg"
         // image: "/img/user-nofoto.jpg",
         size: 'large'
-    }).removeClass('hidden');
+    }).removeClass('hidden');*/
+
+    function onShow(e) {
+        $('#profile-button').addClass('active');
+    }
+
+    function onHide(e) {
+        $('#profile-button').removeClass('active');
+    }
 
     $("#profile-button").kendoPopover({
+        showOn: "click",
         width: "220px",
         position: "bottom",
-        header: "Popover header",
-        body: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        body: kendo.template($("#profile-menu").html()),
+        show: onShow,
+        hide: onHide
     });
 });
