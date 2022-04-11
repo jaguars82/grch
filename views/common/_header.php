@@ -28,12 +28,6 @@ $user = Yii::$app->user->identity;
             'cities' => City::getAllAsList(),
         ]); ?>
 
-        <div class="mobile-menu-icon">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-
         <?= Menu::widget([
             'items' => $mainMenuItems,
             'activeCssClass' => 'selected',
@@ -41,6 +35,9 @@ $user = Yii::$app->user->identity;
                 'class' => 'header--menu'
             ]
         ]);?>
+
+
+        <div id="main-menu-left-container">        
 
         <?php if(!Yii::$app->user->isGuest): ?>
         <div id="profile-button">
@@ -51,7 +48,7 @@ $user = Yii::$app->user->identity;
                 <img src="/img/user-nofoto.jpg" class="avatar">
             <?php endif; ?>
             </div>
-            <div class="user-info-box">
+            <div class="user-info-box hidden-xs">
                 <p class="user-name">
                     <?= $user->first_name ?> <?= $user->last_name ?>
                 </p>
@@ -61,6 +58,15 @@ $user = Yii::$app->user->identity;
             </div>
         </div>
         <?php endif; ?>
+
+        <div class="mobile-menu-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        </div>
+
     </div>
 
     <div class="mobile-menu">

@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="col-md-12">
 
         <div class="white-block">
-            <h1><?= Html::encode($this->title) ?></h1>
+            <h1 class="my-100"><?= Html::encode($this->title) ?></h1>
 
             <?= $this->render('/user/_form', [
                 'model' => $model,
