@@ -14,6 +14,8 @@ $mainMenuItems = [
     ['label' => 'Банки', 'url' => ['/bank']],
     ['label' => 'Агентства', 'url' => ['/agency']],
 ];
+
+$user = Yii::$app->user->identity;
 ?>
 
 <header class="header">
@@ -43,14 +45,18 @@ $mainMenuItems = [
         <?php if(!Yii::$app->user->isGuest): ?>
         <div id="profile-button">
             <div class="avatar-container">
+            <?php if(!is_null($user->photo)): ?>
+                <?= Html::img(\Yii::getAlias("@web/uploads/{$user->photo}"), [ 'class' => 'avatar']); ?>
+            <?php else: ?>
                 <img src="/img/user-nofoto.jpg" class="avatar">
+            <?php endif; ?>
             </div>
             <div class="user-info-box">
                 <p class="user-name">
-                    <?= Yii::$app->user->identity->first_name ?> <?= Yii::$app->user->identity->last_name ?>
+                    <?= $user->first_name ?> <?= $user->last_name ?>
                 </p>
                 <p class="user-position">
-                    <?= Yii::$app->user->identity->roleLabel ?>
+                    <?= $user->roleLabel ?>
                 </p>
             </div>
         </div>
@@ -71,7 +77,7 @@ $mainMenuItems = [
     <ul class="profile-menu-list">
         <li class="profile-menu-item">
             <a href="/user/profile/index">
-                <span class="material-icons">person_outline</span><span class="item-text">Профиль</span>
+                <span class="material-icons">person_outline</span><span class="item-text">Личный кабинет</span>
             </a>
         </li>
         <?php if(Yii::$app->user->can('admin')): ?>
