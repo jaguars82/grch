@@ -1,0 +1,42 @@
+.card {
+  position: relative;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+}
+.card-header {
+  border-bottom-width: 1px;
+}
+.card-header {
+  padding: .75rem 1.25rem;
+  margin-bottom: 0;
+  color: inherit;
+  background-color: #fff;
+  border-bottom: 1px solid #e5e9f2;
+}
+
+.profile-menu-container {
+  margin-top: 15px;
+}
+
+.contacts-container {
+  width: 300px;
+  margin: 20px 0;
+}
+
+.profile-contact {
+  display: flex;
+  align-items: center;
+  padding: 3px 0;
+}
+
+.profile-contact .contact-label {
+  padding-left: 10px;
+}
+
+.actions-container {
+  margin-top: 15px;
+}
