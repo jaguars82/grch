@@ -24,35 +24,40 @@ ProfileAsset::register($this);
 
     <div class="col-md-8 col-xl-9">
         <div class="card white-block">
-            <div class="card-header">
-                <div class="card-actions float-right">
-                </div>
-                <h5 class="card-title mb-0">Основные сведения</h5>
-            </div>
             <div class="card-body h-100">
 
                 <div class="media">
                     <div class="media-body">
-                        <?php if(!is_null($user->phone)): ?>
-                        <a href="tel:<?= $user->phone ?>" class="phone">
-                            <span class="material-icons-outlined">phone</span>
-                            <?= $user->phone ?>
-                        </a>
-                        <?php endif; ?>
-                        <?php if(!is_null($user->email)): ?>
-                        <a href="mailto:<?= $user->email ?>" class="email">
-                            <span class="material-icons-outlined">email</span>
-                            <?= $user->email ?>
-                        </a>
-                        <?php endif; ?>
+                        <h3 class="regular-title"><?= $user->fullName ?></h3>
+                        <p class="regular-subtitle"><?= $user->roleLabel ?></p>
+                        
+                        <div class="contacts-container">
+                            <h5>Контакты</h5>
+                            <?php if(!is_null($user->phone)): ?>
+                            <a href="tel:<?= $user->phone ?>" class="profile-contact phone">
+                                <span class="material-icons-outlined">phone</span>
+                                <span class="contact-label"><?= $user->phone ?></span>
+                            </a>
+                            <?php endif; ?>
+                            <?php if(!is_null($user->email)): ?>
+                            <a href="mailto:<?= $user->email ?>" class="profile-contact email">
+                                <span class="material-icons-outlined">email</span>
+                                <span class="contact-label"><?= $user->email ?></span>
+                            </a>
+                            <?php endif; ?>
+                            <?php if(!is_null($user->telegram_id)): ?>
+                            <a href="tg://resolve?domain=<?= $user->telegram_id ?>" class="profile-contact telegram">
+                                <span class="material-icons-outlined">send</span>
+                                <span class="contact-label">Telegram</span>
+                            </a>
+                            <?php endif; ?>
+                        </div>
+
                     </div>
-                    <div>
+                    <div class="actions-container">
                         <?= Html::a('Редактировать', ['user/profile/update', 'id' => $user->id], ['class' => 'btn btn-primary btn-sm']) ?>
-                        <!--<a class="btn btn-primary btn-sm" href="#">Редактировать</a>-->
                     </div>
                 </div>
-
-                <hr>
 
             </div>
         </div>

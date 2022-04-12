@@ -3409,7 +3409,8 @@ button.close_btn {
   font-size: 25px;
   color: #005a9b;
 }
-.flat-list-sidebar .scrollbar {
+.flat-list-sidebar .scrollbar,
+.left-sidebar .scrollbar {
   max-height: 100vh;
 }
 .flat-list-sidebar .mobile-close {
@@ -3469,7 +3470,23 @@ button.close_btn {
     transition: transform 0.3s ease, -webkit-transform 0.3s ease;
     z-index: 110;
   }
-  .flat-list-sidebar:not(.scroll-content).open {
+  .left-sidebar:not(.scroll-content) {
+    width: 290px;
+    height: 100%;
+    border-radius: 0;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    -webkit-transform: translateX(-100%);
+    transform: translateX(-100%);
+    -webkit-transition: -webkit-transform 0.3s ease;
+    transition: -webkit-transform 0.3s ease;
+    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, -webkit-transform 0.3s ease;
+    z-index: 110;
+  }
+  .flat-list-sidebar:not(.scroll-content).open,
+  .left-sidebar:not(.scroll-content).open {
     -webkit-transform: translateX(0);
     transform: translateX(0);
   }
@@ -3591,8 +3608,22 @@ button.close_btn {
   -webkit-transform: rotate(90deg) translateY(-50%);
   transform: rotate(90deg) translateY(-50%);
 }
+.left-sidebar-button {
+  display: none;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  padding: 4px 24px;
+  font-size: 12px;
+  line-height: 20px;
+  position: absolute;
+  top: 50%;
+  right: -40px;
+  -webkit-transform: rotate(90deg) translateY(-50%);
+  transform: rotate(90deg) translateY(-50%);
+}
 @media screen and (max-width: 991px) {
-  .js-flat-search {
+  .js-flat-search,
+  .left-sidebar-button {
     display: block;
   }
 }
@@ -5685,7 +5716,8 @@ button.close_btn {
     width: 100%;
     right: 0;
   }
-  .search-map--buttons .js-flat-search {
+  .search-map--buttons .js-flat-search,
+  .left-sidebar-button {
     display: inline-block;
   }
   .search-map--sidebar {
@@ -6919,4 +6951,23 @@ button.close_btn {
 .worktime-label {
   text-decoration: underline;
   text-decoration-style: dashed;
+}
+
+/* MY ADDDITIONS */
+.regular-title {
+  margin: 0;
+}
+
+.regular-subtitle {
+  color: #777 !important;
+  font-size: 1.2em;
+}
+
+.iconed-menu-item {
+  display: flex;
+  align-items: center;
+}
+
+.iconed-menu-label {
+  padding-left: 10px;
 }
