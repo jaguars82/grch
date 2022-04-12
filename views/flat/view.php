@@ -163,7 +163,7 @@ $this->params['breadcrumbs'][] = $model->number;
         <?php if($flatDataProvider->totalCount > 0): ?>
             <div class="similar-flat">
                 <div class="similar-flat--trigger">
-                    <span class="title">Анаглогичные квартиры  в других позициях</span>
+                    <span class="title">Аналогичные квартиры  в других позициях</span>
                     <span class="dropdown-rect"></span>
                 </div>
                 <div class="similar-flat--content">
