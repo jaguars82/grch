@@ -16,7 +16,7 @@ ProfileAsset::register($this);
 <div class="row">
     <div class="col-md-4 col-xl-3">
 
-    <?= $this->render('_sideblock', [
+    <?= $this->render('/user/_sideblock', [
         'user' => $user
     ]) ?>
 
