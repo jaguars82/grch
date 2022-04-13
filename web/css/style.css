@@ -5953,9 +5953,15 @@ button.close_btn {
   border: none;
 }
 .chess-table .flat-item {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.chess-table .free.flat-item {
   cursor: pointer;
 }
-.chess-table .flat-item:hover {
+.chess-table .free.flat-item:hover {
   background: #e9eef1;
 }
 .chess-table .flex-row {
