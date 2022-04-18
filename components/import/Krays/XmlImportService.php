@@ -11,25 +11,6 @@ use app\models\Flat;
  */
 class XmlImportService implements ImportServiceInterface
 {
-    const BUILD_YEAR_FIELD = 'built-year';
-    const FLOOR_TOTAL_FIELD = 'floors-total';
-    const LOCALITY_NAME_FIELD = 'locality-name';
-    const PRICE_METER_FIELD = 'price-meter';
-    const READY_QUARTER_FIELD = 'ready-quarter';
-    const SECTION_FIELD = 'building-section';
-    const STATUS_FIELD = 'status-humanized';
-
-    /**
-     * Status value for string
-     *
-     * @var integer
-     */
-    /* protected $status = [
-        'Свободна.' => Flat::STATUS_SALE,
-		'Резерв.' => Flat::STATUS_RESERVED,
-		'Продана.' => Flat::STATUS_SOLD,
-    ]; */
-
     /**
      * {@inheritdoc}
      */
@@ -240,7 +221,8 @@ class XmlImportService implements ImportServiceInterface
 
 
 				foreach ($building->flats->flat as $flat) {
-					$unitPrice = ($flat->area != 0) ? ((int)$flat->price / (float)$flat->area) : 0;
+					$area = str_replace(',', '.', $flat->area);
+					$unitPrice = ($flat->area != 0) ? ((int)$flat->price / (float)$area) : 0;
 					$layout =  $this->getFlatLayout($flat);
 
 					$currentFlatNumber = (int)$flat->apartment;
@@ -250,7 +232,7 @@ class XmlImportService implements ImportServiceInterface
 						$section++;
 					}
 
-                    if((int)$flat->room === 0 && (int)$flat->area > 5) {
+                    if((int)$flat->room === 0 && (float)$area > 5) {
                         $room = 1;
                         $studio = 1;
                     } else {
@@ -263,11 +245,10 @@ class XmlImportService implements ImportServiceInterface
 		                'number' => (int)$flat->apartment,
 		                'section' => $section,
 		                'floor' => (int)$flat->floor,
-		                'area' => (float)$flat->area,
+		                'area' => (float)$area,
 		                'rooms' => $room,
 		                'unit_price_cash' => $unitPrice,
 		                'price_cash' => (float)$flat->price,
-		                // 'status' => $this->getStatus((string)$flat->window_view),
 		                'status' => Flat::STATUS_SALE,
 						'layout' => $layout,
                         'is_studio' => $studio,
