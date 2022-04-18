@@ -25,6 +25,23 @@ class m220413_102004_create_support_tickets_table extends Migration
             'created_at' => $this->timestamp()->defaultValue(null),
             'updated_at' => $this->timestamp()->defaultValue(null),
         ]);
+
+        // creates index for column `author_id`
+        $this->createIndex(
+            '{{%idx-support_tickets-author_id}}',
+            '{{%support_tickets}}',
+            'author_id'
+        );
+
+        // add foreign key for table `{{%user}}`
+        $this->addForeignKey(
+            '{{%fk-support_tickets-author_id}}',
+            '{{%support_tickets}}',
+            'author_id',
+            '{{%user}}',
+            'id',
+            'CASCADE'
+        );        
     }
 
     /**
@@ -32,6 +49,18 @@ class m220413_102004_create_support_tickets_table extends Migration
      */
     public function safeDown()
     {
+        // drops foreign key for table `{{%user}}`
+        $this->dropForeignKey(
+            '{{%fk-support_tickets-author_id}}',
+            '{{%support_tickets}}'
+        );
+
+        // drops index for column `author_id`
+        $this->dropIndex(
+            '{{%idx-support_tickets-author_id}}',
+            '{{%support_tickets}}'
+        );
+
         $this->dropTable('{{%support_tickets}}');
     }
 }
