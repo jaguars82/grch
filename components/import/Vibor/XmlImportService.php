@@ -27,6 +27,8 @@ class XmlImportService implements ImportServiceInterface
      */
     public function getAndParse($endpoint)
     {
+		$this->getFile();
+		
         $client = new \yii\httpclient\Client([
             'transport' => 'yii\httpclient\CurlTransport'
         ]);
@@ -77,7 +79,28 @@ class XmlImportService implements ImportServiceInterface
     {
         return (isset($this->status[$value])) ? $this->status[$value] : Flat::STATUS_SOLD;
     }
+	
+    /**
+     * Download file from ftp
+     */
+    protected function getFile()
+    {
+        $ftpServer = "ftp.h005337440.nichost.ru";
+        $ftpUser ="h005337440_vib";
+        $ftpPassword ="ue98ffn9V";
 
+        $ftpConnection = ftp_connect($ftpServer);
+        $login = ftp_login($ftpConnection, $ftpUser, $ftpPassword);
+
+        $serverFile = '/vyborxml/VyborXMLUnload.xml';
+        // $localFile = 'upload/feeds/vybor.xml';
+        $localFile = '/var/www/html/grch/web/uploads/feeds/vybor.xml';
+
+        ftp_get($ftpConnection, $localFile, $serverFile, FTP_BINARY);
+
+        ftp_close($ftpConnection);
+    }
+	
     /**
      * Get current entity ID
      *
