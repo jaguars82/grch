@@ -152,6 +152,7 @@ class User extends ActiveRecord implements IdentityInterface
         $roleLabels = [
             'admin' => 'Администратор',
             'manager' => 'Менеджер',
+            'agent' => 'Агент',
         ];
 
         return $roleLabels[$this->role];
