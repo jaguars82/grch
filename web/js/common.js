@@ -215,7 +215,8 @@ $(function () {
         });
     });
 
-    $('.chess-table .flat-item').on('click', function() {
+    /* $('.chess-table .flat-item').on('click', function() { */
+    $('.chess-table .free.flat-item').on('click', function() {
         location.href = $(this).data('flaturl');
     })
 
