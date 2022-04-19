@@ -14,7 +14,7 @@ class m220413_102004_create_support_tickets_table extends Migration
     {
         $this->createTable('{{%support_tickets}}', [
             'id' => $this->primaryKey(),
-            'author_id' => $this->integer->notNull(),
+            'author_id' => $this->integer()->notNull(),
             'ticket_number' => $this->string(30)->notNull()->unique(),
             'title' => $this->string(255),
             'is_closed' => $this->boolean(),
