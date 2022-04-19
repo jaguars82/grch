@@ -34,7 +34,7 @@ SupportAsset::register($this);
                 <span class="material-icons-outlined">contact_support</span>
                 <span class="iconed-menu-label">Создать запрос</span>
             </a>-->
-            <?= Html::a('<div class="iconed-menu-item"><span class="material-icons-outlined">contact_support</span><span class="iconed-menu-label">Создать запрос</span></div>', ['user/support/ticket/create', 'id' => $user->id], ['class' => 'btn btn-primary btn-sm']) ?>
+            <?= Html::a('<div class="iconed-menu-item"><span class="material-icons-outlined">contact_support</span><span class="iconed-menu-label">Создать запрос</span></div>', ['user/support-ticket/create', 'id' => $user->id], ['class' => 'btn btn-primary btn-sm']) ?>
         <?php endif; ?>
 
         </div>
