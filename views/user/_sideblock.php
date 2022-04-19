@@ -21,11 +21,11 @@ ProfileAsset::register($this);
     </div>
     <div class="card-body">
         <div class="list-group profile-menu-container">
-            <a href="#" class="iconed-menu-item list-group-item">
+            <a href="/user/profile/index" class="iconed-menu-item list-group-item">
                 <span class="material-icons-outlined">account_box</span>
                 <span class="iconed-menu-label">Основные сведения</span>
             </a>
-            <a href="#" class="iconed-menu-item list-group-item">
+            <a href="/user/support/index" class="iconed-menu-item list-group-item">
                 <span class="material-icons-outlined">support_agent</span>
                 <span class="iconed-menu-label">Техподдержка</span>
             </a>
