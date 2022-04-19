@@ -55,7 +55,7 @@ class InitController extends Controller
         $auth->removeAll();
 
         $admin = $auth->createRole('admin');
-	$manager = $auth->createRole('manager');
+	    $manager = $auth->createRole('manager');
         $agent = $auth->createRole('agent');
 
         $auth->add($admin);

@@ -1,16 +1,11 @@
 <?php
 
 namespace app\controllers\user;
-
-use app\components\traits\CustomRedirects;
-use app\models\User;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\web\Controller;
 
-class SupportController extends Controller
+class SupportTicketController extends \yii\web\Controller
 {
-    use CustomRedirects;
 
     public function behaviors()
     {
@@ -19,6 +14,7 @@ class SupportController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'index' => ['GET'],
+                    'create' => ['GET', 'POST']
                 ],
             ],
             'access' => [
@@ -26,7 +22,7 @@ class SupportController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index'],
+                        'actions' => ['index', 'create'],
                         'roles' => ['admin', 'manager', 'agent'],
                     ],
                 ]
@@ -36,13 +32,11 @@ class SupportController extends Controller
 
     public function actionIndex()
     {
-        $tickets = [
-            
-        ];
-        
-        return $this->render('index', [
-            'user' => \Yii::$app->user->identity,
-            'tickets' => $tickets
-        ]);
+        return $this->render('index');
+    }
+
+    public function actionCreate()
+    {
+        return $this->render('create');
     }
 }

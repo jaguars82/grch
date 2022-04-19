@@ -55,7 +55,7 @@ ProfileAsset::register($this);
 
                     </div>
                     <div class="actions-container">
-                        <?= Html::a('Редактировать', ['user/profile/update', 'id' => $user->id], ['class' => 'btn btn-primary btn-sm']) ?>
+                        <?= Html::a('<div class="iconed-menu-item"><span class="material-icons-outlined">edit</span><span class="iconed-menu-label">Редактировать</span></div>', ['user/profile/update', 'id' => $user->id], ['class' => 'btn btn-primary btn-sm']) ?>
                     </div>
                 </div>
 
