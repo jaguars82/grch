@@ -25,6 +25,12 @@ ProfileAsset::register($this);
                 <span class="material-icons-outlined">account_box</span>
                 <span class="iconed-menu-label">Основные сведения</span>
             </a>
+            <?php if(Yii::$app->user->can('manager')): ?>
+            <a href="/user/agency-agent/index?agencyId=<?= $user->agency_id ?>" class="iconed-menu-item list-group-item">
+                <span class="material-icons-outlined">people</span>
+                <span class="iconed-menu-label">Агенты</span>
+            </a>
+            <?php endif; ?>
             <a href="/user/support/index" class="iconed-menu-item list-group-item">
                 <span class="material-icons-outlined">support_agent</span>
                 <span class="iconed-menu-label">Техподдержка</span>
