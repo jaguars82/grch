@@ -29,7 +29,7 @@ class AgencyAgentController extends Controller
                     [
                         'allow' => true,
                         'actions' => ['create', 'update', 'delete'],
-                        'roles' => ['admin'],
+                        'roles' => ['admin', 'manager'],
                     ],
                     [
                         'allow' => true,
