@@ -29,7 +29,7 @@ class ProfileController extends Controller
                     [
                         'allow' => true,
                         'actions' => ['index', 'update'],
-                        'roles' => ['admin', 'agent'],
+                        'roles' => ['admin', 'manager', 'agent'],
                     ],
                 ]
             ],

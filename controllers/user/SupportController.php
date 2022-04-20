@@ -19,7 +19,6 @@ class SupportController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'index' => ['GET'],
-                    'ticket' => ['GET', 'POST']
                 ],
             ],
             'access' => [
@@ -27,8 +26,8 @@ class SupportController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'ticket'],
-                        'roles' => ['admin', 'agent'],
+                        'actions' => ['index'],
+                        'roles' => ['admin', 'manager', 'agent'],
                     ],
                 ]
             ],
