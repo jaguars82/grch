@@ -6,18 +6,32 @@
 use yii\helpers\Html;
 
 $this->title = "Обновить агента {$user->fullName}";
-$this->params['breadcrumbs'][] = ['label' => 'Агентства недвижимости', 'url' => ['agency/index']];
-$this->params['breadcrumbs'][] = ['label' => $user->agency->name, 'url' => ['agency/view', 'id' => $user->agency->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Агенты', 'url' => ['agency/view', 'id' => $user->agency->id]];
-$this->params['breadcrumbs'][] = ['label' => $user->fullName, 'url' => ['agency-manager/view', 'id' => $user->id]];
-$this->params['breadcrumbs'][] = 'Обновить';
+$this->params['breadcrumbs'][] = ['label' => 'Кабинет пользователя', 'url' => ['user/profile']];
+$this->params['breadcrumbs'][] = ['label' => 'Агенты "'.$user->agency->name.'"', 'url' => ['user/agency-agent/', 'agencyId' => $user->agency->id]];
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<div class="developer-create">
-    <h1><?= Html::encode($this->title) ?></h1>
+<div class="row">
+    
+    <div class="col-md-3">
 
-    <?= $this->render('/user/_form', [
-        'model' => $model,
-        'redirectUrl' => $redirectUrl
-    ]) ?>
+    <?= $this->render('/user/_sideblock') ?>
+
+    </div>
+
+    <div class="col-md-9">
+        <div class="white-block">
+
+            <div class="developer-create">
+                <h1><?= Html::encode($this->title) ?></h1>
+
+                <?= $this->render('/user/_form', [
+                    'model' => $model,
+                    'redirectUrl' => $redirectUrl
+                ]) ?>
+            </div>
+        
+        </div>
+    </div>
+
 </div>

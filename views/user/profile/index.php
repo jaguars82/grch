@@ -14,15 +14,14 @@ ProfileAsset::register($this);
 
 <?php if(!\Yii::$app->user->isGuest): ?>
 <div class="row">
-    <div class="col-md-4 col-xl-3">
 
-    <?= $this->render('/user/_sideblock', [
-        'user' => $user
-    ]) ?>
+    <div class="col-md-3">
+
+    <?= $this->render('/user/_sideblock') ?>
 
     </div>
 
-    <div class="col-md-8 col-xl-9">
+    <div class="col-md-9">
         <div class="card white-block">
             <div class="card-body h-100">
 
@@ -62,6 +61,6 @@ ProfileAsset::register($this);
             </div>
         </div>
     </div>
-</div>
+
 </div>
 <?php endif; ?>
