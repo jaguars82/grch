@@ -5,6 +5,8 @@ use yii\helpers\Html;
 
 ProfileAsset::register($this);
 
+$user = \Yii::$app->user->identity;
+
 ?>
 
 <div class="card white-block left-sidebar">
@@ -23,12 +25,18 @@ ProfileAsset::register($this);
         <div class="list-group profile-menu-container">
             <a href="/user/profile/index" class="iconed-menu-item list-group-item">
                 <span class="material-icons-outlined">account_box</span>
-                <span class="iconed-menu-label">Основные сведения</span>
+                <span class="iconed-menu-label">Профиль</span>
             </a>
-            <a href="/user/support/index" class="iconed-menu-item list-group-item">
+            <?php if(Yii::$app->user->can('manager')): ?>
+            <a href="/user/agency-agent/index?agencyId=<?= $user->agency_id ?>" class="iconed-menu-item list-group-item">
+                <span class="material-icons-outlined">people</span>
+                <span class="iconed-menu-label">Агенты</span>
+            </a>
+            <?php endif; ?>
+            <!--<a href="/user/support/index" class="iconed-menu-item list-group-item">
                 <span class="material-icons-outlined">support_agent</span>
                 <span class="iconed-menu-label">Техподдержка</span>
-            </a>
+            </a>-->
         </div>
     </div>
 </div>

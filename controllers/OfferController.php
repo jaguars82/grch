@@ -39,12 +39,12 @@ class OfferController extends Controller
                     [
                         'allow' => true,
                         'actions' => ['index', 'update', 'delete'],
-                        'roles' => ['admin', 'agent'],
+                        'roles' => ['admin', 'manager', 'agent'],
                     ],
                     [
                         'allow' => true,
                         'actions' => ['make', 'send-email', 'telegram', 'download-pdf'],
-                        'roles' => ['admin', 'agent'],
+                        'roles' => ['admin', 'manager', 'agent'],
                     ],
                     [
                         'allow' => true,

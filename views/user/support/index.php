@@ -16,15 +16,15 @@ SupportAsset::register($this);
 ?>
 
 <?php if(!\Yii::$app->user->isGuest): ?>
-    <div class="col-md-4 col-xl-3">
+<div class="row">
 
-    <?= $this->render('/user/_sideblock', [
-        'user' => $user
-    ]) ?>
+    <div class="col-md-3">
+
+    <?= $this->render('/user/_sideblock') ?>
 
     </div>
 
-    <div class="col-md-8 col-xl-9">
+    <div class="col-md-9">
         <div class="white-block">
         
         <?php if(Yii::$app->user->can('admin')): ?>
@@ -39,5 +39,6 @@ SupportAsset::register($this);
 
         </div>
     </div>
+
 </div>
 <?php endif; ?>
