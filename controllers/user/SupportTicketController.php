@@ -8,9 +8,11 @@ use app\models\form\SupportTicketForm;
 use app\models\form\SupportMessageForm;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use app\components\traits\CustomRedirects;
 
 class SupportTicketController extends \yii\web\Controller
 {
+    use CustomRedirects;
 
     public function behaviors()
     {
@@ -46,6 +48,18 @@ class SupportTicketController extends \yii\web\Controller
         $ticket_model = new SupportTicketForm();
         $message_model = new SupportMessageForm();
 
+        /**
+         * Fill some hidden attributes
+         */
+        $ticket_model->author_id = $message_model->author_id = \Yii::$app->user->id;
+        // $message_model->author_id = \Yii::$app->user->id;
+        // $message_model->author_role = 'manager';
+        // $author_role = \Yii::$app->authManager->getRolesByUser(\Yii::$app->user->id);
+        
+        // echo "<pre>"; echo array_key_first($author_role); var_dump($author_role); echo "</pre>"; die();
+        $message_model->author_role = array_key_first(\Yii::$app->authManager->getRolesByUser(\Yii::$app->user->id));
+
+
         /*
         if ($ticket_model->load(\Yii::$app->request->post())) {
             if ($ticket_model->validate()) {
@@ -55,33 +69,23 @@ class SupportTicketController extends \yii\web\Controller
         }
         */
 
-        /**
-         * 
-         *  THE WORK AT THIS BRANCH (SUPPORT2) WORK HAS BEEN PAUSED ON THIS SECTION
-         * 
-         */
-        /*
         if (\Yii::$app->request->isPost && 
             ($ticket_model->load(\Yii::$app->request->post())
-            & $ticket_model->process() & $message_model->load(\Yii::$app->request->post())  & $message_model->process())
+            /*& $ticket_model->process()*/ && $message_model->load(\Yii::$app->request->post()) /*& $message_model->process()*/)
         ) {
             try {
-                // Developer::create($form->attributes, $importForm->attributes);
                 $transaction = \Yii::$app->db->beginTransaction();
 
                 try {
 
-                    $ticket = (new Newbuilding())->fill($newbuildingData);
+                    $ticket = (new SupportTicket())->fill($ticket_model->attributes);
                     $ticket->save();
-        
-                    $advantages = !empty($newbuildingData['advantages']) ? $newbuildingData['advantages'] : [];
-        
-                    foreach($advantages as $advantageId) {
-                        if($advantage = Advantage::findOne($advantageId) === null) {
-                            throw new NotFoundHttpException('Данные отсутсвуют');
-                        }
-                        $newbuilding->link('advantages', $advantage);
-                    }
+
+                    $message_model->ticket_id = $ticket->id;
+                    $message_model->message_number = (new SupportMessage())->getMessagesAmount($message_model->ticket_id) + 1;
+
+                    $message = (new SupportMessage())->fill($message_model->attributes);
+                    $message->save();        
         
                     $transaction->commit();
                 } catch(\Exception $e) {
@@ -89,17 +93,17 @@ class SupportTicketController extends \yii\web\Controller
                     throw $e;
                 }
 
-                return $newbuilding;
+                // return $ticket;
 
             } catch (\Exception $e) {
                 return $this->redirectBackWhenException($e);
             }
 
-            return $this->redirectWithSuccess(['index'], 'Добавлен застройщик');
+            return $this->redirectWithSuccess(['index'], 'Ваш запрос отправлен в службу поддержки');
         }
-        */
 
-        return $this->render('_form', [
+        return $this->render('create', [
+            'tickets_amount' => (new SupportTicket())->getTicketsAmountByAuthor(\Yii::$app->user->id),
             'ticket_model' => $ticket_model,
             'message_model' => $message_model,
         ]);

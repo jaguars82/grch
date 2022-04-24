@@ -3,8 +3,10 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-$ticket_model->author_id = 110;
-$ticket_model->ticket_number = '78342jk'
+/**
+ * Fill some hidden fields
+ */
+$ticket_model->ticket_number = $ticket_model->author_id.'-#'.$tickets_amount + 1;
 
 /* @var $this yii\web\View */
 /* @var $ticket_model app\models\SupportTickets */
@@ -25,6 +27,10 @@ $ticket_model->ticket_number = '78342jk'
         <?= $form->field($ticket_model, 'created_at')->hiddenInput()->label(false) ?>
         <?= $form->field($ticket_model, 'updated_at')->hiddenInput()->label(false) ?>
         <?= $form->field($ticket_model, 'title') ?>
+        <?= $form->field($message_model, 'author_id')->hiddenInput()->label(false) ?>
+        <!--<?= $form->field($message_model, 'ticket_id')->hiddenInput()->label(false) ?>-->
+        <!--<?= $form->field($message_model, 'message_number')->hiddenInput()->label(false) ?>-->
+        <?= $form->field($message_model, 'author_role')->hiddenInput()->label(false) ?>
         <?= $form->field($message_model, 'text') ?>
     
         <div class="form-group">

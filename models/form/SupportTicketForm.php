@@ -2,6 +2,8 @@
 
 namespace app\models\form;
 
+use app\components\traits\FillAttributes;
+use app\models\SupportTicket;
 use yii\base\Model;
 
 /**
@@ -9,6 +11,10 @@ use yii\base\Model;
  */
 class SupportTicketForm extends Model
 {
+    use FillAttributes {
+        fill as protected originFill;
+    }
+
     const SCENARIO_UPDATE = 'update';
 
     // public $id;
@@ -74,6 +80,16 @@ class SupportTicketForm extends Model
             'updated_at' => 'Обновлен',
             'is_archived' => 'В архиве',
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fill($data = [], $exceptFields = [])
+    {
+        $result = $this->originFill($data, $exceptFields);
+        
+        return $result;
     }
 
     /**

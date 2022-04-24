@@ -2,6 +2,9 @@
 
 namespace app\models;
 
+use app\components\traits\FillAttributes;
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 use Yii;
 
 /**
@@ -23,14 +26,34 @@ use Yii;
  * @property SupportMessages[] $supportMessages
  * @property User $author
  */
-class SupportTickets extends \yii\db\ActiveRecord
+class SupportTicket extends ActiveRecord
 {
+
+    use FillAttributes;
+
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
         return 'support_tickets';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => new \yii\db\Expression('NOW()'),
+            ],
+        ];
     }
 
     /**
@@ -88,5 +111,26 @@ class SupportTickets extends \yii\db\ActiveRecord
     public function getAuthor()
     {
         return $this->hasOne(User::className(), ['id' => 'author_id']);
+    }
+
+    /**
+     * Gets amount of tickets created by particular user
+     * 
+     * @return int
+     */
+    public function getTicketsAmountByAuthor($user_id)
+    {
+        // $tickets = SupportTicket::find($user_id)
+        $tickets = $this->find()
+        ->where([
+            'author_id' => $user_id,
+        ])
+        ->count();
+
+        if($tickets === null) {
+            $tickets = 0;
+        }
+
+        return $tickets;
     }
 }

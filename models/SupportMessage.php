@@ -2,6 +2,9 @@
 
 namespace app\models;
 
+use app\components\traits\FillAttributes;
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 use Yii;
 
 /**
@@ -19,16 +22,36 @@ use Yii;
  * @property string|null $updated_at
  *
  * @property User $author
- * @property SupportTickets $ticket
+ * @property SupportTicket $ticket
  */
-class SupportMessages extends \yii\db\ActiveRecord
+class SupportMessage extends ActiveRecord
 {
+
+    use FillAttributes;
+
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
         return 'support_messages';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => new \yii\db\Expression('NOW()'),
+            ],
+        ];
     }
 
     /**
@@ -40,10 +63,10 @@ class SupportMessages extends \yii\db\ActiveRecord
             [['ticket_id', 'author_id', 'message_number', 'author_role'], 'required'],
             [['ticket_id', 'author_id', 'message_number', 'reply_on', 'seen_by_interlocutor'], 'integer'],
             [['text'], 'string'],
-            [['created_at', 'updated_at'], 'safe'],
-            [['author_role'], 'string', 'max' => 15],
-            [['author_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['author_id' => 'id']],
-            [['ticket_id'], 'exist', 'skipOnError' => true, 'targetClass' => SupportTickets::className(), 'targetAttribute' => ['ticket_id' => 'id']],
+            //[['created_at', 'updated_at'], 'safe'],
+            //[['author_role'], 'string', 'max' => 15],
+            //[['author_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['author_id' => 'id']],
+            //[['ticket_id'], 'exist', 'skipOnError' => true, 'targetClass' => SupportTicket::className(), 'targetAttribute' => ['ticket_id' => 'id']],
         ];
     }
 
@@ -85,4 +108,24 @@ class SupportMessages extends \yii\db\ActiveRecord
     {
         return $this->hasOne(SupportTickets::className(), ['id' => 'ticket_id']);
     }
+
+    /**
+     * Gets amount of messages in this ticket
+     * 
+     * @return int
+     */
+    public function getMessagesAmount($ticket_id)
+    {
+        $messages = $this->find()
+        ->where([
+            'ticket_id' => $ticket_id,
+        ])
+        ->count();
+
+        if($messages === null) {
+            $messages = 0;
+        }
+
+        return $messages;
+    }    
 }
