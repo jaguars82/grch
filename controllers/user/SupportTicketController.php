@@ -21,7 +21,7 @@ class SupportTicketController extends \yii\web\Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'index' => ['GET'],
-                    'view' => ['GET'],
+                    'view' => ['GET', 'POST'],
                     'create' => ['GET', 'POST']
                 ],
             ],
@@ -42,11 +42,41 @@ class SupportTicketController extends \yii\web\Controller
 
         $ticketId = \Yii::$app->request->get('id');
 
-        //$ticket_model = new SupportTicket();
-        
-        // $ticket = $ticket_model->findOne($ticketId);
         $ticket = (new SupportTicket())->findOne($ticketId);
         $messages = $ticket->messages;
+
+        $message_form = new SupportMessageForm();
+
+        if (\Yii::$app->request->isPost && 
+        ($message_form->load(\Yii::$app->request->post())
+        /*& $message_form->process()*/)
+        ) {
+            try {
+                $transaction = \Yii::$app->db->beginTransaction();
+
+                try {
+
+                    $message_form->ticket_id = $ticket->id;
+                    $message_form->author_id = \Yii::$app->user->id;
+                    $message_form->author_role = array_key_first(\Yii::$app->authManager->getRolesByUser(\Yii::$app->user->id));
+                    $message_form->message_number = (new SupportMessage())->getMessagesAmount($message_form->ticket_id) + 1;
+
+                    $message = (new SupportMessage())->fill($message_form->attributes);
+                    $message->save();        
+        
+                    $transaction->commit();
+                } catch(\Exception $e) {
+                    $transaction->rollBack();
+                    throw $e;
+                }
+                
+            } catch (\Exception $e) {
+                return $this->redirectBackWhenException($e);
+            }
+            return $this->redirectWithSuccess(\Yii::$app->request->referrer, 'Сообщение отправлено');
+        }
+
+
 
         return $this->render('view', [
             'ticket' => $ticket,

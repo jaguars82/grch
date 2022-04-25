@@ -115,6 +115,18 @@ class SupportTicket extends ActiveRecord
     }
 
     /**
+     * Gets all the active tickets
+     */
+    public function getAllTickets()
+    {
+        $tickets = $this->find()
+        ->orderBy(['created_at' => SORT_ASC])
+        ->all();
+
+        return $tickets;
+    }
+
+    /**
      * Gets a ticket by ID
      */
     public function getTicketById($id)

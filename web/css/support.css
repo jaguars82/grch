@@ -1,0 +1,22 @@
+.conversation-box {
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+    background-color: #eee;
+    padding: 15px 20px;
+}
+
+.conversation-box .message {
+    align-self: flex-start;
+    margin: 10px 0;
+    background-color: #fff;
+    padding: 10px 15px;
+    box-shadow: 0 0 5px rgba(0,0,0,.3);
+    border-radius: 10px 10px 10px 0;
+}
+
+.conversation-box .message.self {
+    align-self: flex-end;
+    background-color: #E0FCD6;
+    border-radius: 10px 10px 0 10px;
+}

@@ -39,8 +39,12 @@ class SupportController extends Controller
     {
         $model = new SupportTicket();
 
-        $tickets = $model->getTicketsByAuthor(\Yii::$app->user->id);
-        
+        if(\Yii::$app->user->can('admin')) {
+            $tickets = $model->getAllTickets();
+        } else {
+            $tickets = $model->getTicketsByAuthor(\Yii::$app->user->id); 
+        }
+         
         return $this->render('index', [
             'user' => \Yii::$app->user->identity,
             'tickets' => $tickets
