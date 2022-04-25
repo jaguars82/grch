@@ -3,6 +3,7 @@
 namespace app\controllers\user;
 
 use app\components\traits\CustomRedirects;
+use app\models\SupportTicket;
 use app\models\User;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -36,9 +37,9 @@ class SupportController extends Controller
 
     public function actionIndex()
     {
-        $tickets = [
-            
-        ];
+        $model = new SupportTicket();
+
+        $tickets = $model->getTicketsByAuthor(\Yii::$app->user->id);
         
         return $this->render('index', [
             'user' => \Yii::$app->user->identity,

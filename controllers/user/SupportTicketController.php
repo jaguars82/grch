@@ -21,6 +21,7 @@ class SupportTicketController extends \yii\web\Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'index' => ['GET'],
+                    'view' => ['GET'],
                     'create' => ['GET', 'POST']
                 ],
             ],
@@ -29,7 +30,7 @@ class SupportTicketController extends \yii\web\Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'create'],
+                        'actions' => ['index', 'view', 'create'],
                         'roles' => ['admin', 'manager', 'agent'],
                     ],
                 ]
@@ -37,14 +38,24 @@ class SupportTicketController extends \yii\web\Controller
         ];
     }
 
-    public function actionIndex()
-    {
-        return $this->render('index');
+    public function actionView() {
+
+        $ticketId = \Yii::$app->request->get('id');
+
+        //$ticket_model = new SupportTicket();
+        
+        // $ticket = $ticket_model->findOne($ticketId);
+        $ticket = (new SupportTicket())->findOne($ticketId);
+        $messages = $ticket->messages;
+
+        return $this->render('view', [
+            'ticket' => $ticket,
+            'messages' => $messages,
+        ]);
     }
 
     public function actionCreate()
     {
-
         $ticket_model = new SupportTicketForm();
         $message_model = new SupportMessageForm();
 
@@ -52,13 +63,7 @@ class SupportTicketController extends \yii\web\Controller
          * Fill some hidden attributes
          */
         $ticket_model->author_id = $message_model->author_id = \Yii::$app->user->id;
-        // $message_model->author_id = \Yii::$app->user->id;
-        // $message_model->author_role = 'manager';
-        // $author_role = \Yii::$app->authManager->getRolesByUser(\Yii::$app->user->id);
-        
-        // echo "<pre>"; echo array_key_first($author_role); var_dump($author_role); echo "</pre>"; die();
         $message_model->author_role = array_key_first(\Yii::$app->authManager->getRolesByUser(\Yii::$app->user->id));
-
 
         /*
         if ($ticket_model->load(\Yii::$app->request->post())) {
@@ -99,7 +104,7 @@ class SupportTicketController extends \yii\web\Controller
                 return $this->redirectBackWhenException($e);
             }
 
-            return $this->redirectWithSuccess(['index'], 'Ваш запрос отправлен в службу поддержки');
+            return $this->redirectWithSuccess(['/user/support/index'], 'Ваш запрос отправлен в службу поддержки');
         }
 
         return $this->render('create', [
@@ -107,7 +112,5 @@ class SupportTicketController extends \yii\web\Controller
             'ticket_model' => $ticket_model,
             'message_model' => $message_model,
         ]);
-
-        // return $this->render('create');
     }
 }

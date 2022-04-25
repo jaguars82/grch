@@ -36,12 +36,12 @@ class SupportTicketForm extends Model
     public function scenarios()
     {
         $commonFields = [
-            'author_id', 'ticket_number', 'title', 'is_closed'
+            'author_id', 'ticket_number', 'title'
         ];
         
         return [
             self::SCENARIO_DEFAULT => $commonFields,
-            self::SCENARIO_UPDATE => array_merge($commonFields, ['is_archived']),
+            self::SCENARIO_UPDATE => array_merge($commonFields, ['is_archived', 'is_closed']),
         ];
     }
 

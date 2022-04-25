@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\models\SupportMessage;
 use app\components\traits\FillAttributes;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
@@ -98,9 +99,9 @@ class SupportTicket extends ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getSupportMessages()
+    public function getMessages()
     {
-        return $this->hasMany(SupportMessages::className(), ['ticket_id' => 'id']);
+        return $this->hasMany(SupportMessage::className(), ['ticket_id' => 'id']);
     }
 
     /**
@@ -111,6 +112,14 @@ class SupportTicket extends ActiveRecord
     public function getAuthor()
     {
         return $this->hasOne(User::className(), ['id' => 'author_id']);
+    }
+
+    /**
+     * Gets a ticket by ID
+     */
+    public function getTicketById($id)
+    {
+        $ticket = $this->findOne($id);
     }
 
     /**
@@ -131,6 +140,19 @@ class SupportTicket extends ActiveRecord
             $tickets = 0;
         }
 
+        return $tickets;
+    }
+
+    /**
+     * Gets all the tickets created by particular user
+     */
+    public function getTicketsByAuthor($user_id) {
+        $tickets = $this->find()
+        ->where([
+            'author_id' => $user_id,
+        ])
+        ->orderBy(['id' => SORT_DESC])
+        ->all();
         return $tickets;
     }
 }

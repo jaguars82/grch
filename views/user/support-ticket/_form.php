@@ -6,7 +6,8 @@ use yii\widgets\ActiveForm;
 /**
  * Fill some hidden fields
  */
-$ticket_model->ticket_number = $ticket_model->author_id.'-#'.$tickets_amount + 1;
+$curr_ticket_number = $tickets_amount + 1;
+$ticket_model->ticket_number = $ticket_model->author_id.'-#'.$curr_ticket_number;
 
 /* @var $this yii\web\View */
 /* @var $ticket_model app\models\SupportTickets */
@@ -18,10 +19,10 @@ $ticket_model->ticket_number = $ticket_model->author_id.'-#'.$tickets_amount + 1
 
         <?= $form->field($ticket_model, 'author_id')->hiddenInput()->label(false) ?>
         <?= $form->field($ticket_model, 'ticket_number')->hiddenInput()->label(false) ?>
-        <?= $form->field($ticket_model, 'is_closed') ?>
+        <!--<?= $form->field($ticket_model, 'is_closed') ?>-->
         <?= $form->field($ticket_model, 'has_unread_messages_from_support')->hiddenInput()->label(false) ?>
         <?= $form->field($ticket_model, 'has_unread_messages_from_author')->hiddenInput()->label(false) ?>
-        <?= $form->field($ticket_model, 'is_archived') ?>
+        <!--<?= $form->field($ticket_model, 'is_archived') ?>-->
         <?= $form->field($ticket_model, 'last_enter_by_support')->hiddenInput()->label(false) ?>
         <?= $form->field($ticket_model, 'last_enter_by_author')->hiddenInput()->label(false) ?>
         <?= $form->field($ticket_model, 'created_at')->hiddenInput()->label(false) ?>
@@ -34,7 +35,7 @@ $ticket_model->ticket_number = $ticket_model->author_id.'-#'.$tickets_amount + 1
         <?= $form->field($message_model, 'text') ?>
     
         <div class="form-group">
-            <?= Html::submitButton('Submit', ['class' => 'btn btn-primary']) ?>
+            <?= Html::submitButton('Отправить', ['class' => 'btn btn-primary']) ?>
         </div>
     <?php ActiveForm::end(); ?>
 
