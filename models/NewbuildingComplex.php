@@ -246,8 +246,11 @@ class NewbuildingComplex extends ActiveRecord
                 }
             }
         }
-
-        return $minYearlyRate > 0 ? $minYearlyRate / 100 : NULL;
+		
+		// temprory switch of minYearlyRate (ставка)
+		return NULL;
+		// uncomment the line below to switch on minYearlyRate (ставка)
+        // return $minYearlyRate > 0 ? $minYearlyRate / 100 : NULL;
     }
 
     /**

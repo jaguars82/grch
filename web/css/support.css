@@ -1,13 +1,15 @@
 .conversation-box {
-    display: flex;
-    flex-direction: column;
+    /*display: flex;
+    flex-direction: column;*/
     border-radius: 5px;
     background-color: #eee;
     padding: 15px 20px;
 }
 
 .conversation-box .message {
-    align-self: flex-start;
+    /*align-self: flex-start;*/
+    float: left;
+    max-width: 80%;
     margin: 10px 0;
     background-color: #fff;
     padding: 10px 15px;
@@ -16,7 +18,12 @@
 }
 
 .conversation-box .message.self {
-    align-self: flex-end;
+    /* align-self: flex-end; */
+    float: right;
     background-color: #E0FCD6;
     border-radius: 10px 10px 0 10px;
+}
+
+.conversation-box .message-separator {
+    clear: both;
 }

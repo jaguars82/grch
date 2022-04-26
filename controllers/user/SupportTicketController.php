@@ -22,7 +22,8 @@ class SupportTicketController extends \yii\web\Controller
                 'actions' => [
                     'index' => ['GET'],
                     'view' => ['GET', 'POST'],
-                    'create' => ['GET', 'POST']
+                    'create' => ['GET', 'POST'],
+                    'refresh' => ['GET', 'POST']
                 ],
             ],
             'access' => [
@@ -30,7 +31,7 @@ class SupportTicketController extends \yii\web\Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'view', 'create'],
+                        'actions' => ['index', 'view', 'create', 'refresh'],
                         'roles' => ['admin', 'manager', 'agent'],
                     ],
                 ]
@@ -46,6 +47,21 @@ class SupportTicketController extends \yii\web\Controller
         $messages = $ticket->messages;
 
         $message_form = new SupportMessageForm();
+
+
+        if (\Yii::$app->request->isPost && \Yii::$app->request->post('action') === 'refresh') {
+        
+            $ticketId = \Yii::$app->request->post('id');
+
+            $ticket = (new SupportTicket())->findOne($ticketId);
+            $messages = $ticket->messages;
+            
+            return $this->renderPartial('view', [
+                'ticket' => $ticket,
+                'messages' => $messages,
+            ]);
+        }
+
 
         if (\Yii::$app->request->isPost && 
         ($message_form->load(\Yii::$app->request->post())
@@ -74,14 +90,32 @@ class SupportTicketController extends \yii\web\Controller
                 return $this->redirectBackWhenException($e);
             }
             return $this->redirectWithSuccess(\Yii::$app->request->referrer, 'Сообщение отправлено');
+            // return $this->redirectWithSuccess('view?id='.$ticket->id.'', 'Сообщение отправлено');
         }
-
-
 
         return $this->render('view', [
             'ticket' => $ticket,
             'messages' => $messages,
         ]);
+    }
+
+    /**
+     * Renew messages via pjax (if there are new ones)
+     */
+    public function actionRefresh() {
+
+        if (\Yii::$app->request->isPost) {
+        
+            $ticketId = \Yii::$app->request->post('id');
+
+            $ticket = (new SupportTicket())->findOne($ticketId);
+            $messages = $ticket->messages;
+            
+            return $this->renderPartial('view', [
+                'ticket' => $ticket,
+                'messages' => $messages,
+            ]);
+        }
     }
 
     public function actionCreate()
