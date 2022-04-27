@@ -1,6 +1,6 @@
 <?php
 
-use app\assets\ProfileAsset;
+use app\assets\SupportAsset;
 use yii\helpers\Html;
 
 $imagePath = isset($path) ? $path : '';
