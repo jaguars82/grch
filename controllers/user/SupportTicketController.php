@@ -74,12 +74,18 @@ class SupportTicketController extends \yii\web\Controller
                 $message->setAuthorAgency();
 
                 if(\Yii::$app->user->can('admin')){
-                    if($message->authorRole != 'admin') {
-                        // устанавливаем в базе 'seen_by_interlocuter' = 1  
+                    if($message->authorRole != 'Администратор') {
+                        // устанавливаем в базе 'seen_by_interlocuter' = 1
+                        $current_message = (new SupportMessage)->findOne($message->id);
+                        $current_message->seen_by_interlocutor = 1;
+                        $current_message->save();
                     }
                 } else {
-                    if($message->authorRole == 'admin') {
+                    if($message->authorRole == 'Администратор') {
                         // устанавливаем в базе 'seen_by_interlocuter' = 1 
+                        $current_message = (new SupportMessage)->findOne($message->id);
+                        $current_message->seen_by_interlocutor = 1;
+                        $current_message->save();
                     }
                 }
             }
