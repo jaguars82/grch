@@ -29,6 +29,37 @@ class SupportMessage extends ActiveRecord
 
     use FillAttributes;
 
+    private $authorName;
+    private $authorSurname;
+    private $authorAvatar;
+
+    public function setAuthorName() {
+        $author = $this->author;
+        $this->AuthorName = $author->first_name;
+    }
+
+    public function getAuthorName() {
+       return $this->AuthorName;
+    }
+
+    public function setAuthorSurname() {
+        $author = $this->author;
+        $this->authorSurname = $author->last_name;
+    }
+
+    public function getAuthorSurname() {
+       return $this->authorSurname;
+    }
+
+    public function setAuthorAvatar() {
+        $author = $this->author;
+        $this->AuthorAvatar = $author->photo;
+    }
+
+    public function getAuthorAvatar() {
+       return $this->AuthorAvatar;
+    }
+
     /**
      * {@inheritdoc}
      */

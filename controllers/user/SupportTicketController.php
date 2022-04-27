@@ -45,6 +45,12 @@ class SupportTicketController extends \yii\web\Controller
         $ticket = (new SupportTicket())->findOne($ticketId);
         $messages = $ticket->messages;
 
+        foreach($messages as $key => $message) {
+            $message->setAuthorName();
+            $message->setAuthorSurname();
+            $message->setAuthorAvatar();
+        }
+
         $message_form = new SupportMessageForm();
 
         /**
@@ -56,6 +62,12 @@ class SupportTicketController extends \yii\web\Controller
 
             $ticket = (new SupportTicket())->findOne($ticketId);
             $messages = $ticket->messages;
+
+            foreach($messages as $key => $message) {
+                $message->setAuthorName();
+                $message->setAuthorSurname();
+                $message->setAuthorAvatar();
+            }
             
             return $this->renderPartial('view', [
                 'ticket' => $ticket,
