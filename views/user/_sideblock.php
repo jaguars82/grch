@@ -33,10 +33,10 @@ $user = \Yii::$app->user->identity;
                 <span class="iconed-menu-label">Агенты</span>
             </a>
             <?php endif; ?>
-            <!--<a href="/user/support/index" class="iconed-menu-item list-group-item">
+            <a href="/user/support/index" class="iconed-menu-item list-group-item">
                 <span class="material-icons-outlined">support_agent</span>
                 <span class="iconed-menu-label">Техподдержка</span>
-            </a>-->
+            </a>
         </div>
     </div>
 </div>

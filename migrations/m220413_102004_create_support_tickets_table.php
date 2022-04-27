@@ -20,8 +20,8 @@ class m220413_102004_create_support_tickets_table extends Migration
             'is_closed' => $this->boolean(),
             'has_unread_messages_from_support' => $this->boolean(),
             'has_unread_messages_from_author' => $this->boolean(),
-            'last_enter_by_support' => $this->timestamp(),
-            'last_enter_by_author' => $this->timestamp(),
+            'last_enter_by_support' => $this->timestamp()->defaultValue(null),
+            'last_enter_by_author' => $this->timestamp()->defaultValue(null),
             'created_at' => $this->timestamp()->defaultValue(null),
             'updated_at' => $this->timestamp()->defaultValue(null),
         ]);

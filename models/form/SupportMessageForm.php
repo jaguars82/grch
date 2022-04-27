@@ -2,6 +2,8 @@
 
 namespace app\models\form;
 
+use app\components\traits\FillAttributes;
+use app\models\SupportMessage;
 use yii\base\Model;
 
 /**
@@ -9,6 +11,10 @@ use yii\base\Model;
  */
 class SupportMessageForm extends Model
 {
+    use FillAttributes {
+        fill as protected originFill;
+    }
+    
     const SCENARIO_UPDATE = 'update';
 
     public $ticket_id;
@@ -27,7 +33,7 @@ class SupportMessageForm extends Model
     public function scenarios()
     {
         $commonFields = [
-            'text'
+            'ticket_id', 'author_id', 'message_number', 'author_role', 'text', 'seen_by_interlocutor'
         ];
         
         return [
@@ -45,10 +51,10 @@ class SupportMessageForm extends Model
             [['ticket_id', 'author_id', 'message_number', 'author_role'], 'required'],
             [['ticket_id', 'author_id', 'message_number', 'reply_on', 'seen_by_interlocutor'], 'integer'],
             [['text'], 'string'],
-            [['created_at', 'updated_at'], 'safe'],
-            [['author_role'], 'string', 'max' => 15],
-            // [['author_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['author_id' => 'id']],
-            // [['ticket_id'], 'exist', 'skipOnError' => true, 'targetClass' => SupportTickets::className(), 'targetAttribute' => ['ticket_id' => 'id']],
+            //[['created_at', 'updated_at'], 'safe'],
+            //[['author_role'], 'string', 'max' => 15],
+            //[['author_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['author_id' => 'id']],
+            //[['ticket_id'], 'exist', 'skipOnError' => true, 'targetClass' => SupportTicket::className(), 'targetAttribute' => ['ticket_id' => 'id']],
         ];
     }
 
@@ -68,6 +74,16 @@ class SupportMessageForm extends Model
             'created_at' => 'Создано',
             'updated_at' => 'Обновлено',
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fill($data = [], $exceptFields = [])
+    {
+        $result = $this->originFill($data, $exceptFields);
+        
+        return $result;
     }
 
     /**

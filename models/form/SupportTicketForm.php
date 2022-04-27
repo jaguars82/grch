@@ -2,6 +2,8 @@
 
 namespace app\models\form;
 
+use app\components\traits\FillAttributes;
+use app\models\SupportTicket;
 use yii\base\Model;
 
 /**
@@ -9,6 +11,10 @@ use yii\base\Model;
  */
 class SupportTicketForm extends Model
 {
+    use FillAttributes {
+        fill as protected originFill;
+    }
+
     const SCENARIO_UPDATE = 'update';
 
     // public $id;
@@ -30,12 +36,12 @@ class SupportTicketForm extends Model
     public function scenarios()
     {
         $commonFields = [
-            'author_id', 'ticket_number', 'title', 'is_closed'
+            'author_id', 'ticket_number', 'title', 'is_archived'
         ];
         
         return [
             self::SCENARIO_DEFAULT => $commonFields,
-            self::SCENARIO_UPDATE => array_merge($commonFields, ['is_archived']),
+            self::SCENARIO_UPDATE => array_merge($commonFields, ['is_archived', 'is_closed']),
         ];
     }
 
@@ -74,6 +80,16 @@ class SupportTicketForm extends Model
             'updated_at' => 'Обновлен',
             'is_archived' => 'В архиве',
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fill($data = [], $exceptFields = [])
+    {
+        $result = $this->originFill($data, $exceptFields);
+        
+        return $result;
     }
 
     /**

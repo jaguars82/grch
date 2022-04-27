@@ -3,6 +3,7 @@
 namespace app\controllers\user;
 
 use app\components\traits\CustomRedirects;
+use app\models\SupportTicket;
 use app\models\User;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -36,10 +37,27 @@ class SupportController extends Controller
 
     public function actionIndex()
     {
-        $tickets = [
-            
-        ];
-        
+        $model = new SupportTicket();
+
+        if(\Yii::$app->user->can('admin')) {
+            $tickets = $model->getAllTickets();
+
+            foreach($tickets as $key => $ticket) {
+                $ticket->setUnreadFromAuthor();
+                $ticket->setAuthorName();
+                $ticket->setAuthorSurname();
+                $ticket->setAuthorAvatar();
+                $ticket->setAuthorRole();
+                $ticket->setAuthorAgency();
+            }            
+        } else {
+            $tickets = $model->getTicketsByAuthor(\Yii::$app->user->id);
+
+            foreach($tickets as $key => $ticket) {
+                $ticket->setUnreadFromAdmin();
+            }
+        }
+         
         return $this->render('index', [
             'user' => \Yii::$app->user->identity,
             'tickets' => $tickets

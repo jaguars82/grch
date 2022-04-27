@@ -3,8 +3,12 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-$ticket_model->author_id = 110;
-$ticket_model->ticket_number = '78342jk'
+/**
+ * Fill some hidden fields
+ */
+$curr_ticket_number = $tickets_amount + 1;
+$ticket_model->ticket_number = $ticket_model->author_id.'-#'.$curr_ticket_number;
+// $ticket_model->is_archived = 0;
 
 /* @var $this yii\web\View */
 /* @var $ticket_model app\models\SupportTickets */
@@ -16,19 +20,23 @@ $ticket_model->ticket_number = '78342jk'
 
         <?= $form->field($ticket_model, 'author_id')->hiddenInput()->label(false) ?>
         <?= $form->field($ticket_model, 'ticket_number')->hiddenInput()->label(false) ?>
-        <?= $form->field($ticket_model, 'is_closed') ?>
+        <!--<?= $form->field($ticket_model, 'is_closed') ?>-->
         <?= $form->field($ticket_model, 'has_unread_messages_from_support')->hiddenInput()->label(false) ?>
         <?= $form->field($ticket_model, 'has_unread_messages_from_author')->hiddenInput()->label(false) ?>
-        <?= $form->field($ticket_model, 'is_archived') ?>
+        <!--<?= $form->field($ticket_model, 'is_archived')->hiddenInput()->label(false) ?>-->
         <?= $form->field($ticket_model, 'last_enter_by_support')->hiddenInput()->label(false) ?>
         <?= $form->field($ticket_model, 'last_enter_by_author')->hiddenInput()->label(false) ?>
         <?= $form->field($ticket_model, 'created_at')->hiddenInput()->label(false) ?>
         <?= $form->field($ticket_model, 'updated_at')->hiddenInput()->label(false) ?>
         <?= $form->field($ticket_model, 'title') ?>
+        <?= $form->field($message_model, 'author_id')->hiddenInput()->label(false) ?>
+        <!--<?= $form->field($message_model, 'ticket_id')->hiddenInput()->label(false) ?>-->
+        <!--<?= $form->field($message_model, 'message_number')->hiddenInput()->label(false) ?>-->
+        <?= $form->field($message_model, 'author_role')->hiddenInput()->label(false) ?>
         <?= $form->field($message_model, 'text') ?>
     
         <div class="form-group">
-            <?= Html::submitButton('Submit', ['class' => 'btn btn-primary']) ?>
+            <?= Html::submitButton('Отправить', ['class' => 'btn btn-primary']) ?>
         </div>
     <?php ActiveForm::end(); ?>
 
