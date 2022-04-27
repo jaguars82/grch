@@ -8,6 +8,7 @@ use yii\widgets\ActiveForm;
  */
 $curr_ticket_number = $tickets_amount + 1;
 $ticket_model->ticket_number = $ticket_model->author_id.'-#'.$curr_ticket_number;
+// $ticket_model->is_archived = 0;
 
 /* @var $this yii\web\View */
 /* @var $ticket_model app\models\SupportTickets */
@@ -22,7 +23,7 @@ $ticket_model->ticket_number = $ticket_model->author_id.'-#'.$curr_ticket_number
         <!--<?= $form->field($ticket_model, 'is_closed') ?>-->
         <?= $form->field($ticket_model, 'has_unread_messages_from_support')->hiddenInput()->label(false) ?>
         <?= $form->field($ticket_model, 'has_unread_messages_from_author')->hiddenInput()->label(false) ?>
-        <!--<?= $form->field($ticket_model, 'is_archived') ?>-->
+        <!--<?= $form->field($ticket_model, 'is_archived')->hiddenInput()->label(false) ?>-->
         <?= $form->field($ticket_model, 'last_enter_by_support')->hiddenInput()->label(false) ?>
         <?= $form->field($ticket_model, 'last_enter_by_author')->hiddenInput()->label(false) ?>
         <?= $form->field($ticket_model, 'created_at')->hiddenInput()->label(false) ?>

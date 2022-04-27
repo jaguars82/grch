@@ -32,14 +32,16 @@ class SupportMessage extends ActiveRecord
     private $authorName;
     private $authorSurname;
     private $authorAvatar;
+    private $authorRole;
+    private $authorAgency;
 
     public function setAuthorName() {
         $author = $this->author;
-        $this->AuthorName = $author->first_name;
+        $this->authorName = $author->first_name;
     }
 
     public function getAuthorName() {
-       return $this->AuthorName;
+       return $this->authorName;
     }
 
     public function setAuthorSurname() {
@@ -53,11 +55,29 @@ class SupportMessage extends ActiveRecord
 
     public function setAuthorAvatar() {
         $author = $this->author;
-        $this->AuthorAvatar = $author->photo;
+        $this->authorAvatar = $author->photo;
     }
 
     public function getAuthorAvatar() {
-       return $this->AuthorAvatar;
+       return $this->authorAvatar;
+    }
+
+    public function setAuthorRole() {
+        $author = $this->author;
+        $this->authorRole = $author->roleLabel;
+    }
+
+    public function getAuthorRole() {
+       return $this->authorRole;
+    }
+
+    public function setAuthorAgency() {
+        $author = $this->author;
+        $this->authorAgency = $author->agency;
+    }
+
+    public function getAuthorAgency() {
+       return $this->authorAgency;
     }
 
     /**

@@ -41,8 +41,21 @@ class SupportController extends Controller
 
         if(\Yii::$app->user->can('admin')) {
             $tickets = $model->getAllTickets();
+
+            foreach($tickets as $key => $ticket) {
+                $ticket->setUnreadFromAuthor();
+                $ticket->setAuthorName();
+                $ticket->setAuthorSurname();
+                $ticket->setAuthorAvatar();
+                $ticket->setAuthorRole();
+                $ticket->setAuthorAgency();
+            }            
         } else {
-            $tickets = $model->getTicketsByAuthor(\Yii::$app->user->id); 
+            $tickets = $model->getTicketsByAuthor(\Yii::$app->user->id);
+
+            foreach($tickets as $key => $ticket) {
+                $ticket->setUnreadFromAdmin();
+            }
         }
          
         return $this->render('index', [

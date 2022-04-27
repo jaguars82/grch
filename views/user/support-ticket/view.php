@@ -46,6 +46,7 @@ SupportAsset::register($this);
                 <?= Html::beginForm(['view?id='.$ticket->id.''], 'post', ['data-pjax' => '', 'class' => 'form-inline']); ?>
                     <?= Html::input('hidden', 'id', $ticket->id) ?>
                     <?= Html::input('hidden', 'action', 'refresh') ?>
+                    <?= Html::input('hidden', 'watcher', \Yii::$app->user->id) ?>
                     <?= Html::submitButton('обновить', ['class' => 'hidden', 'id' => 'refreshButton']) ?>
                     <!--<?= Html::a(
                     'Обновить',
@@ -56,19 +57,23 @@ SupportAsset::register($this);
                     <!--<pre><?= var_dump($messages) ?></pre>-->
                     <?php foreach($messages as $message): ?>
                     <div class="message <?= $message->author_id == \Yii::$app->user->id ? 'self' : '' ?>">
-                        <div><?= $message->text ?></div>
+                        <div><span class="text-muted"><?= $format->asUpdateDate($message->created_at) ?></span></div>
+                        <div class="message-content"><?= $message->text ?></div>
                         <?= $this->render('/widgets/user-badge', [
                             'name' => $message->authorName,
                             'surname' => $message->authorSurname,
                             'avatar' => $message->authorAvatar,
+                            'role' => $message->authorRole,
+                            'agency' => $message->authorAgency,
                         ]) ?>
-                        <div><span class="text-muted"><?= $format->asUpdateDate($message->created_at) ?></span></div>
                     </div>
                     <div class="message-separator"></div>
                     <?php endforeach; ?>
                 <?php Pjax::end(); ?>
 
             </div>
+
+            <br />
 
             <?=
                 $this->render('_message-form', [

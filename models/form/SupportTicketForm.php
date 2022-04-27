@@ -36,7 +36,7 @@ class SupportTicketForm extends Model
     public function scenarios()
     {
         $commonFields = [
-            'author_id', 'ticket_number', 'title'
+            'author_id', 'ticket_number', 'title', 'is_archived'
         ];
         
         return [

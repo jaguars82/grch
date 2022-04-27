@@ -32,6 +32,111 @@ class SupportTicket extends ActiveRecord
 
     use FillAttributes;
 
+    private $unreadFromAdmin;
+    private $unreadFromAuthor;
+    private $authorName;
+    private $authorSurname;
+    private $authorAvatar;
+    private $authorRole;
+    private $authorAgency;
+
+    public function setAuthorName() {
+        $author = $this->author;
+        $this->authorName = $author->first_name;
+    }
+
+    public function getAuthorName() {
+       return $this->authorName;
+    }
+
+    public function setAuthorSurname() {
+        $author = $this->author;
+        $this->authorSurname = $author->last_name;
+    }
+
+    public function getAuthorSurname() {
+       return $this->authorSurname;
+    }
+
+    public function setAuthorAvatar() {
+        $author = $this->author;
+        $this->authorAvatar = $author->photo;
+    }
+
+    public function getAuthorAvatar() {
+       return $this->authorAvatar;
+    }
+
+    public function setAuthorRole() {
+        $author = $this->author;
+        $this->authorRole = $author->roleLabel;
+    }
+
+    public function getAuthorRole() {
+       return $this->authorRole;
+    }
+
+    public function setAuthorAgency() {
+        $author = $this->author;
+        $this->authorAgency = $author->agency;
+    }
+
+    public function getAuthorAgency() {
+       return $this->authorAgency;
+    }
+
+    public function setUnreadFromAdmin() {
+        $check = $this->hasOne(SupportMessage::className(), [
+            'ticket_id' => 'id'
+        ])
+        ->where(['author_role' => 'admin'])
+        ->count();
+        
+        if($check > 0) {
+            $count = $this->hasMany(SupportMessage::className(), [
+                'ticket_id' => 'id'
+            ])
+            ->where(['author_role' => 'admin'])
+            ->andWhere(['=', 'seen_by_interlocutor', 0])
+            ->count();
+
+            $result = $count > 0 ? true : false;
+            $this->unreadFromAdmin = $result;            
+        } else {
+            $this->unreadFromAdmin = false; 
+        }
+    }
+
+    public function getUnreadFromAdmin() {
+        return $this->unreadFromAdmin;
+    }
+
+    public function setUnreadFromAuthor() {
+        $check = $this->hasOne(SupportMessage::className(), [
+            'ticket_id' => 'id'
+        ])
+        ->where(['<>', 'author_role', 'admin'])
+        ->count();
+        
+        if($check > 0) {
+            $count = $this->hasMany(SupportMessage::className(), [
+                'ticket_id' => 'id'
+            ])
+            ->where(['<>', 'author_role', 'admin'])
+            ->andWhere(['=', 'seen_by_interlocutor', 0])
+            ->count();
+
+            $result = $count > 0 ? true : false;
+            $this->unreadFromAuthor = $result;            
+        } else {
+            $this->unreadFromAuthor = false; 
+        }
+    }
+
+    public function getUnreadFromAuthor() {
+        return $this->unreadFromAuthor;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -109,6 +214,10 @@ class SupportTicket extends ActiveRecord
         return $this->hasMany(SupportMessage::className(), ['ticket_id' => 'id']);
     }
 
+    public function hasUnreadMessagesFromAuthor() {
+
+    }
+
     /**
      * Gets query for [[Author]].
      *
@@ -125,7 +234,8 @@ class SupportTicket extends ActiveRecord
     public function getAllTickets()
     {
         $tickets = $this->find()
-        ->orderBy(['created_at' => SORT_ASC])
+        ->where(['<>', 'is_archived', 1])
+        ->orderBy(['created_at' => SORT_DESC])
         ->all();
 
         return $tickets;
@@ -165,9 +275,10 @@ class SupportTicket extends ActiveRecord
      */
     public function getTicketsByAuthor($user_id) {
         $tickets = $this->find()
-        ->where([
-            'author_id' => $user_id,
-        ])
+        ->where(
+            ['author_id' => $user_id]
+        )
+        ->andWhere(['<>', 'is_archived', 1])
         ->orderBy(['id' => SORT_DESC])
         ->all();
         return $tickets;

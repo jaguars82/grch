@@ -1,3 +1,24 @@
+/* Tickets */
+.ticket-container {
+    padding: 10px 20px;
+    margin: 10px 0;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0,0,0,.3);
+}
+
+.ticket-container .ticket-number {
+    font-size: 1.3em;
+}
+
+.ticket-container .ticket-title {
+    margin: 5px 0;
+}
+
+.ticket-container .ticket-title p {
+    font-size: 1.4em;
+}
+
+/* Chat and messages */
 .conversation-box {
     /*display: flex;
     flex-direction: column;*/
@@ -15,6 +36,12 @@
     padding: 10px 15px;
     box-shadow: 0 0 5px rgba(0,0,0,.3);
     border-radius: 10px 10px 10px 0;
+}
+
+.conversation-box .message .message-content {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: solid thin #ddd;
 }
 
 .conversation-box .message.self {

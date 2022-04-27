@@ -33,7 +33,7 @@ class SupportMessageForm extends Model
     public function scenarios()
     {
         $commonFields = [
-            'ticket_id', 'author_id', 'message_number', 'author_role', 'text'
+            'ticket_id', 'author_id', 'message_number', 'author_role', 'text', 'seen_by_interlocutor'
         ];
         
         return [

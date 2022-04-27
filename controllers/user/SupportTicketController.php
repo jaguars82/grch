@@ -49,12 +49,14 @@ class SupportTicketController extends \yii\web\Controller
             $message->setAuthorName();
             $message->setAuthorSurname();
             $message->setAuthorAvatar();
+            $message->setAuthorRole();
+            $message->setAuthorAgency();
         }
 
         $message_form = new SupportMessageForm();
 
         /**
-         * refresh messages in support chat vis pjax
+         * refresh messages in support chat via pjax
          */
         if (\Yii::$app->request->isPost && \Yii::$app->request->post('action') === 'refresh') {
         
@@ -64,9 +66,22 @@ class SupportTicketController extends \yii\web\Controller
             $messages = $ticket->messages;
 
             foreach($messages as $key => $message) {
+
                 $message->setAuthorName();
                 $message->setAuthorSurname();
                 $message->setAuthorAvatar();
+                $message->setAuthorRole();
+                $message->setAuthorAgency();
+
+                if(\Yii::$app->user->can('admin')){
+                    if($message->authorRole != 'admin') {
+                        // устанавливаем в базе 'seen_by_interlocuter' = 1  
+                    }
+                } else {
+                    if($message->authorRole == 'admin') {
+                        // устанавливаем в базе 'seen_by_interlocuter' = 1 
+                    }
+                }
             }
             
             return $this->renderPartial('view', [
@@ -90,6 +105,7 @@ class SupportTicketController extends \yii\web\Controller
                     $message_form->message_number = (new SupportMessage())->getMessagesAmount($message_form->ticket_id) + 1;
 
                     $message = (new SupportMessage())->fill($message_form->attributes);
+                    $message->seen_by_interlocutor = 0;
                     $message->save();        
         
                     $transaction->commit();
@@ -116,9 +132,10 @@ class SupportTicketController extends \yii\web\Controller
         $message_model = new SupportMessageForm();
 
         /**
-         * Fill some hidden attributes
+         * Fill some initial attributes
          */
         $ticket_model->author_id = $message_model->author_id = \Yii::$app->user->id;
+        // $ticket_model->is_archived = $message_model->seen_by_interlocutor = 0;
         $message_model->author_role = array_key_first(\Yii::$app->authManager->getRolesByUser(\Yii::$app->user->id));
 
         /*
@@ -140,12 +157,15 @@ class SupportTicketController extends \yii\web\Controller
                 try {
 
                     $ticket = (new SupportTicket())->fill($ticket_model->attributes);
+                    $ticket->is_archived = 0;
+                    $ticket->is_closed = 0;
                     $ticket->save();
 
                     $message_model->ticket_id = $ticket->id;
                     $message_model->message_number = (new SupportMessage())->getMessagesAmount($message_model->ticket_id) + 1;
 
                     $message = (new SupportMessage())->fill($message_model->attributes);
+                    $message->seen_by_interlocutor = 0;
                     $message->save();        
         
                     $transaction->commit();

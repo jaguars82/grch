@@ -11,5 +11,8 @@ UserBadgeAsset::register($this);
     <?php else: ?>
         <img src="/img/user-nofoto.jpg" class="avatar">
     <?php endif; ?>                   
-    <div class="iconed-menu-label"><span><?= $name ?> <?= $surname ?></span></div>
+    <div class="iconed-menu-label">
+        <div><?= $name ?> <?= $surname ?></div>
+        <div class="text-muted"><?= $role ?><?= $agency ? ', "'.$agency->name.'"' : '' ?></div>
+    </div>
 </div>
