@@ -43,16 +43,11 @@ SupportAsset::register($this);
                 -->
 
                 <?php Pjax::begin(); ?>
-                <?= Html::beginForm(['view?id='.$ticket->id.''], 'post', ['data-pjax' => '', 'class' => 'form-inline']); ?>
+                    <?= Html::beginForm(['view?id='.$ticket->id.''], 'post', ['data-pjax' => '', 'class' => 'form-inline']); ?>
                     <?= Html::input('hidden', 'id', $ticket->id) ?>
                     <?= Html::input('hidden', 'action', 'refresh') ?>
                     <?= Html::input('hidden', 'watcher', \Yii::$app->user->id) ?>
                     <?= Html::submitButton('обновить', ['class' => 'hidden', 'id' => 'refreshButton']) ?>
-                    <!--<?= Html::a(
-                    'Обновить',
-                    ['refresh'],
-                    ['class' => 'btn btn-lg btn-primary', 'id' => 'refreshButton']
-                    ) ?>-->
                     <?= Html::endForm() ?>
                     <!--<pre><?= var_dump($messages) ?></pre>-->
                     <?php foreach($messages as $message): ?>

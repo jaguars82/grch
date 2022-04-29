@@ -1,7 +1,5 @@
 <?php
 
-use app\assets\ProfileAsset;
-use app\assets\SupportAsset;
 use yii\helpers\Html;
 
 $imagePath = isset($path) ? $path : '';
@@ -10,9 +8,6 @@ $this->title = 'Создание запроса в техподдержку';
 $this->params['breadcrumbs'][] = ['label' => 'Кабинет пользователя', 'url' => ['user/profile/index']];
 $this->params['breadcrumbs'][] = ['label' => 'Техподдержка', 'url' => ['user/support/index']];
 $this->params['breadcrumbs'][] = $this->title;
-
-// ProfileAsset::register($this);
-// SupportAsset::register($this);
 
 ?>
 
