@@ -253,6 +253,7 @@ class Developer extends \app\models\Developer
                 $newbuilding = $savedNewbuildings[$objectId][$newbuildingData['name']];
 
                 if (isset($newbuildingData['deadline']) && $newbuildingData['deadline'] != $newbuilding->deadline) {
+                    $newbuildingData['name'] = $savedNewbuildings[$objectId][$newbuildingData['name']]['name']; // this prevents raplacement of 'name' in database with 'name' from feed
                     $newbuilding->fill($newbuildingData);
                     $newbuilding->save();
                     $this->updatedNewbuildingsCount++;
