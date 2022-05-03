@@ -1,6 +1,7 @@
 <?php
 use app\assets\HeaderAsset;
 use yii\widgets\Menu;
+use yii\widgets\Pjax;
 use yii\helpers\Html;
 use app\models\City;
 use app\components\widgets\LocationSelect;
@@ -47,6 +48,22 @@ $user = Yii::$app->user->identity;
             <?php else: ?>
                 <img src="/img/user-nofoto.jpg" class="avatar">
             <?php endif; ?>
+
+            <?php Pjax::begin(['enablePushState' => false]); ?>
+
+                <?= Html::beginForm(['/async/params-get/event'], 'post', ['data-pjax' => '', 'class' => 'form-inline']); ?>
+                <!--<?= Html::input('hidden', 'action', 'refresh_ticket') ?>-->
+                <!--<?= Html::input('hidden', 'watcher', \Yii::$app->user->id) ?>-->
+                <?= Html::submitButton('обновить', ['class' => '', 'id' => 'refreshEvents']) ?>
+                <?= Html::endForm() ?>
+
+                <?= $this->render('/widgets/status-indicator', [
+                    'status' => false,
+                    'amount' => 0
+                ]) ?>
+
+            <?php Pjax::end(); ?>
+
             </div>
             <div class="user-info-box hidden-xs">
                 <p class="user-name">

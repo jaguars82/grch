@@ -86,12 +86,14 @@ class SupportTicket extends ActiveRecord
     }
 
     public function setUnreadFromAdmin() {
+        // check if the ticket has messages
         $check = $this->hasOne(SupportMessage::className(), [
             'ticket_id' => 'id'
         ])
         ->where(['author_role' => 'admin'])
         ->count();
         
+        // count messages from admin unread by author (user)
         if($check > 0) {
             $count = $this->hasMany(SupportMessage::className(), [
                 'ticket_id' => 'id'
@@ -101,6 +103,12 @@ class SupportTicket extends ActiveRecord
             ->count();
 
             $result = $count > 0 ? true : false;
+
+            // set 'has_unread_messages_from_support' field
+            $ticket = $this->findOne($this->id);
+            $result === true ? $ticket->has_unread_messages_from_support = 1 : $ticket->has_unread_messages_from_support = 0;
+            $ticket->save();
+
             $this->unreadFromAdmin = $result;            
         } else {
             $this->unreadFromAdmin = false; 
@@ -112,12 +120,14 @@ class SupportTicket extends ActiveRecord
     }
 
     public function setUnreadFromAuthor() {
+        // check if the ticket has messages
         $check = $this->hasOne(SupportMessage::className(), [
             'ticket_id' => 'id'
         ])
         ->where(['<>', 'author_role', 'admin'])
         ->count();
         
+        // count messages from author (user) unread by admin (support)
         if($check > 0) {
             $count = $this->hasMany(SupportMessage::className(), [
                 'ticket_id' => 'id'
@@ -127,6 +137,12 @@ class SupportTicket extends ActiveRecord
             ->count();
 
             $result = $count > 0 ? true : false;
+
+            // set 'has_unread_messages_from_author' field
+            $ticket = $this->findOne($this->id);
+            $result === true ? $ticket->has_unread_messages_from_author = 1 : $ticket->has_unread_messages_from_author = 0;
+            $ticket->save();
+            
             $this->unreadFromAuthor = $result;            
         } else {
             $this->unreadFromAuthor = false; 
@@ -281,6 +297,33 @@ class SupportTicket extends ActiveRecord
         ->andWhere(['<>', 'is_archived', 1])
         ->orderBy(['id' => SORT_DESC])
         ->all();
+        return $tickets;
+    }
+
+    /**
+     * Returns amount of tickets with anread messages from admin (if there are any)
+     */
+    public function getTicketsWithUnreadFromAdmin($user_id) {
+        $tickets = $this->find()
+        ->where([
+            'author_id' => $user_id
+        ])
+        ->andWhere(['<>', 'is_archived', 1])
+        ->andWhere(['=', 'has_unread_messages_from_support', 1])
+        ->count();
+        return $tickets;
+    }
+
+    /**
+     * Returns amount of tickets with anread messages from user (if there are any)
+     */
+    public function getTicketsWithUnreadFromAuthor() {
+        $tickets = $this->find()
+        ->where([
+            '<>', 'is_archived', 1
+        ])
+        ->andWhere(['=', 'has_unread_messages_from_author', 1])
+        ->count();
         return $tickets;
     }
 }
