@@ -20,21 +20,23 @@ $format = \Yii::$app->formatter;
         <div class="ticket-container">
             <a href="/user/support-ticket/view?id=<?= $ticket->id ?>" data-pjax="0">
                 <div>
-                    <span class="ticket-number"><?= $ticket->ticket_number ?></span>
+                    <span class="ticket-number"><strong><?= $ticket->ticket_number ?></strong></span>
 
                     <?php if($ticket->unreadFromAdmin): ?>
-                        <span class="material-icons-outlined">mark_chat_unread</span>
+                        <span class="material-icons-outlined icon-indicator">mark_chat_unread</span>
                         <!--<?php echo '<div>непрочитанные от админа - '; var_dump($ticket->unreadFromAdmin); echo '</div>'; ?>-->
                     <?php endif; ?>
                     <?php if($ticket->unreadFromAuthor): ?>
-                        <span class="material-icons-outlined">mark_chat_unread</span>
+                        <span class="material-icons-outlined icon-indicator">mark_chat_unread</span>
                         <!--<?php echo '<div>непрочитанные от автора - '; var_dump($ticket->unreadFromAuthor); echo '</div>'; ?>-->
                     <?php endif; ?>
                 </div>
+                <div><span class="text-muted">создан <?= $format->asUpdateDate($ticket->created_at) ?></span></div>
                 <div class="ticket-title">
                     <p><?= $ticket->title ?></p>
                 </div>
                 <?php if(\Yii::$app->user->can('admin')): ?>
+                    <hr />
                     <?= $this->render('/widgets/user-badge', [
                         'name' => $ticket->authorName,
                         'surname' => $ticket->authorSurname,

@@ -6982,3 +6982,12 @@ button.close_btn {
   right: 0;
   padding: 0 5px;
 }
+
+.icon-indicator {
+  background-color: orange;
+  color: #fff;
+  padding: 7px;
+  font-size: 14px;
+  margin: 0 10px;
+  border-radius: 50%;
+}
