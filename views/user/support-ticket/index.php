@@ -9,7 +9,7 @@ $format = \Yii::$app->formatter;
 ?>
 
 <div>
-    <?php Pjax::begin(['enablePushState' => false]); ?>
+    <?php Pjax::begin(['id' => 'refreshTicketsPjax', 'enablePushState' => false]); ?>
 
         <?= Html::beginForm(['/user/support/index'], 'post', ['data-pjax' => '', 'class' => 'form-inline']); ?>
         <?= Html::input('hidden', 'action', 'refresh_ticket') ?>

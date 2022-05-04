@@ -15,7 +15,7 @@ class StatusIndicatorAsset extends AssetBundle
         'css/widgets/status-indicator.css'
     ];
     public $js = [
-        'js/widgwts/status-indicator.js',
+        'js/widgets/status-indicator.js',
     ];
     public $depends = [
         'yii\web\JqueryAsset',

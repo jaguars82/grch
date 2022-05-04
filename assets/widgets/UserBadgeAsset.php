@@ -15,7 +15,7 @@ class UserBadgeAsset extends AssetBundle
         'css/widgets/user-badge.css'
     ];
     public $js = [
-        'js/widgwts/user-badge.js',
+        'js/widgets/user-badge.js',
     ];
     public $depends = [
         'yii\web\JqueryAsset',

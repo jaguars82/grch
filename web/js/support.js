@@ -12,6 +12,6 @@ $(document).ready(function() {
  */
 $(document).ready(function() {
     setInterval(function(){
-        $('#refreshButton').click();
+        $('#refresSupportMessageshButton').click();
     }, 5000);
 });

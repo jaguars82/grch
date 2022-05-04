@@ -42,12 +42,12 @@ SupportAsset::register($this);
                 <?php endforeach; ?>
                 -->
 
-                <?php Pjax::begin(); ?>
+                <?php Pjax::begin(['id' => 'refreshSupportMessagesPjax', 'enablePushState' => false]); ?>
                     <?= Html::beginForm(['view?id='.$ticket->id.''], 'post', ['data-pjax' => '', 'class' => 'form-inline']); ?>
                     <?= Html::input('hidden', 'id', $ticket->id) ?>
                     <?= Html::input('hidden', 'action', 'refresh') ?>
                     <?= Html::input('hidden', 'watcher', \Yii::$app->user->id) ?>
-                    <?= Html::submitButton('обновить', ['class' => 'hidden', 'id' => 'refreshButton']) ?>
+                    <?= Html::submitButton('обновить', ['class' => 'hidden', 'id' => 'refresSupportMessageshButton']) ?>
                     <?= Html::endForm() ?>
                     <!--<pre><?= var_dump($messages) ?></pre>-->
                     <?php foreach($messages as $message): ?>

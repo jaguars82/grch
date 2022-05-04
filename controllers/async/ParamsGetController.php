@@ -3,6 +3,7 @@
 namespace app\controllers\async;
 
 use app\models\SupportTicket;
+use app\components\async\ParamsGet;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -16,7 +17,7 @@ class ParamsGetController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'event' => ['POST', 'GET'],
-                    'supportmessages' => ['POST'],
+                    'support-messages' => ['POST', 'GET'],
                 ],
             ],
             'access' => [
@@ -24,7 +25,7 @@ class ParamsGetController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['event', 'supportmessages'],
+                        'actions' => ['event', 'support-messages'],
                         'roles' => ['admin', 'manager', 'agent'],
                     ],
                 ]
@@ -36,33 +37,24 @@ class ParamsGetController extends Controller
      * Get any events
      */
     public function actionEvent() {
-        $status = false;
-        $amount = 0;
-
-        // check support messages
-        if($support_messages_amount = $this->actionSupportmessages() > 0) { 
-            $amount = $amount + $support_messages_amount;
-            $status = true;
-        }
+        $params = (new ParamsGet())->getAllEventsParams();
 
         return $this->renderPartial('/widgets/status-indicator', [
-            'status' => $status,
-            'amount' => $amount
+            'url' => \Yii::$app->request->post('url'),
+            'action' => \Yii::$app->request->post('action'),
+            'status' => $params['status'],
+            'amount' => $params['amount']
         ]);
     }
 
-    /**
-     * Get if there are uread support messages
-     */
-    public function actionSupportmessages() {
-        $ticket_model = new SupportTicket();
+    public function actionSupportMessages() {
+        $messages_amount = (new ParamsGet())->getSupportMessagesAmount();
 
-        if(\Yii::$app->user->can('admin')) {
-            $result = $ticket_model->getTicketsWithUnreadFromAuthor();
-        } else {
-            $result = $ticket_model->getTicketsWithUnreadFromAdmin(\Yii::$app->user->id);
-        }
-        return $result;
+        return $this->renderPartial('/widgets/status-indicator', [
+            'url' => \Yii::$app->request->post('url'),
+            'action' => \Yii::$app->request->post('action'),
+            'status' => $messages_amount > 0 ? true : false,
+            'amount' => $messages_amount
+        ]);
     }
-
 }

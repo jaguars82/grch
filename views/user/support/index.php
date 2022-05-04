@@ -31,7 +31,7 @@ SupportAsset::register($this);
             <?= Html::a('<div class="iconed-menu-item"><span class="material-icons-outlined">contact_support</span><span class="iconed-menu-label">Создать запрос</span></div>', ['user/support-ticket/create', 'id' => $user->id], ['class' => 'btn btn-primary btn-sm']) ?>
         <?php endif; ?>
 
-        <?= $this->render('/user/support-ticket/index', [
+        <?= $this->context->renderPartial('/user/support-ticket/index', [
             'tickets' => $tickets 
         ]) ?>
 

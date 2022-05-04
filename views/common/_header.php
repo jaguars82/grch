@@ -1,10 +1,12 @@
 <?php
 use app\assets\HeaderAsset;
 use yii\widgets\Menu;
-use yii\widgets\Pjax;
 use yii\helpers\Html;
 use app\models\City;
 use app\components\widgets\LocationSelect;
+use app\components\async\ParamsGet;
+
+$events = (new ParamsGet())->getAllEventsParams();
 
 HeaderAsset::register($this);
 
@@ -43,27 +45,20 @@ $user = Yii::$app->user->identity;
         <?php if(!Yii::$app->user->isGuest): ?>
         <div id="profile-button">
             <div class="avatar-container">
-            <?php if(!is_null($user->photo)): ?>
-                <?= Html::img(\Yii::getAlias("@web/uploads/{$user->photo}"), [ 'class' => 'avatar']); ?>
-            <?php else: ?>
-                <img src="/img/user-nofoto.jpg" class="avatar">
-            <?php endif; ?>
+                <?php if(!is_null($user->photo)): ?>
+                    <?= Html::img(\Yii::getAlias("@web/uploads/{$user->photo}"), [ 'class' => 'avatar']); ?>
+                <?php else: ?>
+                    <img src="/img/user-nofoto.jpg" class="avatar">
+                <?php endif; ?>
 
-            <?php Pjax::begin(['enablePushState' => false]); ?>
-
-                <?= Html::beginForm(['/async/params-get/event'], 'post', ['data-pjax' => '', 'class' => 'form-inline']); ?>
-                <!--<?= Html::input('hidden', 'action', 'refresh_ticket') ?>-->
-                <!--<?= Html::input('hidden', 'watcher', \Yii::$app->user->id) ?>-->
-                <?= Html::submitButton('обновить', ['class' => '', 'id' => 'refreshEvents']) ?>
-                <?= Html::endForm() ?>
-
-                <?= $this->render('/widgets/status-indicator', [
-                    'status' => false,
-                    'amount' => 0
-                ]) ?>
-
-            <?php Pjax::end(); ?>
-
+                <div class="event-indicator">
+                    <?= $this->render('/widgets/status-indicator', [
+                        'url' => '/async/params-get/event',
+                        'action' => 'refreshEvents',
+                        'status' => $events['status'],
+                        'amount' => $events['amount']
+                    ]) ?>
+                </div>
             </div>
             <div class="user-info-box hidden-xs">
                 <p class="user-name">
