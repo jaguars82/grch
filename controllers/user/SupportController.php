@@ -19,7 +19,7 @@ class SupportController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'index' => ['GET'],
+                    'index' => ['GET', 'POST'],
                 ],
             ],
             'access' => [
