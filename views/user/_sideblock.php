@@ -2,10 +2,13 @@
 
 use app\assets\ProfileAsset;
 use yii\helpers\Html;
+use app\components\async\ParamsGet;
 
 ProfileAsset::register($this);
 
 $user = \Yii::$app->user->identity;
+
+$support_messages_amount = (new ParamsGet())->getSupportMessagesAmount();
 
 ?>
 
@@ -36,6 +39,14 @@ $user = \Yii::$app->user->identity;
             <a href="/user/support/index" class="iconed-menu-item list-group-item">
                 <span class="material-icons-outlined">support_agent</span>
                 <span class="iconed-menu-label">Техподдержка</span>
+                <div class="iconed-menu-indicator">
+                    <?= $this->render('/widgets/status-indicator', [
+                        'url' => '/async/params-get/support-messages',
+                        'action' => 'refreshSupportMessagesAmount',
+                        'status' => $support_messages_amount > 0 ? true : false,
+                        'amount' => $support_messages_amount,
+                    ]) ?>
+                </div>
             </a>
         </div>
     </div>

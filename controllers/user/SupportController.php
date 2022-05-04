@@ -19,7 +19,7 @@ class SupportController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'index' => ['GET'],
+                    'index' => ['GET', 'POST'],
                 ],
             ],
             'access' => [
@@ -57,10 +57,24 @@ class SupportController extends Controller
                 $ticket->setUnreadFromAdmin();
             }
         }
-         
+        
         return $this->render('index', [
             'user' => \Yii::$app->user->identity,
             'tickets' => $tickets
         ]);
+
+        /*
+        if(\Yii::$app->request->post('action') == 'refresh_ticket') {
+            return $this->renderPartial('index', [
+                'user' => \Yii::$app->user->identity,
+                'tickets' => $tickets
+            ]);
+        } else {
+            return $this->render('index', [
+                'user' => \Yii::$app->user->identity,
+                'tickets' => $tickets
+            ]);
+        }
+        */
     }
 }

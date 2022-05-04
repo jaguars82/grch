@@ -6971,9 +6971,23 @@ button.close_btn {
 
 .iconed-menu-item {
   display: flex;
-  align-items: center;
 }
 
 .iconed-menu-label {
   padding-left: 10px;
+}
+
+.iconed-menu-indicator {
+  align-self: flex-end;
+  right: 0;
+  padding: 0 5px;
+}
+
+.icon-indicator {
+  background-color: orange;
+  color: #fff;
+  padding: 7px;
+  font-size: 14px;
+  margin: 0 10px;
+  border-radius: 50%;
 }

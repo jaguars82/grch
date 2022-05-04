@@ -20,7 +20,7 @@ class SupportTicketController extends \yii\web\Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'index' => ['GET'],
+                    'index' => ['GET', 'POST'],
                     'view' => ['GET', 'POST'],
                     'create' => ['GET', 'POST'],
                 ],
@@ -37,6 +37,21 @@ class SupportTicketController extends \yii\web\Controller
             ],
         ];
     }
+
+    /* public function actionIndex() {
+
+        if (\Yii::$app->request->isPost && \Yii::$app->request->post('action') === 'refresh_ticket') {
+
+            $ticketId = \Yii::$app->request->post('id');
+
+            $ticket = (new SupportTicket())->findOne($ticketId);
+
+            return $this->renderPartial('view', [
+                'ticket' => $ticket,
+                'messages' => false,
+            ]);
+        }
+    } */
 
     public function actionView() {
 
@@ -96,6 +111,7 @@ class SupportTicketController extends \yii\web\Controller
             ]);
         }
 
+        /** Create new message in support chat */
         if (\Yii::$app->request->isPost && 
         ($message_form->load(\Yii::$app->request->post())
         /*& $message_form->process()*/)
@@ -112,7 +128,15 @@ class SupportTicketController extends \yii\web\Controller
 
                     $message = (new SupportMessage())->fill($message_form->attributes);
                     $message->seen_by_interlocutor = 0;
-                    $message->save();        
+                    $message->save();
+                    
+                    // renew 'has_unread_messages' status of the ticket when a new message add
+                    if(\Yii::$app->user->can('admin')) {
+                        $ticket->has_unread_messages_from_support = 1;
+                    } else {
+                        $ticket->has_unread_messages_from_author = 1;
+                    }
+                    $ticket->save();
         
                     $transaction->commit();
                 } catch(\Exception $e) {
@@ -165,6 +189,8 @@ class SupportTicketController extends \yii\web\Controller
                     $ticket = (new SupportTicket())->fill($ticket_model->attributes);
                     $ticket->is_archived = 0;
                     $ticket->is_closed = 0;
+                    $ticket->has_unread_messages_from_support = 0;
+                    $ticket->has_unread_messages_from_author = 1;
                     $ticket->save();
 
                     $message_model->ticket_id = $ticket->id;

@@ -317,7 +317,14 @@
 }
 
 #profile-button .avatar-container {
+    position: relative;
     width: 50px;
+}
+
+#profile-button .avatar-container .event-indicator {
+    position: absolute;
+    top: -5px;
+    right: -5px;
 }
 
 #profile-button .avatar {

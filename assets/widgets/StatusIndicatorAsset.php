@@ -7,15 +7,15 @@ use yii\web\AssetBundle;
 /**
  * Asset bundle for user badge widget
  */
-class UserBadgeAsset extends AssetBundle
+class StatusIndicatorAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        'css/widgets/user-badge.css'
+        'css/widgets/status-indicator.css'
     ];
     public $js = [
-        'js/widgets/user-badge.js',
+        'js/widgets/status-indicator.js',
     ];
     public $depends = [
         'yii\web\JqueryAsset',
