@@ -95,6 +95,7 @@ class NewbuildingComplexController extends Controller
                 'flats' => count($newbuilding->activeFlats),
                 'status' => $newbuilding->status,
                 'floors' => $newbuilding->total_floor,
+                'active' => $newbuilding->active,
             ];
             $positionArray[$newbuilding->id] = \Yii::$app->formatter->asCapitalize($newbuilding->name);
         }

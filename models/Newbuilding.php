@@ -30,6 +30,7 @@ use \app\models\City;
  * @property string|null $material
  * @property int $status
  * @property string $deadline
+ * @property int $active
  *
  * @property News[] $actions
  * @property News[] $activeActions
@@ -116,6 +117,7 @@ class Newbuilding extends ActiveRecord
             'deadline' => 'Срок сдачи',
             'material' => 'Материал',
             'status' => 'Статус',
+            'active' => 'Активна',
         ];
     }
     
@@ -325,6 +327,17 @@ class Newbuilding extends ActiveRecord
     {
         return $this->hasMany(Flat::className(), ['newbuilding_id' => 'id'])
                 ->onlyActive();
+    }
+    
+    /**
+     * Gets query for [[Flats]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getReservedFlats()
+    {
+        return $this->hasMany(Flat::className(), ['newbuilding_id' => 'id'])
+                ->onlyReserved();
     }
 
     /**
