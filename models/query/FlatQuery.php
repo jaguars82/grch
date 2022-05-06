@@ -63,6 +63,16 @@ class FlatQuery extends ActiveQuery
     }
 
     /**
+     * Get only reserved flats
+     *
+     * @return yii\db\ActiveQuery
+     */
+    public function onlyReserved()
+    {
+        return $this->andWhere(['flat.status' => Flat::STATUS_RESERVED]);
+    }
+
+    /**
      * Get flats with not null price
      *
      * @return yii\db\ActiveQuery

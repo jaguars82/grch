@@ -19,4 +19,9 @@ class NewbuildingQuery extends ActiveQuery
     {
         return $this->where(['newbuilding_complex_id' => $id]);
     }
+
+    public function onlyActive()
+    {
+        return $this->andWhere(['active' => 1]);
+    }
 }
