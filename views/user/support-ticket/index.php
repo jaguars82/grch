@@ -1,6 +1,5 @@
 <?php
 
-use app\assets\SupportAsset;
 use yii\widgets\Pjax;
 use yii\helpers\Html;
 
@@ -24,19 +23,19 @@ $format = \Yii::$app->formatter;
 
                     <?php if($ticket->unreadFromAdmin): ?>
                         <span class="material-icons-outlined icon-indicator">mark_chat_unread</span>
-                        <!--<?php echo '<div>непрочитанные от админа - '; var_dump($ticket->unreadFromAdmin); echo '</div>'; ?>-->
                     <?php endif; ?>
                     <?php if($ticket->unreadFromAuthor): ?>
                         <span class="material-icons-outlined icon-indicator">mark_chat_unread</span>
-                        <!--<?php echo '<div>непрочитанные от автора - '; var_dump($ticket->unreadFromAuthor); echo '</div>'; ?>-->
                     <?php endif; ?>
                 </div>
                 <div><span class="text-muted">создан <?= $format->asUpdateDate($ticket->created_at) ?></span></div>
                 <div class="ticket-title">
                     <p><?= $ticket->title ?></p>
                 </div>
-                <?php if(\Yii::$app->user->can('admin')): ?>
-                    <hr />
+            </a>
+            <?php if(\Yii::$app->user->can('admin')): ?>
+                <div class="support-ticket-footer">
+                    <!--<hr />-->
                     <?= $this->render('/widgets/user-badge', [
                         'name' => $ticket->authorName,
                         'surname' => $ticket->authorSurname,
@@ -45,9 +44,20 @@ $format = \Yii::$app->formatter;
                         'agency' => $ticket->authorAgency,
                     ]);
                     ?>
-                <?php endif; ?>
-
-            </a>
+                    <div>
+                        <?= $this->render('/widgets/iconed-button', [
+                            'icon_class' => 'material-icons-outlined',
+                            'icon' => $ticket->is_archived == 1 ? 'unarchive' : 'archive'
+                        ])
+                        ?>
+                        <?= $this->render('/widgets/iconed-button', [
+                            'icon_class' => 'material-icons-outlined',
+                            'icon' => $ticket->is_closed == 1 ? 'lock_open' : 'lock'
+                        ])
+                        ?>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
         <?php endforeach; ?>
     <?php Pjax::end(); ?>   

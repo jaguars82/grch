@@ -1,0 +1,16 @@
+.iconed-button {
+    display: inline-block;
+    width: 35px;
+    height: 35px;
+    background-color: #eee;
+    border-radius: 50%;
+    text-align: center;
+    padding: 5px;
+    color: #aaa;
+    cursor: pointer;
+}
+
+.iconed-button:hover {
+    color: #777;
+    background-color: #ccc;
+}

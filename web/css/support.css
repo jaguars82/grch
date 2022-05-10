@@ -18,6 +18,14 @@
     font-size: 1.4em;
 }
 
+.support-ticket-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: solid thin #ddd;
+    padding-top: 10px;
+}
+
 /* Chat and messages */
 .conversation-box {
     /*display: flex;
