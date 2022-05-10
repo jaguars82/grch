@@ -20,7 +20,7 @@ $(function () {
             iconLayout: 'default#imageWithContent',
             iconImageHref: '/img/icons/placemark.svg',
             iconImageSize: [35, 35],
-            iconImageOffset: [0, 0],
+            iconImageOffset: [-17.5, -35]
         });
         myMap.geoObjects.add(myPlacemark);
         myMap.behaviors.disable('scrollZoom');
