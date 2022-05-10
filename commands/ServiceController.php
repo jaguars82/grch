@@ -15,6 +15,9 @@ class ServiceController extends Controller
         foreach($NewbuildingComplexes as $NewbuildingComplex) {
             $Newbuildings = $NewbuildingComplex->newbuildings;
 
+            $newbuildingComplexBuildingsStatuses = array();
+
+            // processing newbuildings to update 'active' field
             foreach($Newbuildings as $Newbuilding) {
                 $active_flats = $Newbuilding->getActiveFlats()->count();
                 $reserved_flats = $Newbuilding->getReservedFlats()->count();
@@ -22,11 +25,16 @@ class ServiceController extends Controller
 
                 if($aviable_flats === 0) {
                     $Newbuilding->active = 0;
+                    array_push($newbuildingComplexBuildingsStatuses, false);
                 } else {
                     $Newbuilding->active = 1;
+                    array_push($newbuildingComplexBuildingsStatuses, true);
                 }
                 $Newbuilding->save();
             }
+            // updating 'has_active_buildings' in 'newbuilding_complex' table
+            $NewbuildingComplex->has_active_buildings = in_array(true, $newbuildingComplexBuildingsStatuses, true) ? 1 : 0;
+            $NewbuildingComplex->save();
         }        
     }
 }
