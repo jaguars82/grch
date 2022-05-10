@@ -63,7 +63,7 @@ class DeveloperController extends Controller
         $model = $this->findModel($id);
         
         $newbuildingComplexDataProvider = new ActiveDataProvider([
-            'query' => $model->getNewbuildingComplexes()->onlyActive()->with(['flats']),
+            'query' => $model->getNewbuildingComplexes()->onlyActive()->onlyWithActiveBuildings()->with(['flats']),
             'pagination' => false,
             'sort' => ['attributes' => ['id'], 'defaultOrder' => ['id' => SORT_DESC]],
         ]);

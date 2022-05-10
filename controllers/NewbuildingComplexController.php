@@ -113,7 +113,7 @@ class NewbuildingComplexController extends Controller
         ]);
         
         $newbuildingComplexesDataProvider = new ActiveDataProvider([
-            'query' => NewbuildingComplex::find()->onlyActive()->andWhere(['!=', 'id', $model->id])->andWhere(['=', 'developer_id', $model->developer_id])->limit(6),
+            'query' => NewbuildingComplex::find()->onlyActive()->onlyWithActiveBuildings()->andWhere(['!=', 'id', $model->id])->andWhere(['=', 'developer_id', $model->developer_id])->limit(6),
             'pagination' => false,
             'sort' => ['attributes' => ['id'], 'defaultOrder' => ['id' => SORT_DESC]],
         ]);
@@ -162,6 +162,7 @@ class NewbuildingComplexController extends Controller
         \Yii::$app->response->data = NewbuildingComplex::find()
             ->forDeveloper($id)
             ->onlyActive(true)
+            ->onlyWithActiveBuildings()
             ->select(['id', 'name'])
             ->orderBy(['id' => SORT_DESC])
             ->asArray()

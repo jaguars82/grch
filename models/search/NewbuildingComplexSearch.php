@@ -83,6 +83,7 @@ class NewbuildingComplexSearch extends NewbuildingComplex
                     'query' => $developer
                         ->getNewbuildingComplexes()
                         ->onlyActive($onlyActiveNewbuildingComplex)
+                        ->onlyWithActiveBuildings()
                         ->onlyWithActiveFlats($this->only_active)
                         ->andFilterWhere(['like', 'newbuilding_complex.name', $this->name])
                         ->with(['actions', 'flatsWithDiscount', 'activeActions']),

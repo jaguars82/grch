@@ -31,6 +31,15 @@ class NewbuildingComplexQuery extends ActiveQuery
         
         return $this->andWhere(['active' => true]);
     }
+    
+    public function onlyWithActiveBuildings($isOnlyActiveBuildings = true)
+    {
+        if(!$isOnlyActiveBuildings) {
+            return $this;
+        }
+        
+        return $this->andWhere(['has_active_buildings' => true]);
+    }
 
     /**
      * Get newbuilding complexes only with active flats

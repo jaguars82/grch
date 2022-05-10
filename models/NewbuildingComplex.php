@@ -94,8 +94,8 @@ class NewbuildingComplex extends ActiveRecord
             [['city_id'], 'exist', 'skipOnError' => true, 'targetClass' => City::className(), 'targetAttribute' => ['city_id' => 'id']],
             [['developer_id'], 'exist', 'skipOnError' => true, 'targetClass' => Developer::className(), 'targetAttribute' => ['developer_id' => 'id']],
             [['longitude', 'latitude', 'detail', 'algorithm', 'offer_info'], 'default', 'value' => NULL],
-            [['active'], 'boolean'],
-            [['active'], 'default', 'value' => true]
+            [['active', 'has_active_buildings'], 'boolean'],
+            [['active', 'has_active_buildings'], 'default', 'value' => true]
         ];
     }
 
