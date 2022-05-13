@@ -126,8 +126,10 @@ class NewbuildingController extends Controller
 
         if (\Yii::$app->request->isPost && $form->load(\Yii::$app->request->post()) && $form->process()) {
             try {
+                // echo '<pre>'; var_dump($form->attributes); die(); echo '</pre>';
                 $model->edit($form->attributes);
             } catch (\Exception $e) {
+                echo '<pre>'; var_dump($e); die(); echo '</pre>';
                 return $this->redirectBackWhenException($e);
             }
             

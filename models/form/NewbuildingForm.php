@@ -30,6 +30,7 @@ class NewbuildingForm extends Model
     public $building_number;
     public $longitude;
     public $latitude;
+    public $azimuth;
     public $detail;
     public $total_floor;
     public $material;
@@ -43,13 +44,13 @@ class NewbuildingForm extends Model
     public function scenarios()
     {
         $commonFields = [
-            'name', 'detail', 'total_floor', 'status', 'deadline', 'material', 'city_id', 'building_number',
+            'name', 'azimuth', 'detail', 'total_floor', 'status', 'deadline', 'material', 'city_id', 'building_number',
             'region_id', 'district_id', 'street_type_id', 'building_type_id', 'street_name', 'advantages'
         ];
         
         return [
             self::SCENARIO_DEFAULT => array_merge($commonFields, ['newbuilding_complex_id', 'longitude', 'latitude']),
-            self::SCENARIO_UPDATE => $commonFields,
+            self::SCENARIO_UPDATE => $commonFields
         ];
     }
     
@@ -66,6 +67,7 @@ class NewbuildingForm extends Model
             [['name', 'material', 'street_name'], 'string', 'max' => 200],
             [['newbuilding_complex_id', 'total_floor', 'status', 'building_type_id', 'street_type_id', 'district_id', 'city_id', 'region_id'], 'integer'],
             [['building_number'], 'string', 'max' => 20],
+            // [['azimuth'], 'integer', 'max' => 3],
             [['deadline', 'detail', 'material'], 'default', 'value' => NULL],
             [['building_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => \app\models\BuildingType::className(), 'targetAttribute' => ['building_type_id' => 'id']],
             [['street_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => \app\models\StreetType::className(), 'targetAttribute' => ['street_type_id' => 'id']],
@@ -84,6 +86,7 @@ class NewbuildingForm extends Model
         return [
             'newbuilding_complex_id' => 'Жилой комплекс',
             'name' => 'Название',
+            'azimuth' => 'Азимут',
             'street_name' => 'Название улицы',
             'detail' => 'Информация',
             'total_floor' => 'Количество этажей',

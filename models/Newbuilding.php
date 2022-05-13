@@ -21,6 +21,7 @@ use \app\models\City;
  *
  * @property int $id
  * @property int $newbuilding_complex_id
+ * @property int $azimuth
  * @property string|null $name
  * @property string|null $address
  * @property float|null $longitude
@@ -90,6 +91,7 @@ class Newbuilding extends ActiveRecord
             [['longitude', 'latitude'], 'double'],
             [['detail'], 'string'],
             [['deadline', 'status'], 'safe'],
+            [['azimuth'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['name', 'material', 'street_name'], 'string', 'max' => 200],
             [['building_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => BuildingType::className(), 'targetAttribute' => ['building_type_id' => 'id']],
@@ -109,6 +111,7 @@ class Newbuilding extends ActiveRecord
         return [
             'newbuilding_complex_id' => 'Жилой комплекс',
             'name' => 'Название',
+            'azimuth' => 'Азимут',
             'address' => 'Адрес',
             'longitude' => 'Долгота',
             'latitude' => 'Широта',

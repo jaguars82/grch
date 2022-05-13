@@ -191,6 +191,11 @@ class XmlImportService implements ImportServiceInterface
             // echo stripos($complexName, 'секция');
             // continue;
 
+            // temporary fix
+            if (strpos($objectName, 'ЖК "Молодежный" 2') !== false) {
+				$objectName = 'ЖК "Молодежный" 1';
+			}
+
             if (mb_stripos($objectName, 'секция') !== false) {
                 $objectName = mb_substr($objectName, 0, mb_stripos($objectName, 'секция') - 1);
             }
