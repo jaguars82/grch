@@ -1,0 +1,8 @@
+#compass-rose-flat {
+    z-index: 1;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 70px;
+    cursor: pointer;
+}

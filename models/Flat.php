@@ -250,6 +250,10 @@ class Flat extends ActiveRecord
         }
     }
 
+    public function getAzimuth() {
+        return $this->newbuilding->azimuth;
+    }
+
     /**
      * Get flat's cost
      *

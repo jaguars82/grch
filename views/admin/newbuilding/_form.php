@@ -21,6 +21,7 @@ NewbuildingFormAsset::register($this);
     <div class="row">
         <div class="col-md-6">
             <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'azimuth')->textInput() ?>
             <?= $form->field($model, 'total_floor')->textInput() ?>
             <?= $form->field($model, 'material')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'region_id', [

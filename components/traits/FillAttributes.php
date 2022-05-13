@@ -15,7 +15,7 @@ trait FillAttributes
      * @return mixed
      */
     public function fill($data = [], $exceptFields = [])
-    {        
+    {       
         $data = array_diff_key($data, array_flip($exceptFields));
         
         $this->attributes = array_uintersect_assoc($data, $this->attributes, function ($a, $b) { 
