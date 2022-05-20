@@ -27,7 +27,12 @@ if (isset($isView)) {
         $priceCache = $offer->new_price_cash;
         $priceCredit = $offer->new_price_credit;
     } else {
-        $priceCache = $flat->price_cash;
+        // $priceCache = $flat->price_cash;
+        if($flat->hasDiscount()) {
+            $priceCache = $flat->cashPriceWithDiscount; 
+        } else {
+            $priceCache = $flat->price_cash;
+        }
         $priceCredit = $flat->price_credit;
     }
 
@@ -41,7 +46,12 @@ if (isset($isView)) {
 }
 
 if (isset($flat)) {
-    $priceCachePrint = $flat->price_cash;
+    // $priceCachePrint = $flat->price_cash;
+    if($flat->hasDiscount()) {
+        $priceCachePrint = $flat->cashPriceWithDiscount; 
+    } else {
+        $priceCachePrint = $flat->price_cash;
+    }
     $priceCreditPrint = $flat->price_credit;
 }
 

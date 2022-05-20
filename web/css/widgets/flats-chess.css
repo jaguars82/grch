@@ -1,0 +1,9 @@
+.chess-discount-badge {
+    height: 20px;
+    padding: 0 5px;
+    font-size: .9em;
+    line-height: 20px;
+    color: #be0106;
+    border: 1px solid #be0106;
+    border-radius: 5px;
+}

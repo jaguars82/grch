@@ -121,7 +121,11 @@ $this->params['breadcrumbs'][] = $model->number;
                 <div class="price-block">
                     <span>Стоимость</span>
                     <span class="value">
+                        <?php if($model->hasDiscount()): ?>
+                        <?= $format->asCurrency($model->cashPriceWithDiscount); ?>    
+                        <?php else: ?>
                         <?= $format->asCurrency($model->price_cash); ?>
+                        <?php endif; ?>
                     </span>
                 </div>
             </div>
@@ -269,7 +273,11 @@ $this->params['breadcrumbs'][] = $model->number;
                 <div class="price-block">
                     <span>Стоимость</span>
                     <span class="value">
+                        <?php if($model->hasDiscount()): ?>
+                        <?= $format->asCurrency($model->cashPriceWithDiscount); ?>    
+                        <?php else: ?>
                         <?= $format->asCurrency($model->price_cash); ?>
+                        <?php endif; ?>
                     </span>
                 </div>
                 <div class="info">
