@@ -99,7 +99,7 @@ class ActionFlatSearch extends Flat
 
         $haveDiscount = $this->checkFlatData($query);
 
-        $query->limit(5);
+        //$query->limit(5);
 
         if ($haveDiscount) {
             return $this->getResultWhenHaveDiscount();
@@ -377,8 +377,19 @@ class ActionFlatSearch extends Flat
         return false;
     }
 
-    public function setDiscount($discount)
+    public function setDiscount($discount, $news, $renewFlatsList = false)
     {
+        // clear discount for the previous set of flats
+        if ($renewFlatsList === true) {
+            $previousFlatsList = $news->assignedFlats;
+
+            foreach ($previousFlatsList as $flat) {
+                $flat->discount = 0;
+                $flat->save();
+                $flat->unlink('assignedNews', $news, true);
+            }
+        }
+
         $query = Flat::find()
             ->select([
                 'flat.*',
@@ -402,6 +413,8 @@ class ActionFlatSearch extends Flat
         foreach ($flatList as $flat) {
             $flat->discount = $flatDiscount;
             $flat->save();
+            
+            $flat->link('assignedNews', $news);
         }
     }
 }

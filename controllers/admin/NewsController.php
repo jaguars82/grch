@@ -210,6 +210,7 @@ class NewsController extends Controller
             try {
                 $news->edit($newsForm->attributes, $actionForm->attributes, $searchModel);
             } catch (\Exception $e) {
+                echo '<pre>'; var_dump($e); echo '<pre></pre>'; die();
                 return $this->redirectBackWhenException($e);
             }
 
@@ -241,8 +242,16 @@ class NewsController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        
         try {
+            if ($model->isAction()) {
+                $flatsList = $model->assignedFlats;
+
+                foreach ($flatsList as $flat) {
+                    $flat->discount = 0;
+                    $flat->save();
+                    $flat->unlink('assignedNews', $model, true);
+                }
+            }
             $model->delete();
         } catch (\Exception $e) {
             return $this->redirectBackWhenException($e);
@@ -267,7 +276,7 @@ class NewsController extends Controller
         return $model;
     }
 
-     public function actionSearchFlats()
+    public function actionSearchFlats()
     {
         $queryParams = \Yii::$app->request->post();
 

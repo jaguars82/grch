@@ -23,6 +23,7 @@ use app\components\flat\SvgDom;
  * @property int|null $section
  * @property float|null $unit_price
  * @property float|null $price
+ * @property int $action_id
  * @property float $discount
  * @property float $azimuth
  * @property string|null $notification
