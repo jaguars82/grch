@@ -9,7 +9,7 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="action-flat-search-form" style="display: none;">
+<div class="action-flat-search-form" style="display: none; border: solid thin #ccc; border-radius: 5px; padding: 10px 15px; background: #eee; margin-bottom: 20px;">
     <h3>Информация о ЖК</h3>
 
     <div class="row">
@@ -124,9 +124,15 @@ use yii\widgets\ActiveForm;
         </div>
     </div>
 
+    
+    
     <div class="form-group" style="clear: both">
         <?= Html::button('Поиск по заданным параметрам', ['class' => 'btn btn-success js-search-flats']) ?>
-        <?= Html::a('Очистить', '#', ['class' => 'btn btn-danger advanced-search-clear']) ?>
+        <!--<?= Html::a('Очистить', '#', ['class' => 'btn btn-danger advanced-search-clear']) ?>-->
     </div>
+
+    <div class="action-flat-search-result" style="max-height: 500px; overflow: auto; padding: 0 5px;"></div>
+
 </div>
-<div class="action-flat-search-result col-xs-12"></div>
+
+
