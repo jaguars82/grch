@@ -39,7 +39,6 @@ use yii\widgets\ActiveForm;
 
     <h3>Информация о квартирах</h3>
 
-
     <div class="row">
         <div class="col-md-12" >
             <?= $form->field($model, 'priceFrom')->textInput([
@@ -126,7 +125,7 @@ use yii\widgets\ActiveForm;
     </div>
 
     <div class="form-group" style="clear: both">
-        <?= Html::button('Поиск', ['class' => 'btn btn-success js-search-flats']) ?>
+        <?= Html::button('Поиск по заданным параметрам', ['class' => 'btn btn-success js-search-flats']) ?>
         <?= Html::a('Очистить', '#', ['class' => 'btn btn-danger advanced-search-clear']) ?>
     </div>
 </div>

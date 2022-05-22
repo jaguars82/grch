@@ -23,7 +23,11 @@ $format = \Yii::$app->formatter;
                 </p>
                 <div class="flex-row info">
                     <span class="price">
+                        <?php if($flat->hasDiscount()): ?>
+                        <?= $format->asCurrency($flat->cashPriceWithDiscount); ?>    
+                        <?php else: ?>
                         <?= $format->asCurrency($flat->price_cash); ?>
+                        <?php endif; ?>
                     </span>
                     <span class="deadline">
                         Сдача: <?= is_null($flat->newbuilding->deadline) ? 'Нет данных' : $format->asQuarterAndYearDate($flat->newbuilding->deadline, false) ?>

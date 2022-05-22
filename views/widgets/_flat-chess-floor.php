@@ -18,7 +18,14 @@ $format = \Yii::$app->formatter;
                 <span class="title"> Квартира </span>
                 <span class="number">№ <?= $flatItem->number?></span>
             </div>
-            <p class="price"><?= $format->asCurrency($flatItem->price_cash) ?></p>
+            <p class="price">
+                <?php if($flatItem->hasDiscount()): ?>
+                <?= $format->asCurrency($flatItem->cashPriceWithDiscount); ?>
+                <span class="chess-discount-badge"><?= $format->asPercent($flatItem->discount) ?> </span>  
+                <?php else: ?>
+                <?= $format->asCurrency($flatItem->price_cash); ?>
+                <?php endif; ?>
+            </p>
             <div class="flex-row">
                 <span class="area"> <?=  $format->asArea($flatItem->area) ?> </span>
                 <span class="area-price"> - <?= $format->asPricePerArea($flatItem->pricePerArea) ?> </span>

@@ -55,9 +55,9 @@ class News extends \app\models\News
                 $actionDataObject->fill($actionData);
     
                 if ($actionFlatData != null) {
-                    $actionFlatData->setDiscount($actionDataObject->discount);
+                    $actionFlatData->setDiscount($actionDataObject->discount, $news);
                 }
-    
+                
                 $news->link('actionData', $actionDataObject);
             }
 
@@ -129,10 +129,16 @@ class News extends \app\models\News
                     $actionData['flat_filter'] = json_encode($actionFlatData->flatFilter);
                     $actionDataObject = new ActionData();
                     $actionDataObject->fill($actionData);
+                    if ($actionFlatData != null) {
+                        $actionFlatData->setDiscount($actionDataObject->discount, $this, true);
+                    }
                     $this->link('actionData', $actionDataObject);
                 } else {
                     $actionData['flat_filter'] = json_encode($actionFlatData->flatFilter);
                     $this->actionData->fill($actionData);
+                    if ($actionFlatData != null) {
+                        $actionFlatData->setDiscount($actionData['discount'], $this, true);
+                    } 
                     $this->actionData->save();
                 }
                 

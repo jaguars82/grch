@@ -35,8 +35,7 @@ NewsFormAsset::register($this);
                     'options' => ['class'=> 'form-control'],
                 ]) ?>
 
-                <a href="#" class="action-flat-search-show">Выбор квартир</a>
-
+                <a href="#" class="btn btn-primary action-flat-search-show">Параметры для выбора квартир</a>
 
                 <?php if ($news->category === News::CATEGORY_ACTION || $news->title == ''): ?>
                 <?= $this->render('_action_flat_search', [

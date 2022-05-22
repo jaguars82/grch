@@ -1,8 +1,11 @@
 <?php
+use app\assets\widgets\FlatsChessAsset;
 use app\components\widgets\FlatsChess;
 use app\models\Flat;
 use yii\helpers\Url;
 use yii\helpers\Html;
+
+FlatsChessAsset::register($this);
 
 $format = \Yii::$app->formatter;
 ?>

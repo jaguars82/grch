@@ -58,7 +58,11 @@ $commentForm = "favorite-comment-{$model->id}";
 
         <div class="flex-row info">
             <span class="price">
+                <?php if($model->flat->hasDiscount()): ?>
+                <?= $format->asCurrency($model->flat->cashPriceWithDiscount); ?>    
+                <?php else: ?>
                 <?= $format->asCurrency($model->flat->price_cash); ?>
+                <?php endif; ?>
             </span>
             <span class="deadline">
                 Сдача: <?= is_null($model->flat->newbuilding->deadline) ? 'Нет данных' : $format->asQuarterAndYearDate($model->flat->newbuilding->deadline, false) ?>

@@ -5,6 +5,7 @@ namespace app\models;
 use Yii;
 use app\components\traits\FillAttributes;
 use app\models\query\NewsQuery;
+use app\models\Flat;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 
@@ -171,5 +172,28 @@ class News extends ActiveRecord
     public function getNewsFiles()
     {
         return $this->hasMany(NewsFile::className(), ['news_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Flat]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAssignedFlats()
+    {
+        return $this->hasMany(Flat::className(), ['id' => 'flat_id'])
+                ->viaTable('news_flat', ['news_id' => 'id']);
+    }
+
+    /**
+     * Gets only actions
+     */
+    public function getActions() {
+        $actions = $this->find()
+        ->where(
+            ['category' => 1]
+        )
+        ->all();
+        return $actions;
     }
 }
