@@ -5,6 +5,7 @@ namespace app\commands;
 use yii\console\Controller;
 use app\models\Newbuilding;
 use app\models\NewbuildingComplex;
+use app\models\News;
 
 class ServiceController extends Controller
 {
@@ -36,5 +37,27 @@ class ServiceController extends Controller
             $NewbuildingComplex->has_active_buildings = in_array(true, $newbuildingComplexBuildingsStatuses, true) ? 1 : 0;
             $NewbuildingComplex->save();
         }        
+    }
+
+    public function actionDisableExpiredActions() {
+
+        $actions = (new News())->actions;
+
+        foreach ($actions as $action) {
+            
+            if (strtotime(date("Y-m-d")) > strtotime($action->actionData->expired_at)) {
+                $flatsList = $action->assignedFlats;
+
+                foreach ($flatsList as $flat) {
+                    $flat->discount = 0;
+                    $flat->save();
+                    $flat->unlink('assignedNews', $action, true);
+                }
+
+                $action->actionData->is_actual = 0;
+                $action->actionData->save();
+            } 
+        }
+        
     }
 }

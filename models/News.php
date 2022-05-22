@@ -185,4 +185,15 @@ class News extends ActiveRecord
                 ->viaTable('news_flat', ['news_id' => 'id']);
     }
 
+    /**
+     * Gets only actions
+     */
+    public function getActions() {
+        $actions = $this->find()
+        ->where(
+            ['category' => 1]
+        )
+        ->all();
+        return $actions;
+    }
 }
