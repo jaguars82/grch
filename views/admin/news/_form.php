@@ -28,7 +28,7 @@ NewsFormAsset::register($this);
                     <?= $form->field($action, 'is_enabled')->checkbox(['class' => 'action-is-enabled', 'checked' => $news->category === News::CATEGORY_ACTION]) ?>
                 </div>
 
-                <?= $form->field($action, 'resume')->textInput(['maxlength' => true]) ?>
+                <!--<?= $form->field($action, 'resume')->textInput(['maxlength' => true]) ?>-->
                 <?= $form->field($action, 'discount')->textInput(['maxlength' => true]) ?>
                 <?= $form->field($action, 'expired_at')->widget(DatePicker::class,[
                     'dateFormat' => 'dd.MM.yyyy',

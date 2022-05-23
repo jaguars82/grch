@@ -119,7 +119,7 @@ NewbuildingComplexViewAsset::register($this);
                     <?php endif; ?>
 
                     <div class="deadline-block">
-                        <span>Ближайщая сдача</span>
+                        <span>Ближайшая сдача</span>
                         <span><b><?= !is_null($model->nearestDeadline) ? $format->asQuarterAndYearDate($model->nearestDeadline) : 'нет данных' ?></b></span>
                     </div>
                 </div>
@@ -176,7 +176,7 @@ NewbuildingComplexViewAsset::register($this);
         <?php if(!is_null($model->banks) && count($model->banks) > 0): ?>
             <div class="white-block">
                 <p class="h3 bordered">
-                    Акредитация банков
+                    Аккредитация банков
                 </p>
                 <?= $this->render('/common/_accreditation', [
                     'banks' => $model->banks,
@@ -269,7 +269,7 @@ NewbuildingComplexViewAsset::register($this);
                     </div>
                 </div>
                 <div class="deadline-block">
-                    <span>Ближайщая сдача</span>
+                    <span>Ближайшая сдача</span>
                     <span><b><?= !is_null($model->nearestDeadline) ? $format->asQuarterAndYearDate($model->nearestDeadline) : 'нет данных' ?></b></span>
                 </div>
                 <?php if(!is_null($model->minYearlyRate)): ?>

@@ -1258,7 +1258,7 @@ svg.favorite-fill {
 
 .sticky {
   position: sticky;
-  top: 0;
+  top: 105px;
 }
 @media screen and (max-width: 992px) {
   .sticky {
@@ -3944,8 +3944,8 @@ button.close_btn {
 }
 
 .nc-card .detail-info {
-  max-width: 198px;
-  margin: 0 auto 15px;
+  /*max-width: 198px;*/
+  margin: 0 0 15px;
 }
 .nc-card .detail-info--item {
   display: -webkit-box;
@@ -4053,7 +4053,7 @@ button.close_btn {
 .bank-inline-list--item .title {
   font-size: 18px;
   line-height: 28px;
-  color: #000000;
+  color: #555;
   text-align: center;
 }
 .bank-inline-list--item .title a {
@@ -4072,12 +4072,12 @@ button.close_btn {
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center;
-  height: 150px;
+  height: 100px;
   margin-bottom: 10px;
 }
 .bank-inline-list--item .image img {
   max-width: 100%;
-  max-height: 150px;
+  max-height: 100px;
 }
 .bank-inline-list--item .btn {
   display: block;
@@ -4294,8 +4294,8 @@ button.close_btn {
 }
 
 .flat-card .sidebar .info {
-  max-width: 190px;
-  margin: 0 auto 19px;
+  /*max-width: 190px;*/
+  margin: 0 0 19px;
 }
 .flat-card .sidebar .info--item {
   display: -webkit-box;
@@ -6120,13 +6120,19 @@ button.close_btn {
   align-items: center;
   font-size: 14px;
   line-height: 24px;
-  padding: 10px 12px;
+  padding: 0 12px;
   color: #000;
   border: 1px solid #0078ce;
   border-left: none;
   -webkit-transition: border 0.3s ease;
   transition: border 0.3s ease;
-  min-height: 60px;
+  min-height: 40px;
+}
+.flat-chess .info--item:first-child {
+  border-radius: 5px 0 0 5px;
+}
+.flat-chess .info--item:last-child {
+  border-radius: 0 5px 5px 0;
 }
 .flat-chess .info--item a {
   color: inherit;
@@ -6138,9 +6144,9 @@ button.close_btn {
 }
 .flat-chess .info--item.position {
   -webkit-box-flex: 0;
-  -ms-flex: 0 0 30%;
-  flex: 0 0 30%;
-  max-width: 30%;
+  -ms-flex: 0 0 26%;
+  flex: 0 0 26%;
+  max-width: 26%;
   padding-left: 22px;
   padding-right: 22px;
   -ms-flex-positive: 0;
@@ -6163,14 +6169,14 @@ button.close_btn {
 }
 .flat-chess .info--item.deadline {
   -webkit-box-flex: 0;
-  -ms-flex: 0 0 26%;
-  flex: 0 0 26%;
-  max-width: 26%;
+  -ms-flex: 0 0 30%;
+  flex: 0 0 30%;
+  max-width: 30%;
   -webkit-box-flex: 1;
   -ms-flex-positive: 1;
   flex-grow: 1;
   padding-left: 22px;
-  font-weight: 700;
+  font-weight: 450;
 }
 .flat-chess .info--item.floors {
   -webkit-box-flex: 0;
@@ -7023,12 +7029,17 @@ button.close_btn {
   border-radius: 50%;
 }
 
+@keyframes cardscale {
+  from {transform:  scale(1); }
+  to {transform:  scale(1.02);}
+}
+
 .hover-accent {
-  transition: box-shadow 300ms;
   box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.3);
 }
 
 .hover-accent:hover {
   transition: box-shadow 300ms;
   box-shadow: 0px 0px 18px rgba(0, 0, 0, 0.3);
+  animation: cardscale 300ms forwards;
 }

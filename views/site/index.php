@@ -183,14 +183,14 @@ SiteIndexAsset::register($this);
     </div>
 </section>
 
-<section class="bank-block">
+<!--<section class="bank-block">
     <div class="container">
         <p class="h2">
             Банки
         </p>
     </div>
     <div class="common-slider swiper">
-        <?= ListView::widget([
+        <?php ListView::widget([
             'dataProvider' => $bankDataProvider,
             'itemView' => '/common/_bank-item',
             'itemOptions' => [
@@ -206,4 +206,4 @@ SiteIndexAsset::register($this);
             'emptyText' => '',
         ]); ?>
     </div>
-</section>
+</section>-->
