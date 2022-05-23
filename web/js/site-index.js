@@ -42,4 +42,6 @@ $(function () {
 
         location.href = '/site/map?' + query;
     });
+
+    $('.hover-accent .hover-accent').removeClass('hover-accent');
 });

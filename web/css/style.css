@@ -110,6 +110,9 @@ a:focus {
   flex-direction: column;
   min-height: 100%;
 }
+.header {
+  padding: 3px 0 3px 0 !important;
+}
 .app header,
 .app footer {
   -webkit-box-flex: 0;
@@ -1023,10 +1026,10 @@ section {
 }
 .common-slider .title {
   font-weight: 500;
-  font-size: 24px;
-  line-height: 36px;
+  font-size: 18px;
+  line-height: 28px;
   text-align: center;
-  color: #212121;
+  color: #555;
   margin-bottom: 15px;
 }
 .common-slider .title a {
@@ -1113,8 +1116,8 @@ section {
 .slider-card {
   background: #fff;
   border-radius: 5px;
-  -webkit-filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.3));
-  filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.3));
+  /*-webkit-filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.3));*/
 }
 .slider-card .border-top::before {
   content: "";
@@ -2752,11 +2755,11 @@ button.close_btn {
 }
 
 .developer-list {
-  padding-top: 20px;
+  /*padding-top: 20px;*/
 }
 .developer-list .h3,
 .developer-list h3 {
-  padding-left: 30px;
+  /*padding-left: 30px;*/
 }
 .developer-list .row {
   margin-bottom: -30px;
@@ -2765,9 +2768,9 @@ button.close_btn {
   margin-bottom: 30px;
 }
 .developer-list--item {
-  background: #ffffff;
+  background: #fff;
   border-radius: 5px;
-  padding: 30px 33px 30px 32px;
+  padding: 20px 25px;
   height: 100%;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -2795,9 +2798,9 @@ button.close_btn {
 }
 .developer-list--item .title {
   font-weight: 500;
-  font-size: 24px;
-  line-height: 36px;
-  color: #212121;
+  font-size: 18px;
+  line-height: 28px;
+  color: #555;
   padding-bottom: 15px;
   text-align: center;
 }
@@ -2811,13 +2814,12 @@ button.close_btn {
   -webkit-box-flex: 1;
   -ms-flex-positive: 1;
   flex-grow: 1;
-  padding: 20px 5px 25px 10px;
+  padding-top: 20px;
   font-size: 12px;
   line-height: 20px;
   position: relative;
   margin-bottom: auto;
 }
-.developer-list--item .contacts::after,
 .developer-list--item .contacts::before {
   content: "";
   display: block;
@@ -2905,26 +2907,35 @@ button.close_btn {
 }
 
 .agency-list {
-  padding-top: 20px;
+  /*padding-top: 5px;*/
 }
 .agency-list .h3,
 .agency-list h3 {
-  padding-left: 30px;
+  /*padding-left: 30px;*/
 }
 .agency-list .agency-item {
   background: #fff;
   border-radius: 5px;
+  padding: 25px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  background: #fff;
   height: 100%;
-  -webkit-filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.3));
-  filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.3));
+  /*-webkit-filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.3));*/
 }
 .agency-list .agency-item .title {
   font-weight: 500;
-  font-size: 24px;
-  line-height: 36px;
+  font-size: 18px;
+  line-height: 28px;
   text-align: center;
-  color: #212121;
-  margin-bottom: 15px;
+  color: #555;
+  margin-bottom: 10px;
 }
 .agency-list .agency-item .title a {
   color: inherit;
@@ -2933,14 +2944,22 @@ button.close_btn {
   color: inherit;
 }
 .agency-list .agency-item .image {
-  height: 100px;
-  margin-bottom: 10px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
   text-align: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  height: 110px;
+  margin-bottom: 10px;
 }
 .agency-list .agency-item .image img {
-  max-width: 100%;
   max-height: 100px;
-  align-self: center;
+  height: 100px;
 }
 .agency-list .agency-item .border-top::before {
   content: "";
@@ -2967,7 +2986,7 @@ button.close_btn {
   bottom: 0;
 }
 .agency-list .agency-item .contacts {
-  padding: 25px 0;
+  padding-top: 20px;
   font-size: 12px;
   line-height: 20px;
   position: relative;
@@ -3063,25 +3082,34 @@ button.close_btn {
 }
 
 .bank-list {
-  padding-top: 20px;
+  /*padding-top: 20px;*/
 }
 .bank-list .h3,
 .bank-list h3 {
-  padding-left: 30px;
+  /*padding-left: 30px;*/
 }
 .bank-list .bank-card {
+  height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
   background: #fff;
+  padding: 25px 15px;
   border-radius: 5px;
-  -webkit-filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.3));
-  filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.3));
+  /*-webkit-filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.3));*/
 }
 .bank-list .bank-card .title {
   font-weight: 500;
-  font-size: 24px;
-  line-height: 36px;
+  font-size: 18px;
+  line-height: 28px;
   text-align: center;
-  color: #212121;
-  margin-bottom: 15px;
+  color: #555;
+  /*margin-bottom: 10px;*/
 }
 .bank-list .bank-card .title a {
   color: inherit;
@@ -6705,11 +6733,11 @@ button.close_btn {
 }
 
 .newbuilding-complex-index {
-  padding-top: 20px;
+  /*padding-top: 20px;*/
 }
 .newbuilding-complex-index > h3,
 .newbuilding-complex-index .h3 {
-  padding-left: 30px;
+  /*padding-left: 30px;*/
 }
 .newbuilding-complex-index .list-view .h3,
 .newbuilding-complex-index .list-view h3 {
@@ -6817,14 +6845,15 @@ button.close_btn {
   flex-direction: column;
   background: #fff;
   border-radius: 5px;
-  -webkit-filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.3));
-  filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.3));
+  /*-webkit-filter: drop-shadow(0px 4px 5px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0px 4px 5px rgba(0, 0, 0, 0.3));*/
 }
 .nc-list-main--item .title {
   font-size: 18px;
   line-height: 28px;
   text-align: center;
-  color: #212121;
+  /* color: #212121; */
+  color: #555;
   margin-bottom: 10px;
   -webkit-box-flex: 1;
   -ms-flex-positive: 1;
@@ -6847,12 +6876,12 @@ button.close_btn {
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center;
-  height: 150px;
+  height: 120px;
 }
 .nc-list-main--item .image img {
   max-width: 100%;
-  max-height: 150px;
-  height: 150px;
+  max-height: 120px;
+  height: 120px;
 }
 .nc-list-main--item .btn {
   display: block;
@@ -6990,4 +7019,14 @@ button.close_btn {
   font-size: 14px;
   margin: 0 10px;
   border-radius: 50%;
+}
+
+.hover-accent {
+  transition: box-shadow 300ms;
+  box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.3);
+}
+
+.hover-accent:hover {
+  transition: box-shadow 300ms;
+  box-shadow: 0px 0px 18px rgba(0, 0, 0, 0.3);
 }

@@ -175,7 +175,7 @@ SiteIndexAsset::register($this);
                 'class' => 'swiper-wrapper'
             ],
             'viewParams' => [
-                'colClass' => 'swiper-slide slider-card'
+                'colClass' => 'swiper-slide slider-card hover-accent'
             ],
             'summary' => '',
             'emptyText' => '',
@@ -200,7 +200,7 @@ SiteIndexAsset::register($this);
                 'class' => 'swiper-wrapper'
             ],
             'viewParams' => [
-                'colClass' => 'swiper-slide slider-card'
+                'colClass' => 'swiper-slide slider-card hover-item'
             ],
             'summary' => '',
             'emptyText' => '',

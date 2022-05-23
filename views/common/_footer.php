@@ -61,8 +61,9 @@ $format = \Yii::$app->formatter;
             <div class="col-md-4">
                 <ul class="footer--menu__right">
                     <li><a href="/news">Новости</a></li>
-                    <li><a href="/bank">Банки</a></li>
-                    <li><a href="/agency">Агентства</a></li>
+                    <!--<li><a href="/bank">Банки</a></li>-->
+                    <!--<li><a href="/agency">Агентства</a></li>-->
+                    <li><a href="/agency">Контакты</a></li>
                     <li><a href="/faq">Поддержка</a></li>
                     <li><a href="/newbuilding-complex">ЖК</a></li>
                 </ul>

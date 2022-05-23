@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
         'layout' => '<div class="row flex-row">{items}</div>{pager}',
         'viewParams' => [
-            'colClass' => 'col-xs-6 col-lg-3'
+            'colClass' => 'col-xs-6 col-sm-4 col-lg-3'
         ],
         'summary' => '',
         'emptyText' => 'Данные о застройщиках отсутсвуют'

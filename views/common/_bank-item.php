@@ -5,7 +5,7 @@ use yii\helpers\Url;
 $format = \Yii::$app->formatter;
 ?>
 <div class="<?= $colClass ?>">
-    <div class="bank-card">
+    <div class="bank-card hover-accent">
         <div class="image">
             <a href="<?= Url::to( ['bank/view', 'id' => $model->id]) ?>">
                 <?php if(!is_null($model->logo)): ?>
@@ -22,6 +22,6 @@ $format = \Yii::$app->formatter;
             'model' => $model,
             'class' => 'border-top border-bottom'
         ]); ?>
-        <?= Html::a('Ипотечные программы', ['bank/view', 'id' => $model->id], ['class' => 'btn btn-white'])?>
+        <!--<?= Html::a('Ипотечные программы', ['bank/view', 'id' => $model->id], ['class' => 'btn btn-white'])?>-->
     </div>
 </div>

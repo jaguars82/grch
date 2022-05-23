@@ -4,7 +4,7 @@ use yii\helpers\Url;
 
 $format = \Yii::$app->formatter;
 ?>
-<div class="swiper-slide slider-card developer-slide">
+<div class="swiper-slide slider-card developer-slide hover-accent">
     <div class="image">
         <a href="<?= Url::to(['developer/view', 'id' => $model->id]) ?>">
             <?php if(!is_null($model->logo)): ?>

@@ -39,17 +39,21 @@ use yii\widgets\ActiveForm;
         </div>
         
         <div class="col-xs-12 col-sm-5 col-md-4">
-            <?= $form->field($model, 'only_active', [
+            <!--<?= $form->field($model, 'only_active', [
                 'template' => "<label>{input}<span>Только с активными предложениями</span></label>{error}",
-            ])->checkbox([], false)->label(false) ?>
+            ])->checkbox([], false)->label(false) ?>-->
+            <div>
+                <?= Html::submitButton('Поиск', [
+                    'class' => 'btn btn-primary',
+                    'style' => 'margin-bottom: 15px;'
+                ]);?>
+            </div>
         </div>
+
+
     </div>
     
-    <div class="buttons">
-        <?= Html::submitButton('Поиск', [
-            'class' => 'btn btn-primary'
-        ]);?>
-    </div>
+
 
     <?php ActiveForm::end(); ?>
 </div>
