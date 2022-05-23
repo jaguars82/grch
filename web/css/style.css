@@ -111,7 +111,9 @@ a:focus {
   min-height: 100%;
 }
 .header {
-  padding: 3px 0 3px 0 !important;
+  padding: 0 !important;
+  position: sticky !important;
+  top: 0;
 }
 .app header,
 .app footer {
