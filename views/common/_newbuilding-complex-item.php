@@ -6,9 +6,9 @@ $format = \Yii::$app->formatter;
 ?>
 
 <div class="col-xs-6 col-sm-4 col-lg-3">
-    <div style="margin-bottom: 15px;">
-        <a href="<?= Url::to(['newbuilding-complex/view', 'id' => $model->id]) ?>">
-            <div class="nc-list--item hover-border">
+    <a href="<?= Url::to(['newbuilding-complex/view', 'id' => $model->id]) ?>">
+        <!--<div style="margin-bottom: 15px;">-->
+            <div class="nc-list--item">
                 <div class="image">
                     <?php if(!is_null($model->logo)): ?>
                         <?= Html::img([Yii::getAlias("@web/uploads/{$model->logo}")]) ?>
@@ -23,6 +23,6 @@ $format = \Yii::$app->formatter;
                     'class' => 'btn btn-white'
                 ]) ?>-->
             </div>
-        </a>
-    </div>
+        <!--</div>-->
+    </a>
 </div>
