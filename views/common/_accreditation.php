@@ -21,12 +21,15 @@ $format = \Yii::$app->formatter;
             </div>
 
             <template id="bank-badge-<?=$bank->id?>-menu" type="text/x-kendo-template">
+                <div class="text-center bank-title-container"><span><strong><?= $bank->name ?></strong></span></div>
                 <ul class="profile-menu-list">
+                    <?php if (empty($bank->url)): ?>
                     <li class="profile-menu-item">
                         <a href="<?=$bank->url?>">
                             <span class="material-icons-outlined">public</span><span class="item-text">Сайт банка</span>
                         </a>
                     </li>
+                    <?php endif; ?>
                     <?php if(isset($isEnableCalculation) && $isEnableCalculation && isset($flat->newbuildingComplex->bank_tariffs[$bank->id])): ?>
                         <li class="profile-menu-item">
                             <?= Html::a('<span class="material-icons-outlined">calculate</span><span class="item-text">Рассчитать кредит</span>', ['bank/calculation', 'id' => $bank->id, 'flatId' => $flat->id]) ?>

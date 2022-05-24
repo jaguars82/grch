@@ -10,6 +10,12 @@
     width: 120px;
 }
 
+.bank-title-container {
+    color: #555;
+    margin-bottom: 5px;
+    text-decoration: underline;
+}
+
 @keyframes bankscale {
     from {
         transform: scale(1);
