@@ -113,7 +113,7 @@ class NewbuildingComplexController extends Controller
         ]);
         
         $newbuildingComplexesDataProvider = new ActiveDataProvider([
-            'query' => NewbuildingComplex::find()->onlyActive()->onlyWithActiveBuildings()->andWhere(['!=', 'id', $model->id])->andWhere(['=', 'developer_id', $model->developer_id])->limit(6),
+            'query' => NewbuildingComplex::find()->onlyActive()->onlyWithActiveBuildings()->andWhere(['!=', 'id', $model->id])->andWhere(['=', 'developer_id', $model->developer_id])/*->limit(6)*/,
             'pagination' => false,
             'sort' => ['attributes' => ['id'], 'defaultOrder' => ['id' => SORT_DESC]],
         ]);

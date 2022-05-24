@@ -38,7 +38,7 @@ $format = \Yii::$app->formatter;
                 </ul>
             </template>
 
-
+        <!-- BEGIN OF depricated segment -->
         <!--<div class="<?= $colSizeClass ?>">
             <div class="bank-inline-list--item">
                 <p class="title">
@@ -65,6 +65,8 @@ $format = \Yii::$app->formatter;
                 <?php endif; ?>
             </div>
         </div>-->
+        <!-- END OF depricated segment -->
+
         <?php endforeach; ?>
     </div>  
 <?php else: ?>

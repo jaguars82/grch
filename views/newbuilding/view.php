@@ -230,9 +230,10 @@ NewbuildingViewAsset::register($this);
 
         <?php if($newbuildingComplexesDataProvider->totalCount > 0): ?>
             <div class="white-block nc-list">
-                <p class="h3 bordered">
+                <p class="h3">
                     Другие ЖК этого застройщика
                 </p>
+                <br />
                 <?= ListView::widget([
                     'dataProvider' => $newbuildingComplexesDataProvider,
                     'itemView' => '/common/_newbuilding-complex-item',

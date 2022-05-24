@@ -240,9 +240,10 @@ $this->params['breadcrumbs'][] = $model->number;
 
         <?php if($newbuildingComplexDataProvider->totalCount > 0): ?>
             <div class="white-block nc-list">
-                <p class="h3 bordered">
+                <p class="h3">
                     Другие ЖК этого застройщика
                 </p>
+                <br />
                 <?= ListView::widget([
                     'dataProvider' => $newbuildingComplexDataProvider,
                     'itemView' => '/common/_newbuilding-complex-item',
@@ -252,7 +253,7 @@ $this->params['breadcrumbs'][] = $model->number;
                         'tag' => false,
                     ],
                     'options' => [
-                        'class' => 'delimiter-list flex-row row'
+                        'class' => 'flex-row row'
                     ]
                 ]); ?>
             </div>
