@@ -175,7 +175,7 @@ NewbuildingComplexViewAsset::register($this);
 
         <?php if(!is_null($model->banks) && count($model->banks) > 0): ?>
             <div class="white-block">
-                <p class="h3 bordered">
+                <p class="h3">
                     Аккредитация банков
                 </p>
                 <?= $this->render('/common/_accreditation', [

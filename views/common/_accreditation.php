@@ -1,14 +1,42 @@
 <?php
+use app\assets\viewElements\AccreditationAsset;
 use yii\helpers\Html;
 use yii\helpers\Url;
+
+AccreditationAsset::register($this);
 
 $format = \Yii::$app->formatter;
 ?>
 
 <?php if(count($banks)): ?>
-    <div class="bank-inline-list delimiter-list row">
+    <div class="bank-list-container">
         <?php foreach($banks as $bank): ?>
-        <div class="<?= $colSizeClass ?>">
+
+            <div id="bank-badge-<?=$bank->id?>" class="bank-logo-container">
+                <?php if(!is_null($bank->logo)): ?>
+                    <?= Html::img(Yii::getAlias("@web/uploads/{$bank->logo}")) ?>
+                <?php else: ?>
+                    <?= Html::img(Yii::getAlias("@web/img/bank.png")) ?>
+                <?php endif ?>
+            </div>
+
+            <template id="bank-badge-<?=$bank->id?>-menu" type="text/x-kendo-template">
+                <ul class="profile-menu-list">
+                    <li class="profile-menu-item">
+                        <a href="<?=$bank->url?>">
+                            <span class="material-icons-outlined">public</span><span class="item-text">Сайт банка</span>
+                        </a>
+                    </li>
+                    <?php if(isset($isEnableCalculation) && $isEnableCalculation && isset($flat->newbuildingComplex->bank_tariffs[$bank->id])): ?>
+                        <li class="profile-menu-item">
+                            <?= Html::a('<span class="material-icons-outlined">calculate</span><span class="item-text">Рассчитать кредит</span>', ['bank/calculation', 'id' => $bank->id, 'flatId' => $flat->id]) ?>
+                        </li>
+                    <?php endif; ?>
+                </ul>
+            </template>
+
+
+        <!--<div class="<?= $colSizeClass ?>">
             <div class="bank-inline-list--item">
                 <p class="title">
                     <?= Html::a($bank->name, ['bank/view', 'id' => $bank->id]) ?>
@@ -33,7 +61,7 @@ $format = \Yii::$app->formatter;
                     </div>
                 <?php endif; ?>
             </div>
-        </div>
+        </div>-->
         <?php endforeach; ?>
     </div>  
 <?php else: ?>

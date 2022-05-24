@@ -1,0 +1,25 @@
+.bank-list-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.bank-logo-container {
+    margin: 10px 15px;
+    width: 120px;
+}
+
+@keyframes bankscale {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.05);
+    }
+}
+
+.bank-logo-container:hover {
+    cursor: pointer;
+    animation: bankscale 300ms forwards;
+}
