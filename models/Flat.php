@@ -42,6 +42,7 @@ use app\components\flat\SvgDom;
  * @property FlatImage[] $flatImages
  * @property Furnish[] $furnishes
  * @property Newbuilding $newbuilding
+ * @property Entrance $entrance
  * @property NewbuildingComplex $newbuildingComplex
  * @property News[] $news
  */
@@ -477,6 +478,16 @@ class Flat extends ActiveRecord
     public function getFlatImages()
     {
         return $this->hasMany(FlatImage::className(), ['flat_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Entrance]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEntrance()
+    {
+        return $this->hasOne(Entrance::className(), ['id' => 'entrance_id']);
     }
 
     /**
