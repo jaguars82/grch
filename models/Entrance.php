@@ -3,6 +3,9 @@
 namespace app\models;
 
 use Yii;
+use app\components\traits\FillAttributes;
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "entrance".
@@ -12,7 +15,7 @@ use Yii;
  * @property string|null $name
  * @property int|null $number
  * @property int|null $floors
- * @property string|null $materil
+ * @property string|null $material
  * @property int|null $azimuth
  * @property float|null $longitude
  * @property float|null $latitude
@@ -22,7 +25,7 @@ use Yii;
  * @property Newbuilding $newbuilding
  * @property Flat[] $flats
  */
-class Entrance extends \yii\db\ActiveRecord
+class Entrance extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -30,6 +33,23 @@ class Entrance extends \yii\db\ActiveRecord
     public static function tableName()
     {
         return 'entrance';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => new \yii\db\Expression('NOW()'),
+            ],
+        ];
     }
 
     /**
@@ -43,7 +63,7 @@ class Entrance extends \yii\db\ActiveRecord
             [['longitude', 'latitude'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['name'], 'string', 'max' => 200],
-            [['materil'], 'string', 'max' => 255],
+            [['material'], 'string', 'max' => 255],
             [['newbuilding_id'], 'exist', 'skipOnError' => true, 'targetClass' => Newbuilding::className(), 'targetAttribute' => ['newbuilding_id' => 'id']],
         ];
     }
@@ -59,7 +79,7 @@ class Entrance extends \yii\db\ActiveRecord
             'name' => 'Название',
             'number' => 'Номер',
             'floors' => 'Количество этажей',
-            'materil' => 'Материал',
+            'material' => 'Материал',
             'azimuth' => 'Азимут',
             'longitude' => 'Долгота',
             'latitude' => 'Широта',

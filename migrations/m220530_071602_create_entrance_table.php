@@ -18,7 +18,7 @@ class m220530_071602_create_entrance_table extends Migration
             'name' => $this->string(200)->defaultValue(null),
             'number' => $this->smallInteger(3),
             'floors' => $this->smallInteger(3),
-            'materil' => $this->string()->defaultValue(null),
+            'material' => $this->string()->defaultValue(null),
             'azimuth' => $this->smallInteger(3)->defaultValue(0),
             'longitude' => $this->decimal(8, 6),
             'latitude' => $this->decimal(8, 6),
