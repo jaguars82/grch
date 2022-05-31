@@ -27,6 +27,9 @@ use yii\db\ActiveRecord;
  */
 class Entrance extends ActiveRecord
 {
+
+    use FillAttributes;
+    
     /**
      * {@inheritdoc}
      */
