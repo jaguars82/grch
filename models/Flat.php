@@ -14,6 +14,7 @@ use app\components\flat\SvgDom;
  *
  * @property int $id
  * @property int $newbuilding_id
+ * @property int $entrance_id
  * @property string|null $number
  * @property string $layout
  * @property string|null $detail
@@ -137,6 +138,7 @@ class Flat extends ActiveRecord
     {
         return [
             'newbuilding_id' => 'Newbuilding ID',
+            'entrance_id' => 'ID подъезда',
             'Number' => 'Номер',
             'layout' => 'Изображение планировки',
             'detail' => 'Информация',

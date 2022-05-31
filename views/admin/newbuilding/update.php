@@ -21,9 +21,9 @@ $this->params['breadcrumbs'][] = 'Обновить';
     <h2 class="bordered"><?= Html::encode($this->title) ?></h2>
 
     <div style="margin: 20px 0;">
-        <?= Html::a('Планировки этажей', ['/admin/floor-layout/index', 'newbuildingId' => $newbuilding->id], ['class' => 'btn btn-primary']); ?>
         <?= Html::a('Подъезды', ['/admin/entrance/index', 'newbuildingId' => $newbuilding->id], ['class' => 'btn btn-primary']); ?>
-        <?= Html::a('Квартиры', ['/admin/flat/index', 'newbuildingId' => $newbuilding->id], ['class' => 'btn btn-primary']); ?>
+        <?= Html::a('Планировки этажей', ['/admin/floor-layout/index', 'newbuildingId' => $newbuilding->id], ['class' => 'btn btn-primary']); ?>
+        <!--<?= Html::a('Квартиры', ['/admin/flat/index', 'newbuildingId' => $newbuilding->id], ['class' => 'btn btn-primary']); ?>-->
     </div>
 
     <?= $this->render('_form', [

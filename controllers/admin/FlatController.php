@@ -4,6 +4,7 @@ namespace app\controllers\admin;
 
 use app\components\traits\CustomRedirects;
 use app\models\Newbuilding;
+use app\models\Entrance;
 use app\models\form\FlatForm;
 use app\models\service\Flat;
 use yii\data\ActiveDataProvider;
@@ -49,21 +50,26 @@ class FlatController extends Controller
         ];
     }
 
-    public function actionIndex($newbuildingId)
+    public function actionIndex($entranceId)
     {
-        if (($newbuilding = Newbuilding::findOne($newbuildingId)) === null) {
+        /*if (($newbuilding = Newbuilding::findOne($newbuildingId)) === null) {
             throw new NotFoundHttpException('Данные отсутсвуют');
+        }*/
+
+        if (($entrance = Entrance::findOne($entranceId)) === null) {
+            throw new NotFoundHttpException('Подъезд отсутсвует');
         }
 
         $dataProvider = new ActiveDataProvider([
-            'query' => Flat::find()->where(['newbuilding_id' => $newbuilding->id]),
+            'query' => Flat::find()->where(['entrance_id' => $entrance->id]),
             'pagination' => [
                 'pageSize' => 20,
             ],
         ]);
 
         return $this->render('index', [
-            'newbuilding' => $newbuilding,
+            //'newbuilding' => $newbuilding,
+            'entrance' => $entrance,
             'dataProvider' => $dataProvider
         ]);
     }
@@ -74,14 +80,15 @@ class FlatController extends Controller
      * 
      * @return mixed
      */
-    public function actionCreate($newbuildingId)
+    public function actionCreate($entranceId)
     {
-        if (($newbuilding = Newbuilding::findOne($newbuildingId)) === null) {
-            throw new NotFoundHttpException('Данные отсутсвуют');
+        if (($entrance = Entrance::findOne($entranceId)) === null) {
+            throw new NotFoundHttpException('Подъезд не найден');
         }
         
         $form = new FlatForm();
-        $form->newbuilding_id = $newbuilding->id;
+        $form->entrance_id = $entrance->id;
+        $form->newbuilding_id = $entrance->newbuilding->id;
 
         if (\Yii::$app->request->isPost && $form->load(\Yii::$app->request->post()) && $form->process()) {
             try {
@@ -90,13 +97,14 @@ class FlatController extends Controller
                 return $this->redirectBackWhenException($e);
             }
             
-            return $this->redirectWithSuccess(['admin/flat/index', 'newbuildingId' => $newbuildingId], 'Добавлена квартира');
+            return $this->redirectWithSuccess(['admin/flat/index', 'entranceId' => $entranceId], 'Добавлена квартира');
         }
 
         return $this->render('create', [
             'model' => $form,
-            'newbuilding' => $newbuilding,
-            'actions' => $newbuilding->newbuildingComplex->activeActions,
+            'entrance' => $entrance,
+            'newbuilding' => $entrance->newbuilding,
+            'actions' => $entrance->newbuilding->newbuildingComplex->activeActions,
         ]);
     }
 
@@ -125,17 +133,36 @@ class FlatController extends Controller
 
         if (\Yii::$app->request->isPost && $form->load(\Yii::$app->request->post()) && $form->process()) {
             try {
+
+                $successMessage = 'Квартира обновлена';
+
+                // if 'section' field changed - move flat to another antrance or ignore 'section' field if entrance doesn't exist
+                /* if($model->section !== (int)$form->section) {
+                    $newEntrance = (new Entrance())
+                        ->find()
+                        ->where([ 'newbuilding_id' => $model->newbuilding_id ])
+                        ->andWhere( [ 'number' => $form->section ] )
+                        ->one();
+
+                    if ($newEntrance instanceof Entrance) {
+                        $form->entrance_id = $newEntrance->id;
+                    } else {
+                        $form->section = $model->section;
+                        $successMessage = 'Квартира обновлена. Данные о подъезде не изменены, поскольку указанный подъезд не найден';
+                    }
+                } */
                 $model->edit($form->attributes);
             } catch (\Exception $e) {
                 return $this->redirectBackWhenException($e);
             }
 
-            return $this->redirectWithSuccess(['admin/flat/index', 'newbuildingId' => $model->newbuilding_id], 'Квартира обновлена');
+            return $this->redirectWithSuccess(['admin/flat/index', 'entranceId' => $model->entrance_id], $successMessage);
         }
         
         return $this->render('update', [
             'model' => $form,
             'newbuilding' => $model->newbuilding,
+            'entrance' => $model->entrance,
             'flat' => $model,
             'actions' => $model->newbuildingComplex->activeActions,
         ]);

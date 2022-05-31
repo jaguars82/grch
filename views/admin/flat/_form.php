@@ -33,7 +33,7 @@ use yii\widgets\ActiveForm;
             ]) ?>
             <?= $form->field($model, 'number')->textInput(['maxlength' => true]) ?> 
             <?= $form->field($model, 'floor')->textInput() ?>
-            <?= $form->field($model, 'section')->textInput() ?>            
+            <!--<?= $form->field($model, 'section')->textInput() ?>-->          
             <?= $form->field($model, 'azimuth', [
                 'template' => '
                     {label}
