@@ -4,6 +4,7 @@ namespace app\models\service;
 
 use Yii;
 use app\models\FlatImage;
+use app\models\Entrance;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -24,6 +25,9 @@ class Flat extends \app\models\Flat
             
         try {                
             $flat = (new Flat())->fill($data);
+
+            // ID of an entrance
+            $flat->entrance_id = $data['entrance_id'];
 
             if($data['layout_type'] == 'euro') {
                 $flat->is_euro = true;

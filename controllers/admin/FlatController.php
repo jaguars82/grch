@@ -89,6 +89,7 @@ class FlatController extends Controller
         $form = new FlatForm();
         $form->entrance_id = $entrance->id;
         $form->newbuilding_id = $entrance->newbuilding->id;
+        $form->section = $entrance->number;
 
         if (\Yii::$app->request->isPost && $form->load(\Yii::$app->request->post()) && $form->process()) {
             try {
@@ -120,6 +121,7 @@ class FlatController extends Controller
     {
         $model = $this->findModel($id);        
         $form = (new FlatForm())->fill($model->attributes);
+        $form->section = $model->section;
         $form->floor_position = $model->floor_position;
         $form->savedActions = array_unique(ArrayHelper::getColumn($model->actions, 'id'));
         $form->savedImages = $model->getFlatImages()->indexBy('id')->asArray()->all();
@@ -179,7 +181,7 @@ class FlatController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        $newbuildingId = $model->newbuilding->id;
+        $entranceId = $model->entrance->id;
         
         try {
             $model->delete();
@@ -187,7 +189,7 @@ class FlatController extends Controller
             return $this->redirectBackWhenException($e);
         }
 
-        return $this->redirectWithSuccess(['admin/flat/index', 'newbuildingId' => $newbuildingId], 'Квартира удалена');
+        return $this->redirectWithSuccess(['admin/flat/index', 'entranceId' => $entranceId], 'Квартира удалена');
     }
 
     /**

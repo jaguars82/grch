@@ -12,7 +12,9 @@ $this->params['breadcrumbs'][] = ['label' => 'Жилые комплексы', 'u
 $this->params['breadcrumbs'][] = ['label' => $newbuilding->newbuildingComplex->name, 'url' => ['admin/newbuilding-complex/update', 'id' => $newbuilding->newbuildingComplex->id]];
 $this->params['breadcrumbs'][] = ['label' => 'Позиции', 'url' => ['admin/newbuilding/index', 'newbuildingComplexId' => $newbuilding->newbuildingComplex->id]];
 $this->params['breadcrumbs'][] = ['label' => $newbuilding->name, 'url' => ['admin/newbuilding/update', 'id' => $newbuilding->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Квартиры', 'url' => ['admin/flat/index', 'newbuildingId' => $newbuilding->id]];
+$this->params['breadcrumbs'][] = ['label' => 'Подъезды', 'url' => ['admin/entrance/index', 'newbuildingId' => $newbuilding->id]];
+$this->params['breadcrumbs'][] = ['label' => 'Подъезд '.$entrance->number, 'url' => ['admin/entrance/update', 'id' => $entrance->id]];
+$this->params['breadcrumbs'][] = ['label' => 'Квартиры', 'url' => ['admin/flat/index', 'entranceId' => $entrance->id]];
 $this->params['breadcrumbs'][] = ['label' => $flat->number, 'url' => ['admin/flat/update', 'id' => $flat->id]];
 $this->params['breadcrumbs'][] = 'Обновить';
 ?>

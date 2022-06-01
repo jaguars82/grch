@@ -35,14 +35,17 @@ class UtilsController extends Controller
                     if($entrance instanceof Entrance) { // if entrance exists: save its ID in 'entrance_id' field for current flat
                         $flat->entrance_id = $entrance->id;
                         $flat->save();
-                    } else { // if entrance doesn't exist: add a new record to 'entrance' table and save its ID in 'entrance_id' field for current flat
+                    } else { // if entrance doesn't exist: add a new record to 'entrance' table and copy some data from 'newbuilding' table to 'entrance' table
                         $entrance = new Entrance();
                         $entrance->newbuilding_id = $Newbuilding->id;
                         $entrance->name = 'Подъезд '.$flat->section;
                         $entrance->number = $flat->section;
                         $entrance->floors = $Newbuilding->total_floor;
                         $entrance->material = $Newbuilding->material;
+                        $entrance->status = $Newbuilding->status;
+                        $entrance->deadline = $Newbuilding->deadline;
                         $entrance->save();
+                        // save entrance's ID in 'entrance_id' field for current flat
                         $flat->entrance_id = $entrance->id;
                         $flat->save();
                     }
