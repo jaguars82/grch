@@ -26,9 +26,6 @@ class Flat extends \app\models\Flat
         try {                
             $flat = (new Flat())->fill($data);
 
-            // ID of an entrance
-            // $flat->entrance_id = $data['entrance_id'];
-
             if($data['layout_type'] == 'euro') {
                 $flat->is_euro = true;
                 $flat->is_studio = false;
@@ -80,11 +77,6 @@ class Flat extends \app\models\Flat
         try {
             $status = $this->status;
             $this->fill($data, ['layout', 'floor_layout', 'floor_position']);
-
-            // ID of an entrance
-            /* if (!empty($data['entrance_id'])) {
-                $this->entrance_id = $data['entrance_id'];
-            } */
 
             if ($data['is_layout_reset']) {
                 $this->layout = NULL;
