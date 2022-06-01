@@ -1,12 +1,21 @@
 <?php foreach($sectionsData as $section): ?>
     <?php
+        $entrancesData = $sectionsFlats['entrances_data'];
         $maxRoomsOnFloor = $maxRoomsOnFloors[$section];
         $flats = [];
         $sectionFlats = $sectionsFlats[$section];
         $lastSectionFlat = count($sectionFlats) - 1;
         $lastFloor = $newbuilding->total_floor + 1;
     ?>
-    <p class="section">Подъезд №<?= $section ?></p>
+    
+    <?php if (!empty($entrancesData[$section]['id'])) : ?>
+        <p class="section">
+            <?= $entrancesData[$section]['name'] ?>
+        </p>
+    <?php else : ?>
+        <p class="section">Подъезд №<?= $section ?></p>
+    <?php endif; ?>
+
     <div class="chess-table">
         <div class="responsive-table">
             <table>
