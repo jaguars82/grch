@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = ['label' => $newbuilding->newbuildingComplex->d
 $this->params['breadcrumbs'][] = ['label' => 'Жилые комплексы', 'url' => ['admin/newbuilding-complex/index',  'NewbuildingComplexSearch[developer_id]' => $newbuilding->newbuildingComplex->developer->id]];
 $this->params['breadcrumbs'][] = ['label' => $newbuilding->newbuildingComplex->name, 'url' => ['admin/newbuilding-complex/update', 'id' => $newbuilding->newbuildingComplex->id]];
 $this->params['breadcrumbs'][] = ['label' => 'Позиции', 'url' => ['admin/newbuilding/index', 'newbuildingComplexId' => $newbuilding->newbuildingComplex->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Подъезды', 'url' => ['admin/entrance/index', 'newbuildingComplexId' => $newbuilding->id]];
+$this->params['breadcrumbs'][] = ['label' => 'Подъезды', 'url' => ['admin/entrance/index', 'newbuildingId' => $newbuilding->id]];
 $this->params['breadcrumbs'][] = 'Добавить';
 ?>
 

@@ -22,6 +22,8 @@ class EntranceForm extends Model
     public $number;
     public $floors;
     public $material;
+    public $status;
+    public $deadline;
     public $azimuth;
     public $longitude;
     public $latitude;
@@ -32,7 +34,7 @@ class EntranceForm extends Model
     public function scenarios()
     {
         $commonFields = [
-            'name', 'number', 'floors', 'material', 'azimuth'
+            'name', 'number', 'floors', 'material', 'azimuth', 'status', 'deadline'
         ];
         
         return [
@@ -68,6 +70,8 @@ class EntranceForm extends Model
             'azimuth' => 'Азимут',
             'floors' => 'Количество этажей',
             'material' => 'Материал',
+            'status' => 'Статус',
+            'deadline' => 'Срок сдачи',
         ];
     }
     
@@ -77,6 +81,10 @@ class EntranceForm extends Model
     public function fill($data = [], $exceptFields = [])
     {
         $result = $this->originFill($data, $exceptFields);
+
+        if (!is_null($this->deadline)) {
+            $this->deadline = \Yii::$app->formatter->asDate(strtotime($this->deadline . ' + 1 seconds'), 'php:d.m.Y');
+        }
         
         return $result;
     }
@@ -91,6 +99,11 @@ class EntranceForm extends Model
         if (!$this->validate()) {
             return false;
         }
+
+        if (!is_null($this->deadline)) {
+            $this->deadline = \Yii::$app->formatter->asDate($this->deadline, 'php:Y-m-d H:i:s');
+        }
+
         return true;
     }
 }

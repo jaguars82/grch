@@ -14,6 +14,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Жилые комплексы', 'u
 $this->params['breadcrumbs'][] = ['label' => $entrance->newbuilding->newbuildingComplex->name, 'url' => ['admin/newbuilding-complex/update', 'id' => $entrance->newbuilding->newbuildingComplex->id]];
 $this->params['breadcrumbs'][] = ['label' => 'Позиции', 'url' => ['admin/newbuilding/index', 'newbuildingComplexId' => $entrance->newbuilding->newbuildingComplex->id]];
 $this->params['breadcrumbs'][] = ['label' => $format->asCapitalize($entrance->newbuilding->name), 'url' => ['admin/newbuilding/update', 'id' => $entrance->newbuilding->id]];
+$this->params['breadcrumbs'][] = ['label' => 'Подъезды', 'url' => ['admin/entrance/index', 'newbuildingId' => $entrance->newbuilding->id]];
 $this->params['breadcrumbs'][] = ['label' => $format->asCapitalize($entrance->name), 'url' => ['admin/entrance/update', 'id' => $entrance->id]];
 $this->params['breadcrumbs'][] = 'Обновить';
 ?>

@@ -12,6 +12,8 @@ $this->params['breadcrumbs'][] = ['label' => 'Застройщики', 'url' => 
 $this->params['breadcrumbs'][] = ['label' => $newbuilding->newbuildingComplex->developer->name, 'url' => ['admin/developer/update', 'id' => $newbuilding->newbuildingComplex->developer->id]];
 $this->params['breadcrumbs'][] = ['label' => 'Жилые комплексы', 'url' => ['admin/newbuilding-complex/index',  'NewbuildingComplexSearch[developer_id]' => $newbuilding->newbuildingComplex->developer->id]];
 $this->params['breadcrumbs'][] = ['label' => $newbuilding->newbuildingComplex->name, 'url' => ['admin/newbuilding-complex/update', 'id' => $newbuilding->newbuildingComplex->id]];
+$this->params['breadcrumbs'][] = ['label' => 'Позиции', 'url' => ['admin/newbuilding/index', 'newbuildingComplexId' => $newbuilding->newbuildingComplex->id]];
+
 $this->params['breadcrumbs'][] = ['label' => $newbuilding->name, 'url' => ['admin/newbuilding/update', 'id' => $newbuilding->id]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

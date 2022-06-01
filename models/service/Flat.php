@@ -27,7 +27,7 @@ class Flat extends \app\models\Flat
             $flat = (new Flat())->fill($data);
 
             // ID of an entrance
-            $flat->entrance_id = $data['entrance_id'];
+            // $flat->entrance_id = $data['entrance_id'];
 
             if($data['layout_type'] == 'euro') {
                 $flat->is_euro = true;

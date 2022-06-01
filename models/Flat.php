@@ -125,7 +125,7 @@ class Flat extends ActiveRecord
             [['detail', 'notification', 'extra_data', 'floor_layout', 'layout_coords'], 'string'],
             [['discount', 'unit_price_cash', 'price_cash', 'unit_price_credit', 'price_credit'], 'double'],
             [['area', 'azimuth', 'section', 'floor_position'], 'number'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at', 'entrance_id'], 'safe'],
             [['newbuilding_id'], 'exist', 'skipOnError' => true, 'targetClass' => Newbuilding::className(), 'targetAttribute' => ['newbuilding_id' => 'id']],
             [['is_euro', 'is_studio'], 'boolean'],
         ];

@@ -16,6 +16,8 @@ use yii\db\ActiveRecord;
  * @property int|null $number
  * @property int|null $floors
  * @property string|null $material
+ * @property int $status
+ * @property string $deadline
  * @property int|null $azimuth
  * @property float|null $longitude
  * @property float|null $latitude
@@ -37,6 +39,14 @@ class Entrance extends ActiveRecord
     {
         return 'entrance';
     }
+
+    const STATUS_PROCESS = 0;
+    const STATUS_FINISH = 1;
+
+    public static $status = [
+        self::STATUS_PROCESS => 'Не сдан',
+        self::STATUS_FINISH => 'Сдан',
+    ];
 
     /**
      * @inheritdoc
@@ -62,9 +72,9 @@ class Entrance extends ActiveRecord
     {
         return [
             [['newbuilding_id'], 'required'],
-            [['newbuilding_id', 'number', 'floors', 'azimuth'], 'integer'],
+            [['newbuilding_id', 'number', 'floors', 'azimuth', 'status'], 'integer'],
             [['longitude', 'latitude'], 'number'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at', 'deadline', 'status'], 'safe'],
             [['name'], 'string', 'max' => 200],
             [['material'], 'string', 'max' => 255],
             [['newbuilding_id'], 'exist', 'skipOnError' => true, 'targetClass' => Newbuilding::className(), 'targetAttribute' => ['newbuilding_id' => 'id']],
@@ -83,6 +93,8 @@ class Entrance extends ActiveRecord
             'number' => 'Номер',
             'floors' => 'Количество этажей',
             'material' => 'Материал',
+            'status' => 'Статус',
+            'deadline' => 'Срок сдачи',
             'azimuth' => 'Азимут',
             'longitude' => 'Долгота',
             'latitude' => 'Широта',
