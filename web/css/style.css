@@ -6857,7 +6857,8 @@ button.close_btn {
   text-align: center;
   /* color: #212121; */
   color: #555;
-  margin-bottom: 10px;
+  margin: 0px;
+  margin-top: 10px;
   -webkit-box-flex: 1;
   -ms-flex-positive: 1;
   flex-grow: 1;

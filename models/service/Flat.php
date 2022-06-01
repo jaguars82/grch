@@ -4,6 +4,7 @@ namespace app\models\service;
 
 use Yii;
 use app\models\FlatImage;
+use app\models\Entrance;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -76,7 +77,7 @@ class Flat extends \app\models\Flat
         try {
             $status = $this->status;
             $this->fill($data, ['layout', 'floor_layout', 'floor_position']);
-            
+
             if ($data['is_layout_reset']) {
                 $this->layout = NULL;
             } else {

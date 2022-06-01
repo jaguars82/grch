@@ -16,7 +16,10 @@ use yii\widgets\ActiveForm;
 <div class="flat-form">
     <?php $form = ActiveForm::begin(); ?>    
     
-    <div style="display: none"><?= $form->field($model, 'newbuilding_id')->hiddenInput()->label(false)?></div>
+    <div style="display: none">
+        <?= $form->field($model, 'newbuilding_id')->hiddenInput()->label(false)?>
+        <?= $form->field($model, 'section')->hiddenInput()->label(false) ?>
+    </div>
 
     <div class="row">        
         <div class="col-md-4">
@@ -33,7 +36,6 @@ use yii\widgets\ActiveForm;
             ]) ?>
             <?= $form->field($model, 'number')->textInput(['maxlength' => true]) ?> 
             <?= $form->field($model, 'floor')->textInput() ?>
-            <?= $form->field($model, 'section')->textInput() ?>            
             <?= $form->field($model, 'azimuth', [
                 'template' => '
                     {label}

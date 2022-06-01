@@ -14,6 +14,7 @@ use app\components\flat\SvgDom;
  *
  * @property int $id
  * @property int $newbuilding_id
+ * @property int $entrance_id
  * @property string|null $number
  * @property string $layout
  * @property string|null $detail
@@ -42,6 +43,7 @@ use app\components\flat\SvgDom;
  * @property FlatImage[] $flatImages
  * @property Furnish[] $furnishes
  * @property Newbuilding $newbuilding
+ * @property Entrance $entrance
  * @property NewbuildingComplex $newbuildingComplex
  * @property News[] $news
  */
@@ -123,7 +125,7 @@ class Flat extends ActiveRecord
             [['detail', 'notification', 'extra_data', 'floor_layout', 'layout_coords'], 'string'],
             [['discount', 'unit_price_cash', 'price_cash', 'unit_price_credit', 'price_credit'], 'double'],
             [['area', 'azimuth', 'section', 'floor_position'], 'number'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at', 'entrance_id'], 'safe'],
             [['newbuilding_id'], 'exist', 'skipOnError' => true, 'targetClass' => Newbuilding::className(), 'targetAttribute' => ['newbuilding_id' => 'id']],
             [['is_euro', 'is_studio'], 'boolean'],
         ];
@@ -136,6 +138,7 @@ class Flat extends ActiveRecord
     {
         return [
             'newbuilding_id' => 'Newbuilding ID',
+            'entrance_id' => 'ID подъезда',
             'Number' => 'Номер',
             'layout' => 'Изображение планировки',
             'detail' => 'Информация',
@@ -477,6 +480,16 @@ class Flat extends ActiveRecord
     public function getFlatImages()
     {
         return $this->hasMany(FlatImage::className(), ['flat_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Entrance]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEntrance()
+    {
+        return $this->hasOne(Entrance::className(), ['id' => 'entrance_id']);
     }
 
     /**

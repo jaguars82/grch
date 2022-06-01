@@ -21,6 +21,7 @@ class FlatForm extends Model
     const SCENARIO_UPDATE = 'update';
     
     public $newbuilding_id;
+    public $entrance_id;
     public $number;
     public $layout;
     public $is_layout_reset = 0;
@@ -50,7 +51,7 @@ class FlatForm extends Model
     public function scenarios()
     {
         $commonFields = [
-            'number', 'detail', 'notification', 'area', 'rooms', 'floor', 'section', 'discountAsPercent',
+            'entrance_id', 'number', 'detail', 'notification', 'area', 'rooms', 'floor', 'section', 'discountAsPercent',
             'unit_price_cash', 'price_cash', 'unit_price_credit', 'price_credit', 'status', 'azimuth', 
             'actions', 'images', 'discount', 'floor_position', 'is_layout_reset', 'layout_type'
         ];
