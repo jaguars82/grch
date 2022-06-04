@@ -12,8 +12,8 @@ class m220604_081417_change_columns_in_entrance_table extends Migration
      */
     public function safeUp()
     {
-        $this->alterColumn('entrance', 'name', $this->string(255)->append('CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL'));
-        $this->alterColumn('entrance', 'material', $this->string(255)->append('CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL'));
+        $this->alterColumn('entrance', 'name', $this->string(255)->append('CHARACTER SET utf8 COLLATE utf8_general_ci NULL'));
+        $this->alterColumn('entrance', 'material', $this->string(255)->append('CHARACTER SET utf8 COLLATE utf8_general_ci NULL'));
     }
 
     /**
