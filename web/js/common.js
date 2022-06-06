@@ -209,12 +209,6 @@ $(function () {
         new SimpleBar(element, { autoHide: false });
     });
 
-    $('.flat-chess__item .info').on('click', function () {
-        $(this).closest('.flat-chess__item').toggleClass('marked').find('.content').stop().slideToggle(300, function () {
-            $(this).closest('.flat-chess__item').toggleClass('open');
-        });
-    });
-
     /* $('.chess-table .flat-item').on('click', function() { */
     $('.chess-table .free.flat-item').on('click', function() {
         location.href = $(this).data('flaturl');

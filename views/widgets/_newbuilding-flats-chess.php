@@ -1,13 +1,49 @@
+<?php
+
+$format = \Yii::$app->formatter;
+
+?>
+
+<div class="sections-container">
 <?php foreach($sectionsData as $section): ?>
     <?php
+        $entrancesData = $sectionsFlats['entrances_data'];
         $maxRoomsOnFloor = $maxRoomsOnFloors[$section];
         $flats = [];
         $sectionFlats = $sectionsFlats[$section];
         $lastSectionFlat = count($sectionFlats) - 1;
         $lastFloor = $newbuilding->total_floor + 1;
     ?>
-    <p class="section">Подъезд №<?= $section ?></p>
-    <div class="chess-table">
+    
+    <?php if (!empty($entrancesData[$section]['id'])): ?>
+        <div id="entrance-<?= $entrancesData[$section]['id'] ?>"  class="section" onclick="toggleEntrance(<?= $entrancesData[$section]['id'] ?>)">
+            <div>
+                <span class="section-arrow material-icons-outlined">chevron_right</span>
+            </div>
+            <div>
+                <strong><?= $entrancesData[$section]['name'] ?></strong>
+            </div>
+            <?php if (!empty($entrancesData[$section]['deadline'])): ?>
+                <div>
+                , cдача - <?= is_null($entrancesData[$section]['deadline']) ? 'нет данных' : $format->asQuarterAndYearDate($entrancesData[$section]['deadline']) ?>
+                </div>
+            <?php endif; ?>
+            <?php if (!empty($entrancesData[$section]['floors'])): ?>
+                <div>
+                , <?= $entrancesData[$section]['floors'] ?> этажей
+                </div>
+            <?php endif; ?>
+            <?php if (!empty($entrancesData[$section]['material'])): ?>
+                <div>
+                , <?= $entrancesData[$section]['material'] ?>
+                </div>
+            <?php endif; ?>
+        </div>
+    <?php else: ?>
+        <p class="section">Подъезд №<?= $section ?></p>
+    <?php endif; ?>
+
+    <div id="chess-entrance-<?= $entrancesData[$section]['id']?>" class="chess-table" <?php if (!empty($entrancesData[$section]['id'])): ?>style="display: none;"<?php endif; ?>>
         <div class="responsive-table">
             <table>
                 <?php foreach ($sectionFlats as $key => $flat) {
@@ -35,3 +71,4 @@
         </div>
     </div>    
 <?php endforeach ?>
+</div>
