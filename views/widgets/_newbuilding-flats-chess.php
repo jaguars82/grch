@@ -17,12 +17,27 @@ $format = \Yii::$app->formatter;
     
     <?php if (!empty($entrancesData[$section]['id'])): ?>
         <div id="entrance-<?= $entrancesData[$section]['id'] ?>"  class="section" onclick="toggleEntrance(<?= $entrancesData[$section]['id'] ?>)">
-            <div>
-                <span class="section-arrow material-icons-outlined">chevron_right</span>
-            </div>
+            <div class="section-arrow material-icons-outlined">chevron_right</div>
             <div>
                 <strong><?= $entrancesData[$section]['name'] ?></strong>
             </div>
+
+            <?php if ($entrancesData[$section]['activeFlats'] > 0): ?>
+                <?= \MessageFormatter::formatMessage(
+                    'be',
+                    ' {flats, plural, one{, доступна # квартира} few{, доступно # квартиры} other{, доступно # квартир}}',
+                    ['flats' => $entrancesData[$section]['activeFlats']]
+                );
+                ?>
+            <?php endif; ?>
+            <?php if ($entrancesData[$section]['reservedFlats'] > 0): ?>
+                <?= \MessageFormatter::formatMessage(
+                    'be',
+                    ' {flats, plural, one{, зарезервирована # квартира} few{, зарезервировано # квартиры} other{, зарезервировано # квартир}}',
+                    ['flats' => $entrancesData[$section]['reservedFlats']]
+                );
+                ?>
+            <?php endif; ?>
             <?php if (!empty($entrancesData[$section]['deadline'])): ?>
                 <div>
                 , cдача - <?= is_null($entrancesData[$section]['deadline']) ? 'нет данных' : $format->asQuarterAndYearDate($entrancesData[$section]['deadline']) ?>

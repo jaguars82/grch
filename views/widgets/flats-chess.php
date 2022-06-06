@@ -25,12 +25,22 @@ $format = \Yii::$app->formatter;
                         <?= $format->asCapitalize($newbuilding->name) ?>
                     </span>
                     <span class="info--item available-flats">
+                        <?php if ($newbuilding->getActiveFlats()->count() > 0): ?>
                         <?= \MessageFormatter::formatMessage(
                             'be',
                             ' {flats, plural, one{Доступна # квартира} few{Доступно # квартиры} other{Доступно # квартир}}',
                             ['flats' => $newbuilding->getActiveFlats()->count()]
                         );
                         ?>
+                        <?php endif; ?>
+                        <?php if ($newbuilding->getReservedFlats()->count() > 0): ?>
+                        <?= \MessageFormatter::formatMessage(
+                            'be',
+                            ' {flats, plural, one{Зарезервирована # квартира} few{Зарезервировано # квартиры} other{Зарезервировано # квартир}}',
+                            ['flats' => $newbuilding->getReservedFlats()->count()]
+                        );
+                        ?>
+                        <?php endif; ?>
                     </span>
                     <span class="info--item deadline">
                         Сдача <?= is_null($newbuilding->deadline) ? 'Нет данных' : $format->asQuarterAndYearDate($newbuilding->deadline) ?>

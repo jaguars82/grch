@@ -56,6 +56,8 @@ class FlatsChess extends Widget
                             'azimuth' => $flat->entrance->azimuth,
                             'longitude' => $flat->entrance->longitude,
                             'latitude' => $flat->entrance->latitude,
+                            'activeFlats' => $flat->entrance->getActiveFlats()->count(),
+                            'reservedFlats' => $flat->entrance->getReservedFlats()->count(),
                         ];
                     }
                 } else {

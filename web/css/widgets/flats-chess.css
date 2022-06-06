@@ -240,19 +240,38 @@
 
   .flat-chess .content .section {
     display: flex;
-    padding-left: 35px;
+    align-items: center;
+    flex-wrap: nowrap;
     cursor: pointer;
     border-radius: 3px;
-    /* padding-left: 53px; */
     font-size: 12px;
-    line-height: 30px;
+    /* line-height: 30px; */
     color: #7d92a1;
+    background: rgba(0, 120, 206, .1);
+    padding: 5px;
+    margin: 5px 0;
   }
 
   .flat-chess .content .section:hover {
-    background: #eee;
+    background: rgba(0, 120, 206, .2);
   }
 
+  .flat-chess .content .section.active {
+    background: rgba(111, 207, 151, .2);
+  }
+
+  /*
+  .flat-chess .content .section span {
+    display: inline-block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  */
+  
+  .flat-chess .content .section.active .section-arrow {
+      transform: rotateZ(90deg);
+  }
+  
   .flat-chess .content .section.active .section-arrow {
       transform: rotateZ(90deg);
   }

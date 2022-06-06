@@ -122,4 +122,28 @@ class Entrance extends ActiveRecord
     {
         return $this->hasMany(Flat::className(), ['entrance_id' => 'id']);
     }
+
+    
+    /**
+     * Gets query for [[Flats]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getActiveFlats()
+    {
+        return $this->hasMany(Flat::className(), ['entrance_id' => 'id'])
+                ->onlyActive();
+    }
+    
+    /**
+     * Gets query for [[Flats]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getReservedFlats()
+    {
+        return $this->hasMany(Flat::className(), ['entrance_id' => 'id'])
+                ->onlyReserved();
+    }
+
 }
