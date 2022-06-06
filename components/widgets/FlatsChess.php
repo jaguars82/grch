@@ -35,10 +35,32 @@ class FlatsChess extends Widget
             $newbuildingIds = [];
             foreach ($this->newbuildings as $newbuilding) {
                 $newbuildingIds[] = $newbuilding->id;
+                $sectionsFlats[$newbuilding->id]['entrances_data'] = array();
             }
 
             foreach (Flat::find()->where(['IN', 'newbuilding_id', $newbuildingIds])->orderBy(['floor' => SORT_DESC, 'number' => SORT_DESC])->all() as $flat) {
-                $sectionsFlats[$flat->newbuilding_id][$flat->section][] = $flat;
+
+                // if there is a corresponding record in 'entrance' table - put information into array 'entrances_data'
+                if (!empty($flat->entrance_id)) {
+                    $sectionsFlats[$flat->newbuilding_id][$flat->entrance->number][] = $flat;
+                    if (!array_key_exists($flat->entrance->number, $sectionsFlats[$flat->newbuilding_id]['entrances_data'])) {
+                        $sectionsFlats[$flat->newbuilding_id]['entrances_data'][$flat->entrance->number] =
+                        [
+                            'id' => $flat->entrance->id,
+                            'name' => $flat->entrance->name,
+                            'number' => $flat->entrance->number,
+                            'floors' => $flat->entrance->floors,
+                            'material' => $flat->entrance->material,
+                            'status' => $flat->entrance->status,
+                            'deadline' => $flat->entrance->deadline,
+                            'azimuth' => $flat->entrance->azimuth,
+                            'longitude' => $flat->entrance->longitude,
+                            'latitude' => $flat->entrance->latitude,
+                        ];
+                    }
+                } else {
+                    $sectionsFlats[$flat->newbuilding_id][$flat->section][] = $flat;
+                }
             }
 
             foreach (Newbuilding::maxRoomsOnFloorsForNewbuildings($newbuildingIds) as $sectionData) {
