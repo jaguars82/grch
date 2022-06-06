@@ -15,9 +15,9 @@ class FloorLayout extends Widget
     const FLOOR_VIEW_MODE = 3;
     
     const COLORS = [
-        Flat::STATUS_SALE => '00ff00',
+        /*Flat::STATUS_SALE => '00ff00',
         Flat::STATUS_RESERVED => '808080',
-        Flat::STATUS_SOLD => 'ff0000',
+        Flat::STATUS_SOLD => 'ff0000',*/
     ];
     
     public $flat;

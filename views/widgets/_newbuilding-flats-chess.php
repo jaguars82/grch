@@ -25,7 +25,8 @@ $format = \Yii::$app->formatter;
             <?php if ($entrancesData[$section]['activeFlats'] > 0): ?>
                 <?= \MessageFormatter::formatMessage(
                     'be',
-                    ' {flats, plural, one{, доступна # квартира} few{, доступно # квартиры} other{, доступно # квартир}}',
+                    // ' {flats, plural, one{, доступна # квартира} few{, доступно # квартиры} other{, доступно # квартир}}',
+                    ' {flats, plural, one{, доступна #} few{, доступно #} other{, доступно #}}',
                     ['flats' => $entrancesData[$section]['activeFlats']]
                 );
                 ?>
@@ -33,7 +34,8 @@ $format = \Yii::$app->formatter;
             <?php if ($entrancesData[$section]['reservedFlats'] > 0): ?>
                 <?= \MessageFormatter::formatMessage(
                     'be',
-                    ' {flats, plural, one{, зарезервирована # квартира} few{, зарезервировано # квартиры} other{, зарезервировано # квартир}}',
+                    // ' {flats, plural, one{, зарезервирована # квартира} few{, зарезервировано # квартиры} other{, зарезервировано # квартир}}',
+                    ' {flats, plural, one{, забронирована - #} few{, забронировано - #} other{, забронировано - #}}',
                     ['flats' => $entrancesData[$section]['reservedFlats']]
                 );
                 ?>

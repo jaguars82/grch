@@ -28,7 +28,8 @@ $format = \Yii::$app->formatter;
                         <?php if ($newbuilding->getActiveFlats()->count() > 0): ?>
                         <?= \MessageFormatter::formatMessage(
                             'be',
-                            ' {flats, plural, one{Доступна # квартира} few{Доступно # квартиры} other{Доступно # квартир}}',
+                            // ' {flats, plural, one{Доступна # квартира} few{Доступно # квартиры} other{Доступно # квартир}}',
+                            ' {flats, plural, one{Доступна #} few{Доступно #} other{Доступно #}}',
                             ['flats' => $newbuilding->getActiveFlats()->count()]
                         );
                         ?>
@@ -36,7 +37,8 @@ $format = \Yii::$app->formatter;
                         <?php if ($newbuilding->getReservedFlats()->count() > 0): ?>
                         <?= \MessageFormatter::formatMessage(
                             'be',
-                            ' {flats, plural, one{Зарезервирована # квартира} few{Зарезервировано # квартиры} other{Зарезервировано # квартир}}',
+                            // ' {flats, plural, one{Зарезервирована # квартира} few{Зарезервировано # квартиры} other{Зарезервировано # квартир}}',
+                            ' {flats, plural, one{Забронирована #} few{Забронировано #} other{Забронировано #}}',
                             ['flats' => $newbuilding->getReservedFlats()->count()]
                         );
                         ?>

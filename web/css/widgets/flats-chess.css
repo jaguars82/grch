@@ -90,9 +90,11 @@
   }
   .chess-table .booked .rooms-count {
     background: #f2994a;
+    background: #db4240;
   }
   .chess-table .sales .rooms-count {
     background: #828282;
+    background: #ffbf00;
   }
   .chess-table .sales .title {
     color: #828282;
@@ -308,9 +310,12 @@
   }
   .flat-chess .abbreviation span.booked::before {
     background: #f2994a;
+    background: #db4240;
   }
   .flat-chess .abbreviation span.sales::before {
     background: #828282;
+    background: #ffbf00;
+
   }
   .flat-chess .abbreviation span.not-available::before {
     background: #e0e0e0;
