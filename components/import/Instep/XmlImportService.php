@@ -222,6 +222,8 @@ class XmlImportService implements ImportServiceInterface
                 }
             }
         }
+		
+		$deadline = $this->validateDate($deadline) ? $deadline : null;
 
         return [$extraData, $deadline];
     }
@@ -381,4 +383,16 @@ class XmlImportService implements ImportServiceInterface
 
         return $flats;
     }
+	
+	private function validateDate($date, $format = 'Y-m-d H:i:s')
+	{
+		$year = date("Y",strtotime($date));
+		
+		if ($year < 2000) {
+			return false;
+		}
+		
+		$d = \DateTime::createFromFormat($format, $date);
+		return $d && $d->format($format) == $date;
+	}
 }
