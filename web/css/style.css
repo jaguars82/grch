@@ -6756,3 +6756,8 @@ button.close_btn {
   transition: border-color 0s ease-out 0.4s, width 0.2s ease-out 0.4s, height 0.2s ease-out 0.6s;
 }
 /* end of draw frame hover effect */
+
+.k-window-titlebar {
+  background-color: #fff;
+  border: none;
+}

@@ -7,9 +7,12 @@ use app\components\widgets\FloorLayout;
 use app\components\widgets\Gallery;
 use app\components\widgets\ImageView;
 use app\components\widgets\Placemark;
+use app\assets\FlatViewAsset;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ListView;
+
+FlatViewAsset::register($this);
 
 $format = \Yii::$app->formatter;
 
@@ -133,6 +136,7 @@ $this->params['breadcrumbs'][] = $model->number;
                 <div class="flat-card--layout">
                     <div id="" style="position: relative;">
                     <?= $this->render('/widgets/compass-rose', [
+                        'id' => 'compass-rose-flat',
                         'azimuth' => $model->entrance->azimuth
                     ]) ?>
                     </div>
@@ -324,6 +328,23 @@ $this->params['breadcrumbs'][] = $model->number;
                     <div class="floor-layout">
                         <?= $floorLayoutImage ?>
                     </div>
+                    <div id="floor-layout" class="hidden">
+                        <div class="modal-buttons">
+                            <span id="close-modal-window" class="material-icons-outlined">close</span>
+                        </div>
+                        <?= $this->render('/widgets/compass-rose', [
+                            'id' => 'compass-rose-entrance',
+                            'azimuth' => $model->entrance->azimuth
+                        ]) ?>
+                        <div id="entrance-layout">
+                            <?= $floorLayoutImage ?>
+                        </div>
+                    </div>
+                    <span id="expand-floor-layout" class="expand-button material-icons-outlined">fullscreen</span>
+                    <?= $this->render('/widgets/modal-window', [
+                        'modal_id' => 'floor-layout',
+                        'content' => $floorLayoutImage,
+                    ]) ?>
                 <?php endif; ?>
                 <?php if(!is_null($model->newbuilding->deadline)): ?>
                     <div class="deadline-block">
