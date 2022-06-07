@@ -20,7 +20,7 @@ $format = \Yii::$app->formatter;
 ?>
 
 <div class="row flex-row developer-card">
-    <div class="col-xs-12 col-md-8">
+    <div class="col-xs-12 col-md-12">
         <div class="white-block description">
             <h2 class="bordered">
                 <?= Html::encode($model->name) ?>
@@ -39,6 +39,7 @@ $format = \Yii::$app->formatter;
                 </div>
             </div>
             
+            <!--
             <p class="h3 bordered">
                 Условия бесплатной брони
             </p>
@@ -57,6 +58,8 @@ $format = \Yii::$app->formatter;
                 Не задано
             <?php endif ?>
             <?php if(!is_null($model->detail)): ?>
+            -->
+
             <p class="h3 bordered">
                 Описание
             </p>
@@ -117,6 +120,8 @@ $format = \Yii::$app->formatter;
             </div>
         <?php endif; ?>
     </div>
+
+    <!--
     <div class="col-md-4 hidden-sm hidden-xs">
         <div class="sticky">
             <div class="sidebar white-block scrollbar">
@@ -165,4 +170,6 @@ $format = \Yii::$app->formatter;
             </div>
         </div>
     </div>
+    -->
+
 </div>
