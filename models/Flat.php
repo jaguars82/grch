@@ -58,7 +58,7 @@ class Flat extends ActiveRecord
     public static $status = [
         self::STATUS_SALE => 'Продаётся',
         self::STATUS_SOLD => 'Продана',
-        self::STATUS_RESERVED => 'Зарезервирована',
+        self::STATUS_RESERVED => 'Бронь',
     ];
 
     public $minPriceCash;

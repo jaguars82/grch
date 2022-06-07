@@ -38,7 +38,7 @@ $format = \Yii::$app->formatter;
                         <?= \MessageFormatter::formatMessage(
                             'be',
                             // ' {flats, plural, one{Зарезервирована # квартира} few{Зарезервировано # квартиры} other{Зарезервировано # квартир}}',
-                            ' {flats, plural, one{Забронирована #} few{Забронировано #} other{Забронировано #}}',
+                            ' {flats, plural, one{Бронь #} few{Бронь #} other{Бронь #}}',
                             ['flats' => $newbuilding->getReservedFlats()->count()]
                         );
                         ?>

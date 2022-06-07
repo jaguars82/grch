@@ -35,7 +35,7 @@ $format = \Yii::$app->formatter;
                 <?= \MessageFormatter::formatMessage(
                     'be',
                     // ' {flats, plural, one{, зарезервирована # квартира} few{, зарезервировано # квартиры} other{, зарезервировано # квартир}}',
-                    ' {flats, plural, one{, забронирована - #} few{, забронировано - #} other{, забронировано - #}}',
+                    ' {flats, plural, one{, бронь - #} few{, бронь - #} other{, бронь - #}}',
                     ['flats' => $entrancesData[$section]['reservedFlats']]
                 );
                 ?>
@@ -60,7 +60,7 @@ $format = \Yii::$app->formatter;
         <p class="section">Подъезд №<?= $section ?></p>
     <?php endif; ?>
 
-    <div id="chess-entrance-<?= $entrancesData[$section]['id']?>" class="chess-table" <?php if (!empty($entrancesData[$section]['id']) && $currentFlat->entrance_id != $entrancesData[$section]['id']): ?>style="display: none;"<?php endif; ?>>
+    <div id="chess-entrance-<?= $entrancesData[$section]['id']?>" class="chess-table" <?php if (!empty($entrancesData[$section]['id'])  && !empty($currentFlat) && $currentFlat->entrance_id != $entrancesData[$section]['id']): ?>style="display: none;"<?php endif; ?>>
         <div class="responsive-table">
             <table>
                 <?php foreach ($sectionFlats as $key => $flat) {
