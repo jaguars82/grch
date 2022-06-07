@@ -16,7 +16,7 @@ $format = \Yii::$app->formatter;
     ?>
     
     <?php if (!empty($entrancesData[$section]['id'])): ?>
-        <div id="entrance-<?= $entrancesData[$section]['id'] ?>"  class="section" onclick="toggleEntrance(<?= $entrancesData[$section]['id'] ?>)">
+        <div id="entrance-<?= $entrancesData[$section]['id'] ?>" class="section <?php if (!is_null($currentFlat) && $currentFlat->entrance->id == $entrancesData[$section]['id']): ?>active<?php endif; ?>" onclick="toggleEntrance(<?= $entrancesData[$section]['id'] ?>)">
             <div class="section-arrow material-icons-outlined">chevron_right</div>
             <div>
                 <strong><?= $entrancesData[$section]['name'] ?></strong>
@@ -60,7 +60,7 @@ $format = \Yii::$app->formatter;
         <p class="section">Подъезд №<?= $section ?></p>
     <?php endif; ?>
 
-    <div id="chess-entrance-<?= $entrancesData[$section]['id']?>" class="chess-table" <?php if (!empty($entrancesData[$section]['id'])): ?>style="display: none;"<?php endif; ?>>
+    <div id="chess-entrance-<?= $entrancesData[$section]['id']?>" class="chess-table" <?php if (!empty($entrancesData[$section]['id']) && $currentFlat->entrance_id != $entrancesData[$section]['id']): ?>style="display: none;"<?php endif; ?>>
         <div class="responsive-table">
             <table>
                 <?php foreach ($sectionFlats as $key => $flat) {

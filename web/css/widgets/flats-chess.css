@@ -277,6 +277,10 @@
   .flat-chess .content .section.active .section-arrow {
       transform: rotateZ(90deg);
   }
+
+  .flat-chess .content .section.active ~ .chess-table {
+      display: block;
+  }
   
   .flat-chess .abbreviation {
     padding: 16px 3px 15px;

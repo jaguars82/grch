@@ -133,7 +133,7 @@ $this->params['breadcrumbs'][] = $model->number;
                 <div class="flat-card--layout">
                     <div id="" style="position: relative;">
                     <?= $this->render('/widgets/compass-rose', [
-                        'azimuth' => $model->newbuilding->azimuth
+                        'azimuth' => $model->entrance->azimuth
                     ]) ?>
                     </div>
                     <?= Html::img(["/uploads/{$model->layout}"], ['id' => 'flat-layout']) ?>
