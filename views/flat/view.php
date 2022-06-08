@@ -132,17 +132,19 @@ $this->params['breadcrumbs'][] = $model->number;
                     </span>
                 </div>
             </div>
+
             <?php if($model->layout): ?>
                 <div class="flat-card--layout">
-                    <div id="" style="position: relative;">
-                    <?= $this->render('/widgets/compass-rose', [
-                        'id' => 'compass-rose-flat',
-                        'azimuth' => $model->entrance->azimuth
-                    ]) ?>
-                    </div>
-                    <?= Html::img(["/uploads/{$model->layout}"], ['id' => 'flat-layout']) ?>
+                    <?= Html::img(["/uploads/{$model->layout}"], ['id' => 'flat-layout2']) ?>
                 </div>
+
+                <?= $this->render('/widgets/layouts', [
+                    'flat' => $model
+                ]) ?>
+
             <?php endif; ?>
+
+
 
             <?= Gallery::widget([
                 'images' => $model->flatImages,
