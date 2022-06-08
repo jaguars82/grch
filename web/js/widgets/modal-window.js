@@ -4,8 +4,8 @@ $(document).ready(function () {
         actions: ["Close"],
         title: false,
         modal: true,
-        height: '95%',
-        width: '95%',
+        height: '98%',
+        width: '700px',
         pinned: true,
         visible: false
     });

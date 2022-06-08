@@ -6,3 +6,11 @@
 .modal-buttons span {
   cursor: pointer;
 }
+
+.image-container {
+  display: flex;
+  height: 90%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

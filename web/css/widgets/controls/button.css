@@ -1,0 +1,14 @@
+.c-button-wrapper {
+  display: inline-flex;
+  padding: 5px;
+  border-radius: 50%;
+}
+
+.c-button-wrapper.simple:hover {
+  background-color: #eee;
+}
+
+.c-button {
+  cursor: pointer;
+  color: #888;
+}

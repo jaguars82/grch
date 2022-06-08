@@ -336,11 +336,20 @@ $this->params['breadcrumbs'][] = $model->number;
                             'id' => 'compass-rose-entrance',
                             'azimuth' => $model->entrance->azimuth
                         ]) ?>
-                        <div id="entrance-layout">
-                            <?= $floorLayoutImage ?>
+                        <div class="image-container">
+                            <div id="entrance-layout" style="width: 600px; max-width: 600px;">
+                                <?= $floorLayoutImage ?>
+                            </div>
                         </div>
                     </div>
-                    <span id="expand-floor-layout" class="expand-button material-icons-outlined">fullscreen</span>
+                    <div style="display: flex; justify-content: end;">
+                    <?= $this->render('/widgets/controls/button', [
+                        'button_id' => 'expand-floor-layout',
+                        'icon' => 'fullscreen',
+                        'class' => 'simple',
+                        'wrapper_style' => 'margin-top: -25px; margin-bottom: 15px;'
+                    ]) ?>
+                    </div>
                     <?= $this->render('/widgets/modal-window', [
                         'modal_id' => 'floor-layout',
                         'content' => $floorLayoutImage,
