@@ -9,12 +9,14 @@ $(function() {
             return;
         }
 
-        if (currentEffect) {
+        /*if (currentEffect) {
             currentEffect.stop();
-        }
+        }*/
+        
+        $(".layout").hide();
         $("#area" + target).show();
-        currentEffect = kendo.fx("#area" + target).replace("#area" + index, "swap");
-        currentEffect.run();
+        // currentEffect = kendo.fx("#area" + target).replace("#area" + index, "swap");
+        // currentEffect.run();
         index = target;
     });
 });

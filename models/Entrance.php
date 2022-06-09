@@ -123,7 +123,7 @@ class Entrance extends ActiveRecord
         return $this->hasMany(Flat::className(), ['entrance_id' => 'id']);
     }
 
-    
+   
     /**
      * Gets query for [[Flats]].
      *
@@ -132,7 +132,7 @@ class Entrance extends ActiveRecord
     public function getActiveFlats()
     {
         return $this->hasMany(Flat::className(), ['entrance_id' => 'id'])
-                ->onlyActive();
+            ->onlyActive();
     }
     
     /**

@@ -192,6 +192,17 @@ class Developer extends \yii\db\ActiveRecord
     }
     
     /**
+     * Gets query for [[Flat]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getActiveFlats()
+    {
+        return $this->hasMany(Flat::className(), ['newbuilding_id' => 'id'])
+            ->onlyActive();
+    }
+    
+    /**
      * Gets query for [[Import]].
      *
      * @return \yii\db\ActiveQuery

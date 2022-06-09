@@ -321,6 +321,7 @@ class Newbuilding extends ActiveRecord
                 ->inverseOf('newbuilding');
     }
     
+   
     /**
      * Gets query for [[Flats]].
      *

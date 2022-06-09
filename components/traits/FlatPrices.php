@@ -17,7 +17,7 @@ trait FlatPrices
         $flatsData = $this->getFlats()->select([
             'min(price_cash * (1 - discount)) as minPriceCash',
             'min(price_credit * (1 - discount)) as minPriceCredit',
-        ])->withNonNullPrice()->one();
+        ])->where('status = 0')->withNonNullPrice()->one();
                 
         return is_null($flatsData->minPriceCredit) ? $flatsData->minPriceCash : min($flatsData->minPriceCredit, $flatsData->minPriceCash);
     }
@@ -32,7 +32,7 @@ trait FlatPrices
         $flatsData = $this->getFlats()->select([
             'max(price_cash * (1 - discount)) as maxPriceCash',
             'max(price_credit * (1 - discount)) as maxPriceCredit',
-        ])->withNonNullPrice()->one();
+        ])->where('status = 0')->withNonNullPrice()->one();
                 
         return is_null($flatsData->maxPriceCredit) ? $flatsData->maxPriceCash : max($flatsData->maxPriceCredit, $flatsData->maxPriceCash);
     }
@@ -48,7 +48,7 @@ trait FlatPrices
         $flatsData = $this->getFlats()->select([
             'min(price_cash * (1 - discount)) as minPriceCash',
             'min(price_credit * (1 - discount)) as minPriceCredit',
-        ])->withNonNullPrice()->andWhere([
+        ])->where('status = 0')->withNonNullPrice()->andWhere([
             'rooms' => $rooms,
             'is_studio' => false,
         ])->one();
@@ -67,7 +67,7 @@ trait FlatPrices
         $flatsData = $this->getFlats()->select([
             'max(price_cash * (1 - discount)) as maxPriceCash',
             'max(price_credit * (1 - discount)) as maxPriceCredit',
-        ])->withNonNullPrice()->andWhere([
+        ])->where('status = 0')->withNonNullPrice()->andWhere([
             'rooms' => $rooms,
             'is_studio' => false
         ])->one();
@@ -85,7 +85,7 @@ trait FlatPrices
         $flatsData = $this->getFlats()->select([
             'min(price_cash * (1 - discount)) as minPriceCash',
             'min(price_credit * (1 - discount)) as minPriceCredit',
-        ])->withNonNullPrice()->andWhere([
+        ])->where('status = 0')->withNonNullPrice()->andWhere([
             'is_studio' => true
         ])->one();
 
@@ -102,7 +102,7 @@ trait FlatPrices
         $flatsData = $this->getFlats()->select([
             'max(price_cash * (1 - discount)) as maxPriceCash',
             'max(price_credit * (1 - discount)) as maxPriceCredit',
-        ])->withNonNullPrice()->andWhere([
+        ])->where('status = 0')->withNonNullPrice()->andWhere([
             'is_studio' => true
         ])->one();
 

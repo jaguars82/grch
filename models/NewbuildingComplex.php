@@ -412,6 +412,17 @@ class NewbuildingComplex extends ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
+    public function getActiveFlats()
+    {
+        return $this->hasMany(Flat::className(), ['newbuilding_id' => 'id'])
+            ->onlyActive();
+    }
+    
+    /**
+     * Gets query for [[Flat]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
     public function getFlatsWithDiscount()
     {
         return $this->hasMany(Flat::className(), ['newbuilding_id' => 'id'])
