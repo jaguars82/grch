@@ -17,6 +17,11 @@ LayoutsAsset::register($this);
                 ]) ?>
             </div>
             <?= Html::img(["/uploads/{$flat->layout}"], ['id' => 'flat-layout', 'style' => 'display: block; max-height: 100%; margin: 0 auto;']) ?>
+            <div id="layout-modal" class="modal-window" data-idprefix="layout">
+                <div id="layout-close">Close</div>
+                <?= Html::img(["/uploads/{$flat->layout}"], ['id' => 'flat-layout', 'style' => 'display: block; max-height: 100%; margin: 0 auto;']) ?>
+            </div>
+            <div id="layout-expand">Развернуть</div>
         </div>
         <div id="area1" class="layout" style="display: none; width: 100%; height: 100%; max-height: 100%;">
             <div style="position: relative;">
@@ -25,9 +30,15 @@ LayoutsAsset::register($this);
                     'azimuth' => $flat->entrance->azimuth
                 ]) ?>
             </div>
-            <div id="entrance-layout" style="width: 450px; max-width: 450px; display: block; margin: 100px 100px;">
+            <div id="entrance-layout" style="width: 450px; max-width: 450px; height: 100%; max-height: 100%; display: block; margin: 20px 100px;">
                 <?= $floorLayoutImage ?>
             </div>
+            <div id="entrance-modal" class="modal-window" data-idprefix="entrance">
+                <div id="entrance-close">Close</div>
+                <?= $floorLayoutImage ?>
+            </div>
+            <div id="entrance-expand">Развернуть</div>
+            <?= $this->render('/widgets/modal-window') ?>
         </div>
         <div id="area2" class="layout" style="display: none; width: 100%; height: 100%; max-height: 100%;">
             <!--<img src="https://dbldom.ru/wp-content/uploads/2021/10/12b2.jpg" />-->
