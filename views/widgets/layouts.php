@@ -11,7 +11,7 @@ LayoutsAsset::register($this);
     <div id="placeholder">
         <div id="area0" class="layout" style="width: 100%; max-width: 100%; height: 100%; max-height: 100%;">
             <div class="layout-buttons"><span id="layout-expand" class="material-icons-outlined zoom-button">zoom_in</span></div>
-            <?= Html::img(["/uploads/{$flat->layout}"], ['style' => 'display: block; max-height: 100%; margin: 0 auto;']) ?>
+            <?= Html::img(["/uploads/{$flat->layout}"], ['style' => 'display: block; max-height: 100%; margin: 0 auto; padding-top: 15px;']) ?>
             <div id="layout-modal" class="modal-window" data-idprefix="layout">
                 <div class="modal-buttons"><span id="layout-close" class="material-icons-outlined">close</span></div>
                 <div style="position: relative;">
@@ -27,7 +27,7 @@ LayoutsAsset::register($this);
         </div>
         <div id="area1" class="layout" style="display: none; width: 100%; height: 100%; max-height: 100%;">
             <div class="layout-buttons"><span id="entrance-expand" class="material-icons-outlined zoom-button">zoom_in</span></div>
-            <div style="width: 100%; max-width: 100%; height: 100%; max-height: 100%;">
+            <div style="display: flex; justify-content: center; width: 100%; max-height: 100%; padding-top: 20px;">
                 <?= $floorLayoutImage ?>
             </div>
             <div id="entrance-modal" class="modal-window" data-idprefix="entrance">
@@ -39,7 +39,7 @@ LayoutsAsset::register($this);
                     ]) ?>
                 </div>
                 <div class="modal-media-container">
-                    <div id="entrance-layout" style="width: 60%; max-width: 60%;">
+                    <div id="entrance-layout" style="display: flex; justify-content: center; width: 60%; max-width: 60%; height: 100%; max-height: 100%">
                         <?= $floorLayoutImage ?>
                     </div>
                 </div>
