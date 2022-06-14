@@ -37,7 +37,7 @@ $(document).ready(function () {
             title: false,
             modal: true,
             height: '98%',
-            width: '700px',
+            width: '85%',
             pinned: true,
             visible: false
         });

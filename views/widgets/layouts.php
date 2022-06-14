@@ -6,40 +6,46 @@ use app\assets\widgets\LayoutsAsset;
 LayoutsAsset::register($this);
 
 ?>
-
+<?= $this->render('/widgets/modal-window') ?>
 <div style="display: flex;">
     <div id="placeholder">
-        <div id="area0" class="layout" style="width: 100%; height: 85%; max-height: 85%;">
-            <div style="position: relative;">
-                <?= $this->render('/widgets/compass-rose', [
-                    'id' => 'compass-rose-flat',
-                    'azimuth' => $flat->entrance->azimuth
-                ]) ?>
-            </div>
-            <?= Html::img(["/uploads/{$flat->layout}"], ['id' => 'flat-layout', 'style' => 'display: block; max-height: 100%; margin: 0 auto;']) ?>
+        <div id="area0" class="layout" style="width: 100%; max-width: 100%; height: 100%; max-height: 100%;">
+            <div class="layout-buttons"><span id="layout-expand" class="material-icons-outlined zoom-button">zoom_in</span></div>
+            <?= Html::img(["/uploads/{$flat->layout}"], ['style' => 'display: block; max-height: 100%; margin: 0 auto;']) ?>
             <div id="layout-modal" class="modal-window" data-idprefix="layout">
-                <div id="layout-close">Close</div>
-                <?= Html::img(["/uploads/{$flat->layout}"], ['id' => 'flat-layout', 'style' => 'display: block; max-height: 100%; margin: 0 auto;']) ?>
+                <div class="modal-buttons"><span id="layout-close" class="material-icons-outlined">close</span></div>
+                <div style="position: relative;">
+                    <?= $this->render('/widgets/compass-rose', [
+                        'id' => 'compass-rose-flat',
+                        'azimuth' => $flat->entrance->azimuth
+                    ]) ?>
+                </div>
+                <div class="modal-media-container">
+                    <?= Html::img(["/uploads/{$flat->layout}"], ['id' => 'flat-layout', 'style' => 'width: 60%; max-width: 60%;']) ?>
+                </div>
             </div>
-            <div id="layout-expand">Развернуть</div>
         </div>
         <div id="area1" class="layout" style="display: none; width: 100%; height: 100%; max-height: 100%;">
-            <div style="position: relative;">
-                    <?= $this->render('/widgets/compass-rose', [
-                    'id' => 'compass-rose-entrance',
-                    'azimuth' => $flat->entrance->azimuth
-                ]) ?>
-            </div>
-            <div id="entrance-layout" style="width: 450px; max-width: 450px; height: 100%; max-height: 100%; display: block; margin: 20px 100px;">
+            <div class="layout-buttons"><span id="entrance-expand" class="material-icons-outlined zoom-button">zoom_in</span></div>
+            <div style="width: 100%; max-width: 100%; height: 100%; max-height: 100%;">
                 <?= $floorLayoutImage ?>
             </div>
             <div id="entrance-modal" class="modal-window" data-idprefix="entrance">
-                <div id="entrance-close">Close</div>
-                <?= $floorLayoutImage ?>
+                <div class="modal-buttons"><span id="entrance-close" class="material-icons-outlined">close</span></div>
+                <div style="position: relative;">
+                        <?= $this->render('/widgets/compass-rose', [
+                        'id' => 'compass-rose-entrance',
+                        'azimuth' => $flat->entrance->azimuth
+                    ]) ?>
+                </div>
+                <div class="modal-media-container">
+                    <div id="entrance-layout" style="width: 60%; max-width: 60%;">
+                        <?= $floorLayoutImage ?>
+                    </div>
+                </div>
             </div>
-            <div id="entrance-expand">Развернуть</div>
-            <?= $this->render('/widgets/modal-window') ?>
         </div>
+        
         <div id="area2" class="layout" style="display: none; width: 100%; height: 100%; max-height: 100%;">
             <!--<img src="https://dbldom.ru/wp-content/uploads/2021/10/12b2.jpg" />-->
             <img src="/uploads/<?= $flat->newbuildingComplex->master_plan ?>" style="display: block; max-height: 100%; margin: 0 auto;" />
