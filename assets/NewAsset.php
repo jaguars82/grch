@@ -22,6 +22,7 @@ class NewAsset extends AssetBundle
         'vendor/fancybox/jquery.fancybox.min.css',
         'vendor/kendoui/kendo.common.min.css',
         'vendor/kendoui/kendo.default.min.css',
+        'vendor/kendoui/kendo.default.mobile.min.css',
         'css/style.css',
     ];
     public $js = [

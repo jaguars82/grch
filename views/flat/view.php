@@ -132,17 +132,20 @@ $this->params['breadcrumbs'][] = $model->number;
                     </span>
                 </div>
             </div>
+
             <?php if($model->layout): ?>
-                <div class="flat-card--layout">
-                    <div id="" style="position: relative;">
-                    <?= $this->render('/widgets/compass-rose', [
-                        'id' => 'compass-rose-flat',
-                        'azimuth' => $model->entrance->azimuth
-                    ]) ?>
-                    </div>
-                    <?= Html::img(["/uploads/{$model->layout}"], ['id' => 'flat-layout']) ?>
-                </div>
+                <!--<div class="flat-card--layout">
+                    <?= Html::img(["/uploads/{$model->layout}"], ['id' => 'flat-layout2']) ?>
+                </div>-->
+
+                <?= $this->render('/widgets/layouts', [
+                    'flat' => $model,
+                    'floorLayoutImage' => $floorLayoutImage
+                ]) ?>
+
             <?php endif; ?>
+
+
 
             <?= Gallery::widget([
                 'images' => $model->flatImages,
@@ -324,37 +327,6 @@ $this->params['breadcrumbs'][] = $model->number;
                         <span class="value"><?= $format->asPercent($model->newbuildingComplex->freeFlats) ?> квартир</span>
                     </div>
                 </div>
-                <?php if($floorLayoutImage): ?>
-                    <div class="floor-layout">
-                        <?= $floorLayoutImage ?>
-                    </div>
-                    <div id="floor-layout" class="hidden">
-                        <div class="modal-buttons">
-                            <span id="close-modal-window" class="material-icons-outlined">close</span>
-                        </div>
-                        <?= $this->render('/widgets/compass-rose', [
-                            'id' => 'compass-rose-entrance',
-                            'azimuth' => $model->entrance->azimuth
-                        ]) ?>
-                        <div class="image-container">
-                            <div id="entrance-layout" style="width: 600px; max-width: 600px;">
-                                <?= $floorLayoutImage ?>
-                            </div>
-                        </div>
-                    </div>
-                    <div style="display: flex; justify-content: end;">
-                    <?= $this->render('/widgets/controls/button', [
-                        'button_id' => 'expand-floor-layout',
-                        'icon' => 'fullscreen',
-                        'class' => 'simple',
-                        'wrapper_style' => 'margin-top: -25px; margin-bottom: 15px;'
-                    ]) ?>
-                    </div>
-                    <?= $this->render('/widgets/modal-window', [
-                        'modal_id' => 'floor-layout',
-                        'content' => $floorLayoutImage,
-                    ]) ?>
-                <?php endif; ?>
                 <?php if(!is_null($model->newbuilding->deadline)): ?>
                     <div class="deadline-block">
                         <span>Срок сдачи</span>
