@@ -10,7 +10,12 @@ LayoutsAsset::register($this);
 <div style="display: flex;">
     <div id="placeholder">
         <div id="area0" class="layout" style="width: 100%; max-width: 100%; height: 100%; max-height: 100%;">
-            <div class="layout-buttons"><span id="layout-expand" class="material-icons-outlined zoom-button">zoom_in</span></div>
+            <div id="layout-expand" class="layout-buttons">
+                <?php if (!empty($flat->entrance->azimuth)): ?>
+                    <span class="material-icons-outlined zoom-button">explore</span>
+                <?php endif; ?>
+                <span class="material-icons-outlined zoom-button">zoom_in</span>
+            </div>
             <?= Html::img(["/uploads/{$flat->layout}"], ['style' => 'display: block; max-height: 100%; margin: 0 auto; padding-top: 15px;']) ?>
             <div id="layout-modal" class="modal-window" data-idprefix="layout">
                 <div class="modal-buttons"><span id="layout-close" class="material-icons-outlined">close</span></div>
@@ -26,7 +31,12 @@ LayoutsAsset::register($this);
             </div>
         </div>
         <div id="area1" class="layout" style="display: none; width: 100%; height: 100%; max-height: 100%;">
-            <div class="layout-buttons"><span id="entrance-expand" class="material-icons-outlined zoom-button">zoom_in</span></div>
+            <div id="entrance-expand" class="layout-buttons">
+                <?php if (!empty($flat->entrance->azimuth)): ?>
+                    <span class="material-icons-outlined zoom-button">explore</span>
+                <?php endif; ?>
+                <span class="material-icons-outlined zoom-button">zoom_in</span>
+            </div>
             <div style="display: flex; justify-content: center; width: 100%; max-height: 100%; padding-top: 20px;">
                 <?= $floorLayoutImage ?>
             </div>
