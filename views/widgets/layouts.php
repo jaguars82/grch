@@ -21,7 +21,7 @@ LayoutsAsset::register($this);
                     ]) ?>
                 </div>
                 <div class="modal-media-container">
-                    <?= Html::img(["/uploads/{$flat->layout}"], ['id' => 'flat-layout', 'style' => 'width: 60%; max-width: 60%;']) ?>
+                    <?= Html::img(["/uploads/{$flat->layout}"], ['id' => 'flat-layout']) ?>
                 </div>
             </div>
         </div>
