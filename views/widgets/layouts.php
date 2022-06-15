@@ -12,7 +12,7 @@ LayoutsAsset::register($this);
         <div id="area0" class="layout" style="width: 100%; max-width: 100%; height: 100%; max-height: 100%;">
             <div id="layout-expand" class="layout-buttons">
                 <?php if (!empty($flat->entrance->azimuth)): ?>
-                    <span class="material-icons-outlined zoom-button">explore</span>
+                    <span class="material-icons-outlined zoom-button" style="transform: rotate(<?= $flat->entrance->azimuth - 45 ?>deg)">explore</span>
                 <?php endif; ?>
                 <span class="material-icons-outlined zoom-button">zoom_in</span>
             </div>
@@ -33,7 +33,7 @@ LayoutsAsset::register($this);
         <div id="area1" class="layout" style="display: none; width: 100%; height: 100%; max-height: 100%;">
             <div id="entrance-expand" class="layout-buttons">
                 <?php if (!empty($flat->entrance->azimuth)): ?>
-                    <span class="material-icons-outlined zoom-button">explore</span>
+                    <span class="material-icons-outlined zoom-button" style="transform: rotate(<?= $flat->entrance->azimuth - 45 ?>deg)">explore</span>
                 <?php endif; ?>
                 <span class="material-icons-outlined zoom-button">zoom_in</span>
             </div>
@@ -49,7 +49,7 @@ LayoutsAsset::register($this);
                     ]) ?>
                 </div>
                 <div class="modal-media-container">
-                    <div id="entrance-layout" style="display: flex; justify-content: center; width: 60%; max-width: 60%; height: 100%; max-height: 100%">
+                    <div id="entrance-layout" style="display: flex; justify-content: center; width: 70%; max-width: 70%; height: 100%; max-height: 100%">
                         <?= $floorLayoutImage ?>
                     </div>
                 </div>

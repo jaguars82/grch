@@ -13,8 +13,8 @@
 
 .modal-media-container {
   display: flex;
-  height: 90%;
-  max-height: 90%;
+  height: 95%;
+  max-height: 95%;
   justify-content: center;
   align-items: center;
 }
