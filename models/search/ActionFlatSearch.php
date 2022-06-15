@@ -21,7 +21,7 @@ class ActionFlatSearch extends Flat
     public $newbuilding_array = NULL;
     public $priceFrom = NULL, $priceTo = NULL;
     public $areaFrom = NULL, $areaTo = NULL;
-    public $floorFrom = NULL, $floorTo = NULL, $totalFloor = NULL;
+    public $floorsSet = NULL, $floorFrom = NULL, $floorTo = NULL, $totalFloor = NULL;
     public $material = NULL, $newbuilding_status, $deadline, $update_date;
 
     public $newbuildingComplexes = [];
@@ -33,10 +33,13 @@ class ActionFlatSearch extends Flat
     public function rules()
     {
         return [
-            [['floorFrom', 'floorTo', 'totalFloor', 'rooms', 'developer', 'newbuilding_complex'], 'integer'],
+            [['floorFrom', 'floorTo', 'totalFloor', 'developer'], 'integer'],
             [['priceFrom', 'priceTo', 'areaFrom', 'areaTo'], 'double'],
             [['material', 'deadline', 'update_date'], 'string'],
-            ['newbuilding_status', 'safe']
+            ['newbuilding_status', 'safe'],
+            ['floorsSet', 'each', 'rule' => ['integer']],
+            ['rooms', 'each', 'rule' => ['integer']],
+            ['newbuilding_complex', 'each', 'rule' => ['integer']]
         ];
     }
 
@@ -58,7 +61,9 @@ class ActionFlatSearch extends Flat
             'newbuilding_array' => 'Позиции',
             'priceFrom' => 'Стоимость',
             'areaFrom' => 'Площадь',
-            'floorFrom' => 'Этаж',
+            'rooms' => 'Количество комнат',
+            // 'floorFrom' => 'Этаж',
+            'floorsSet' => 'Этажи',
             'totalFloor' => 'Этажей не более',
             'newbuilding_status' => 'Сдан',
             'deadline' => 'Сдан',
@@ -117,12 +122,22 @@ class ActionFlatSearch extends Flat
     {
         $query->andFilterWhere(['>=', 'area', $this->areaFrom])
             ->andFilterWhere(['<=', 'area', $this->areaTo])
-            ->andFilterWhere(['>=', 'floor', $this->floorFrom])
-            ->andFilterWhere(['<=', 'floor', $this->floorTo]);
+            //->andFilterWhere(['>=', 'floor', $this->floorFrom])
+            //->andFilterWhere(['<=', 'floor', $this->floorTo]);
+            ->andFilterWhere(['floor' => $this->floorsSet]);
 
-        if (isset($this->rooms) && !empty($this->rooms)) {
+        /* if (isset($this->rooms) && !empty($this->rooms)) {
             if ($this->rooms == 5) {
                 $query->andWhere(['>=', 'rooms', $this->rooms]);
+            } else {
+                $query->andWhere(['rooms' => $this->rooms]);
+            }
+        } */
+
+        if (isset($this->rooms) && !empty($this->rooms)) {
+            if (in_array(5, $this->rooms)) {
+                $query->andWhere(['rooms' => $this->rooms])
+                    ->orWhere(['>', 'rooms', 5]);
             } else {
                 $query->andWhere(['rooms' => $this->rooms]);
             }
@@ -264,8 +279,9 @@ class ActionFlatSearch extends Flat
             && (isset($params[$form]['priceTo']) && empty($params[$form]['priceTo']))
             && (isset($params[$form]['areaFrom']) && empty($params[$form]['areaFrom']))
             && (isset($params[$form]['areaTo']) && empty($params[$form]['areaTo']))
-            && (isset($params[$form]['floorFrom']) && empty($params[$form]['floorFrom']))
-            && (isset($params[$form]['floorTo']) && empty($params[$form]['floorTo']))
+            // && (isset($params[$form]['floorFrom']) && empty($params[$form]['floorFrom']))
+            // && (isset($params[$form]['floorTo']) && empty($params[$form]['floorTo']))
+            && (isset($params[$form]['floorsSet']) && empty($params[$form]['floorsSet']))
             && (isset($params[$form]['totalFloor']) && empty($params[$form]['totalFloor']))
             && (isset($params[$form]['material']) && empty($params[$form]['material']))
             && (isset($params[$form]['newbuilding_status']) && empty($params[$form]['newbuilding_status']))
@@ -308,12 +324,16 @@ class ActionFlatSearch extends Flat
             $this->areaTo = $params[$form]['areaTo'];
         }
 
-        if (isset($params[$form]['floorFrom'])) {
+        /* if (isset($params[$form]['floorFrom'])) {
             $this->floorFrom = $params[$form]['floorFrom'];
-        }
+        } */
 
-        if (isset($params[$form]['floorTo'])) {
+        /* if (isset($params[$form]['floorTo'])) {
             $this->floorTo = $params[$form]['floorTo'];
+        } */
+
+        if (isset($params[$form]['floorsSet'])) {
+            $this->floorsSet = $params[$form]['floorsSet'];
         }
 
         if (isset($params[$form]['totalFloor'])) {
@@ -343,8 +363,9 @@ class ActionFlatSearch extends Flat
         $values = [
             'rooms' => $this->rooms,
             'totalFloor' => $this->totalFloor,
-            'floorFrom' => $this->floorFrom,
-            'floorTo' => $this->floorTo,
+            // 'floorFrom' => $this->floorFrom,
+            // 'floorTo' => $this->floorTo,
+            'floorsSet' => $this->floorsSet,
             'priceFrom' => $this->priceFrom,
             'priceTo' => $this->priceTo,
             'areaFrom' => $this->areaFrom,

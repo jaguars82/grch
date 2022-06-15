@@ -18,6 +18,8 @@ $(function () {
                 }
             });
         });
+
+        fillFloorsForDeveloper(selectedDeveloper.val());
     }    
     
     function fillNewbuildingComplexes(developerId, afterDone = null) {
@@ -37,6 +39,31 @@ $(function () {
             if (afterDone != null) {
                 afterDone();
             }
+        })
+        .fail(function(answer) {
+            alert = $('.alert-template').clone().removeClass('alert-template').addClass('alert-danger');
+            processAlert(alert, 'Произошла ошибка. Обратитесь в службу поддержки');
+        });
+    }
+
+    function fillFloorsForDeveloper(developerId) {
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRF-Token", $('meta[name="csrf-token"]').attr('content'));
+            }
+        });
+
+        $.post( "/newbuilding-complex/get-floors-for-developer?id=" + developerId, function(answear) {
+            /*let newbuildingComplexSelect = $('#newbuilding-complex-select1');
+            newbuildingComplexSelect.find('option').remove();*/
+            answer.forEach(function (currentValue, index, array) {
+                // newbuildingComplexSelect.append(new Option(currentValue['name'], currentValue['id']));
+                console.log(answear);
+            });
+            
+            /*if (afterDone != null) {
+                afterDone();
+            }*/
         })
         .fail(function(answer) {
             alert = $('.alert-template').clone().removeClass('alert-template').addClass('alert-danger');
