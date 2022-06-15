@@ -33,7 +33,7 @@
 }
 
 .layout-buttons {
-  z-index: 99;
+  z-index: 2;
   background-color: #e7f0f7;
   height: 30px;
   padding: 3px;
