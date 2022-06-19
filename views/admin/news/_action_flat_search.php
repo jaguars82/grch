@@ -36,6 +36,33 @@ use yii\widgets\ActiveForm;
                 'data-placeholder' => 'Жилой комплекс',
             ])->label(false) ?>
         </div>
+
+        <!-- newbuilding -->
+        <div class="col-md-6" >
+            <?= $form->field($model, 'newbuilding', [
+                'options' => [
+                    'class' => 'form-group inline-select'
+                ]
+            ])->dropDownList($newbuildings, [
+                'multiple' => true,
+                'id' => 'newbuildings-select2',
+                'data-placeholder' => 'Позиция',
+            ])->label(false) ?>
+        </div>
+
+        <!-- entrance -->
+        <div class="col-md-6" >
+            <?= $form->field($model, 'entrance', [
+                'options' => [
+                    'class' => 'form-group inline-select'
+                ]
+            ])->dropDownList($entrances, [
+                'multiple' => true,
+                'id' => 'entrance-select2',
+                'data-placeholder' => 'Подъезд',
+            ])->label(false) ?>
+        </div>
+
     </div>
 
     <h3>Информация о квартирах</h3>

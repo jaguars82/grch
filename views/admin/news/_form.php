@@ -43,6 +43,8 @@ NewsFormAsset::register($this);
                     'districts' => $districts,
                     'developers' => $developersSearch,
                     'newbuildingComplexes' => $newbuildingComplexes,
+                    'newbuildings' => $newbuildings,
+                    'entrances' => $entrances,
                     'positionArray' => $positionArray,
                     'materials' => $materials,
                     'form' => $form,

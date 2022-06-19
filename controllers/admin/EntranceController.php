@@ -98,7 +98,6 @@ class EntranceController extends \yii\web\Controller
             try {
                 $model->edit($form->attributes);
             } catch (\Exception $e) {
-                // echo '<pre>'; var_dump($e); echo '</pre>'; die();
                 return $this->redirectBackWhenException($e);
             }
             
@@ -134,7 +133,8 @@ class EntranceController extends \yii\web\Controller
         }
 
         return $this->redirectWithSuccess(['index', 'newbuildingId' => $newbuildingId], 'Подъезд удален');
-    }    
+    }
+
 
     /**
      * Finds the Newbuilding model based on its primary key value.

@@ -1,26 +1,4 @@
 $(function () {        
-    $('#developer-select > option').click(function(e) {
-        console.log(e);
-
-        fillNewbuildingComplexes(e.target.value);
-    });
-    
-    selectedDeveloper = $('#developer-select > option[selected]');
-    console.log(selectedDeveloper);
-    
-    if (selectedDeveloper.length) {
-        newbuildingComplexes = String(selectedDeveloper.data('newbuilding-complexes')).split(",");
-        
-        fillNewbuildingComplexes(selectedDeveloper.val(), function() {
-            $('#newbuilding-complex-select1 > option').each(function (index, option) {
-                if (newbuildingComplexes.includes($(option).val())) {
-                    $(option).attr('selected', '');
-                }
-            });
-        });
-
-        fillFloorsForDeveloper(selectedDeveloper.val());
-    }    
     
     function fillNewbuildingComplexes(developerId, afterDone = null) {
         $.ajaxSetup({
@@ -46,6 +24,7 @@ $(function () {
         });
     }
 
+    /*
     function fillFloorsForDeveloper(developerId) {
         $.ajaxSetup({
             beforeSend: function(xhr, settings) {
@@ -54,22 +33,23 @@ $(function () {
         });
 
         $.post( "/newbuilding-complex/get-floors-for-developer?id=" + developerId, function(answear) {
-            /*let newbuildingComplexSelect = $('#newbuilding-complex-select1');
-            newbuildingComplexSelect.find('option').remove();*/
+            // let newbuildingComplexSelect = $('#newbuilding-complex-select1');
+            // newbuildingComplexSelect.find('option').remove(); 
             answer.forEach(function (currentValue, index, array) {
                 // newbuildingComplexSelect.append(new Option(currentValue['name'], currentValue['id']));
                 console.log(answear);
             });
             
-            /*if (afterDone != null) {
-                afterDone();
-            }*/
+            //if (afterDone != null) {
+                //afterDone();
+            //}
         })
         .fail(function(answer) {
             alert = $('.alert-template').clone().removeClass('alert-template').addClass('alert-danger');
             processAlert(alert, 'Произошла ошибка. Обратитесь в службу поддержки');
         });
     }
+    */
     
     function updateActionDataVisibility()
     {
@@ -81,10 +61,6 @@ $(function () {
             $('.action-is-enabled').prop('checked', false);
         }
     }
-    
-    $('#newsform-category').change(function () {
-        updateActionDataVisibility()
-    });
        
     //updateActionDataVisibility()
     function searchFlats(e) {
@@ -106,18 +82,6 @@ $(function () {
             }
         });
     }
-
-    $('.js-search-flats').click(searchFlats);
-
-    $('.action-flat-search-show').click(function(e) {
-        e.preventDefault();
-
-        $('.action-flat-search-form').toggle();
-    });
-
-    $('.action-flat-search-form #developer-select').on('change', function() {
-        fillNewbuildingComplexesActions($(this).val());
-    });
 
     function fillNewbuildingComplexesActions(developerId, afterDone = null) {
         $.ajaxSetup({
@@ -143,7 +107,104 @@ $(function () {
             });
     }
 
+
+    function fillNewbuildingsActions(newbuidingComplexId) {
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRF-Token", $('meta[name="csrf-token"]').attr('content'));
+            }
+        });
+
+        $.post("/newbuilding/get-for-newbuilding-complex?id=" + newbuidingComplexId, function(answear) {
+            answear.forEach(function (currentValue, index, array) {
+                $('#newbuildings-select2').append(new Option(currentValue['name'], currentValue['id']));
+            });
+        });
+    }
+
+    function fillEntrancesActions(MewbuildingId) {
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRF-Token", $('meta[name="csrf-token"]').attr('content'));
+            }
+        });
+
+        $.post("/entrance/get-for-newbuilding?id=" + MewbuildingId, function(answear) {
+            // console.log(answear);
+            answear.forEach(function (currentValue, index, array) {
+                $('#entrance-select2').append(new Option(currentValue['name'], currentValue['id']));
+            });
+        });
+    }
+
+    /*
+    $('#developer-select > option').click(function(e) {
+        console.log(e);
+
+        fillNewbuildingComplexes(e.target.value);
+    });
+    */
+    
+    selectedDeveloper = $('#developer-select > option[selected]');
+    console.log(selectedDeveloper);
+    
+    if (selectedDeveloper.length) {
+        newbuildingComplexes = String(selectedDeveloper.data('newbuilding-complexes')).split(",");
+        
+        fillNewbuildingComplexes(selectedDeveloper.val(), function() {
+            $('#newbuilding-complex-select1 > option').each(function (index, option) {
+                if (newbuildingComplexes.includes($(option).val())) {
+                    $(option).attr('selected', '');
+                }
+            });
+        });
+
+        // fillFloorsForDeveloper(selectedDeveloper.val());
+    }
+
+
+    $('#newsform-category').change(function () {
+        updateActionDataVisibility()
+    });
+
+    $('.js-search-flats').click(searchFlats);
+
+    $('.action-flat-search-show').click(function(e) {
+        e.preventDefault();
+
+        $('.action-flat-search-form').toggle();
+    });
+
+    $('.action-flat-search-form #developer-select').on('change', function() {
+        $('#newbuildings-select2').find('option').remove();
+        $('#entrance-select2').find('option').remove();
+        fillNewbuildingComplexesActions($(this).val());
+    });
+
     if ($('.action-flat-search-form #developer-select').val()) {
         fillNewbuildingComplexesActions($('.action-flat-search-form #developer-select').val());
+    }
+
+    $('.action-flat-search-form #newbuilding-complex-select2').on('change', function() {
+        $('#newbuildings-select2').find('option').remove();
+        $('#entrance-select2').find('option').remove();
+        $(this).val().forEach(function(newbuldingComplexId) {
+            fillNewbuildingsActions(newbuldingComplexId);
+        });
+    });
+
+    if ($('.action-flat-search-form #newbuilding-complex-select2').val()) {
+        fillNewbuildingsActions($('.action-flat-search-form #newbuilding-complex-select2').val());
+    }
+
+    $('.action-flat-search-form #newbuildings-select2').on('change', function() {
+        $('#entrance-select2').find('option').remove();
+        $(this).val().forEach(function(newbuldingId) {
+            fillEntrancesActions(newbuldingId);
+        });
+    });
+
+    if ($('.action-flat-search-form #newbuildings-select2').val()) {
+        fillEntrancesActions($('.action-flat-search-form #newbuildings-select2').val());
     }
 });

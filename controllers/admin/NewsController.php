@@ -165,6 +165,8 @@ class NewsController extends Controller
             'developersSearch' => Developer::getAllAsList(),
             'districts' => NewbuildingComplex::getAllDistrictsAsList(),
             'newbuildingComplexes' => $searchModel->newbuildingComplexes,
+            'newbuildings' => $searchModel->newbuildings,
+            'entrances' => $searchModel->entrances,
             'positionArray' => $searchModel->positionArray,
             'materials' => Newbuilding::getAllMaterialsAsList(),
         ]);
@@ -226,6 +228,8 @@ class NewsController extends Controller
             'developersSearch' => Developer::getAllAsList(),
             'districts' => NewbuildingComplex::getAllDistrictsAsList(),
             'newbuildingComplexes' => $searchModel->newbuildingComplexes,
+            'newbuildings' => $searchModel->newbuildings,
+            'entrances' => $searchModel->entrances,
             'positionArray' => $searchModel->positionArray,
             'materials' => Newbuilding::getAllMaterialsAsList(),
         ]);

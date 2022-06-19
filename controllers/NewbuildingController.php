@@ -92,7 +92,7 @@ class NewbuildingController extends Controller
     /**
      * Getting newbuildings for given newbuilding complex.
      * 
-     * @param integer $id Developer's ID
+     * @param integer $id mewbuilding complex'es ID
      * @return mixed
      */
     public function actionGetForNewbuildingComplex($id)

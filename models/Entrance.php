@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use app\components\traits\FillAttributes;
+use app\models\query\EntranceQuery;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 
@@ -101,6 +102,16 @@ class Entrance extends ActiveRecord
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     * 
+     * @return EntranceQuery the active query used by this AR class.
+     */
+    public static function find()
+    {
+        return new EntranceQuery(get_called_class());
     }
 
     /**
