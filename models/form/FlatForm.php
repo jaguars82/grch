@@ -36,6 +36,7 @@ class FlatForm extends Model
     public $unit_price_credit;
     public $price_credit;
     public $discount = 0;
+    public $discount_type = 0;
     public $status = Flat::STATUS_SALE;
     public $azimuth;
     public $actions = [];
@@ -53,7 +54,7 @@ class FlatForm extends Model
         $commonFields = [
             'entrance_id', 'number', 'detail', 'notification', 'area', 'rooms', 'floor', 'section', 'discountAsPercent',
             'unit_price_cash', 'price_cash', 'unit_price_credit', 'price_credit', 'status', 'azimuth', 
-            'actions', 'images', 'discount', 'floor_position', 'is_layout_reset', 'layout_type'
+            'actions', 'images', 'discount', 'discount_type', 'discount_amount', 'discount_price', 'floor_position', 'is_layout_reset', 'layout_type'
         ];
         
         return [
@@ -69,9 +70,9 @@ class FlatForm extends Model
     {
         return [
             [['newbuilding_id', 'number', 'section', 'floor', 'area', 'rooms', 'floor', 'status'], 'required'],
-            [['newbuilding_id', 'number', 'rooms', 'floor', 'azimuth', 'section', 'status', 'floor_position'], 'integer'],
+            [['newbuilding_id', 'number', 'rooms', 'floor', 'azimuth', 'section', 'status', 'floor_position', 'discount_type'], 'integer'],
             [['detail', 'notification'], 'string'],
-            [['area', 'discount', 'unit_price_cash', 'price_cash', 'unit_price_credit', 'price_credit', 'discountAsPercent'], 'double'],
+            [['area', 'discount', 'discount_amount', 'discount_price', 'unit_price_cash', 'price_cash', 'unit_price_credit', 'price_credit', 'discountAsPercent'], 'double'],
             [['actions', 'savedActions', 'images', 'savedImages'], 'safe'],
             [['newbuilding_id'], 'exist', 'skipOnError' => true, 'targetClass' => \app\models\Newbuilding::className(), 'targetAttribute' => ['newbuilding_id' => 'id']],
             [['layout'], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg, gif, jpeg, svg'],

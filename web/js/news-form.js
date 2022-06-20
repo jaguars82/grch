@@ -112,14 +112,16 @@ $(function () {
 
     function switchField (activeFieldId, fields) {
         $(`#${activeFieldId}`).change(function(){
-            fields.forEach(function(fieldId){
-                if (fieldId !== activeFieldId) {
+            fields.forEach(function(fieldId, index){
+                if (fieldId === activeFieldId) {
+                    $('#discount_type').val(index);
+                } else {
                     $(`#${fieldId}`).val('');
                 }
             });
         });
     }
-    
+
 
     /** switch discount fields */
     const discountFields = ['discount_percent', 'discount_amount', 'discount_price'];
