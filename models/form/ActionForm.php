@@ -17,7 +17,10 @@ class ActionForm extends Model
     public $is_enabled = false;
     public $resume;
     public $expired_at;
+    public $discount_type;
     public $discount;
+    public $discount_amount;
+    public $discount_price;
     
     /**
      * {@inheritdoc}
@@ -35,7 +38,8 @@ class ActionForm extends Model
             ],
             [['resume'], 'string', 'max' => 200],
             [['expired_at'], 'string'],
-            [['discount'], 'integer'],
+            [['discount', 'discount_type'], 'integer'],
+            [['discount_amount', 'discount_price'], 'double'],
         ];
     }
     
@@ -47,7 +51,10 @@ class ActionForm extends Model
         return [
             'resume' => 'Суть акции',
             'expired_at' => 'Дата окончания',
-            'discount' => 'Размер скидки',
+            'discount' => 'Скидка в процентах',
+            'discount_amount' => 'Скидка в рублях',
+            'discount_price' => 'Цена со скидкой',
+
         ];
     }
     

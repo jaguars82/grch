@@ -24,33 +24,6 @@ $(function () {
         });
     }
 
-    /*
-    function fillFloorsForDeveloper(developerId) {
-        $.ajaxSetup({
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRF-Token", $('meta[name="csrf-token"]').attr('content'));
-            }
-        });
-
-        $.post( "/newbuilding-complex/get-floors-for-developer?id=" + developerId, function(answear) {
-            // let newbuildingComplexSelect = $('#newbuilding-complex-select1');
-            // newbuildingComplexSelect.find('option').remove(); 
-            answer.forEach(function (currentValue, index, array) {
-                // newbuildingComplexSelect.append(new Option(currentValue['name'], currentValue['id']));
-                console.log(answear);
-            });
-            
-            //if (afterDone != null) {
-                //afterDone();
-            //}
-        })
-        .fail(function(answer) {
-            alert = $('.alert-template').clone().removeClass('alert-template').addClass('alert-danger');
-            processAlert(alert, 'Произошла ошибка. Обратитесь в службу поддержки');
-        });
-    }
-    */
-    
     function updateActionDataVisibility()
     {
         if($('#newsform-category option:selected').val() == 1) {
@@ -137,14 +110,24 @@ $(function () {
         });
     }
 
-    /*
-    $('#developer-select > option').click(function(e) {
-        console.log(e);
-
-        fillNewbuildingComplexes(e.target.value);
-    });
-    */
+    function switchField (activeFieldId, fields) {
+        $(`#${activeFieldId}`).change(function(){
+            fields.forEach(function(fieldId){
+                if (fieldId !== activeFieldId) {
+                    $(`#${fieldId}`).val('');
+                }
+            });
+        });
+    }
     
+
+    /** switch discount fields */
+    const discountFields = ['discount_percent', 'discount_amount', 'discount_price'];
+    discountFields.forEach(function(field){
+        switchField(field, discountFields);
+    });
+
+
     selectedDeveloper = $('#developer-select > option[selected]');
     console.log(selectedDeveloper);
     
