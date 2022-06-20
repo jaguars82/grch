@@ -69,8 +69,8 @@ NewbuildingComplexViewAsset::register($this);
                     <p class="range">
                         <?= $this->render('/common/_price', [
                             'condition' => count($model->flats),
-                            'firstPrice' => floor($model->minFlatPrice),
-                            'secondPrice' => floor($model->maxFlatPrice),
+                            'firstPrice' => round($model->minFlatPrice),
+                            'secondPrice' => round($model->maxFlatPrice),
                             'message' => 'данные отсутсвуют'
                         ]) ?>
                     </p>
@@ -233,8 +233,8 @@ NewbuildingComplexViewAsset::register($this);
                     <p class="range">
                         <?= $this->render('/common/_price', [
                             'condition' => count($model->flats),
-                            'firstPrice' => floor($model->minFlatPrice),
-                            'secondPrice' => floor($model->maxFlatPrice),
+                            'firstPrice' => round($model->minFlatPrice),
+                            'secondPrice' => round($model->maxFlatPrice),
                             'message' => 'данные отсутсвуют'
                         ]) ?>
                     </p>

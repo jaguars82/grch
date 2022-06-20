@@ -21,7 +21,15 @@ $format = \Yii::$app->formatter;
             <p class="price">
                 <?php if($flatItem->hasDiscount()): ?>
                 <?= $format->asCurrency($flatItem->cashPriceWithDiscount); ?>
-                <span class="chess-discount-badge"><?= $format->asPercent($flatItem->discount) ?> </span>  
+                <span class="chess-discount-badge">
+                    <?php if ($flatItem->discount_type == 1): ?>
+                        -<?= $format->asCurrency($flatItem->discount_amount) ?>
+                    <?php elseif ($flatItem->discount_type == 2): ?>
+                        акция
+                    <?php else: ?>
+                        -<?= $format->asPercent($flatItem->discount) ?>
+                    <?php endif; ?>
+                </span>  
                 <?php else: ?>
                 <?= $format->asCurrency($flatItem->price_cash); ?>
                 <?php endif; ?>
