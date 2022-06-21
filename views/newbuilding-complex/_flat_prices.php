@@ -17,7 +17,7 @@ $format = Yii::$app->formatter;
             ]); ?>" class="link-list--item">
     <span>1- комнатные</span>
     <b>
-        <?= $format->asCurrencyRange($model->getMinFlatPriceForRooms(1), $model->getMaxFlatPriceForRooms(1), 'руб.'); ?>
+        <?= $format->asCurrencyRange(round($model->getMinFlatPriceForRooms(1)), round($model->getMaxFlatPriceForRooms(1)), 'руб.'); ?>
     </b>
 </a>
 <?php endif; ?>
@@ -32,7 +32,7 @@ $format = Yii::$app->formatter;
             ]); ?>" class="link-list--item">
     <span>2- комнатные</span>
     <b>
-        <?= $format->asCurrencyRange($model->getMinFlatPriceForRooms(2), $model->getMaxFlatPriceForRooms(2), 'руб.'); ?>
+        <?= $format->asCurrencyRange(round($model->getMinFlatPriceForRooms(2)), round($model->getMaxFlatPriceForRooms(2)), 'руб.'); ?>
     </b>
 </a>
 <?php endif; ?>
@@ -47,7 +47,7 @@ $format = Yii::$app->formatter;
             ]); ?>" class="link-list--item">
     <span>3- комнатные</span>
     <b>
-        <?= $format->asCurrencyRange($model->getMinFlatPriceForRooms(3), $model->getMaxFlatPriceForRooms(3), 'руб.'); ?>
+        <?= $format->asCurrencyRange(round($model->getMinFlatPriceForRooms(3)), round($model->getMaxFlatPriceForRooms(3)), 'руб.'); ?>
     </b>
 </a>
 <?php endif; ?>
@@ -61,7 +61,7 @@ $format = Yii::$app->formatter;
             ]); ?>" class="link-list--item">
     <span>Студии</span>
     <b>
-        <?= $format->asCurrencyRange($model->minStudioFlatPrice, $model->maxStudioFlatPrice, 'руб.'); ?>
+        <?= $format->asCurrencyRange(round($model->minStudioFlatPrice), round($model->maxStudioFlatPrice), 'руб.'); ?>
     </b>
 </a>
 <?php endif; ?>

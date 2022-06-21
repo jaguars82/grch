@@ -55,9 +55,11 @@ class News extends \app\models\News
                 $actionDataObject->fill($actionData);
     
                 if ($actionFlatData != null) {
-                    $actionFlatData->setDiscount($actionDataObject->discount, $news);
+                    
+                    $discount = self::setDiscountField($actionData);
+                    $actionFlatData->setDiscount($discount, $news, false, $actionData['discount_type']);
+                    // $actionFlatData->setDiscount($discount, $news, false, $actionData->discount_type);
                 }
-                
                 $news->link('actionData', $actionDataObject);
             }
 
@@ -130,14 +132,27 @@ class News extends \app\models\News
                     $actionDataObject = new ActionData();
                     $actionDataObject->fill($actionData);
                     if ($actionFlatData != null) {
-                        $actionFlatData->setDiscount($actionDataObject->discount, $this, true);
+                        $discount = self::setDiscountField($actionData);
+                        $actionFlatData->setDiscount($discount, $this, true, $actionData['discount_type']);
+                        //$actionFlatData->setDiscount($discount, $this, true, $actionData->discount_type);
                     }
                     $this->link('actionData', $actionDataObject);
                 } else {
                     $actionData['flat_filter'] = json_encode($actionFlatData->flatFilter);
                     $this->actionData->fill($actionData);
                     if ($actionFlatData != null) {
-                        $actionFlatData->setDiscount($actionData['discount'], $this, true);
+                        switch($actionData['discount_type']) {
+                            case 0:
+                                break;
+                                $discount = $actionData['discount'];
+                            case 1:
+                                $discount = $actionData['discount_amount'];
+                                break;
+                            case 2:
+                                $discount = $actionData['discount_price'];
+                                break;
+                        }
+                        $actionFlatData->setDiscount($discount, $this, true, $actionFlatData['discount_type']);
                     } 
                     $this->actionData->save();
                 }
@@ -166,5 +181,21 @@ class News extends \app\models\News
         $newbuildingComplexesArray = is_array($newbuildingComplexes) ? $newbuildingComplexes : [$newbuildingComplexes];
         $result = NewbuildingComplex::find()->where(['in', 'id', $newbuildingComplexesArray])->groupBy('developer_id')->all();
         return count($result) <= 1;
+    }
+
+    private static function setDiscountField($data)
+    {
+        switch ($data['discount_type']) {
+            case 0:
+                $discount = $data['discount'];
+                break;
+            case 1:
+                $discount = $data['discount_amount'];
+                break;
+            case 2:
+                $discount = $data['discount_price'];
+                break;
+        }
+        return $discount;
     }
 }

@@ -33,6 +33,7 @@ NewsFormAsset::register($this);
                 <div class="row">
                     <div class="col-md-12">
                         <h4 style="font-weight: 400;">Размер скидки</h4>
+                        <?= $form->field($action, 'discount_type')->hiddenInput(['id' => 'discount_type'])->label(false) ?>
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($action, 'discount')->textInput(['id' => 'discount_percent', 'maxlength' => true, 'placeholder' => 'В процентах'])->label(false) ?>

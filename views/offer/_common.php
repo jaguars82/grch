@@ -207,7 +207,13 @@ $this->registerCssFile('/css/offer-print.css', ['media' => 'print']);
 
                 <?php if($flat->hasDiscount()): ?>
                 <div class="btn btn-red">
-                    Действует скидка - <?= $format->asPercent($flat->discount) ?>
+                    <?php if ($flat->discount_type == 1): ?>
+                        Действует скидка - <?= $format->asCurrency($flat->discount_amount) ?>
+                    <?php elseif ($flat->discount_type == 2): ?>
+                        Цена по акции
+                    <?php else: ?>
+                        Действует скидка - <?= $format->asPercent($flat->discount) ?>
+                    <?php endif; ?>
                 </div>
                 <?php endif; ?>
             </div>

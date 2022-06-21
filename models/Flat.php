@@ -286,7 +286,17 @@ class Flat extends ActiveRecord
      */
     public function getCashPriceWithDiscount()
     {
-        return $this->price_cash * (1 - $this->discount);
+        switch ($this->discount_type) {
+            case 0:
+                return $this->price_cash * (1 - $this->discount);
+                break;
+            case 1:
+                return $this->price_cash - $this->discount_amount;
+                break;
+            case 2:
+                return $this->discount_price;
+                break;
+        }
     }
 
     /**
