@@ -39,6 +39,7 @@ use \app\models\City;
  * @property Flat[] $flats
  * @property FloorLayout[] $floorLayouts
  * @property NewbuildingComplex $newbuildingComplex
+ * @property Entrance $Entrance
  * @property News[] $news
  */
 class Newbuilding extends ActiveRecord
@@ -133,7 +134,17 @@ class Newbuilding extends ActiveRecord
     {
         return new NewbuildingQuery(get_called_class());
     }
-    
+
+    /**
+     * Gets query for [[Entrance]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEntrances()
+    {
+        return $this->hasMany(Entrance::className(), ['newbuilding_id' => 'id'])
+                ->inverseOf('newbuilding');
+    }    
     /**
      * Get maximum flat rooms count on given section 
      * 

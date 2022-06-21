@@ -166,9 +166,9 @@ $(function () {
         fillNewbuildingComplexesActions($(this).val());
     });
 
-    if ($('.action-flat-search-form #developer-select').val()) {
+    /*if ($('.action-flat-search-form #developer-select').val()) {
         fillNewbuildingComplexesActions($('.action-flat-search-form #developer-select').val());
-    }
+    }*/
 
     $('.action-flat-search-form #newbuilding-complex-select2').on('change', function() {
         $('#newbuildings-select2').find('option').remove();
@@ -178,9 +178,9 @@ $(function () {
         });
     });
 
-    if ($('.action-flat-search-form #newbuilding-complex-select2').val()) {
+    /*if ($('.action-flat-search-form #newbuilding-complex-select2').val()) {
         fillNewbuildingsActions($('.action-flat-search-form #newbuilding-complex-select2').val());
-    }
+    }*/
 
     $('.action-flat-search-form #newbuildings-select2').on('change', function() {
         $('#entrance-select2').find('option').remove();
@@ -189,7 +189,7 @@ $(function () {
         });
     });
 
-    if ($('.action-flat-search-form #newbuildings-select2').val()) {
+    /*if ($('.action-flat-search-form #newbuildings-select2').val()) {
         fillEntrancesActions($('.action-flat-search-form #newbuildings-select2').val());
-    }
+    }*/
 });

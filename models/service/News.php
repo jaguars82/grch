@@ -140,6 +140,7 @@ class News extends \app\models\News
                 } else {
                     $actionData['flat_filter'] = json_encode($actionFlatData->flatFilter);
                     $this->actionData->fill($actionData);
+                    
                     if ($actionFlatData != null) {
                         switch($actionData['discount_type']) {
                             case 0:
@@ -152,7 +153,7 @@ class News extends \app\models\News
                                 $discount = $actionData['discount_price'];
                                 break;
                         }
-                        $actionFlatData->setDiscount($discount, $this, true, $actionFlatData['discount_type']);
+                        $actionFlatData->setDiscount($discount, $this, true, $actionData['discount_type']);
                     } 
                     $this->actionData->save();
                 }

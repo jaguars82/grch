@@ -113,9 +113,9 @@ class ActionFlatSearch extends Flat
 
         //$query->limit(5);
 
-        if ($haveDiscount) {
+        /*if ($haveDiscount) {
             return $this->getResultWhenHaveDiscount();
-        }
+        }*/
 
         return [$this->getResult($query), self::SUCCESS];
     }

@@ -4,6 +4,7 @@ namespace app\controllers\admin;
 
 use app\components\traits\CustomRedirects;
 use app\models\Developer;
+use app\models\Entrance;
 use app\models\Newbuilding;
 use app\models\NewbuildingComplex;
 use app\models\NewsFile;
@@ -200,6 +201,42 @@ class NewsController extends Controller
             $searchData = (array)json_decode($news->actionData->flat_filter);
             $loadData['ActionFlatSearch'] = $searchData;
             $searchModel->load($loadData);
+
+            $newbuildingComplexes = [];
+            if (isset($searchModel->developer) && !empty($searchModel->developer)) {
+                $developer = (new Developer())->findOne($searchModel->developer);
+                // echo '<pre>'; var_dump($developer); echo '</pre>'; die();
+                $complexes = $developer->newbuildingComplexes;
+                foreach ($complexes as $complex) {
+                    // $newbuildingComplexes[] = ['id' => $complex->id, 'name' => $complex->name];
+                    $newbuildingComplexes[$complex->id] = $complex->name;
+                }
+            }
+
+            $newbuildings = [];
+            if (isset($searchModel->newbuilding_complex) && !empty($searchModel->newbuilding_complex)) {
+                foreach ($searchModel->newbuilding_complex as $key => $newbuildingComplexId) {
+                    $complex = (new NewbuildingComplex())->findOne($newbuildingComplexId);
+                    $buildings = $complex->newbuildings;
+                    foreach ($buildings as $building) {
+                        // $newbuildings[] = ['id' => $building->id, 'name' => $building->name];
+                        $newbuildings[$building->id] = $building->name;
+                    }
+                }
+            }
+
+            $entrances = [];
+            if (isset($searchModel->newbuilding) && !empty($searchModel->newbuilding)) {
+                foreach ($searchModel->newbuilding as $key => $newbuildingId) {
+                    $building = (new Newbuilding())->findOne($newbuildingId);
+                    $sections = $building->entrances;
+                    foreach ($sections as $entrance) {
+                        // $entrances[] = ['id' => $entrance->id, 'name' => $entrance->name. ', ('.$building->name.')'];
+                        $entrances[$entrance->id] = $entrance->name. ', ('.$building->name.')';
+                    }
+                }
+            }
+            // echo '<pre>'; var_dump($entrances); echo '</pre>'; die();
         }
 
         if (\Yii::$app->request->isPost &&
@@ -212,9 +249,10 @@ class NewsController extends Controller
                 return $this->redirectWithError(['index'], 'Произошла ошибка. Обратитесь в службу поддержки');
             }
             try {
+                echo '<pre>'; var_dump($actionForm->attributes); echo '<pre>'; die();
                 $news->edit($newsForm->attributes, $actionForm->attributes, $searchModel);
             } catch (\Exception $e) {
-                // echo '<pre>'; var_dump($e); echo '<pre>'; die();
+                echo '<pre>'; var_dump($e); echo '<pre>'; die();
                 return $this->redirectBackWhenException($e);
             }
 
@@ -229,9 +267,12 @@ class NewsController extends Controller
             'developers' => Developer::find()->whereNewbuildingComplexesExist()->all(),
             'developersSearch' => Developer::getAllAsList(),
             'districts' => NewbuildingComplex::getAllDistrictsAsList(),
-            'newbuildingComplexes' => $searchModel->newbuildingComplexes,
-            'newbuildings' => $searchModel->newbuildings,
-            'entrances' => $searchModel->entrances,
+            // 'newbuildingComplexes' => $searchModel->newbuildingComplexes,
+            'newbuildingComplexes' => $newbuildingComplexes,
+            // 'newbuildings' => $searchModel->newbuildings,
+            'newbuildings' => $newbuildings,
+            // 'entrances' => $searchModel->entrances,
+            'entrances' => $entrances,
             'positionArray' => $searchModel->positionArray,
             'materials' => Newbuilding::getAllMaterialsAsList(),
         ]);
