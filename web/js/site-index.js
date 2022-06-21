@@ -44,4 +44,11 @@ $(function () {
     });
 
     $('.hover-accent .hover-accent').removeClass('hover-accent');
+
+
+    $("#news-slider").kendoScrollView({
+        contentHeight: "100%"
+    });
+
+
 });

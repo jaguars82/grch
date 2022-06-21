@@ -13,17 +13,46 @@ $format = \Yii::$app->formatter;
 SiteIndexAsset::register($this);
 ?>
 
-<?= $this->render('/common/_simple-search', [
-    'model' => $searchModel,
-    'districts' => $districts,
-    'developers' => $developers,
-    'newbuildingComplexes' => $newbuildingComplexes,
-])?>
+<section class="media-bckgr search-index">
+    <?= $this->render('/common/_simple-search', [
+        'model' => $searchModel,
+        'districts' => $districts,
+        'developers' => $developers,
+        'newbuildingComplexes' => $newbuildingComplexes,
+    ])?>
+
+    <div class="white-block" style="width: 70%;">
+        <?php /* echo '<pre>'; var_dump($newsList); echo '</pre>'; */ ?>
+        <div id="news-slider" style="height: 230px;">
+            <?php foreach ($newsList as $newsItem): ?>
+            <div data-role="page">
+                <div style="display: flex;">
+                    <!--<?php if(isset($newsItem->image) && !empty($newsItem->image)): ?>
+                        <div style="width: 200px;">
+                            <img src="/uploads/<?= $newsItem->image ?>" style="width: 100%;">
+                        </div>
+                    <?php endif; ?>-->
+                    <div>
+                        <h3 style="white-space: normal;">
+                            <?= $newsItem->title ?>
+                        </h3>
+                        <div style="white-space: normal; height: 120px; max-height: 120px; overflow: hidden;">
+                            <?= $newsItem->detail ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+
+</section>
 
 <section class="usefull-links container">
-    <p class="h2">
+    <!--<p class="h2">
         Полезные ссылки
-    </p>
+    </p>-->
     <div class="row flex-row">
         <div class="col-lg-6 col-xs-12">
             <div class="row flex-row"> 
