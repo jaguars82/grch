@@ -31,24 +31,55 @@ use yii\widgets\ActiveForm;
                     'class' => 'form-group inline-select'
                 ]
             ])->dropDownList($newbuildingComplexes, [
+                'multiple' => true,
                 'id' => 'newbuilding-complex-select2',
                 'data-placeholder' => 'Жилой комплекс',
             ])->label(false) ?>
         </div>
+
+        <!-- newbuilding -->
+        <div class="col-md-6" >
+            <?= $form->field($model, 'newbuilding', [
+                'options' => [
+                    'class' => 'form-group inline-select'
+                ]
+            ])->dropDownList($newbuildings, [
+                'multiple' => true,
+                'id' => 'newbuildings-select2',
+                'data-placeholder' => 'Позиция',
+            ])->label(false) ?>
+        </div>
+
+        <!-- entrance -->
+        <div class="col-md-6" >
+            <?= $form->field($model, 'entrance', [
+                'options' => [
+                    'class' => 'form-group inline-select'
+                ]
+            ])->dropDownList($entrances, [
+                'multiple' => true,
+                'id' => 'entrance-select2',
+                'data-placeholder' => 'Подъезд',
+            ])->label(false) ?>
+        </div>
+
     </div>
 
     <h3>Информация о квартирах</h3>
 
     <div class="row">
-        <div class="col-md-12" >
+        <div class="col-md-12">
+            <h4 style="font-weight: 400;">Стоимость</h4>
+        </div>
+        <div class="col-md-6" >
             <?= $form->field($model, 'priceFrom')->textInput([
                 'placeholder' => 'От',
                 'style' => 'display: inline;'
 
-            ]) ?>
+            ])->label(false) ?>
         </div>
 
-        <div class="col-md-12" >
+        <div class="col-md-6" >
             <?= $form->field($model, 'priceTo')->textInput([
                 'placeholder' => 'До',
                 'style' => 'display: inline;'
@@ -57,18 +88,43 @@ use yii\widgets\ActiveForm;
         </div>
 
 
-        <div class="col-md-12" >
+        <div class="col-md-12">
+            <h4 style="font-weight: 400;">Площадь</h4>
+        </div>
+        <div class="col-md-6" >
             <?= $form->field($model, 'areaFrom')->textInput([
                 'placeholder' => 'От',
-            ]) ?>
+            ])->label(false) ?>
         </div>
 
-        <div class="col-md-12" >
+        <div class="col-md-6" >
             <?= $form->field($model, 'areaTo')->textInput([
                 'placeholder' => 'До',
             ])->label(false) ?>
         </div>
+        
+        <!-- set of particular floors -->
+        <div class="col-md-6">
+            <?= $form->field($model, 'floorsSet')
+                ->dropDownList([1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5], [
+                    'multiple' => true,
+                    'class' => 'form-control',
+                    'size' => 6,
+                ]) ?>
+        </div>
 
+
+        <div class="col-md-6" >
+            <?= $form->field($model, 'rooms')
+                ->dropDownList([1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => '5+'], [
+                    'multiple' => true,
+                    'class' => 'form-control',
+                    'size' => 6,
+                ]) ?>
+        </div>
+
+
+        <!--
         <div class="col-md-12" >
             <?= $form->field($model, 'floorFrom')->textInput([
                 'placeholder' => 'От',
@@ -80,18 +136,7 @@ use yii\widgets\ActiveForm;
                 'placeholder' => 'До',
             ])->label(false) ?>
         </div>
-
-        <div class="col-md-12" >
-            <?= $form->field($model, 'rooms', [
-                'options' => [
-                    'class' => 'form-group inline-select'
-                ]
-            ])->dropDownList([1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => '5+'], [
-                'prompt' => '',
-                'data-placeholder' => 'Количество комнат'
-            ])->label(false) ?>
-        </div>
-
+        -->
 
 
         <div class="col-md-12">
@@ -105,7 +150,7 @@ use yii\widgets\ActiveForm;
             ])->label(false) ?>
         </div>
         
-        <div class="col-md-12" >
+        <div class="col-md-6" >
             <?= $form->field($model, 'deadline')->widget(DatePicker::class,[
                 'dateFormat' => 'dd.MM.yyyy',
                 'options' => [
@@ -114,7 +159,7 @@ use yii\widgets\ActiveForm;
             ]) ?>
         </div>
 
-        <div class="col-md-12" >
+        <div class="col-md-6" >
             <?= $form->field($model, 'update_date')->widget(DatePicker::class,[
                 'dateFormat' => 'dd.MM.yyyy',
                 'options' => [
@@ -122,6 +167,7 @@ use yii\widgets\ActiveForm;
                 ],
             ]) ?>
         </div>
+
     </div>
 
     

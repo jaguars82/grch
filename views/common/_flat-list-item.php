@@ -63,7 +63,13 @@ $format = \Yii::$app->formatter;
 
         <?php if($model->hasDiscount()): ?>
             <div class="btn btn-red">
-                Действует скидка - <?= $format->asPercent($model->discount) ?>
+                <?php if ($model->discount_type == 1): ?>
+                   Действует скидка - <?= $format->asCurrency($model->discount_amount) ?>
+                <?php elseif ($model->discount_type == 2): ?>
+                    Цена по акции
+                <?php else: ?>
+                    Действует скидка - <?= $format->asPercent($model->discount) ?>
+                <?php endif; ?>
             </div>
         <?php endif; ?>
 

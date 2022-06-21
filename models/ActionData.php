@@ -33,7 +33,8 @@ class ActionData extends \yii\db\ActiveRecord
     {
         return [
             [['news_id'], 'required'],
-            [['news_id', 'discount'], 'integer'],
+            [['news_id', 'discount', 'discount_type'], 'integer'],
+            [['discount_amount', 'discount_price'], 'double'],
             [['expired_at'], 'safe'],
             [['resume'], 'string', 'max' => 200],
             [['news_id'], 'exist', 'skipOnError' => true, 'targetClass' => News::className(), 'targetAttribute' => ['news_id' => 'id']],

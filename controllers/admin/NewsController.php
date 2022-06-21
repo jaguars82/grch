@@ -145,13 +145,15 @@ class NewsController extends Controller
             $haveFlats = \Yii::$app->request->post('have_flats'); 
             try {
                 if ($haveFlats) {
+                    // echo '<pre>'; var_dump($searchModel); echo '</pre>'; die();
                     $news = News::create($newsForm->attributes, $actionForm->attributes, $searchModel); 
                 }
                 else {
                     $news = News::create($newsForm->attributes, $actionForm->attributes); 
                 }
             } catch (\Exception $e) {
-               return $this->redirectBackWhenException($e);
+                // echo '<pre>'; var_dump($e); echo '</pre>'; die();
+                return $this->redirectBackWhenException($e);
             }
 
             return $this->redirectWithSuccess(['index'], 'Добавлена ' . ($news->isAction() ? 'акция' : 'новость'));
@@ -165,6 +167,8 @@ class NewsController extends Controller
             'developersSearch' => Developer::getAllAsList(),
             'districts' => NewbuildingComplex::getAllDistrictsAsList(),
             'newbuildingComplexes' => $searchModel->newbuildingComplexes,
+            'newbuildings' => $searchModel->newbuildings,
+            'entrances' => $searchModel->entrances,
             'positionArray' => $searchModel->positionArray,
             'materials' => Newbuilding::getAllMaterialsAsList(),
         ]);
@@ -210,7 +214,7 @@ class NewsController extends Controller
             try {
                 $news->edit($newsForm->attributes, $actionForm->attributes, $searchModel);
             } catch (\Exception $e) {
-                echo '<pre>'; var_dump($e); echo '<pre></pre>'; die();
+                // echo '<pre>'; var_dump($e); echo '<pre>'; die();
                 return $this->redirectBackWhenException($e);
             }
 
@@ -226,6 +230,8 @@ class NewsController extends Controller
             'developersSearch' => Developer::getAllAsList(),
             'districts' => NewbuildingComplex::getAllDistrictsAsList(),
             'newbuildingComplexes' => $searchModel->newbuildingComplexes,
+            'newbuildings' => $searchModel->newbuildings,
+            'entrances' => $searchModel->entrances,
             'positionArray' => $searchModel->positionArray,
             'materials' => Newbuilding::getAllMaterialsAsList(),
         ]);
@@ -247,7 +253,10 @@ class NewsController extends Controller
                 $flatsList = $model->assignedFlats;
 
                 foreach ($flatsList as $flat) {
+                    $flat->discount_type = 0;
                     $flat->discount = 0;
+                    $flat->discount_amount = NULL;
+                    $flat->discount_price = NULL;
                     $flat->save();
                     $flat->unlink('assignedNews', $model, true);
                 }

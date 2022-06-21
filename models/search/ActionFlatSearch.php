@@ -17,15 +17,18 @@ class ActionFlatSearch extends Flat
     const ERROR_COMMON = 20;
     const ERROR_HAVE_DISCOUNT = 21;
 
-    public $developer, $newbuilding_complex;
+    public $developer, $newbuilding_complex, $newbuilding, $entrance;
     public $newbuilding_array = NULL;
     public $priceFrom = NULL, $priceTo = NULL;
     public $areaFrom = NULL, $areaTo = NULL;
-    public $floorFrom = NULL, $floorTo = NULL, $totalFloor = NULL;
+    public $floorsSet = NULL, $floorFrom = NULL, $floorTo = NULL, $totalFloor = NULL;
     public $material = NULL, $newbuilding_status, $deadline, $update_date;
 
     public $newbuildingComplexes = [];
     public $positionArray = [];
+
+    public $newbuildings = [];
+    public $entrances = [];
 
     /**
      * {@inheritdoc}
@@ -33,10 +36,15 @@ class ActionFlatSearch extends Flat
     public function rules()
     {
         return [
-            [['floorFrom', 'floorTo', 'totalFloor', 'rooms', 'developer', 'newbuilding_complex'], 'integer'],
+            [['floorFrom', 'floorTo', 'totalFloor', 'developer'], 'integer'],
             [['priceFrom', 'priceTo', 'areaFrom', 'areaTo'], 'double'],
             [['material', 'deadline', 'update_date'], 'string'],
-            ['newbuilding_status', 'safe']
+            ['newbuilding_status', 'safe'],
+            ['floorsSet', 'each', 'rule' => ['integer']],
+            ['rooms', 'each', 'rule' => ['integer']],
+            ['newbuilding_complex', 'each', 'rule' => ['integer']],
+            ['newbuilding', 'each', 'rule' => ['integer']],
+            ['entrance', 'each', 'rule' => ['integer']]
         ];
     }
 
@@ -58,7 +66,9 @@ class ActionFlatSearch extends Flat
             'newbuilding_array' => 'Позиции',
             'priceFrom' => 'Стоимость',
             'areaFrom' => 'Площадь',
-            'floorFrom' => 'Этаж',
+            'rooms' => 'Количество комнат',
+            // 'floorFrom' => 'Этаж',
+            'floorsSet' => 'Этажи',
             'totalFloor' => 'Этажей не более',
             'newbuilding_status' => 'Сдан',
             'deadline' => 'Сдан',
@@ -83,8 +93,10 @@ class ActionFlatSearch extends Flat
                 'minCostWithDiscount' => new Expression('IF(price_credit is not null, LEAST(price_cash * (1 + discount), price_credit * (1 + discount)), price_cash * (1 + discount))'),
                 'maxCostWithDiscount' => new Expression('IF(price_credit is not null, GREATEST(price_cash * (1 + discount), price_credit * (1 + discount)), price_cash * (1 + discount))')
             ])
-            ->onlyActive()
+            //->onlyActive()
             ->joinWith(['developer d1', 'newbuildingComplex nc1'])
+            ->where(['nc1.active' => true]) // only in active newbuilding complexes
+            ->onlyActive()
             ->with(['flatImages']);
 
         if (!$this->fillAttributes($params) || !$this->validate()) {
@@ -117,12 +129,22 @@ class ActionFlatSearch extends Flat
     {
         $query->andFilterWhere(['>=', 'area', $this->areaFrom])
             ->andFilterWhere(['<=', 'area', $this->areaTo])
-            ->andFilterWhere(['>=', 'floor', $this->floorFrom])
-            ->andFilterWhere(['<=', 'floor', $this->floorTo]);
+            //->andFilterWhere(['>=', 'floor', $this->floorFrom])
+            //->andFilterWhere(['<=', 'floor', $this->floorTo]);
+            ->andFilterWhere(['floor' => $this->floorsSet]);
 
-        if (isset($this->rooms) && !empty($this->rooms)) {
+        /* if (isset($this->rooms) && !empty($this->rooms)) {
             if ($this->rooms == 5) {
                 $query->andWhere(['>=', 'rooms', $this->rooms]);
+            } else {
+                $query->andWhere(['rooms' => $this->rooms]);
+            }
+        } */
+
+        if (isset($this->rooms) && !empty($this->rooms)) {
+            if (in_array(5, $this->rooms)) {
+                $query->andWhere(['rooms' => $this->rooms])
+                    ->orWhere(['>', 'rooms', 5]);
             } else {
                 $query->andWhere(['rooms' => $this->rooms]);
             }
@@ -146,6 +168,7 @@ class ActionFlatSearch extends Flat
             $query->andWhere(['IN', 'newbuilding_id', $this->newbuilding_array]);
         }
 
+        $query->join('INNER JOIN', 'entrance as e1', 'e1.id = flat.entrance_id');
         $query->join('INNER JOIN', 'newbuilding as n1', 'n1.id = flat.newbuilding_id');
         $query->join('INNER JOIN', 'newbuilding_complex as nc2', 'nc2.id = n1.newbuilding_complex_id');
 
@@ -155,6 +178,14 @@ class ActionFlatSearch extends Flat
 
         if (isset($this->newbuilding_complex) && !empty($this->newbuilding_complex)) {
             $query->andWhere(['n1.newbuilding_complex_id' => $this->newbuilding_complex]);
+        }
+
+        if (isset($this->newbuilding) && !empty($this->newbuilding)) {
+            $query->andWhere(['n1.id' => $this->newbuilding]);
+        }
+
+        if (isset($this->entrance) && !empty($this->entrance)) {
+            $query->andWhere(['e1.id' => $this->entrance]);
         }
 
         if (isset($this->material) && !empty($this->material)) {
@@ -259,13 +290,16 @@ class ActionFlatSearch extends Flat
 
         if ((isset($params[$form]['developer']) && empty($params[$form]['developer']))
             && (isset($params[$form]['newbuilding_complex']) && empty($params[$form]['newbuilding_complex']))
+            && (isset($params[$form]['newbuilding']) && empty($params[$form]['newbuilding']))
+            && (isset($params[$form]['entrance']) && empty($params[$form]['entrance']))
             && (isset($params[$form]['rooms']) && empty($params[$form]['rooms']))
             && (isset($params[$form]['priceFrom']) && empty($params[$form]['priceFrom']))
             && (isset($params[$form]['priceTo']) && empty($params[$form]['priceTo']))
             && (isset($params[$form]['areaFrom']) && empty($params[$form]['areaFrom']))
             && (isset($params[$form]['areaTo']) && empty($params[$form]['areaTo']))
-            && (isset($params[$form]['floorFrom']) && empty($params[$form]['floorFrom']))
-            && (isset($params[$form]['floorTo']) && empty($params[$form]['floorTo']))
+            // && (isset($params[$form]['floorFrom']) && empty($params[$form]['floorFrom']))
+            // && (isset($params[$form]['floorTo']) && empty($params[$form]['floorTo']))
+            && (isset($params[$form]['floorsSet']) && empty($params[$form]['floorsSet']))
             && (isset($params[$form]['totalFloor']) && empty($params[$form]['totalFloor']))
             && (isset($params[$form]['material']) && empty($params[$form]['material']))
             && (isset($params[$form]['newbuilding_status']) && empty($params[$form]['newbuilding_status']))
@@ -281,6 +315,14 @@ class ActionFlatSearch extends Flat
 
         if (isset($params[$form]['newbuilding_complex'])) {
             $this->newbuilding_complex = $params[$form]['newbuilding_complex'];
+        }
+
+        if (isset($params[$form]['newbuilding'])) {
+            $this->newbuilding = $params[$form]['newbuilding'];
+        }
+
+        if (isset($params[$form]['entrance'])) {
+            $this->entrance = $params[$form]['entrance'];
         }
 
         if (isset($params[$form]['newbuilding_array'])
@@ -308,12 +350,16 @@ class ActionFlatSearch extends Flat
             $this->areaTo = $params[$form]['areaTo'];
         }
 
-        if (isset($params[$form]['floorFrom'])) {
+        /* if (isset($params[$form]['floorFrom'])) {
             $this->floorFrom = $params[$form]['floorFrom'];
-        }
+        } */
 
-        if (isset($params[$form]['floorTo'])) {
+        /* if (isset($params[$form]['floorTo'])) {
             $this->floorTo = $params[$form]['floorTo'];
+        } */
+
+        if (isset($params[$form]['floorsSet'])) {
+            $this->floorsSet = $params[$form]['floorsSet'];
         }
 
         if (isset($params[$form]['totalFloor'])) {
@@ -343,8 +389,9 @@ class ActionFlatSearch extends Flat
         $values = [
             'rooms' => $this->rooms,
             'totalFloor' => $this->totalFloor,
-            'floorFrom' => $this->floorFrom,
-            'floorTo' => $this->floorTo,
+            // 'floorFrom' => $this->floorFrom,
+            // 'floorTo' => $this->floorTo,
+            'floorsSet' => $this->floorsSet,
             'priceFrom' => $this->priceFrom,
             'priceTo' => $this->priceTo,
             'areaFrom' => $this->areaFrom,
@@ -354,6 +401,8 @@ class ActionFlatSearch extends Flat
             'update_date' => $this->update_date,
             'developer' => $this->developer,
             'newbuilding_complex' => $this->newbuilding_complex,
+            'newbuilding' => $this->newbuilding,
+            'entrance' => $this->entrance,
             'newbuilding_status' => $this->newbuilding_status,
             'newbuilding_array' => $this->newbuilding_array
         ];
@@ -377,14 +426,17 @@ class ActionFlatSearch extends Flat
         return false;
     }
 
-    public function setDiscount($discount, $news, $renewFlatsList = false)
+    public function setDiscount($discount, $news, $renewFlatsList = false, $discountType = 0)
     {
         // clear discount for the previous set of flats
         if ($renewFlatsList === true) {
             $previousFlatsList = $news->assignedFlats;
 
             foreach ($previousFlatsList as $flat) {
+                $flat->discount_type = 0;
                 $flat->discount = 0;
+                $flat->discount_amount = NULL;
+                $flat->discount_price = NULL;
                 $flat->save();
                 $flat->unlink('assignedNews', $news, true);
             }
@@ -398,8 +450,9 @@ class ActionFlatSearch extends Flat
                 'minCostWithDiscount' => new Expression('IF(price_credit is not null, LEAST(price_cash * (1 + discount), price_credit * (1 + discount)), price_cash * (1 + discount))'),
                 'maxCostWithDiscount' => new Expression('IF(price_credit is not null, GREATEST(price_cash * (1 + discount), price_credit * (1 + discount)), price_cash * (1 + discount))')
             ])
-            ->onlyActive()
             ->joinWith(['developer d1', 'newbuildingComplex nc1'])
+            ->where(['nc1.active' => true]) // only in active newbuilding complexes
+            ->onlyActive()
             ->with(['flatImages']);
 
         $query->andWhere(['>', 'price_cash', 0]);
@@ -408,9 +461,29 @@ class ActionFlatSearch extends Flat
 
 
         $flatList = $query->all();
-
-        $flatDiscount = $discount / 100;
+        
         foreach ($flatList as $flat) {
+
+            /** calculate discount in percent according to discount type */
+            switch ($discountType) {
+                case 0:
+                    // if we have discount in percent
+                    $flatDiscount = $discount / 100;
+                    break;
+                case 1:
+                    // if we have discount in cash
+                    $flat->discount_amount = $discount;
+                    $flatDiscount = $discount / $flat->price_cash;
+                    break;
+                    // if we have discount as a price
+                case 2:
+                    $flat->discount_price = $discount;
+                    $priceDelta = $flat->price_cash - $discount;
+                    $flatDiscount = $priceDelta / $flat->price_cash;
+                    break;
+            }
+
+            $flat->discount_type = $discountType;
             $flat->discount = $flatDiscount;
             $flat->save();
             

@@ -25,7 +25,10 @@ use app\components\flat\SvgDom;
  * @property float|null $unit_price
  * @property float|null $price
  * @property int $action_id
+ * @property int $discount_type
  * @property float $discount
+ * @property float|null $discount_amount
+ * @property float|null $discount_price
  * @property float $azimuth
  * @property string|null $notification
  * @property int $status
@@ -121,9 +124,9 @@ class Flat extends ActiveRecord
     {
         return [
             [['newbuilding_id', 'number', 'area', 'rooms', 'floor', 'rooms'], 'required'],
-            [['newbuilding_id', 'number', 'floor', 'status'], 'integer'],
+            [['newbuilding_id', 'number', 'floor', 'status', 'discount_type'], 'integer'],
             [['detail', 'notification', 'extra_data', 'floor_layout', 'layout_coords'], 'string'],
-            [['discount', 'unit_price_cash', 'price_cash', 'unit_price_credit', 'price_credit'], 'double'],
+            [['discount', 'unit_price_cash', 'price_cash', 'unit_price_credit', 'price_credit', 'discount_amount', 'discount_price'], 'double'],
             [['area', 'azimuth', 'section', 'floor_position'], 'number'],
             [['created_at', 'updated_at', 'entrance_id'], 'safe'],
             [['newbuilding_id'], 'exist', 'skipOnError' => true, 'targetClass' => Newbuilding::className(), 'targetAttribute' => ['newbuilding_id' => 'id']],
@@ -151,7 +154,9 @@ class Flat extends ActiveRecord
             'price_cash' => 'Цена(Нал.)',
             'unit_price_credit' => 'Цена(Ипотека) за кв.м.',
             'price_credit' => 'Цена(Ипотека)',
-            'discount' => 'Скидка',
+            'discount' => 'Скидка в процентах',
+            'discount_amount' => 'Скидка в рублях',
+            'discount_price' => 'Цена со скидкой',
             'azimuth' => 'Азимут',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
@@ -281,7 +286,17 @@ class Flat extends ActiveRecord
      */
     public function getCashPriceWithDiscount()
     {
-        return $this->price_cash * (1 - $this->discount);
+        switch ($this->discount_type) {
+            case 0:
+                return $this->price_cash * (1 - $this->discount);
+                break;
+            case 1:
+                return $this->price_cash - $this->discount_amount;
+                break;
+            case 2:
+                return $this->discount_price;
+                break;
+        }
     }
 
     /**

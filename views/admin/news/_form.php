@@ -29,7 +29,22 @@ NewsFormAsset::register($this);
                 </div>
 
                 <!--<?= $form->field($action, 'resume')->textInput(['maxlength' => true]) ?>-->
-                <?= $form->field($action, 'discount')->textInput(['maxlength' => true]) ?>
+                <!-- discount block -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4 style="font-weight: 400;">Размер скидки</h4>
+                        <?= $form->field($action, 'discount_type')->hiddenInput(['id' => 'discount_type'])->label(false) ?>
+                    </div>
+                    <div class="col-md-4">
+                        <?= $form->field($action, 'discount')->textInput(['id' => 'discount_percent', 'maxlength' => true, 'placeholder' => 'В процентах'])->label(false) ?>
+                    </div>
+                    <div class="col-md-4">
+                        <?= $form->field($action, 'discount_amount')->textInput(['id' => 'discount_amount', 'maxlength' => true, 'placeholder' => 'В рублях'])->label(false) ?>
+                    </div>
+                    <div class="col-md-4">
+                        <?= $form->field($action, 'discount_price')->textInput(['id' => 'discount_price', 'maxlength' => true, 'placeholder' => 'Цена со скидкой'])->label(false) ?>
+                    </div>
+                </div>
                 <?= $form->field($action, 'expired_at')->widget(DatePicker::class,[
                     'dateFormat' => 'dd.MM.yyyy',
                     'options' => ['class'=> 'form-control'],
@@ -43,6 +58,8 @@ NewsFormAsset::register($this);
                     'districts' => $districts,
                     'developers' => $developersSearch,
                     'newbuildingComplexes' => $newbuildingComplexes,
+                    'newbuildings' => $newbuildings,
+                    'entrances' => $entrances,
                     'positionArray' => $positionArray,
                     'materials' => $materials,
                     'form' => $form,
