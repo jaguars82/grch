@@ -45,10 +45,21 @@ $(function () {
 
     $('.hover-accent .hover-accent').removeClass('hover-accent');
 
-
+    
     $("#news-slider").kendoScrollView({
-        contentHeight: "100%"
+        contentHeight: "100%",
     });
 
+    $('.k-scrollview-prev, .k-scrollview-next').remove();
+
+    $('.bage-action').kendoBadge({
+        themeColor: 'warning',
+        text: 'Акция'
+    });
+
+    $('.bage-news').kendoBadge({
+        themeColor: 'info',
+        text: 'Новость'
+    });
 
 });

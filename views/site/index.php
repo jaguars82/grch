@@ -21,38 +21,130 @@ SiteIndexAsset::register($this);
         'newbuildingComplexes' => $newbuildingComplexes,
     ])?>
 
-    <div class="white-block" style="width: 70%;">
-        <?php /* echo '<pre>'; var_dump($newsList); echo '</pre>'; */ ?>
-        <div id="news-slider" style="height: 230px;">
-            <?php foreach ($newsList as $newsItem): ?>
-            <div data-role="page">
-                <div style="display: flex;">
-                    <!--<?php if(isset($newsItem->image) && !empty($newsItem->image)): ?>
-                        <div style="width: 200px;">
-                            <img src="/uploads/<?= $newsItem->image ?>" style="width: 100%;">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-sm-12 col-xs-12">
+
+                <div class="dark-transparent-block" style="margin-top: 15px; padding-bottom: 0;">
+                    <?php /* echo '<pre>'; var_dump($newsList); echo '</pre>'; */ ?>
+                    <div id="news-slider" style="height: 240px; border: none; background: transparent;">
+                        <?php foreach ($newsList as $newsItem): ?>
+                        <div data-role="page">
+                            <div>
+                                <h3 class="bordered regular-title" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;">
+                                    <span style="font-weight: 400; padding-right: 10px;"><?= $newsItem->title ?></span>
+                                </h3>
+                                <table style="margin-top: 20px;">
+                                    <tr>
+                                <?php if(isset($newsItem->image) && !empty($newsItem->image)): ?>
+                                    <!--<div style="width: 200px !important; background-image: url('/uploads/<?= $newsItem->image ?>'); background-position: center; background-repeat: no-repeat; background-size: cover; padding: 0 100px;">-->
+                                    <td style="width: 150px; vertical-align: top; padding-left: 5px; padding-right: 15px;">
+                                        <img src="/uploads/<?= $newsItem->image ?>">
+                                    </td>
+                                <?php endif; ?>
+                                <td>
+                                    <!--<h3 class="regular-title" style="white-space: normal; color: #fff;">
+                                        <span style="font-weight: 400; padding-right: 10px;"><?= $newsItem->title ?></span>
+                                        <a href="/news/view?id=<?= $newsItem->id ?>">
+                                            <span class="material-icons-outlined" style="font-size: 0.8em; color: #bbb;">open_in_new<span>
+                                        </a>
+                                    </h3>-->
+                                    <p>
+                                        <span class="<?= $newsItem->isAction() ? 'bage-action' : 'bage-news'?>"></span>
+                                        <span style="padding-left: 10px; color: #aaa !important;"><?= $format->asDate($newsItem->created_at, 'php:d.m.Y') ?></span>
+                                        <a href="/news/view?id=<?= $newsItem->id ?>">
+                                        <span class="material-icons-outlined" style="padding-left: 10px; font-size: 1.2em; color: #bbb;">open_in_new<span>
+                                    </a>
+                                    </p>
+                                    <div style="white-space: normal; height: 60px; max-height: 60px; overflow: hidden;">
+                                        <p style="color: #fff;"><?= $newsItem->detail ?></p>
+                                    </div>
+                                </td>
+                                </tr>
+                                </table>
+                            </div>
                         </div>
-                    <?php endif; ?>-->
-                    <div>
-                        <h3 style="white-space: normal;">
-                            <?= $newsItem->title ?>
-                        </h3>
-                        <div style="white-space: normal; height: 120px; max-height: 120px; overflow: hidden;">
-                            <?= $newsItem->detail ?>
-                        </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
+            
             </div>
-            <?php endforeach; ?>
+
+            <div class="col-md-3 col-sm-6 col-xs-6">
+                <div class="dark-transparent-block" style="margin-top: 15px;">
+                    <p class="h3 bordered" style="color: #fff; font-weight: 400;">
+                    По кол-ву комнат
+                    </p>
+                    <a class="link-list--item" href="<?= Url::to(['site/search', 'AdvancedFlatSearch[roomsCount][0]' => 1]) ?>" style="text-decoration: none;">
+                        <span style="color: #fff;">1-комнатные</span>
+                        <span style="color: #fff;">
+                            <?= Flat::getWithRooms(1)->onlyActive()->count(); ?>
+                        </span>
+                    </a>
+                    <a class="link-list--item" href="<?= Url::to(['site/search', 'AdvancedFlatSearch[roomsCount][0]' => 2]) ?>" style="text-decoration: none;">
+                        <span style="color: #fff;">2-комнатные</span>
+                        <span style="color: #fff;">
+                            <?= Flat::getWithRooms(2)->onlyActive()->count(); ?>
+                        </span>
+                    </a>
+                    <a class="link-list--item" href="<?= Url::to(['site/search', 'AdvancedFlatSearch[roomsCount][0]' => 3]) ?>" style="text-decoration: none;">
+                        <span style="color: #fff;">3-комнатные</span>
+                        <span style="color: #fff;">
+                            <?= Flat::getWithRooms(3)->onlyActive()->count(); ?>
+                        </span>
+                    </a>
+                    <a class="link-list--item" href="<?= Url::to(['site/search', 'AdvancedFlatSearch[flatType]' => \app\models\search\AdvancedFlatSearch::FLAT_TYPE_STUDIO]) ?>" style="text-decoration: none;">
+                        <span style="color: #fff;">Квартиры-студии</span>
+                        <span style="color: #fff;">
+                            <?= Flat::getStudio()->onlyActive()->count(); ?>
+                        </span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-md-3 col-sm-6 col-xs-6">
+                <div class="dark-transparent-block" style="margin-top: 15px;">
+
+                    <p class="h3 bordered" style="color: #fff; font-weight: 400;">
+                        По сроку сдачи
+                    </p>
+                    <a class="link-list--item" href="<?= Url::to(['site/search', 'AdvancedFlatSearch[newbuilding_status]' => \app\models\Newbuilding::STATUS_FINISH])?>">
+                        <span style="color: #fff;">Сданные</span>
+                        <span style="color: #fff;">
+                            <?= Flat::getSurrendered()->onlyActive()->count() ?>
+                        </span>
+                    </a>
+                    <a class="link-list--item" href="<?= Url::to(['site/search', 'AdvancedFlatSearch[deadlineYear]' =>  date('Y')])?>">
+                        <span style="color: #fff;">До конца года</span>
+                        <span style="color: #fff;">
+                            <?= Flat::getWithEndYearDeadline()->onlyActive()->count() ?>
+                        </span>
+                    </a>
+                    <a class="link-list--item" href="<?= Url::to(['site/search', 'AdvancedFlatSearch[deadlineYear]' =>  date('Y', strtotime('+1 year'))])?>">
+                        <span style="color: #fff;">Сдача в <?= date('Y', strtotime('+1 year')) ?></span>
+                        <span style="color: #fff;">
+                            <?= Flat::getAfterYearsDeadline(1)->onlyActive()->count() ?>
+                        </span>
+                    </a>
+                    <a class="link-list--item" href="<?= Url::to(['site/search', 'AdvancedFlatSearch[deadlineYear]' =>  date('Y', strtotime('+2 year'))])?>">
+                        <span style="color: #fff;">Сдача в <?= date('Y', strtotime('+2 year')) ?> и после</span>
+                        <span style="color: #fff;">
+                            <?= Flat::getAfterYearsDeadline(2)->onlyActive()->count() ?>
+                        </span>
+                    </a>
+
+                </div>
+            </div>
+
         </div>
     </div>
 
-
 </section>
 
-<section class="usefull-links container">
-    <!--<p class="h2">
+<!--<section class="usefull-links container">
+    <p class="h2">
         Полезные ссылки
-    </p>-->
+    </p>
     <div class="row flex-row">
         <div class="col-lg-6 col-xs-12">
             <div class="row flex-row"> 
@@ -164,6 +256,7 @@ SiteIndexAsset::register($this);
         </div>
     </div>
 </section>
+-->
 
 <section class="developer-block">
     <div class="container">
