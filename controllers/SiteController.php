@@ -89,6 +89,8 @@ class SiteController extends Controller
         $searchModel = new AdvancedFlatSearch();
         $searchModel->scenario = AdvancedFlatSearch::SCENARIO_SIMPLE;
 
+        $newsList = (new News())->find()->all();
+
         $newsDataProvider = new ActiveDataProvider([
             'query' => News::find()->onlyNews()->limit(4),
             'pagination' => false,
@@ -136,6 +138,7 @@ class SiteController extends Controller
 
         return $this->render('index', [
             'searchModel' => $searchModel,
+            'newsList' => $newsList,
             'newsDataProvider' =>$newsDataProvider,
             'actionsDataProvider' => $actionsDataProvider,
             'developerDataProvider' => $developerDataProvider,
