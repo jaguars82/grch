@@ -4,6 +4,7 @@ namespace app\models;
 
 use app\components\traits\FillAttributes;
 use app\models\query\FlatQuery;
+use app\models\ActionData;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\helpers\Url;
@@ -206,14 +207,15 @@ class Flat extends ActiveRecord
     }
 
     /**
-     * Check that flat has discount
+     * Check that flat has discount (a flat has discount if it has active actions)
      *
      * @return boolean
      */
     public function hasDiscount()
     {
-        return $this->discount > 0;
+        return $this->getActiveActions()->count() > 0;
     }
+
 
     /**
      * Check that flat has active actions
@@ -297,6 +299,54 @@ class Flat extends ActiveRecord
                 return $this->discount_price;
                 break;
         }
+    }
+
+    /**
+     * Get flat's cash price with discount by action ID
+     *
+     * @return float
+     */
+    public function getCashPriceWithDiscountByAction($action_id)
+    {
+        $action = (new ActionData())->findOne($action_id);
+
+        switch ($action->discount_type) {
+            case 0:
+                return $this->price_cash * (1 - $action->discount / 100);
+                break;
+            case 1:
+                return $this->price_cash - $action->discount_amount;
+                break;
+            case 2:
+                return $action->discount_price;
+        }
+    }
+
+    /**
+     * Get all flat's prices with discount and actions data as array sorted by price with discount
+     *
+     * @return array
+     */
+    public function getAllCashPricesWithDiscount()
+    {
+        $allActionsData = array();
+
+        foreach ($this->activeActions as $action) {
+                $actionData = array(
+                'id' => $action->actionData->id,
+                'expire' => $action->actionData->expired_at,
+                'price' => $this->getCashPriceWithDiscountByAction($action->actionData->id)
+            );
+
+            array_push($allActionsData, $actionData);
+        }
+
+        /** Sort array of actions by price: from min to max */
+        usort($allActionsData, function($a, $b) {
+            return $a['price'] <=> $b['price'];
+        });
+        
+        return $allActionsData;
     }
 
     /**

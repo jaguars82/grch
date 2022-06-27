@@ -19,8 +19,10 @@ class FlatQuery extends ActiveQuery
      */
     public function analogs($model, $costInterval = 200000)
     {
-        $minPrice = $model->cashPriceWithDiscount - $costInterval;
-        $maxPrice = $model->cashPriceWithDiscount + $costInterval;
+        // $minPrice = $model->cashPriceWithDiscount - $costInterval;
+        // $maxPrice = $model->cashPriceWithDiscount + $costInterval;
+        $minPrice = $model->price_cash - $costInterval;
+        $maxPrice = $model->price_cash + $costInterval;
 
         return $this->andWhere("id != {$model->id}")
             ->andWhere("rooms != 0")
