@@ -26,7 +26,6 @@ SiteIndexAsset::register($this);
             <div class="col-md-6 col-sm-12 col-xs-12">
 
                 <div class="dark-transparent-block" style="margin-top: 15px; padding-bottom: 0;">
-                    <?php /* echo '<pre>'; var_dump($newsList); echo '</pre>'; */ ?>
                     <div id="news-slider" style="height: 240px; border: none; background: transparent;">
                         <?php foreach ($newsList as $newsItem): ?>
                         <div data-role="page">
@@ -37,18 +36,11 @@ SiteIndexAsset::register($this);
                                 <table style="margin-top: 20px;">
                                     <tr>
                                 <?php if(isset($newsItem->image) && !empty($newsItem->image)): ?>
-                                    <!--<div style="width: 200px !important; background-image: url('/uploads/<?= $newsItem->image ?>'); background-position: center; background-repeat: no-repeat; background-size: cover; padding: 0 100px;">-->
                                     <td style="width: 150px; vertical-align: top; padding-left: 5px; padding-right: 15px;">
                                         <img src="/uploads/<?= $newsItem->image ?>">
                                     </td>
                                 <?php endif; ?>
                                 <td>
-                                    <!--<h3 class="regular-title" style="white-space: normal; color: #fff;">
-                                        <span style="font-weight: 400; padding-right: 10px;"><?= $newsItem->title ?></span>
-                                        <a href="/news/view?id=<?= $newsItem->id ?>">
-                                            <span class="material-icons-outlined" style="font-size: 0.8em; color: #bbb;">open_in_new<span>
-                                        </a>
-                                    </h3>-->
                                     <p>
                                         <span class="<?= $newsItem->isAction() ? 'bage-action' : 'bage-news'?>"></span>
                                         <span style="padding-left: 10px; color: #aaa !important;"><?= $format->asDate($newsItem->created_at, 'php:d.m.Y') ?></span>
@@ -140,123 +132,6 @@ SiteIndexAsset::register($this);
     </div>
 
 </section>
-
-<!--<section class="usefull-links container">
-    <p class="h2">
-        Полезные ссылки
-    </p>
-    <div class="row flex-row">
-        <div class="col-lg-6 col-xs-12">
-            <div class="row flex-row"> 
-                <div class="col-xs-6">
-                    <div class="link-list rooms-count">
-                        <p class="h3 bordered">
-                            По кол-ву комнат
-                        </p>
-                        <a class="link-list--item" href="<?= Url::to(['site/search', 'AdvancedFlatSearch[roomsCount][0]' => 1]) ?>">
-                            <span>1-комнатные</span>
-                            <span>
-                                <?= Flat::getWithRooms(1)->onlyActive()->count(); ?>
-                            </span>
-                        </a>
-                        <a class="link-list--item" href="<?= Url::to(['site/search', 'AdvancedFlatSearch[roomsCount][0]' => 2]) ?>">
-                            <span>2-комнатные</span>
-                            <span>
-                                <?= Flat::getWithRooms(2)->onlyActive()->count(); ?>
-                            </span>
-                        </a>
-                        <a class="link-list--item" href="<?= Url::to(['site/search', 'AdvancedFlatSearch[roomsCount][0]' => 3]) ?>">
-                            <span>3-комнатные</span>
-                            <span>
-                                <?= Flat::getWithRooms(3)->onlyActive()->count(); ?>
-                            </span>
-                        </a>
-                        <a class="link-list--item" href="<?= Url::to(['site/search', 'AdvancedFlatSearch[flatType]' => \app\models\search\AdvancedFlatSearch::FLAT_TYPE_STUDIO]) ?>">
-                            <span>Квартиры-студии</span>
-                            <span>
-                                <?= Flat::getStudio()->onlyActive()->count(); ?>
-                            </span>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-xs-6">
-                    <div class="link-list deadline">
-                        <p class="h3 bordered">
-                            По сроку сдачи
-                        </p>
-                        <a class="link-list--item" href="<?= Url::to(['site/search', 'AdvancedFlatSearch[newbuilding_status]' => \app\models\Newbuilding::STATUS_FINISH])?>">
-                            <span>Сданные</span>
-                            <span>
-                                <?= Flat::getSurrendered()->onlyActive()->count() ?>
-                            </span>
-                        </a>
-                        <a class="link-list--item" href="<?= Url::to(['site/search', 'AdvancedFlatSearch[deadlineYear]' =>  date('Y')])?>">
-                            <span>До конца года</span>
-                            <span>
-                                <?= Flat::getWithEndYearDeadline()->onlyActive()->count() ?>
-                            </span>
-                        </a>
-                        <a class="link-list--item" href="<?= Url::to(['site/search', 'AdvancedFlatSearch[deadlineYear]' =>  date('Y', strtotime('+1 year'))])?>">
-                            <span>Сдача в <?= date('Y', strtotime('+1 year')) ?></span>
-                            <span>
-                                <?= Flat::getAfterYearsDeadline(1)->onlyActive()->count() ?>
-                            </span>
-                        </a>
-                        <a class="link-list--item" href="<?= Url::to(['site/search', 'AdvancedFlatSearch[deadlineYear]' =>  date('Y', strtotime('+2 year'))])?>">
-                            <span>Сдача в <?= date('Y', strtotime('+2 year')) ?> и после</span>
-                            <span>
-                                <?= Flat::getAfterYearsDeadline(2)->onlyActive()->count() ?>
-                            </span>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-xs-12">
-                    <div class="inline-list stock">
-                        <p class="h3 bordered">
-                            Акции
-                        </p>
-                        <?= ListView::widget([
-                            'dataProvider' => $actionsDataProvider,
-                            'itemView' => '/common/_inline-list-item',
-                            'summary' => '',
-                            'emptyText' => 'Акций ещё нет',
-                            'viewParams' => [
-                                'displayType' => false
-                            ],
-                        ]); ?>
-                        <?php if ($actionsDataProvider->totalCount > 1): ?>
-                            <div class="center">
-                                <?= Html::a('Все акции', ['/news', 'action-page' => 1], ['class' => 'btn btn-white']) ?>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-6 col-xs-12">
-            <div class="inline-list news">
-                <p class="h3 bordered">
-                    Новости
-                </p>
-                <?= ListView::widget([
-                    'dataProvider' => $newsDataProvider,
-                    'itemView' => '/common/_inline-list-item',
-                    'summary' => '',
-                    'emptyText' => 'Новостей ещё нет',
-                    'viewParams' => [
-                        'displayType' => false
-                    ],
-                ]); ?>
-                <?php if ($newsDataProvider->totalCount > 3): ?>
-                    <div class="center">
-                        <?= Html::a('Все новости', ['/news', 'news-page' => 1], ['class' => 'btn btn-white']) ?>
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
-    </div>
-</section>
--->
 
 <section class="developer-block">
     <div class="container">

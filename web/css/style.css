@@ -2555,7 +2555,7 @@ button.close_btn {
   align-items: flex-end;
   font-size: 14px;
   line-height: 24px;
-  color: #0078ce;
+  /* color: #0078ce; */
   text-decoration: none !important;
   margin-bottom: 10px;
   position: relative;
