@@ -1,0 +1,26 @@
+.price-container {
+    margin-left: auto;
+}
+
+.price-container .price-label {
+    color: #7d92a1;
+    font-size: 32px;
+    padding-right: 15px;
+}
+
+.price-container .price-value {
+    font-size: 32px;
+    font-weight: 500;
+}
+
+.price-container .price-expand-button {
+    margin-left: 15px;
+    cursor: pointer;
+    border-radius: 50%;
+    border: solid thin #7d92a1;
+}
+
+.discounts-container {
+    display: none;
+    clear: both;
+}

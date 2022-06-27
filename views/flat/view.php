@@ -21,9 +21,9 @@ $this->params['breadcrumbs'][] = ['label' => 'Застройщики', 'url' => 
 $this->params['breadcrumbs'][] = ['label' => $model->developer->name, 'url' => ['developer/view', 'id' => $model->developer->id]];
 $this->params['breadcrumbs'][] = ['label' => 'Жилые комплексы', 'url' => ['developer/view', 'id' => $model->developer->id]];
 $this->params['breadcrumbs'][] = ['label' => $model->newbuildingComplex->name, 'url' => ['newbuilding-complex/view', 'id' => $model->newbuildingComplex->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Позиции', 'url' => ['newbuilding-complex/view', 'id' => $model->newbuildingComplex->id]];
-$this->params['breadcrumbs'][] = ['label' => $model->newbuilding->name, 'url' => ['newbuilding/view', 'id' => $model->newbuilding_id]];
-$this->params['breadcrumbs'][] = ['label' => 'Квартиры', 'url' => ['newbuilding/view', 'id' => $model->newbuilding_id]];
+// $this->params['breadcrumbs'][] = ['label' => 'Позиции', 'url' => ['newbuilding-complex/view', 'id' => $model->newbuildingComplex->id]];
+// $this->params['breadcrumbs'][] = ['label' => $model->newbuilding->name, 'url' => ['newbuilding/view', 'id' => $model->newbuilding_id]];
+// $this->params['breadcrumbs'][] = ['label' => 'Квартиры', 'url' => ['newbuilding/view', 'id' => $model->newbuilding_id]];
 $this->params['breadcrumbs'][] = $model->number;
 
 \yii\web\YiiAsset::register($this);
@@ -108,7 +108,7 @@ $this->params['breadcrumbs'][] = $model->number;
                     <?php endif; ?>
                 </div>
             </div>
-            <div class="flat-card--labels flex-row">
+            <div class="flat-card--labels">
                 <?php if(!is_null($model->newbuildingComplex->minYearlyRate)): ?>
                     <div class="btn btn-red">
                         Ставка от <?= $format->asPercent($model->newbuildingComplex->minYearlyRate) ?>
@@ -121,16 +121,19 @@ $this->params['breadcrumbs'][] = $model->number;
                     </div>
                 <?php endif; ?>
 
-                <div class="price-block">
-                    <span>Стоимость</span>
+                <!--<div class="price-block">-->
+                    <!--<span>Стоимость</span>
                     <span class="value">
                         <?php if($model->hasDiscount()): ?>
                         <?= $format->asCurrencyRange($model->allCashPricesWithDiscount[0]['price'], $model->price_cash); ?>    
                         <?php else: ?>
                         <?= $format->asCurrency($model->price_cash); ?>
                         <?php endif; ?>
-                    </span>
-                </div>
+                    </span>-->
+                <!--</div>-->
+                <?= $this->render('/widgets/flat-price-range', [
+                    'model' => $model
+                ]) ?>
             </div>
 
             <?php if($model->layout): ?>

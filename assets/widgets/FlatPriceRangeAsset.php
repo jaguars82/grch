@@ -7,7 +7,7 @@ use yii\web\AssetBundle;
 /**
  * Asset bundle for flat-price-range widget
  */
-class UserBadgeAsset extends AssetBundle
+class FlatPriceRangeAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';

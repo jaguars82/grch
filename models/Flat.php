@@ -335,6 +335,11 @@ class Flat extends ActiveRecord
                 $actionData = array(
                 'id' => $action->actionData->id,
                 'expire' => $action->actionData->expired_at,
+                'resume' => $action->actionData->resume,
+                'discount_type' => $action->actionData->discount_type,
+                'discount' => $action->actionData->discount,
+                'discount_amount' => $action->actionData->discount_amount,
+                'discount_price' => $action->actionData->discount_price,
                 'price' => $this->getCashPriceWithDiscountByAction($action->actionData->id)
             );
 
