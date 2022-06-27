@@ -23,6 +23,7 @@ class NewAsset extends AssetBundle
         'vendor/kendoui/kendo.common.min.css',
         'vendor/kendoui/kendo.default.min.css',
         'vendor/kendoui/kendo.default.mobile.min.css',
+        /* 'vendor/berry-css/berry.css', */
         'css/style.css',
     ];
     public $js = [
@@ -35,6 +36,7 @@ class NewAsset extends AssetBundle
         'vendor/match-height/jquery.matchHeight-min.js',
         'vendor/fancybox/jquery.fancybox.min.js',
         'vendor/kendoui/kendo.all.min.js',
+        /*'https://cdn.tailwindcss.com',*/
         'js/common.js',
     ];
     public $depends = [
