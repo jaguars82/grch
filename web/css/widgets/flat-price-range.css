@@ -1,0 +1,112 @@
+.price-container {
+    margin-left: auto;
+}
+
+.price-container .price-label {
+    color: #7d92a1;
+    font-size: 32px;
+    padding-right: 15px;
+}
+
+.price-container .price-value {
+    font-size: 32px;
+    font-weight: 500;
+}
+
+.price-container .price-expand-button {
+    margin-left: 15px;
+    cursor: pointer;
+    border-radius: 50%;
+    border: solid thin #7d92a1;
+    transition: transform 300ms;
+}
+
+.price-container .price-expand-button.pressed {
+    transform: rotate(90deg);
+    color: #fff;
+    background-color: #7d92a1;
+    transition: transform 300ms;
+}
+
+.discounts-container {
+    margin-top: 10px;
+    display: none;
+    clear: both;
+}
+
+.discounts-container .discount-item {
+    display: flex;
+    padding: 3px 0;
+}
+
+.discounts-container .discount-value {
+    font-weight: 500;
+}
+
+.discounts-container .discount-label {
+    padding-left: 10px;
+    color: #7d92a1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.discounts-container .discount-badge {
+    padding: 0 5px;
+    margin-left: 10px;
+    color: #fff;
+    font-size: 0.9em;
+    font-weight: 500;
+    white-space: nowrap;
+    /* background-color: #ffbf00; */
+    background-color: orange;
+    border-radius: 3px;
+}
+
+.discounts-container .discount-info-icon {
+    cursor: pointer;
+    margin-left: 10px;
+    color: #7d92a1;
+}
+
+.action-detail-container {
+    max-width: 330px;
+}
+
+.action-detail-container h4 {
+    max-width: 330px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.action-detail-container h4 {
+    max-width: 330px;
+    max-height: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.action-detail-container .action-detail-content-container div {
+    max-width: 330px;
+    max-height: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.action-detail-button-container {
+    margin-top: 10px;
+    display: flex;
+    justify-content: end;
+}
+
+.action-detail-button-container .action-detail-linkbutton {
+    display: flex;
+    align-items: center;
+}
+
+.action-detail-button-container .action-detail-linkbutton span:first-child {
+    padding-right: 10px;
+    text-transform: uppercase;
+}
