@@ -20,10 +20,6 @@ $format = \Yii::$app->formatter;
             </div>
             <p class="price">
                 <?php if($flatItem->hasDiscount()): ?>
-                    <?php foreach ($flatItem->allCashPricesWithDiscount as $action): ?>
-                        idisnik-<?= $action['price'] ?>
-                    <?php endforeach; ?>
-                <!--<?= $format->asCurrency($flatItem->cashPriceWithDiscount); ?>-->
                 <?= $format->asCurrencyRange($flatItem->allCashPricesWithDiscount[0]['price'], $flatItem->price_cash); ?>
                 <span class="chess-discount-badge">
                     акция

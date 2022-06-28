@@ -333,6 +333,10 @@ class Flat extends ActiveRecord
 
         foreach ($this->activeActions as $action) {
                 $actionData = array(
+                'news_id' => $action->id,
+                'title' => $action->title,
+                'detail' => $action->detail,
+                'image' => $action->image,
                 'id' => $action->actionData->id,
                 'expire' => $action->actionData->expired_at,
                 'resume' => $action->actionData->resume,

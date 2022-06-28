@@ -115,11 +115,13 @@ $this->params['breadcrumbs'][] = $model->number;
                     </div>
                 <?php endif; ?>
 
+                <!--
                 <?php if($model->hasDiscount()): ?>
                     <div class="btn btn-red">
                         Есть скидка
                     </div>
                 <?php endif; ?>
+                -->
 
                 <!--<div class="price-block">-->
                     <!--<span>Стоимость</span>
