@@ -144,8 +144,8 @@ class News extends \app\models\News
                     if ($actionFlatData != null) {
                         switch($actionData['discount_type']) {
                             case 0:
-                                break;
                                 $discount = $actionData['discount'];
+                                break;
                             case 1:
                                 $discount = $actionData['discount_amount'];
                                 break;
@@ -153,6 +153,17 @@ class News extends \app\models\News
                                 $discount = $actionData['discount_price'];
                                 break;
                         }
+
+                        /*if ($actionData['discount_type'] == 1) {
+                            $discount = $actionData['discount_amount'];
+                        } elseif ($actionData['discount_type'] == 2) {
+                            $discount = $actionData['discount_price'];
+                        } else {
+                            $discount = $actionData['discount'];
+                        }*/
+
+                        // echo '<pre>'; var_dump($discount); echo '<pre>'; die();
+                        
                         $actionFlatData->setDiscount($discount, $this, true, $actionData['discount_type']);
                     } 
                     $this->actionData->save();

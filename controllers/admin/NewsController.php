@@ -193,7 +193,9 @@ class NewsController extends Controller
         $newsForm->scenario = NewsForm::SCENARIO_UPDATE;
 
         $actionForm = new ActionForm();
-        $actionForm->fill(!is_null($news->actionData) ? $news->actionData->attributes : []);
+        $actionForm->fill(!is_null($news->actionData) ? $news->actionData->attributes : []); // кажется, где-то тут теряется "discount_type"
+
+        echo '<pre>'; var_dump($news->actionData->attributes); echo '<pre>'; die();
 
         $searchModel = new ActionFlatSearch();
 
@@ -249,14 +251,15 @@ class NewsController extends Controller
                 return $this->redirectWithError(['index'], 'Произошла ошибка. Обратитесь в службу поддержки');
             }
             try {
-                echo '<pre>'; var_dump($actionForm->attributes); echo '<pre>'; die();
+                // echo '<pre>'; var_dump($actionForm->attributes); echo '<pre>'; die();
                 $news->edit($newsForm->attributes, $actionForm->attributes, $searchModel);
             } catch (\Exception $e) {
-                echo '<pre>'; var_dump($e); echo '<pre>'; die();
+                // echo '<pre>'; var_dump($e); echo '<pre>'; die();
                 return $this->redirectBackWhenException($e);
             }
 
-            return $this->redirectWithSuccess(['update', 'id' => $news->id], $news->isAction() ? 'Акция обновлена' : 'Новость обновлена');
+            //return $this->redirectWithSuccess(['update', 'id' => $news->id], $news->isAction() ? 'Акция обновлена' : 'Новость обновлена');
+            return $this->redirectWithSuccess(['index'], $news->isAction() ? 'Акция обновлена' : 'Новость обновлена');
         }
 
         return $this->render('update', [
