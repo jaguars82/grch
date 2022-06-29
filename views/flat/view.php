@@ -123,16 +123,6 @@ $this->params['breadcrumbs'][] = $model->number;
                 <?php endif; ?>
                 -->
 
-                <!--<div class="price-block">-->
-                    <!--<span>Стоимость</span>
-                    <span class="value">
-                        <?php if($model->hasDiscount()): ?>
-                        <?= $format->asCurrencyRange($model->allCashPricesWithDiscount[0]['price'], $model->price_cash); ?>    
-                        <?php else: ?>
-                        <?= $format->asCurrency($model->price_cash); ?>
-                        <?php endif; ?>
-                    </span>-->
-                <!--</div>-->
                 <?= $this->render('/widgets/flat-price-range', [
                     'model' => $model
                 ]) ?>
@@ -283,8 +273,8 @@ $this->params['breadcrumbs'][] = $model->number;
                         <?= $model->newbuildingComplex->address ?>
                     </p>
                 <?php endif; ?>
-                <div class="price-block">
-                    <span>Стоимость</span>
+                <div class="title advantages" style="margin-bottom: 10px;">
+                    <!--<span>Стоимость</span>-->
                     <span class="value">
                         <?php if($model->hasDiscount()): ?>
                         <?= $format->asCurrencyRange($model->allCashPricesWithDiscount[0]['price'], $model->price_cash); ?>    
@@ -333,9 +323,9 @@ $this->params['breadcrumbs'][] = $model->number;
                     </div>
                 </div>
                 <?php if(!is_null($model->newbuilding->deadline)): ?>
-                    <div class="deadline-block">
-                        <span>Срок сдачи</span>
-                        <span><b><?= $format->asQuarterAndYearDate($model->newbuilding->deadline) ?></b></span>
+                    <div class="info--item">
+                        <span class="name">Срок сдачи</span>
+                        <span class="value"><b><?= $format->asQuarterAndYearDate($model->newbuilding->deadline) ?></b></span>
                     </div>
                 <?php endif; ?>
                 
@@ -345,11 +335,13 @@ $this->params['breadcrumbs'][] = $model->number;
                     </div>
                 <?php endif; ?>
                 
+                <!--
                 <?php if($model->hasDiscount()): ?>
                     <div class="btn btn-red">
                         Есть скидка
                     </div>
                 <?php endif; ?>
+                -->
 
                 <?php if(!is_null($model->newbuildingComplex->advantages) && count($model->newbuildingComplex->advantages) > 0): ?>
                     <?= $this->render('/common/_advantages', [

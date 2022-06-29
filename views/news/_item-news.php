@@ -5,7 +5,10 @@ $format = \Yii::$app->formatter;
 ?>
 
 <div style="margin-bottom: 20px">
-    <h4 style="font-size: 17px; text-decoration: underline"><?= Html::a($model->title, ['news/view', 'id' => $model->id]) ?></h4>
+    <h4 style="font-size: 17px; text-decoration: underline">
+        <!--<?= Html::a($model->title, ['news/view', 'id' => $model->id]) ?>-->
+        <?= $model->title ?>
+    </h4>
 
     <p class="text-justify">
         <?= $format->asShortText($model->detail) ?>

@@ -66,7 +66,7 @@ if ($model->isAction()) {
                         <?= Html::a('Квартиры', $model->search_link, ['class' => 'btn btn-white']) ?>
                     </div>
                 <?php endif; ?>
-
+                <!--
                 <div class="labels">
                     <a href="<?= Url::to([
                         'site/search', 
@@ -76,7 +76,7 @@ if ($model->isAction()) {
                         'AdvancedFlatSearch[developer]' => $flatfilter->developer,
                     ]); ?>" class="link-list--item">Квартиры</a>
                 </div>
-
+                -->
                 <?php if(!is_null($model->actionData)): ?>
                     <p class="h3 bordered">
                         Суть акции
