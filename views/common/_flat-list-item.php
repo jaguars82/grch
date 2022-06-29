@@ -30,7 +30,7 @@ $format = \Yii::$app->formatter;
                 <?php endif; ?>
             </span>
             <span class="deadline">
-                Сдача: <?= is_null($model->newbuilding->deadline) ? 'Нет данных' : $format->asQuarterAndYearDate($model->newbuilding->deadline, false) ?>
+                Сдача: <?= (is_null($model->newbuilding->deadline) ? 'Нет данных' : strtotime(date("Y-m-d")) > strtotime($model->newbuilding->deadline)) ? 'позиция сдана' : $format->asQuarterAndYearDate($model->newbuilding->deadline, false) ?>
             </span>
         </div>
         <p class="area"><?= $format->asPricePerArea($model->pricePerArea) ?></p>

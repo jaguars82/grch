@@ -72,8 +72,7 @@ $format = \Yii::$app->formatter;
                             <?php else: ?>
                                 <?= $format->asFloor($model->floor, $model->newbuilding->total_floor) ?>
                             <?php endif ?>,
-
-                            Сдача: <?= is_null($model->newbuilding->deadline) ? 'Нет данных' : $format->asQuarterAndYearDate($model->newbuilding->deadline, false) ?>,
+                            Сдача: <?= (is_null($model->newbuilding->deadline) ? 'Нет данных' : strtotime(date("Y-m-d")) > strtotime($model->newbuilding->deadline)) ? 'позиция сдана' : $format->asQuarterAndYearDate($model->newbuilding->deadline, false) ?>,
                             <?php if(!is_null($model->newbuilding->newbuildingComplex->district)): ?>
                                 <?= $format->asDistrict($model->newbuilding->newbuildingComplex->district->name) ?>
                             <?php else: ?>

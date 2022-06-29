@@ -45,7 +45,7 @@ $format = \Yii::$app->formatter;
                         <?php endif; ?>
                     </span>
                     <span class="info--item deadline">
-                        Сдача <?= is_null($newbuilding->deadline) ? 'Нет данных' : $format->asQuarterAndYearDate($newbuilding->deadline) ?>
+                        Сдача: <?= (is_null($newbuilding->deadline) ? 'Нет данных' : strtotime(date("Y-m-d")) > strtotime($newbuilding->deadline)) ? 'позиция сдана' : $format->asQuarterAndYearDate($newbuilding->deadline) ?>
                     </span>
                     <span class="info--item floors"> <?= $newbuilding->total_floor ?> этажей </span>
                 </div>
