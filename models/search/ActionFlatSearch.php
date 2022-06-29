@@ -134,6 +134,9 @@ class ActionFlatSearch extends Flat
         } elseif (!empty($this->areaFrom) && (!empty($this->areaTo))) {
             $areaFrom = $this->areaFrom;
             $areaTo = $this->areaTo;
+        } else {
+            $areaFrom = NULL;
+            $areaTo = NULL;
         }
 
         $query->andFilterWhere(['>=', 'area', $areaFrom])
