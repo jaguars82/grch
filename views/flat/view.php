@@ -21,9 +21,9 @@ $this->params['breadcrumbs'][] = ['label' => 'Застройщики', 'url' => 
 $this->params['breadcrumbs'][] = ['label' => $model->developer->name, 'url' => ['developer/view', 'id' => $model->developer->id]];
 $this->params['breadcrumbs'][] = ['label' => 'Жилые комплексы', 'url' => ['developer/view', 'id' => $model->developer->id]];
 $this->params['breadcrumbs'][] = ['label' => $model->newbuildingComplex->name, 'url' => ['newbuilding-complex/view', 'id' => $model->newbuildingComplex->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Позиции', 'url' => ['newbuilding-complex/view', 'id' => $model->newbuildingComplex->id]];
-$this->params['breadcrumbs'][] = ['label' => $model->newbuilding->name, 'url' => ['newbuilding/view', 'id' => $model->newbuilding_id]];
-$this->params['breadcrumbs'][] = ['label' => 'Квартиры', 'url' => ['newbuilding/view', 'id' => $model->newbuilding_id]];
+// $this->params['breadcrumbs'][] = ['label' => 'Позиции', 'url' => ['newbuilding-complex/view', 'id' => $model->newbuildingComplex->id]];
+// $this->params['breadcrumbs'][] = ['label' => $model->newbuilding->name, 'url' => ['newbuilding/view', 'id' => $model->newbuilding_id]];
+// $this->params['breadcrumbs'][] = ['label' => 'Квартиры', 'url' => ['newbuilding/view', 'id' => $model->newbuilding_id]];
 $this->params['breadcrumbs'][] = $model->number;
 
 \yii\web\YiiAsset::register($this);
@@ -108,35 +108,24 @@ $this->params['breadcrumbs'][] = $model->number;
                     <?php endif; ?>
                 </div>
             </div>
-            <div class="flat-card--labels flex-row">
+            <div class="flat-card--labels">
                 <?php if(!is_null($model->newbuildingComplex->minYearlyRate)): ?>
                     <div class="btn btn-red">
                         Ставка от <?= $format->asPercent($model->newbuildingComplex->minYearlyRate) ?>
                     </div>
                 <?php endif; ?>
 
+                <!--
                 <?php if($model->hasDiscount()): ?>
                     <div class="btn btn-red">
-                        <?php if ($model->discount_type == 1): ?>
-                            Действует скидка - <?= $format->asCurrency($model->discount_amount) ?>
-                        <?php elseif ($model->discount_type == 2): ?>
-                            Цена по акции
-                        <?php else: ?>
-                            Действует скидка - <?= $format->asPercent($model->discount) ?>
-                        <?php endif; ?>
+                        Есть скидка
                     </div>
                 <?php endif; ?>
+                -->
 
-                <div class="price-block">
-                    <span>Стоимость</span>
-                    <span class="value">
-                        <?php if($model->hasDiscount()): ?>
-                        <?= $format->asCurrency($model->cashPriceWithDiscount); ?>    
-                        <?php else: ?>
-                        <?= $format->asCurrency($model->price_cash); ?>
-                        <?php endif; ?>
-                    </span>
-                </div>
+                <?= $this->render('/widgets/flat-price-range', [
+                    'model' => $model
+                ]) ?>
             </div>
 
             <?php if($model->layout): ?>
@@ -284,11 +273,11 @@ $this->params['breadcrumbs'][] = $model->number;
                         <?= $model->newbuildingComplex->address ?>
                     </p>
                 <?php endif; ?>
-                <div class="price-block">
-                    <span>Стоимость</span>
+                <div class="title advantages" style="margin-bottom: 10px;">
+                    <!--<span>Стоимость</span>-->
                     <span class="value">
                         <?php if($model->hasDiscount()): ?>
-                        <?= $format->asCurrency($model->cashPriceWithDiscount); ?>    
+                        <?= $format->asCurrencyRange($model->allCashPricesWithDiscount[0]['price'], $model->price_cash); ?>    
                         <?php else: ?>
                         <?= $format->asCurrency($model->price_cash); ?>
                         <?php endif; ?>
@@ -334,9 +323,9 @@ $this->params['breadcrumbs'][] = $model->number;
                     </div>
                 </div>
                 <?php if(!is_null($model->newbuilding->deadline)): ?>
-                    <div class="deadline-block">
-                        <span>Срок сдачи</span>
-                        <span><b><?= $format->asQuarterAndYearDate($model->newbuilding->deadline) ?></b></span>
+                    <div class="info--item">
+                        <span class="name">Срок сдачи</span>
+                        <span class="value"><b><?= $format->asQuarterAndYearDate($model->newbuilding->deadline) ?></b></span>
                     </div>
                 <?php endif; ?>
                 
@@ -346,17 +335,13 @@ $this->params['breadcrumbs'][] = $model->number;
                     </div>
                 <?php endif; ?>
                 
+                <!--
                 <?php if($model->hasDiscount()): ?>
                     <div class="btn btn-red">
-                        <?php if ($model->discount_type == 1): ?>
-                            Действует скидка - <?= $format->asCurrency($model->discount_amount) ?>
-                        <?php elseif ($model->discount_type == 2): ?>
-                            Цена по акции
-                        <?php else: ?>
-                            Действует скидка - <?= $format->asPercent($model->discount) ?>
-                        <?php endif; ?>
+                        Есть скидка
                     </div>
                 <?php endif; ?>
+                -->
 
                 <?php if(!is_null($model->newbuildingComplex->advantages) && count($model->newbuildingComplex->advantages) > 0): ?>
                     <?= $this->render('/common/_advantages', [

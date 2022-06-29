@@ -75,7 +75,6 @@ class Newbuilding extends \app\models\Newbuilding
             $transaction->commit();
         } catch(\Exception $e) {
             $transaction->rollBack();
-            // echo '<pre>'; var_dump($e); die(); echo '</pre>';
             throw $e;
         }
     }

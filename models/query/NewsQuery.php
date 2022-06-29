@@ -30,8 +30,9 @@ class NewsQuery extends ActiveQuery
     {
         $query= $this->andWhere(['category' => News::CATEGORY_ACTION]);
         if ($isActive) {
+            // $query->join('INNER JOIN', 'action_data', 'news.id = action_data.news_id')
             $query->join('INNER JOIN', 'action_data', 'news.id = action_data.news_id')
-                ->where('expired_at > NOW()');
+                ->where('is_actual = 1');
         }
         
         return $query;

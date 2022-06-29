@@ -91,14 +91,24 @@ use yii\widgets\ActiveForm;
         <div class="col-md-12">
             <h4 style="font-weight: 400;">Площадь</h4>
         </div>
-        <div class="col-md-6" >
+
+        <div class="col-md-4" >
+            <?= $form->field($model, 'area')->textInput([
+                'id' => 'area-value',
+                'placeholder' => 'Точно',
+            ])->label(false) ?>
+        </div>
+
+        <div class="col-md-4" >
             <?= $form->field($model, 'areaFrom')->textInput([
+                'id' => 'area-from',
                 'placeholder' => 'От',
             ])->label(false) ?>
         </div>
 
-        <div class="col-md-6" >
+        <div class="col-md-4" >
             <?= $form->field($model, 'areaTo')->textInput([
+                'id' => 'area-to',
                 'placeholder' => 'До',
             ])->label(false) ?>
         </div>

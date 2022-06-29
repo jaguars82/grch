@@ -13,6 +13,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $format = \Yii::$app->formatter;
 \yii\web\YiiAsset::register($this);
+
+if ($model->isAction()) {
+   $flatfilter = json_decode($model->actionData->flat_filter); 
+}
+
 ?>
 
 <div class="news-view">
@@ -61,7 +66,17 @@ $format = \Yii::$app->formatter;
                         <?= Html::a('Квартиры', $model->search_link, ['class' => 'btn btn-white']) ?>
                     </div>
                 <?php endif; ?>
-
+                <!--
+                <div class="labels">
+                    <a href="<?= Url::to([
+                        'site/search', 
+                        'AdvancedFlatSearch[roomsCount]' => $flatfilter->rooms,
+                        //'AdvancedFlatSearch[flatType]' => AdvancedFlatSearch::FLAT_TYPE_STANDARD,
+                        // 'AdvancedFlatSearch[newbuilding_complex]' => $flatfilter->newbuilding_complex,
+                        'AdvancedFlatSearch[developer]' => $flatfilter->developer,
+                    ]); ?>" class="link-list--item">Квартиры</a>
+                </div>
+                -->
                 <?php if(!is_null($model->actionData)): ?>
                     <p class="h3 bordered">
                         Суть акции

@@ -15,7 +15,8 @@ $format = \Yii::$app->formatter;
         <span class="date">
             <?= $format->asDate($model->created_at, 'php:d.m.Y') ?>
         </span>
-        <?= Html::a($model->title, ['news/view', 'id' => $model->id], ['class' => 'group']) ?>
+        <!--<?= Html::a($model->title, ['news/view', 'id' => $model->id], ['class' => 'group']) ?>-->
+        <strong><?= $model->title ?></strong>
     </div>
     <div class="flex-row">
         <div class="desc">

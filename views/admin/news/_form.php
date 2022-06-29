@@ -22,13 +22,13 @@ NewsFormAsset::register($this);
     <div class="row">
         <div class="col-md-8">
             <?= $form->field($news, 'title')->textInput(['maxlength' => true]) ?>
-
+            <?php // echo '<pre>'; var_dump($action); echo '<pre>'; die(); ?>
             <div id="actions-data" <?= $news->category === News::CATEGORY_ACTION ? '' : 'style="display: none"' ?>>
                 <div style="display: none">
                     <?= $form->field($action, 'is_enabled')->checkbox(['class' => 'action-is-enabled', 'checked' => $news->category === News::CATEGORY_ACTION]) ?>
                 </div>
 
-                <!--<?= $form->field($action, 'resume')->textInput(['maxlength' => true]) ?>-->
+                <?= $form->field($action, 'resume')->textInput(['maxlength' => true]) ?>
                 <!-- discount block -->
                 <div class="row">
                     <div class="col-md-12">
