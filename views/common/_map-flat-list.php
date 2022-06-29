@@ -30,7 +30,7 @@ $format = \Yii::$app->formatter;
                         <?php endif; ?>
                     </span>
                     <span class="deadline">
-                        Сдача: <?= is_null($flat->newbuilding->deadline) ? 'Нет данных' : $format->asQuarterAndYearDate($flat->newbuilding->deadline, false) ?>
+                        Сдача: <?= (is_null($flat->newbuilding->deadline) ? 'Нет данных' : strtotime(date("Y-m-d")) > strtotime($flat->newbuilding->deadline)) ? 'позиция сдана' : $format->asQuarterAndYearDate($flat->newbuilding->deadline, false) ?>
                     </span>
                 </div>
                 <div class="flex-row params">

@@ -65,7 +65,7 @@ $commentForm = "favorite-comment-{$model->id}";
                 <?php endif; ?>
             </span>
             <span class="deadline">
-                Сдача: <?= is_null($model->flat->newbuilding->deadline) ? 'Нет данных' : $format->asQuarterAndYearDate($model->flat->newbuilding->deadline, false) ?>
+                Сдача: <?= (is_null($model->flat->newbuilding->deadline) ? 'Нет данных' : strtotime(date("Y-m-d")) > strtotime($model->flat->newbuilding->deadline)) ? 'позиция сдана' : $format->asQuarterAndYearDate($model->flat->newbuilding->deadline, false) ?>
             </span>
         </div>
         <p class="area"><?= $format->asPricePerArea($model->flat->pricePerArea) ?></p>

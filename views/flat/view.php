@@ -70,7 +70,11 @@ $this->params['breadcrumbs'][] = $model->number;
                     <?php if(!is_null($model->newbuilding->deadline)): ?>
                         <div class="flat-card--properties__item">
                             <span>Срок сдачи</span>
-                            <b><?= $format->asQuarterAndYearDate($model->newbuilding->deadline) ?></b>
+                            <?php if (strtotime(date("Y-m-d")) > strtotime($model->newbuilding->deadline)): ?>
+                                <span class="value"><b>Позиция сдана</b></span>
+                            <?php else: ?>
+                                <span class="value"><b><?= $format->asQuarterAndYearDate($model->newbuilding->deadline) ?></b></span>
+                            <?php endif; ?>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -325,7 +329,11 @@ $this->params['breadcrumbs'][] = $model->number;
                 <?php if(!is_null($model->newbuilding->deadline)): ?>
                     <div class="info--item">
                         <span class="name">Срок сдачи</span>
-                        <span class="value"><b><?= $format->asQuarterAndYearDate($model->newbuilding->deadline) ?></b></span>
+                        <?php if (strtotime(date("Y-m-d")) > strtotime($model->newbuilding->deadline)): ?>
+                            <span class="value"><b>Позиция сдана</b></span>
+                        <?php else: ?>
+                            <span class="value"><b><?= $format->asQuarterAndYearDate($model->newbuilding->deadline) ?></b></span>
+                        <?php endif; ?>
                     </div>
                 <?php endif; ?>
                 

@@ -15,7 +15,7 @@ $format = \Yii::$app->formatter;
                     <div class="col-md-12">
                         <div class="row">
                             <div class="col-md-12">
-                                <?= Html::a($model->roomsTitle, ['flat/view', 'id' => $model->id], ['target' => '_blank']) ?>, <?= $format->asArea($model->area) ?>, <?= $format->asFloor($model->floor, $model->newbuilding->total_floor) ?> эт., Сдача: <?= is_null($model->newbuilding->deadline) ? 'Нет данных' : $format->asQuarterAndYearDate($model->newbuilding->deadline, false) ?>, <?= Html::a($model->newbuildingComplex->name, ['newbuilding-complex/view', 'id' => $model->newbuildingComplex->id], ['target' => '_blank']) ?>(<?= Html::a($model->newbuildingComplex->developer->name, ['developer/view', 'id' => $model->newbuildingComplex->developer->id], ['target' => '_blank']) ?>)
+                                <?= Html::a($model->roomsTitle, ['flat/view', 'id' => $model->id], ['target' => '_blank']) ?>, <?= $format->asArea($model->area) ?>, <?= $format->asFloor($model->floor, $model->newbuilding->total_floor) ?> эт., Сдача: <?= (is_null($model->newbuilding->deadline) ? 'Нет данных' : strtotime(date("Y-m-d")) > strtotime($model->newbuilding->deadline)) ? 'позиция сдана' : $format->asQuarterAndYearDate($model->newbuilding->deadline, false) ?>, <?= Html::a($model->newbuildingComplex->name, ['newbuilding-complex/view', 'id' => $model->newbuildingComplex->id], ['target' => '_blank']) ?> (<?= Html::a($model->newbuildingComplex->developer->name, ['developer/view', 'id' => $model->newbuildingComplex->developer->id], ['target' => '_blank']) ?>)
 
                             </div>
 

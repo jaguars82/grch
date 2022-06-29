@@ -156,7 +156,11 @@ $this->registerCssFile('/css/offer-print.css', ['media' => 'print']);
                 <?php if(!is_null($flat->newbuilding->deadline)): ?>
                     <div class="info-item">
                         <span>Срок сдачи</span>
-                        <b><?= $format->asQuarterAndYearDate($flat->newbuilding->deadline) ?></b>
+                        <?php if (strtotime(date("Y-m-d")) > strtotime($flat->newbuilding->deadline)): ?>
+                            <b>Позиция сдана</b>
+                        <?php else: ?>
+                            <b><?= $format->asQuarterAndYearDate($flat->newbuilding->deadline) ?></b>
+                        <?php endif; ?>
                     </div>
                 <?php endif; ?>
             </div>

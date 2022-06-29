@@ -70,7 +70,11 @@ NewbuildingViewAsset::register($this);
                     <?php if(!is_null($model->deadline)): ?>
                         <div class="newbuilding-card--properties__item">
                             <span>Срок сдачи</span>
-                            <b><?= $format->asQuarterAndYearDate($model->deadline) ?></b>
+                            <?php if (strtotime(date("Y-m-d")) > strtotime($model->deadline)): ?>
+                                <b>Позиция сдана</b>
+                            <?php else: ?>
+                                <b><?= $format->asQuarterAndYearDate($model->deadline) ?></b>
+                            <?php endif; ?>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -303,7 +307,11 @@ NewbuildingViewAsset::register($this);
                 <?php if(!is_null($model->deadline)): ?>
                     <div class="deadline-block">
                         <span>Сдача</span>
-                        <span><b><?= $format->asQuarterAndYearDate($model->deadline) ?></b></span>
+                        <?php if (strtotime(date("Y-m-d")) > strtotime($model->deadline)): ?>
+                            <span><b>Позиция сдана</b></span>
+                        <?php else: ?>
+                            <span><b><?= $format->asQuarterAndYearDate($model->deadline) ?></b></span>
+                        <?php endif; ?>
                     </div>
                 <?php endif; ?>
 
