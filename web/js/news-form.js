@@ -130,6 +130,15 @@ $(function () {
     });
 
 
+    /** switch area fields */
+    $('#area-value').change(function(){
+        $('#area-from, #area-to').val('');
+    });
+    $('#area-from, #area-to').change(function(){
+        $('#area-value').val('');
+    });
+
+
     selectedDeveloper = $('#developer-select > option[selected]');
     console.log(selectedDeveloper);
     

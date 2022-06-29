@@ -29,7 +29,7 @@ class ActionForm extends Model
     {
         return [
             [
-                ['resume', 'expired_at'], 'required', 'when' => function($model) {
+            ['resume'/*, 'expired_at'*/], 'required', 'when' => function($model) {
                     return $model->is_enabled;
                 }, 'whenClient' => "function (attribute, value) {
                     return $('.action-is-enabled').prop('checked');

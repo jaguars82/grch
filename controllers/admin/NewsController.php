@@ -146,14 +146,12 @@ class NewsController extends Controller
             $haveFlats = \Yii::$app->request->post('have_flats'); 
             try {
                 if ($haveFlats) {
-                    // echo '<pre>'; var_dump($searchModel); echo '</pre>'; die();
                     $news = News::create($newsForm->attributes, $actionForm->attributes, $searchModel); 
                 }
                 else {
                     $news = News::create($newsForm->attributes, $actionForm->attributes); 
                 }
             } catch (\Exception $e) {
-                // echo '<pre>'; var_dump($e); echo '</pre>'; die();
                 return $this->redirectBackWhenException($e);
             }
 
@@ -195,7 +193,10 @@ class NewsController extends Controller
         $actionForm = new ActionForm();
         $actionForm->fill(!is_null($news->actionData) ? $news->actionData->attributes : []); // кажется, где-то тут теряется "discount_type"
 
-        echo '<pre>'; var_dump($news->actionData->attributes); echo '<pre>'; die();
+        // fix 'discount type' in 'actionForm' if discount type === 0
+        if ($actionForm->discount_type === NULL && $news->actionData->attributes['discount_type'] === 0) {
+            $actionForm->discount_type = 0;
+        }
 
         $searchModel = new ActionFlatSearch();
 
@@ -207,7 +208,6 @@ class NewsController extends Controller
             $newbuildingComplexes = [];
             if (isset($searchModel->developer) && !empty($searchModel->developer)) {
                 $developer = (new Developer())->findOne($searchModel->developer);
-                // echo '<pre>'; var_dump($developer); echo '</pre>'; die();
                 $complexes = $developer->newbuildingComplexes;
                 foreach ($complexes as $complex) {
                     // $newbuildingComplexes[] = ['id' => $complex->id, 'name' => $complex->name];
@@ -238,7 +238,6 @@ class NewsController extends Controller
                     }
                 }
             }
-            // echo '<pre>'; var_dump($entrances); echo '</pre>'; die();
         }
 
         if (\Yii::$app->request->isPost &&
@@ -251,10 +250,8 @@ class NewsController extends Controller
                 return $this->redirectWithError(['index'], 'Произошла ошибка. Обратитесь в службу поддержки');
             }
             try {
-                // echo '<pre>'; var_dump($actionForm->attributes); echo '<pre>'; die();
                 $news->edit($newsForm->attributes, $actionForm->attributes, $searchModel);
             } catch (\Exception $e) {
-                // echo '<pre>'; var_dump($e); echo '<pre>'; die();
                 return $this->redirectBackWhenException($e);
             }
 

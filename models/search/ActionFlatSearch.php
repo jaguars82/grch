@@ -20,7 +20,7 @@ class ActionFlatSearch extends Flat
     public $developer, $newbuilding_complex, $newbuilding, $entrance;
     public $newbuilding_array = NULL;
     public $priceFrom = NULL, $priceTo = NULL;
-    public $areaFrom = NULL, $areaTo = NULL;
+    public $area = NULL, $areaFrom = NULL, $areaTo = NULL;
     public $floorsSet = NULL, $floorFrom = NULL, $floorTo = NULL, $totalFloor = NULL;
     public $material = NULL, $newbuilding_status, $deadline, $update_date;
 
@@ -37,7 +37,7 @@ class ActionFlatSearch extends Flat
     {
         return [
             [['floorFrom', 'floorTo', 'totalFloor', 'developer'], 'integer'],
-            [['priceFrom', 'priceTo', 'areaFrom', 'areaTo'], 'double'],
+            [['priceFrom', 'priceTo', 'area', 'areaFrom', 'areaTo'], 'double'],
             [['material', 'deadline', 'update_date'], 'string'],
             ['newbuilding_status', 'safe'],
             ['floorsSet', 'each', 'rule' => ['integer']],
@@ -64,8 +64,9 @@ class ActionFlatSearch extends Flat
     {
         return [
             'newbuilding_array' => 'Позиции',
-            'priceFrom' => 'Стоимость',
-            'areaFrom' => 'Площадь',
+            'priceFrom' => 'Стоимость от',
+            'area' => 'Площадь',
+            'areaFrom' => 'Площадь от',
             'rooms' => 'Количество комнат',
             // 'floorFrom' => 'Этаж',
             'floorsSet' => 'Этажи',
@@ -127,19 +128,19 @@ class ActionFlatSearch extends Flat
      */
     protected function applyFilters($query)
     {
-        $query->andFilterWhere(['>=', 'area', $this->areaFrom])
-            ->andFilterWhere(['<=', 'area', $this->areaTo])
+        if (!empty($this->area)) {
+            $areaFrom = $this->area - 0.01;
+            $areaTo = $this->area + 0.01;
+        } elseif (!empty($this->areaFrom) && (!empty($this->areaTo))) {
+            $areaFrom = $this->areaFrom;
+            $areaTo = $this->areaTo;
+        }
+
+        $query->andFilterWhere(['>=', 'area', $areaFrom])
+            ->andFilterWhere(['<=', 'area', $areaTo])
             //->andFilterWhere(['>=', 'floor', $this->floorFrom])
             //->andFilterWhere(['<=', 'floor', $this->floorTo]);
             ->andFilterWhere(['floor' => $this->floorsSet]);
-
-        /* if (isset($this->rooms) && !empty($this->rooms)) {
-            if ($this->rooms == 5) {
-                $query->andWhere(['>=', 'rooms', $this->rooms]);
-            } else {
-                $query->andWhere(['rooms' => $this->rooms]);
-            }
-        } */
 
         if (isset($this->rooms) && !empty($this->rooms)) {
             if (in_array(5, $this->rooms)) {
@@ -295,6 +296,7 @@ class ActionFlatSearch extends Flat
             && (isset($params[$form]['rooms']) && empty($params[$form]['rooms']))
             && (isset($params[$form]['priceFrom']) && empty($params[$form]['priceFrom']))
             && (isset($params[$form]['priceTo']) && empty($params[$form]['priceTo']))
+            && (isset($params[$form]['area']) && empty($params[$form]['area']))
             && (isset($params[$form]['areaFrom']) && empty($params[$form]['areaFrom']))
             && (isset($params[$form]['areaTo']) && empty($params[$form]['areaTo']))
             // && (isset($params[$form]['floorFrom']) && empty($params[$form]['floorFrom']))
@@ -340,6 +342,10 @@ class ActionFlatSearch extends Flat
 
         if (isset($params[$form]['priceTo'])) {
             $this->priceTo = $params[$form]['priceTo'];
+        }
+
+        if (isset($params[$form]['area'])) {
+            $this->area = $params[$form]['area'];
         }
 
         if (isset($params[$form]['areaFrom'])) {
@@ -394,6 +400,7 @@ class ActionFlatSearch extends Flat
             'floorsSet' => $this->floorsSet,
             'priceFrom' => $this->priceFrom,
             'priceTo' => $this->priceTo,
+            'area' => $this->area,
             'areaFrom' => $this->areaFrom,
             'areaTo' => $this->areaTo,
             'material' => $this->material,
