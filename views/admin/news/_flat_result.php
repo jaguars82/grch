@@ -9,7 +9,8 @@ use yii\widgets\ListView;
         <?= ListView::widget([
             'dataProvider' => $dataProvider,
             'itemView' => '_flat_item',
-            'layout' => "{sorter}\n{items}\n{pager}",
+            //'layout' => "{sorter}\n{items}\n{pager}",
+            'layout' => "{summary}\n{sorter}\n{items}",
             'emptyText' => 'Подходящих квартир не нашлось. Попробуйте изменить параметры поиска.',
         ]); ?>
     </div>

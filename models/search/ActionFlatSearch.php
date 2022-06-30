@@ -240,7 +240,8 @@ class ActionFlatSearch extends Flat
     {
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => false,
+            //'pagination' => false,
+            'pagination' => ['pageSize' => 10],
             'sort' => false,
         ]);
 
