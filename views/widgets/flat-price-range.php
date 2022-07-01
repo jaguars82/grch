@@ -10,7 +10,7 @@ $format = \Yii::$app->formatter;
     <span class="price-label hidden">Стоимость</span>
     <?php if ($model->hasDiscount()): ?>
         <span class="price-value">
-            <?= $format->asCurrencyRange($model->allCashPricesWithDiscount[0]['price'], $model->price_cash); ?>
+            <?= $format->asCurrencyRange(round($model->allCashPricesWithDiscount[0]['price']), $model->price_cash); ?>
             <span id="price-expand-button-<?= $model->id ?>" class="price-expand-button material-icons-outlined" onclick="handleDiscountsVisibility(<?= $model->id ?>)">chevron_right<span>
         </span>  
     <?php else: ?>
@@ -28,7 +28,7 @@ $format = \Yii::$app->formatter;
         </div>
         <?php foreach ($model->allCashPricesWithDiscount as $actionDiscount): ?>
             <div class="discount-item">
-                <span class="discount-value"><?= $format->asCurrency($actionDiscount['price']) ?></span>
+                <span class="discount-value"><?= $format->asCurrency(round($actionDiscount['price'])) ?></span>
                 <?php if ($actionDiscount['discount_type'] == 0): ?>
                     <span class="discount-badge">- <?= $format->asPercent($actionDiscount['discount'] / 100) ?></span>
                 <?php elseif ($actionDiscount['discount_type'] == 1): ?>

@@ -281,7 +281,7 @@ $this->params['breadcrumbs'][] = $model->number;
                     <!--<span>Стоимость</span>-->
                     <span class="value">
                         <?php if($model->hasDiscount()): ?>
-                        <?= $format->asCurrencyRange($model->allCashPricesWithDiscount[0]['price'], $model->price_cash); ?>    
+                        <?= $format->asCurrencyRange(round($model->allCashPricesWithDiscount[0]['price']), $model->price_cash); ?>    
                         <?php else: ?>
                         <?= $format->asCurrency($model->price_cash); ?>
                         <?php endif; ?>

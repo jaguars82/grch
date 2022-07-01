@@ -191,11 +191,13 @@ class NewsController extends Controller
         $newsForm->scenario = NewsForm::SCENARIO_UPDATE;
 
         $actionForm = new ActionForm();
-        $actionForm->fill(!is_null($news->actionData) ? $news->actionData->attributes : []); // кажется, где-то тут теряется "discount_type"
+        $actionForm->fill(!is_null($news->actionData) ? $news->actionData->attributes : []);
 
         // fix 'discount type' in 'actionForm' if discount type === 0
-        if ($actionForm->discount_type === NULL && $news->actionData->attributes['discount_type'] === 0) {
-            $actionForm->discount_type = 0;
+        if ($news->isAction()) {
+            if ($actionForm->discount_type === NULL && $news->actionData->attributes['discount_type'] === 0) {
+                $actionForm->discount_type = 0;
+            }
         }
 
         $searchModel = new ActionFlatSearch();
@@ -268,11 +270,11 @@ class NewsController extends Controller
             'developersSearch' => Developer::getAllAsList(),
             'districts' => NewbuildingComplex::getAllDistrictsAsList(),
             // 'newbuildingComplexes' => $searchModel->newbuildingComplexes,
-            'newbuildingComplexes' => $newbuildingComplexes,
+            'newbuildingComplexes' => isset($newbuildingComplexes) ? $newbuildingComplexes : [],
             // 'newbuildings' => $searchModel->newbuildings,
-            'newbuildings' => $newbuildings,
+            'newbuildings' => isset($newbuildings) ? $newbuildings : [],
             // 'entrances' => $searchModel->entrances,
-            'entrances' => $entrances,
+            'entrances' => isset($entrances) ? $entrances : [],
             'positionArray' => $searchModel->positionArray,
             'materials' => Newbuilding::getAllMaterialsAsList(),
         ]);
