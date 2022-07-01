@@ -44,20 +44,22 @@ class ServiceController extends Controller
         $actions = (new News())->actions;
 
         foreach ($actions as $action) {
-            
-            if (strtotime(date("Y-m-d")) > strtotime($action->actionData->expired_at)) {
-                $flatsList = $action->assignedFlats;
 
-                foreach ($flatsList as $flat) {
-                    $flat->discount = 0;
-                    $flat->save();
-                    $flat->unlink('assignedNews', $action, true);
-                }
+            if (!empty($action->actionData->expired_at) && $action->actionData->expired_at =! NULL) {
 
-                $action->actionData->is_actual = 0;
-                $action->actionData->save();
-            } 
+                if (strtotime(date("Y-m-d")) > strtotime($action->actionData->expired_at)) {
+                    $flatsList = $action->assignedFlats;
+
+                    foreach ($flatsList as $flat) {
+                        $flat->discount = 0;
+                        $flat->save();
+                        $flat->unlink('assignedNews', $action, true);
+                    }
+
+                    $action->actionData->is_actual = 0;
+                    $action->actionData->save();
+                } 
+            }
         }
-        
     }
 }
