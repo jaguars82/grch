@@ -449,7 +449,8 @@ class NewbuildingComplex extends ActiveRecord
         return $this->hasMany(Newbuilding::className(), ['newbuilding_complex_id' => 'id'])
                 ->inverseOf('newbuildingComplex');
     }
-    
+	
+	
     /**
      * Gets query for [[News]].
      *

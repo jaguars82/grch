@@ -40,6 +40,11 @@ class NewbuildingComplexQuery extends ActiveQuery
         
         return $this->andWhere(['has_active_buildings' => true]);
     }
+	
+	public function byFeedName($feedName)
+	{
+		return $this->where(['feed_name' => $feedName]);
+	}
 
     /**
      * Get newbuilding complexes only with active flats
@@ -68,4 +73,5 @@ class NewbuildingComplexQuery extends ActiveQuery
                 ->andWhere(new InCondition('type', 'in', Import::$import_auto))
                 ->andWhere('TO_SECONDS(NOW()) - TO_SECONDS(imported_at) >= schedule OR imported_at IS NULL');
     }
+	
 }

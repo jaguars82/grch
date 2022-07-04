@@ -4,8 +4,8 @@ namespace app\commands;
 
 use yii\console\Controller;
 use app\models\service\Developer;
-use app\models\NewbuildingComplex;
 use app\models\Newbuilding;
+use app\models\NewbuildingComplex;
 use app\models\News;
 
 class ServiceController extends Controller
@@ -40,14 +40,13 @@ class ServiceController extends Controller
         }        
     }
 
-    
     public function actionDisableExpiredActions() {
 
         $actions = (new News())->actions;
 
         foreach ($actions as $action) {
 
-            if (!empty($action->actionData->expired_at) && $action->actionData->expired_at =! NULL) {
+            if (!empty($action->actionData->expired_at) && $action->actionData->expired_at != NULL) {
 
                 if (strtotime(date("Y-m-d")) > strtotime($action->actionData->expired_at)) {
                     $flatsList = $action->assignedFlats;
@@ -64,70 +63,84 @@ class ServiceController extends Controller
             }
         }
     }
-
-
+	
+	/**
+	 * method to compare positions in feed (XML) with positions in DataBase
+	 * in order to find out 'suspended' positions (that contained in data base, but not contained in XML-feed)
+	 */
 	public function actionFeedInquiry() {
 
-        $id = 13;
-
-        if (($developer = Developer::findOne($id)) === null) {
-            echo "Застройщик с ID $id не найден\n";
-            return self::RETURN_ERROR_NOT_FOUND;
-        }
-        
-        if (is_null($import = $developer->import)) {
-            echo "Для застройщика не настроен импорт\n";
-            return self::RETURN_ERROR_NO_IMPORT;
-        }
-
-        $algorithm = $import->algorithmAsObject;
-
-        $data = $algorithm->getAndParse($import->endpoint);
+		$developers = Developer::find()->all();
 		
-		$dataTree = array();
-		
-		foreach ($data['newbuildingComplexes'] as $nbc_key => $newbuildingComplex) {
-			$newbuildingComplexFeedName = $newbuildingComplex['name'];
+		foreach ($developers as $developer) {
 			
-			foreach ($data['newbuildings'] as $nb_key => $newbuilding) {
-				if ($newbuilding['objectId'] === $nbc_key) {
-					$newbuildingFeedName = $newbuilding['name'];
-					
-					$dataTree[$newbuildingComplexFeedName][$newbuildingFeedName] = [
-						//$newbuildingFeedName => [
+			echo "==================================\n";
+			echo $developer->name."\n";
+			echo "==================================\n";
+	
+			if (is_null($import = $developer->import)) {
+				echo "Для застройщика не настроен импорт\n";
+				return self::RETURN_ERROR_NO_IMPORT;
+			}
+
+			$algorithm = $import->algorithmAsObject;
+
+			$data = $algorithm->getAndParse($import->endpoint);
+			
+			$dataTree = array();
+			
+			foreach ($data['newbuildingComplexes'] as $nbc_key => $newbuildingComplex) {
+				$newbuildingComplexFeedName = $newbuildingComplex['name'];
+				
+				foreach ($data['newbuildings'] as $nb_key => $newbuilding) {
+					if ($newbuilding['objectId'] === $nbc_key) {
+						$newbuildingFeedName = $newbuilding['name'];
+						
+						$dataTree[$newbuildingComplexFeedName][$newbuildingFeedName] = [
 							'flats' => array(),
 							'flats_in_feed_amount' => 0,
 							'flats_in_feed_numbers' => array()
-						//]
-					];
-					
-					$newbuildingFlatCounter = 0;
-					
-					foreach ($data['flats'] as $flat) {
-						if ($flat['houseId'] === $nb_key) {
-							$newbuildingFlatCounter += 1;
-							//$dataTree[$newbuildingComplexFeedName][$newbuildingFeedName]['flats'][] = $flat;
-							$dataTree[$newbuildingComplexFeedName][$newbuildingFeedName]['flats_in_feed_amount'] = $newbuildingFlatCounter;
-							$dataTree[$newbuildingComplexFeedName][$newbuildingFeedName]['flats_in_feed_numbers'][] = $flat['number'];
+						];
+						
+						$newbuildingFlatCounter = 0;
+						
+						foreach ($data['flats'] as $flat) {
+							if ($flat['houseId'] === $nb_key) {
+								$newbuildingFlatCounter += 1;
+								$dataTree[$newbuildingComplexFeedName][$newbuildingFeedName]['flats'][] = $flat;
+								$dataTree[$newbuildingComplexFeedName][$newbuildingFeedName]['flats_in_feed_amount'] = $newbuildingFlatCounter;
+								$dataTree[$newbuildingComplexFeedName][$newbuildingFeedName]['flats_in_feed_numbers'][] = $flat['number'];
+							}
 						}
 					}
 				}
 			}
-		}
-		
-		// list positions from feeds
-        // var_dump($dataTree);
-		foreach ($dataTree as $newbuildingComplexName => $buildings) {
-			echo '----- '.$newbuildingComplexName.' -----';
-			// var_dump($buildings);
-			echo PHP_EOL;
-			foreach ($buildings as $buildingName => $buildingData) {
-				echo $buildingName;
+			
+			// list positions from feeds, compare with positions on website
+			// var_dump($dataTree);
+			foreach ($dataTree as $newbuildingComplexName => $buildings) {
+				$complexFromDataBase = (new NewbuildingComplex())->find()->byFeedName($newbuildingComplexName)->one();
+				$buildingsFromDataBase = $complexFromDataBase->newbuildings;
+				//echo '----- '.$newbuildingComplexName.' -----';
+				echo '***** '.$complexFromDataBase->name.' *****';
 				echo PHP_EOL;
-				echo 'передаётся '.$buildingData['flats_in_feed_amount'].' квартир';
-				echo PHP_EOL;
+				foreach ($buildings as $buildingName => $buildingData) {
+					foreach($buildingsFromDataBase as $building) {
+						if ($building->feed_name == $buildingName) {
+							$buildingFromDataBase = $building;
+						}
+					}
+					echo $buildingFromDataBase->name.' - ';
+					echo 'передаётся '.$buildingData['flats_in_feed_amount'].' квартир; ';
+					echo 'на сайте '.$buildingFromDataBase->activeFlatsAmount.' квартир;';
+					if ($buildingFromDataBase->activeFlatsAmount > $buildingData['flats_in_feed_amount']) {
+						echo ' - ВНИМАНИЕ, ПРОВЕРИТЬ!';
+					}
+					echo PHP_EOL;
+				}
 			}
+		
 		}
     }
-    
+	
 }
