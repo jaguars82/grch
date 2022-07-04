@@ -251,13 +251,13 @@ class Developer extends \app\models\Developer
 
             if (array_key_exists($newbuildingData['name'], $savedNewbuildings[$objectId])) {
                 $newbuilding = $savedNewbuildings[$objectId][$newbuildingData['name']];
-
-                if (isset($newbuildingData['deadline']) && $newbuildingData['deadline'] != $newbuilding->deadline) {
+                // the following commented code was responsible for updating newbuilding data (deadline, material etc.)
+                /*if (isset($newbuildingData['deadline']) && $newbuildingData['deadline'] != $newbuilding->deadline) {
                     $newbuildingData['name'] = $savedNewbuildings[$objectId][$newbuildingData['name']]['name']; // this prevents raplacement of 'name' in database with 'name' from feed
                     $newbuilding->fill($newbuildingData);
                     $newbuilding->save();
                     $this->updatedNewbuildingsCount++;
-                }
+                }*/
             } else {
                 $newbuildingData['feed_name'] = $newbuildingData['name'];
 
