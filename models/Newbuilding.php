@@ -343,6 +343,11 @@ class Newbuilding extends ActiveRecord
         return $this->hasMany(Flat::className(), ['newbuilding_id' => 'id'])
                 ->onlyActive();
     }
+	
+	public function getActiveFlatsAmount()
+	{
+		return $this->getActiveFlats()->count();
+	}
     
     /**
      * Gets query for [[Flats]].
