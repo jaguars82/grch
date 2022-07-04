@@ -42,7 +42,7 @@ $format = \Yii::$app->formatter;
             <?php endif; ?>
             <?php if (!empty($entrancesData[$section]['deadline'])): ?>
                 <div>
-                , cдача - <?= is_null($entrancesData[$section]['deadline']) ? 'нет данных' : $format->asQuarterAndYearDate($entrancesData[$section]['deadline']) ?>
+                , cдача - <?= (is_null($entrancesData[$section]['deadline']) ? 'нет данных' : strtotime(date("Y-m-d")) > strtotime($entrancesData[$section]['deadline'])) ? 'подъезд сдан' : $format->asQuarterAndYearDate($entrancesData[$section]['deadline']) ?>
                 </div>
             <?php endif; ?>
             <?php if (!empty($entrancesData[$section]['floors'])): ?>
