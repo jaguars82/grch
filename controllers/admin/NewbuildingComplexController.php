@@ -62,7 +62,7 @@ class NewbuildingComplexController extends Controller
                         'allow' => true,
                         'actions' => [
                             'index', 'create', 'update', 'delete', 'upload-archive', 
-                            'import-archive', 'download-archive',
+                            'import-archive', 'download-archive', 'virtual-structure'
                         ],
                         'roles' => ['admin'],
                     ],
@@ -458,5 +458,13 @@ class NewbuildingComplexController extends Controller
         
         $fileName = \Yii::getAlias("@webroot/uploads/archive/{$model->archive->file}");
         return \Yii::$app->response->sendFile($fileName, 'Архив - ' . $model->name . '.' . pathinfo($fileName, PATHINFO_EXTENSION));
+    }
+
+    public function actionVirtualStructure($newbuildingComplexId) {
+        $newbuildingComplex = $this->findModel($newbuildingComplexId);
+
+        return $this->render('virtual-structure', [
+            'newbuildingComplex' => $newbuildingComplex
+        ]);
     }
 }

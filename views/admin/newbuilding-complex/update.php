@@ -42,6 +42,7 @@ $this->params['breadcrumbs'][] = $newbuildingComplex->name;
         <?= Html::a('Позиции', ['/admin/newbuilding/index', 'newbuildingComplexId' => $newbuildingComplexId], ['class' => 'btn btn-primary']); ?>
         <?= Html::a('Контакты', ['/admin/contact/newbuilding-complex-contact/index', 'newbuildingComplexId' => $newbuildingComplexId], ['class' => 'btn btn-primary']); ?>
         <?= Html::a('Документы', ['/admin/document/newbuilding-complex-document/index', 'newbuildingComplexId' => $newbuildingComplexId], ['class' => 'btn btn-primary']); ?>
+        <?= Html::a('Виртуальная структура', ['/admin/newbuilding-complex/virtual-structure', 'newbuildingComplexId' => $newbuildingComplexId], ['class' => 'btn btn-primary']); ?>
 
         <?php if(!empty($model->archive)): ?>
             <div>

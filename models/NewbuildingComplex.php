@@ -37,6 +37,7 @@ use \app\models\City;
  * @property Flat[] $flats
  * @property Furnish[] $furnishes
  * @property Newbuilding[] $newbuildings
+ * @property Entrance[] $entrances
  * @property News[] $news
  * @property Image[] $images
  * @property Document[] $documents
@@ -404,6 +405,17 @@ class NewbuildingComplex extends ActiveRecord
     public function getFlats()
     {
         return $this->hasMany(Flat::className(), ['newbuilding_id' => 'id'])
+                ->via('newbuildings');
+    }
+    
+    /**
+     * Gets query for [[Entrance]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEntrances()
+    {
+        return $this->hasMany(Entrance::className(), ['newbuilding_id' => 'id'])
                 ->via('newbuildings');
     }
     
