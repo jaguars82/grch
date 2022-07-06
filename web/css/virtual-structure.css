@@ -1,0 +1,57 @@
+.position-container {
+  margin-bottom: 15px;
+  border-radius: 3px;
+  border: solid thin #ddd;
+  padding: 15px;
+}
+
+#entrances-list {
+  padding-left: 0px;
+}
+
+.entrance-draggable-item {
+  margin: 3px;
+  padding: 7px 10px;
+  border-radius: 3px;
+  background-color: #eee;
+  cursor: all-scroll;
+}
+
+.entrances-container {
+  margin-top: 10px;
+}
+
+.entrance-accept-slot {
+  border-radius: 3px;
+  background-color: #f5f5f5;
+  height: 45px;
+}
+
+.droppable-active {
+  background-color: #d0d0d0;
+}
+
+.position-entrances-list {
+  padding-left: 0px;
+  list-style: none;
+}
+
+.entrance-edit-row {
+  display: flex;
+  align-items: center;
+}
+
+.entrance-edit-row .inputs-field {
+  flex-grow: 2;
+}
+
+.entrance-edit-row .entrance-edit-row-marker {
+  padding: 0 3px;
+  color: #888;
+}
+
+.entrance-edit-row .action-button {
+  padding: 0 3px;
+  color: indianred;
+  cursor: pointer;
+}

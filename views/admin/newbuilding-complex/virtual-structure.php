@@ -3,6 +3,7 @@
 use app\assets\VirtualStructureAsset;
 
 use yii\helpers\Html;
+use yii\widgets\ActiveForm;
 
 VirtualStructureAsset::register($this);
 
@@ -20,17 +21,31 @@ $this->params['breadcrumbs'][] = 'Виртуальная структура';
     
     <h2 class="bordered"><?= Html::encode($this->title) ?></h2>
 
-        <div id="virtual-structure-form" class="row">
+        <div id="virtual-structure-form-container" class="row">
             <div class="col-md-8">
-                <div class="entrances-slot" style="height: 50px; border: solid thin #000; margin: 5px;"></div>
-                <div class="entrances-slot" style="height: 50px; border: solid thin #000; margin: 5px;"></div>
+                <div id="positions-list">
+                <!--<div class="position-container">
+                    <div class="position-name-container">
+                        <input class="form-control" type="text" placeholder="Название позиции">
+                    </div>
+                    <div class="entrances-container">
+                        <ul class="position-entrances-list">
+                        </ul>
+                        <div class="entrance-accept-slot"></div>
+                    </div>
+                </div>-->
+                </div>
+                <button class="btn btn-primary btn-xs" onclick="addPosition()">Добавить позицию</button>
+            <?php $form = ActiveForm::begin(['id' => 'virtual-structure-form', 'options' => ['enctype' => 'multipart/form-data']]); ?>
+            <?php ActiveForm::end(); ?>
+
             </div>
             <div class="col-md-4">
-                <ul id="entrances-list">
+                <div id="entrances-list">
                 <?php foreach ($newbuildingComplex->entrances as $entrance): ?>
-                    <li id="<?= $entrance->id ?>"><?= $entrance->name ?></li>
+                    <div class="entrance-draggable-item" id="<?= $entrance->id ?>"><?= $entrance->name ?></div>
                 <?php endforeach; ?>
-                </ul>
+                </div>
             </div>
         </div>
 

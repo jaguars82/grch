@@ -660,7 +660,8 @@ input.form-control {
   line-height: 24px;
   border: 1px solid #dae2e8;
   border-radius: 4px;
-  padding: 12px 4px;
+  /* padding: 12px 4px; */
+  padding: 7px 10px;
   color: #212121;
   height: auto;
 }
