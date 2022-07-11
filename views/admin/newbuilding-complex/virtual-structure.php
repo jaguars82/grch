@@ -36,14 +36,19 @@ $this->params['breadcrumbs'][] = 'Виртуальная структура';
                 </div>-->
                 </div>
                 <button class="btn btn-primary btn-xs" onclick="addPosition()">Добавить позицию</button>
-            <?php $form = ActiveForm::begin(['id' => 'virtual-structure-form', 'options' => ['enctype' => 'multipart/form-data']]); ?>
-            <?php ActiveForm::end(); ?>
+            
+                <?php $form = ActiveForm::begin(['id' => 'virtual-structure-form', 'options' => ['enctype' => 'multipart/form-data']]); ?>
+                <?= $form->field($newbuildingComplex, 'name')->hiddenInput(['id' => 'virtual-structure-input'])->label(false) ?>
+                <?= $form->field($newbuildingComplex, 'active', [
+                    'template' => "<label>{input}<span>Использовать виртуальную структуру</span></label>{error}",
+                ])->checkbox([], false)->label(false) ?>
+                <?php ActiveForm::end(); ?>
 
             </div>
             <div class="col-md-4">
                 <div id="entrances-list">
                 <?php foreach ($newbuildingComplex->entrances as $entrance): ?>
-                    <div class="entrance-draggable-item" id="<?= $entrance->id ?>"><?= $entrance->name ?></div>
+                    <div class="entrance-draggable-item" id="<?= $entrance->id ?>"><?= $entrance->name ?> (<?= $entrance->newbuilding->name ?>)</div>
                 <?php endforeach; ?>
                 </div>
             </div>

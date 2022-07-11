@@ -83,7 +83,7 @@ class NewbuildingComplex extends ActiveRecord
             [['building_number'], 'string', 'max' => 20],
             [['longitude', 'latitude'], 'double'],
             [['detail', 'offer_info', 'algorithm'], 'string'],
-            [['project_declaration', 'bank_tariffs'], 'safe'],
+            [['project_declaration', 'bank_tariffs', 'virtual_structure'], 'safe'],
             [['name', 'logo', 'street_name', 'master_plan'], 'string', 'max' => 200],
             [['name', 'logo'], 'unique'],
             [['created_at', 'updated_at'], 'safe'],
@@ -95,8 +95,8 @@ class NewbuildingComplex extends ActiveRecord
             [['city_id'], 'exist', 'skipOnError' => true, 'targetClass' => City::className(), 'targetAttribute' => ['city_id' => 'id']],
             [['developer_id'], 'exist', 'skipOnError' => true, 'targetClass' => Developer::className(), 'targetAttribute' => ['developer_id' => 'id']],
             [['longitude', 'latitude', 'detail', 'algorithm', 'offer_info'], 'default', 'value' => NULL],
-            [['active', 'has_active_buildings'], 'boolean'],
-            [['active', 'has_active_buildings'], 'default', 'value' => true]
+            [['active', 'has_active_buildings', 'use_virtual_structure'], 'boolean'],
+            [['active', 'has_active_buildings', 'use_virtual_structure'], 'default', 'value' => true]
         ];
     }
 
@@ -119,7 +119,8 @@ class NewbuildingComplex extends ActiveRecord
             'advantages' => 'Преимущества',
             'algorithm' => 'Алгоритм действия',
             'project_declaration' => 'Проектная декларация',
-            'address' => 'Адрес'
+            'address' => 'Адрес',
+            'use_virtual_structure' => 'Использовать виртуальную структуру'
         ];
     }
     
