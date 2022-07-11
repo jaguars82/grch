@@ -82,7 +82,7 @@ class NewbuildingComplexController extends Controller
     public function actionView($id)
     {
         $model = $this->findModel($id, true);       
-        $positions = [];
+        /*$positions = [];
         $positionArray = [];
         $number = 1;
         foreach ($model->getNewbuildings()->with(['activeFlats'])->all() as $newbuilding) {
@@ -98,7 +98,7 @@ class NewbuildingComplexController extends Controller
                 'active' => $newbuilding->active,
             ];
             $positionArray[$newbuilding->id] = \Yii::$app->formatter->asCapitalize($newbuilding->name);
-        }
+        }*/
         
         $newsDataProvider = new ActiveDataProvider([
             'query' => $model->getNews()->limit(4),

@@ -9,6 +9,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 use \app\models\BuildingType;
+use \app\models\Entrance;
 use \app\models\StreetType;
 use \app\models\District;
 use \app\models\Region;
@@ -84,7 +85,7 @@ class NewbuildingComplex extends ActiveRecord
             [['building_number'], 'string', 'max' => 20],
             [['longitude', 'latitude'], 'double'],
             [['detail', 'offer_info', 'algorithm'], 'string'],
-            [['project_declaration', 'bank_tariffs', 'virtual_structure'], 'safe'],
+            [['project_declaration', 'bank_tariffs', 'virtual_structure', 'virtualbuildings'], 'safe'],
             [['name', 'logo', 'street_name', 'master_plan'], 'string', 'max' => 200],
             [['name', 'logo'], 'unique'],
             [['created_at', 'updated_at'], 'safe'],
@@ -462,6 +463,41 @@ class NewbuildingComplex extends ActiveRecord
     {
         return $this->hasMany(Newbuilding::className(), ['newbuilding_complex_id' => 'id'])
                 ->inverseOf('newbuildingComplex');
+    }
+
+
+    public function getVirtualbuildings()
+    {
+        if (!empty($this->virtual_structure)) {
+
+            $structure = json_decode($this->virtual_structure);
+
+                        
+            foreach ($structure as $position) {
+                $db_entrances = array();
+                $activeFlats = 0;
+                $reservedFlats = 0;
+                foreach ($position->entrance_idies as $entranceID) {
+                    $dbEntrance = (new Entrance())->find(['id' => $entranceID])->one();
+                    array_push($db_entrances, $dbEntrance);
+                    $activeFlats += $dbEntrance->getActiveFlats()->count();
+                    $reservedFlats += $dbEntrance->getReservedFlats()->count();
+                }
+                $position->db_entrances = $db_entrances;
+                $position->available_flats = $activeFlats + $reservedFlats;
+                $position->active_flats = $activeFlats;
+                $position->reserved_flats = $reservedFlats;
+            }
+
+            /*foreach ($structure as $position) {
+
+            }*/
+
+            return $structure;
+
+        } else {
+            return false;
+        }
     }
 	
 	

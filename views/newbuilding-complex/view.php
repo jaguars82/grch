@@ -161,7 +161,11 @@ NewbuildingComplexViewAsset::register($this);
         </div>
         <?php endif; ?>
 
-        <?= FlatsChess::widget(['newbuildings' => $model->newbuildings]) ?>
+        <?php if ($model->use_virtual_structure == 1): ?>
+            <?= FlatsChess::widget(['use_virtual_structure' => $model->use_virtual_structure, 'newbuildings' => $model->virtualbuildings]) ?>
+        <?php else: ?>
+            <?= FlatsChess::widget(['newbuildings' => $model->newbuildings]) ?>
+        <?php endif; ?>
         
         <?php if(!is_null($model->stages) && count($model->stages) > 0): ?>
         <div class="white-block interactions">

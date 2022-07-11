@@ -68,13 +68,17 @@ function processData() {
       position.name = $(`#position-${positionIndex}-name`).val() == '' ? `Позиция ${positionIndex}` : $(`#position-${positionIndex}-name`).val();
       
       const entrances = [];
+      const entranceIDies = [];
 
       $(`#entrances-list-position-${positionIndex} li`).each(function(index, entranceElem) {
         const alias = $(`#entrance-${entranceElem.dataset.entranceid}-alias`).val() != '' ? $(`#entrance-${entranceElem.dataset.entranceid}-alias`).val() : '';
         entrances.push({ id: entranceElem.dataset.entranceid, alias });
+        entranceIDies.push(entranceElem.dataset.entranceid);
       });
 
+      position.id = positionIndex;
       position.entrances = entrances;
+      position.entrance_idies = entranceIDies;
 
       dataTree.push(position);
     });    
