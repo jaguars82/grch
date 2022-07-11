@@ -38,10 +38,14 @@ $this->params['breadcrumbs'][] = 'Виртуальная структура';
                 <button class="btn btn-primary btn-xs" onclick="addPosition()">Добавить позицию</button>
             
                 <?php $form = ActiveForm::begin(['id' => 'virtual-structure-form', 'options' => ['enctype' => 'multipart/form-data']]); ?>
-                <?= $form->field($newbuildingComplex, 'name')->hiddenInput(['id' => 'virtual-structure-input'])->label(false) ?>
-                <?= $form->field($newbuildingComplex, 'active', [
+                <?= $form->field($newbuildingComplex, 'virtual_structure')->hiddenInput(['id' => 'virtual-structure-input'])->label(false) ?>
+                <?= $form->field($newbuildingComplex, 'use_virtual_structure', [
                     'template' => "<label>{input}<span>Использовать виртуальную структуру</span></label>{error}",
                 ])->checkbox([], false)->label(false) ?>
+                <div class="form-group">
+                    <?= Html::submitButton('Сохранить структуру', ['id' => 'virtual-structure-submit', 'class' => 'btn btn-success']) ?>
+                </div>
+
                 <?php ActiveForm::end(); ?>
 
             </div>

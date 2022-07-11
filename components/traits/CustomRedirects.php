@@ -64,6 +64,7 @@ trait CustomRedirects
      */
     protected function redirectBackWhenException(\Exception $e)
     {        
+        // echo '<pre>'; var_dump($e); echo '</pre>'; die();
         return $this->redirectWithError(\Yii::$app->request->referrer, ($e instanceof AppException) ? $e->getMessage() : 'Произошла ошибка. Обратитесь в службу поддержки');
     }
 }

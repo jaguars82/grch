@@ -11,7 +11,6 @@ function enableDroppable () {
       "ui-droppable-active": "droppable-active"
     },
     drop: function (event, ui) {
-      // console.log(event.target.dataset.positionindex);
       addToPosition(ui.draggable, event.target.dataset.positionindex);
       processData();
     }
@@ -23,7 +22,7 @@ function addPosition () {
   const newPositionIndex = existingPositionsAmount + 1;
   const newPositionHTML = `<div class="position-container" data-indexOfPosition="${newPositionIndex}">
   <div class="position-name-container">
-      <input id="position-${newPositionIndex}-name" class="position-name form-control" type="text" placeholder="Название позиции">
+      <input id="position-${newPositionIndex}-name" class="position-name form-control" type="text" placeholder="Название позиции" onchange="processData()">
   </div>
   <div class="entrances-container">
       <ul id="entrances-list-position-${newPositionIndex}" class="position-entrances-list">
@@ -37,7 +36,7 @@ function addPosition () {
 
 function addToPosition ($item, positionIndex) {
   $item[0].style = 'cursor: default; user-select: none;';
-  const entranceEntry = `<li id="entrance-edit-item-${$item[0].id}" class="entrance-edit-row" data-entranceid="${$item[0].id}"><span class="entrance-edit-row-marker material-icons-outlined">door_sliding</span><div class="inputs-field"><input type="hidden" name="entrance-id[]" value="${$item[0].id}"><input id="entrance-${$item[0].id}-name" type="hidden" name="entrance-name[]" value="${$item[0].innerText}"><input id="entrance-${$item[0].id}-alias" class="form-control" type="text" name="entrance-alias[]" placeholder="Псевдоним подъезда"></div>${$item[0].outerHTML}<span id="entrance-edit-item-remove-${$item[0].id}" onclick="removeEntranceItem(${$item[0].id})" class="action-button material-icons-outlined">close</span></li>`;
+  const entranceEntry = `<li id="entrance-edit-item-${$item[0].id}" class="entrance-edit-row" data-entranceid="${$item[0].id}"><span class="entrance-edit-row-marker material-icons-outlined">door_sliding</span><div class="inputs-field"><input type="hidden" name="entrance-id[]" value="${$item[0].id}"><input id="entrance-${$item[0].id}-name" type="hidden" name="entrance-name[]" value="${$item[0].innerText}"><input id="entrance-${$item[0].id}-alias" class="form-control" type="text" name="entrance-alias[]" placeholder="Псевдоним подъезда" onchange="processData()"></div>${$item[0].outerHTML}<span id="entrance-edit-item-remove-${$item[0].id}" onclick="removeEntranceItem(${$item[0].id})" class="action-button material-icons-outlined">close</span></li>`;
   $(`#entrances-list-position-${positionIndex}`).append(entranceEntry);
   $item.remove();
 }
@@ -48,6 +47,7 @@ function removeEntranceItem(id) {
   $("#entrances-list").append(backToListEntranceItem);
   enableDraggable();
   $(`#entrance-edit-item-${id}`).remove();
+  processData();
 }
 
 function processData() {
@@ -79,7 +79,13 @@ function processData() {
       dataTree.push(position);
     });    
   }
-  console.log(dataTree);
+
+  const jsonData = JSON.stringify(dataTree);
+
+  $('#virtual-structure-input').val(jsonData);
+
+  console.log(jsonData);
+
 
 }
 

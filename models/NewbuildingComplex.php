@@ -28,6 +28,7 @@ use \app\models\City;
  * @property string|null algorithm
  * @property int|null $offer_new_price_permit
  * @property string|null project_declaration
+ * @property string|null virtual_structure
  *
  * @property News[] $actions
  * @property News[] $activeActions

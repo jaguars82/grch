@@ -462,6 +462,22 @@ class NewbuildingComplexController extends Controller
 
     public function actionVirtualStructure($newbuildingComplexId) {
         $newbuildingComplex = $this->findModel($newbuildingComplexId);
+        $form = (new NewbuildingComplexForm())->fill($newbuildingComplex->attributes);
+
+        if (\Yii::$app->request->isPost /*&& $form->load(\Yii::$app->request->post()) && $form->process()*/) {
+            $data = \Yii::$app->request->post();
+            // $form->load(\Yii::$app->request->post());
+            $form->use_virtual_structure = $data['NewbuildingComplex']['use_virtual_structure'];
+            $form->virtual_structure = $data['NewbuildingComplex']['virtual_structure'];
+            // echo '<pre>'; var_dump($form);  var_dump(\Yii::$app->request->post()); echo '</pre>'; die();
+            try {               
+                $newbuildingComplex->edit($form->attributes);
+            } catch (\Exception $e) {
+                return $this->redirectBackWhenException($e);
+            }
+
+            return $this->redirectWithSuccess(['virtual-structure', 'newbuildingComplexId' => $newbuildingComplex->id], 'Виртуальная структура жилого комплекса обновлена');
+        }
 
         return $this->render('virtual-structure', [
             'newbuildingComplex' => $newbuildingComplex
