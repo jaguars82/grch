@@ -34,6 +34,34 @@ class FlatsChess extends Widget
         
         if ($this->use_virtual_structure == 1) {
 
+            if (count($this->newbuildings)) {
+                $newbuildingIds = [];
+                foreach ($this->newbuildings as $newbuilding) {
+                    
+                    $sectionsFlats[$newbuilding->id]['entrances_data'] = array();
+                    foreach ($newbuilding->db_entrances as $entrance) {
+                        $sectionsFlats[$newbuilding->id]['entrances_data'][$entrance->number] =
+                            [
+                                'id' => $entrance->id,
+                                'name' => $entrance->name,
+                                'number' => $entrance->number,
+                                'floors' => $entrance->floors,
+                                'material' => $entrance->material,
+                                'status' => $entrance->status,
+                                'deadline' => $entrance->deadline,
+                                'azimuth' => $entrance->azimuth,
+                                'longitude' => $entrance->longitude,
+                                'latitude' => $entrance->latitude,
+                                'activeFlats' => $entrance->getActiveFlats()->count(),
+                                'reservedFlats' => $entrance->getReservedFlats()->count(),
+                            ];
+                        $sectionsFlats[$newbuilding->id][$entrance->number] = $entrance->getFlats()->orderBy(['floor' => SORT_DESC, 'number' => SORT_DESC])->all();
+                        $sectionsData[$newbuilding->id][] = $entrance->number;
+                        $maxRoomsOnFloors[$newbuilding->id][$entrance->number] = $entrance->maxRoomsOnFloorsForEntrance($entrance->id);
+                    }
+                }
+            }
+
         } else {
 
             if (count($this->newbuildings)) {

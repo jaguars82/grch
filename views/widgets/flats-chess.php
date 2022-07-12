@@ -11,9 +11,7 @@ $format = \Yii::$app->formatter;
 ?>
 
 <?php if (isset($use_virtual_structure) && $use_virtual_structure == 1): ?>
-    <pre>
-        <?php var_dump ($newbuildings) ?>
-    </pre>
+
     <?php if (count($newbuildings)): ?>
         <div class="white-block flat-chess">
             <p class="h3">Шахматки / Позиции</p>
@@ -60,8 +58,16 @@ $format = \Yii::$app->formatter;
                             <?php endforeach ?>
                             <span class="<?= FlatsChess::NO_FLAT_CLASS ?>">Недоступно</span>
                         </div>
-                        <?php //if (isset($maxRoomsOnFloors[$newbuilding->id]) && isset($sectionsFlats[$newbuilding->id]) && isset($sectionsData[$newbuilding->id])): ?>
-                        <?php //endif; ?>
+                        <?php if (/*isset($maxRoomsOnFloors[$newbuilding->id]) && */isset($sectionsFlats[$newbuilding->id])/* && isset($sectionsData[$newbuilding->id])*/): ?>
+                            <?= $this->render('/widgets/_newbuilding-flats-chess', [
+                                'newbuilding' => $newbuilding,
+                                'maxRoomsOnFloors' => $maxRoomsOnFloors[$newbuilding->id],
+                                //'maxRoomsOnFloors' => 5,
+                                'sectionsFlats' => $sectionsFlats[$newbuilding->id],
+                                'sectionsData' => $sectionsData[$newbuilding->id],
+                                'currentFlat' => $currentFlat
+                            ]) ?>
+                        <?php endif; ?>
                     </div>
 
 

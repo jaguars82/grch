@@ -477,12 +477,15 @@ class NewbuildingComplex extends ActiveRecord
                 $db_entrances = array();
                 $activeFlats = 0;
                 $reservedFlats = 0;
+                
                 foreach ($position->entrance_idies as $entranceID) {
-                    $dbEntrance = (new Entrance())->find(['id' => $entranceID])->one();
+                    $dbEntrance = (new Entrance())->findOne($entranceID);
                     array_push($db_entrances, $dbEntrance);
                     $activeFlats += $dbEntrance->getActiveFlats()->count();
                     $reservedFlats += $dbEntrance->getReservedFlats()->count();
+                    //echo '<pre>'; var_dump($dbEntrance); echo '</pre>';
                 }
+                //echo '<pre>'; var_dump($position->entrance_idies); echo '</pre>'; die();
                 $position->db_entrances = $db_entrances;
                 $position->available_flats = $activeFlats + $reservedFlats;
                 $position->active_flats = $activeFlats;

@@ -12,7 +12,9 @@ $format = \Yii::$app->formatter;
         $flats = [];
         $sectionFlats = $sectionsFlats[$section];
         $lastSectionFlat = count($sectionFlats) - 1;
-        $lastFloor = $newbuilding->total_floor + 1;
+        //$lastFloor = $newbuilding->total_floor + 1;
+        $lastFloor = $entrancesData[$section]['floors'] + 1;
+        //echo '<pre>'; var_dump($entrancesData); echo '</pre>';
     ?>
     
     <?php if (!empty($entrancesData[$section]['id'])): ?>
