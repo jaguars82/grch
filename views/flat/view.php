@@ -194,9 +194,13 @@ $this->params['breadcrumbs'][] = $model->number;
                 </div>
             </div>
         <?php endif; ?>
-        
-        <?= FlatsChess::widget(['newbuildings' => $model->newbuildingComplex->newbuildings, 'currentFlat' => $model]) ?>
 
+        <?php if ($model->newbuildingComplex->use_virtual_structure == 1): ?>
+            <?= FlatsChess::widget(['use_virtual_structure' => $model->newbuildingComplex->use_virtual_structure, 'newbuildings' => $model->newbuildingComplex->virtualbuildings, 'currentFlat' => $model]) ?>
+        <?php else: ?>
+            <?= FlatsChess::widget(['newbuildings' => $model->newbuildingComplex->newbuildings, 'currentFlat' => $model]) ?>
+        <?php endif; ?>
+        
         <?= Placemark::widget([
             'longitude' => $model->newbuildingComplex->longitude,
             'latitude' => $model->newbuildingComplex->latitude,

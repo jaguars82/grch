@@ -16,7 +16,7 @@ $format = \Yii::$app->formatter;
         <div class="white-block flat-chess">
             <p class="h3">Шахматки / Позиции</p>
             <?php foreach($newbuildings as $key => $newbuilding): ?>
-                <div class="flat-chess__item"
+                <div class="flat-chess__item
                 <?php if(!is_null($currentFlat) && in_array($currentFlat->entrance_id, $newbuilding->entrance_idies)): ?>
                     flat-chess marked open
                 <?php endif; ?>">
@@ -58,11 +58,10 @@ $format = \Yii::$app->formatter;
                             <?php endforeach ?>
                             <span class="<?= FlatsChess::NO_FLAT_CLASS ?>">Недоступно</span>
                         </div>
-                        <?php if (/*isset($maxRoomsOnFloors[$newbuilding->id]) && */isset($sectionsFlats[$newbuilding->id])/* && isset($sectionsData[$newbuilding->id])*/): ?>
+                        <?php if (isset($maxRoomsOnFloors[$newbuilding->id]) && isset($sectionsFlats[$newbuilding->id])/* && isset($sectionsData[$newbuilding->id])*/): ?>
                             <?= $this->render('/widgets/_newbuilding-flats-chess', [
                                 'newbuilding' => $newbuilding,
                                 'maxRoomsOnFloors' => $maxRoomsOnFloors[$newbuilding->id],
-                                //'maxRoomsOnFloors' => 5,
                                 'sectionsFlats' => $sectionsFlats[$newbuilding->id],
                                 'sectionsData' => $sectionsData[$newbuilding->id],
                                 'currentFlat' => $currentFlat
