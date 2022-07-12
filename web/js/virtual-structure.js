@@ -36,7 +36,7 @@ function addPosition () {
 
 function addToPosition ($item, positionIndex) {
   $item[0].style = 'cursor: default; user-select: none;';
-  const entranceEntry = `<li id="entrance-edit-item-${$item[0].id}" class="entrance-edit-row" data-entranceid="${$item[0].id}"><span class="entrance-edit-row-marker material-icons-outlined">door_sliding</span><div class="inputs-field"><input type="hidden" name="entrance-id[]" value="${$item[0].id}"><input id="entrance-${$item[0].id}-name" type="hidden" name="entrance-name[]" value="${$item[0].innerText}"><input id="entrance-${$item[0].id}-alias" class="form-control" type="text" name="entrance-alias[]" placeholder="Псевдоним подъезда" onchange="processData()"></div>${$item[0].outerHTML}<span id="entrance-edit-item-remove-${$item[0].id}" onclick="removeEntranceItem(${$item[0].id})" class="action-button material-icons-outlined">close</span></li>`;
+  const entranceEntry = `<li id="entrance-edit-item-${$item[0].id}" class="entrance-edit-row" data-entranceid="${$item[0].id}"><span class="entrance-edit-row-marker material-icons-outlined">door_sliding</span><div class="inputs-field"><input type="hidden" name="entrance-id[]" value="${$item[0].id}"><input id="entrance-${$item[0].id}-name" type="hidden" name="entrance-name[]" value="${$item[0].innerText}"><input id="entrance-${$item[0].id}-alias" class="form-control" type="hidden" name="entrance-alias[]" placeholder="Псевдоним подъезда" onchange="processData()"></div>${$item[0].outerHTML}<span id="entrance-edit-item-remove-${$item[0].id}" onclick="removeEntranceItem(${$item[0].id})" class="action-button material-icons-outlined">close</span></li>`;
   $(`#entrances-list-position-${positionIndex}`).append(entranceEntry);
   $item.remove();
 }
@@ -87,9 +87,6 @@ function processData() {
   const jsonData = JSON.stringify(dataTree);
 
   $('#virtual-structure-input').val(jsonData);
-
-  console.log(jsonData);
-
 
 }
 
