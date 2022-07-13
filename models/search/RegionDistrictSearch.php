@@ -4,12 +4,12 @@ namespace app\models\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\City;
+use app\models\RegionDistrict;
 
 /**
- * CitySearch represents the model behind the search form of `app\models\City`.
+ * RegionDistrictSearch represents the model behind the search form of `app\models\RegionDistrict`.
  */
-class CitySearch extends City
+class RegionDistrictSearch extends RegionDistrict
 {
     public $itemsCount;
 
@@ -19,7 +19,7 @@ class CitySearch extends City
     public function rules()
     {
         return [
-            [['region_id', 'region_district_id'], 'safe'],
+            [['region_id'], 'safe'],
         ];
     }
 
@@ -41,7 +41,7 @@ class CitySearch extends City
      */
     public function search($params)
     {
-        $query = City::find();
+        $query = RegionDistrict::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -58,8 +58,7 @@ class CitySearch extends City
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'region_id' => $this->region_id,
-            'region_district_id' => $this->region_district_id,
+            'region_id' => $this->region_id
         ]);
 
         $this->itemsCount += $dataProvider->getTotalCount();

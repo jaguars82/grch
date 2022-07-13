@@ -5,11 +5,11 @@ use yii\widgets\ActiveForm;
 use app\components\widgets\InputAddress;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\City */
+/* @var $model app\models\RegionDistrict */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="city-form">
+<div class="region_district-form">
 
     <?php $form = ActiveForm::begin(); ?>
     
@@ -22,7 +22,7 @@ use app\components\widgets\InputAddress;
         'data-placeholder' => 'Регион'
     ])->label(false) ?>
 
-    <?= $form->field($model, 'name')->widget(InputAddress::className(), ['form' => $form, 'attribute' => 'name']) ?>
+    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>

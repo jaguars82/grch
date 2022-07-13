@@ -65,11 +65,15 @@ NewAsset::register($this);
                                             'url' => '/admin/region/index',
                                         ],
                                         [
+                                            'label' => 'Районы регионов',
+                                            'url' => '/admin/region-district/index',
+                                        ],
+                                        [
                                             'label' => 'Города',
                                             'url' => '/admin/city/index',
                                         ],
                                         [
-                                            'label' => 'Районы',
+                                            'label' => 'Районы городов',
                                             'url' => '/admin/district/index',
                                         ],
                                         [
