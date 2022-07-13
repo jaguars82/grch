@@ -9,6 +9,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 use \app\models\BuildingType;
+use \app\models\Entrance;
 use \app\models\StreetType;
 use \app\models\District;
 use \app\models\Region;
@@ -28,6 +29,7 @@ use \app\models\City;
  * @property string|null algorithm
  * @property int|null $offer_new_price_permit
  * @property string|null project_declaration
+ * @property string|null virtual_structure
  *
  * @property News[] $actions
  * @property News[] $activeActions
@@ -37,6 +39,7 @@ use \app\models\City;
  * @property Flat[] $flats
  * @property Furnish[] $furnishes
  * @property Newbuilding[] $newbuildings
+ * @property Entrance[] $entrances
  * @property News[] $news
  * @property Image[] $images
  * @property Document[] $documents
@@ -82,7 +85,7 @@ class NewbuildingComplex extends ActiveRecord
             [['building_number'], 'string', 'max' => 20],
             [['longitude', 'latitude'], 'double'],
             [['detail', 'offer_info', 'algorithm'], 'string'],
-            [['project_declaration', 'bank_tariffs'], 'safe'],
+            [['project_declaration', 'bank_tariffs', 'virtual_structure', 'virtualbuildings'], 'safe'],
             [['name', 'logo', 'street_name', 'master_plan'], 'string', 'max' => 200],
             [['name', 'logo'], 'unique'],
             [['created_at', 'updated_at'], 'safe'],
@@ -94,8 +97,8 @@ class NewbuildingComplex extends ActiveRecord
             [['city_id'], 'exist', 'skipOnError' => true, 'targetClass' => City::className(), 'targetAttribute' => ['city_id' => 'id']],
             [['developer_id'], 'exist', 'skipOnError' => true, 'targetClass' => Developer::className(), 'targetAttribute' => ['developer_id' => 'id']],
             [['longitude', 'latitude', 'detail', 'algorithm', 'offer_info'], 'default', 'value' => NULL],
-            [['active', 'has_active_buildings'], 'boolean'],
-            [['active', 'has_active_buildings'], 'default', 'value' => true]
+            [['active', 'has_active_buildings', 'use_virtual_structure'], 'boolean'],
+            [['active', 'has_active_buildings', 'use_virtual_structure'], 'default', 'value' => true]
         ];
     }
 
@@ -118,7 +121,8 @@ class NewbuildingComplex extends ActiveRecord
             'advantages' => 'Преимущества',
             'algorithm' => 'Алгоритм действия',
             'project_declaration' => 'Проектная декларация',
-            'address' => 'Адрес'
+            'address' => 'Адрес',
+            'use_virtual_structure' => 'Использовать виртуальную структуру'
         ];
     }
     
@@ -408,6 +412,17 @@ class NewbuildingComplex extends ActiveRecord
     }
     
     /**
+     * Gets query for [[Entrance]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEntrances()
+    {
+        return $this->hasMany(Entrance::className(), ['newbuilding_id' => 'id'])
+                ->via('newbuildings');
+    }
+    
+    /**
      * Gets query for [[Flat]].
      *
      * @return \yii\db\ActiveQuery
@@ -448,6 +463,44 @@ class NewbuildingComplex extends ActiveRecord
     {
         return $this->hasMany(Newbuilding::className(), ['newbuilding_complex_id' => 'id'])
                 ->inverseOf('newbuildingComplex');
+    }
+
+
+    public function getVirtualbuildings()
+    {
+        if (!empty($this->virtual_structure)) {
+
+            $structure = json_decode($this->virtual_structure);
+
+                        
+            foreach ($structure as $position) {
+                $db_entrances = array();
+                $activeFlats = 0;
+                $reservedFlats = 0;
+                
+                foreach ($position->entrance_idies as $entranceID) {
+                    $dbEntrance = (new Entrance())->findOne($entranceID);
+                    array_push($db_entrances, $dbEntrance);
+                    $activeFlats += $dbEntrance->getActiveFlats()->count();
+                    $reservedFlats += $dbEntrance->getReservedFlats()->count();
+                    //echo '<pre>'; var_dump($dbEntrance); echo '</pre>';
+                }
+                //echo '<pre>'; var_dump($position->entrance_idies); echo '</pre>'; die();
+                $position->db_entrances = $db_entrances;
+                $position->available_flats = $activeFlats + $reservedFlats;
+                $position->active_flats = $activeFlats;
+                $position->reserved_flats = $reservedFlats;
+            }
+
+            /*foreach ($structure as $position) {
+
+            }*/
+
+            return $structure;
+
+        } else {
+            return false;
+        }
     }
 	
 	

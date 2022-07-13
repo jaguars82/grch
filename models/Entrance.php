@@ -6,6 +6,7 @@ use Yii;
 use app\components\traits\FillAttributes;
 use app\models\query\EntranceQuery;
 use yii\behaviors\TimestampBehavior;
+use yii\db\Query;
 use yii\db\ActiveRecord;
 
 /**
@@ -156,5 +157,23 @@ class Entrance extends ActiveRecord
         return $this->hasMany(Flat::className(), ['entrance_id' => 'id'])
                 ->onlyReserved();
     }
+
+
+    public static function maxRoomsOnFloorsForEntrance($id)
+    {        
+        $result = (new Query)
+            ->select('section, max(flats_count) as max_flats_on_floor')
+            ->from([
+                'floor_data' => (new Query)
+                    ->select('section, floor, count(*) as flats_count')
+                    ->from(['flats' => Flat::find()->where(['IN', 'entrance_id', $id])])
+                    ->groupBy('section, floor')
+            ])
+            ->groupBy('section')
+            ->all();
+         
+        return $result[0]['max_flats_on_floor'];
+    }
+
 
 }

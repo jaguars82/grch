@@ -62,7 +62,7 @@ class NewbuildingComplexController extends Controller
                         'allow' => true,
                         'actions' => [
                             'index', 'create', 'update', 'delete', 'upload-archive', 
-                            'import-archive', 'download-archive',
+                            'import-archive', 'download-archive', 'virtual-structure'
                         ],
                         'roles' => ['admin'],
                     ],
@@ -458,5 +458,29 @@ class NewbuildingComplexController extends Controller
         
         $fileName = \Yii::getAlias("@webroot/uploads/archive/{$model->archive->file}");
         return \Yii::$app->response->sendFile($fileName, 'Архив - ' . $model->name . '.' . pathinfo($fileName, PATHINFO_EXTENSION));
+    }
+
+    public function actionVirtualStructure($newbuildingComplexId) {
+        $newbuildingComplex = $this->findModel($newbuildingComplexId);
+        $form = (new NewbuildingComplexForm())->fill($newbuildingComplex->attributes);
+
+        if (\Yii::$app->request->isPost /*&& $form->load(\Yii::$app->request->post()) && $form->process()*/) {
+            $data = \Yii::$app->request->post();
+            // $form->load(\Yii::$app->request->post());
+            $form->use_virtual_structure = $data['NewbuildingComplex']['use_virtual_structure'];
+            $form->virtual_structure = $data['NewbuildingComplex']['virtual_structure'];
+            // echo '<pre>'; var_dump($form);  var_dump(\Yii::$app->request->post()); echo '</pre>'; die();
+            try {               
+                $newbuildingComplex->edit($form->attributes);
+            } catch (\Exception $e) {
+                return $this->redirectBackWhenException($e);
+            }
+
+            return $this->redirectWithSuccess(['virtual-structure', 'newbuildingComplexId' => $newbuildingComplex->id], 'Виртуальная структура жилого комплекса обновлена');
+        }
+
+        return $this->render('virtual-structure', [
+            'newbuildingComplex' => $newbuildingComplex
+        ]);
     }
 }

@@ -48,6 +48,8 @@ class NewbuildingComplexForm extends Model
     public $master_plan;
     public $stages = [];
     public $bank_tariffs = [];
+    public $use_virtual_structure = 0;
+    public $virtual_structure;
 
     /**
      * {@inheritdoc}
@@ -64,7 +66,7 @@ class NewbuildingComplexForm extends Model
         
         return [
             self::SCENARIO_DEFAULT => array_merge($commonFields, ['developer_id']),
-            self::SCENARIO_UPDATE => array_merge($commonFields, ['remove_project_declaration']),
+            self::SCENARIO_UPDATE => array_merge($commonFields, ['remove_project_declaration'], ['use_virtual_structure'], ['virtual_structure']),
         ];
     }
 
@@ -88,11 +90,12 @@ class NewbuildingComplexForm extends Model
             [['region_id'], 'exist', 'skipOnError' => true, 'targetClass' => \app\models\Region::className(), 'targetAttribute' => ['region_id' => 'id']],
             [['city_id'], 'exist', 'skipOnError' => true, 'targetClass' => \app\models\City::className(), 'targetAttribute' => ['city_id' => 'id']],
             [['developer_id'], 'exist', 'skipOnError' => true, 'targetClass' => \app\models\Developer::className(), 'targetAttribute' => ['developer_id' => 'id']],
-            [['project_declaration', 'remove_project_declaration', 'banks', 'advantages', 'stages', 'bank_tariffs'], 'safe'],
+            [['project_declaration', 'remove_project_declaration', 'banks', 'advantages', 'stages', 'bank_tariffs', 'virtual_structure'], 'safe'],
             [['bank_tariffs'], 'validateBankTariffs', 'skipOnEmpty' => false, 'skipOnError' => false],
             [['longitude', 'latitude', 'detail', 'algorithm', 'offer_info'], 'default', 'value' => NULL],
-            [['active'], 'boolean'],
-            [['active'], 'default', 'value' => 1]
+            [['active', 'use_virtual_structure'], 'boolean'],
+            [['active'], 'default', 'value' => 1],
+            [['use_virtual_structure'], 'default', 'value' => 0]
         ];
     }
     
@@ -117,6 +120,7 @@ class NewbuildingComplexForm extends Model
             'master_plan' => 'Генплан',
             'images' => 'Фото ЖК',
             'stages' => 'Этапы взаимодействия',
+            'use_virtual_structure' => 'Использовать виртуальную структуру'
         ];
     }
 
