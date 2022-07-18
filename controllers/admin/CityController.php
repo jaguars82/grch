@@ -12,6 +12,7 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use app\components\traits\CustomRedirects;
 use app\models\Region;
+use app\models\RegionDistrict;
 use app\models\search\CitySearch;
 
 /**
@@ -87,6 +88,7 @@ class CityController extends Controller
         return $this->render('create', [
             'model' => $model,
             'regions' => Region::getAllAsList(),
+            'region_districts' => RegionDistrict::getAllAsList(),
         ]);
     }
 
@@ -108,6 +110,7 @@ class CityController extends Controller
         return $this->render('update', [
             'model' => $model,
             'regions' => Region::getAllAsList(),
+            'region_districts' => RegionDistrict::getForRegionAsList($model->region->id),
         ]);
     }
 

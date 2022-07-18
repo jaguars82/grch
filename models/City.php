@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use app\models\Region;
+use app\models\RegionDistrict;
 use app\models\query\CityQuery;
 
 /**
@@ -31,11 +32,12 @@ class City extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'region_id'], 'required'],
-            [['region_id'], 'integer'],
+            [['region_id', 'region_district_id', 'is_region_center', 'is_district_center'], 'integer'],
             [['name'], 'string', 'max' => 200],
             [['longitude', 'latitude'], 'double'],
             [['name'], 'unique'],
             [['region_id'], 'exist', 'skipOnError' => true, 'targetClass' => Region::className(), 'targetAttribute' => ['region_id' => 'id']],
+            [['region_district_id'], 'exist', 'skipOnError' => true, 'targetClass' => RegionDistrict::className(), 'targetAttribute' => ['region_district_id' => 'id']],
         ];
     }
 
@@ -46,7 +48,9 @@ class City extends \yii\db\ActiveRecord
     {
         return [
             'name' => 'Город',
-            'region_id' => 'Регион'
+            'region_id' => 'Регион',
+            'is_region_center' => 'Региональный центр',
+            'is_district_center' => 'Районный центр',
         ];
     }
 

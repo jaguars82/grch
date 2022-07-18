@@ -1,5 +1,6 @@
 <?php
 
+use app\assets\admin\CityFormAsset;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\components\widgets\InputAddress;
@@ -7,6 +8,8 @@ use app\components\widgets\InputAddress;
 /* @var $this yii\web\View */
 /* @var $model app\models\City */
 /* @var $form yii\widgets\ActiveForm */
+
+CityFormAsset::register($this);
 ?>
 
 <div class="city-form">
@@ -20,6 +23,16 @@ use app\components\widgets\InputAddress;
     ])->dropDownList($regions, [
         'prompt' => '',
         'data-placeholder' => 'Регион'
+    ])->label(false) ?>
+    
+    <?= $form->field($model, 'region_district_id', [
+        'options' => [
+            //'id' => 'region-district-select',
+            'class' => 'form-group inline-select'
+        ]
+    ])->dropDownList($region_districts, [
+        'prompt' => '',
+        'data-placeholder' => 'Район'
     ])->label(false) ?>
 
     <?= $form->field($model, 'name')->widget(InputAddress::className(), ['form' => $form, 'attribute' => 'name']) ?>

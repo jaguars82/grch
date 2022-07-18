@@ -65,12 +65,22 @@ class Region extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Districts]].
+     * Gets query for [[Cities]].
      *
      * @return \yii\db\ActiveQuery
      */
     public function getCities()
     {
         return $this->hasMany(City::className(), ['region_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[RegionDistricts]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRegionDistricts()
+    {
+        return $this->hasMany(RegionDistrict::className(), ['region_id' => 'id']);
     }
 }

@@ -17,6 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= $this->render('_form', [
         'model' => $model,
         'regions' => $regions,
+        'region_districts' => $region_districts,
         'backUrl' => Url::to(['index']),
     ]) ?>
 </div>

@@ -49,7 +49,7 @@ class RegionDistrict extends \yii\db\ActiveRecord
     }
 
     /**
-     * Get all cities in array form
+     * Get all districts in array form
      * 
      * @return array
      */
@@ -64,9 +64,32 @@ class RegionDistrict extends \yii\db\ActiveRecord
         $regionDistricts = [];
         
         foreach ($result as $key => $region_district) {
-            $cities[$key] = $region_district['name'];
+            $regionDistricts[$key] = $region_district['name'];
         }
         
+        return $regionDistricts;
+    }
+
+    /**
+     * Get all districts for a particular region in array
+     * 
+     * @return array
+     */
+    public static function getForRegionAsList($regionId)
+    {
+        $result = self::find()
+            ->where(['region_id' => $regionId])
+            ->orderBy(['name' => SORT_DESC])
+            ->indexBy('id')
+            ->asArray()
+            ->all();
+        
+        $regionDistricts = [];
+        
+        foreach ($result as $key => $region_district) {
+            $regionDistricts[$key] = $region_district['name'];
+        }
+
         return $regionDistricts;
     }
 

@@ -150,7 +150,8 @@ class RegionDistrictController extends Controller
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;        
         \Yii::$app->response->data = RegionDistrict::find()
-            ->forRegion($id)
+            //->forRegion($id)
+            ->where(['region_id' => $id])
             ->select(['id', 'name'])
             ->orderBy(['name' => SORT_DESC])
             ->asArray()
