@@ -37,6 +37,22 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'id',
             'name',
+            [
+                'attribute' => 'region_id',
+                'label' => 'Регион',
+                'enableSorting' => true,
+                'content' => function ($model, $key, $index, $column) {
+                    return $model->region->name;
+                }
+            ],
+            [
+                'attribute' => 'region_district_id',
+                'label' => 'Район',
+                'enableSorting' => true,
+                'content' => function ($model, $key, $index, $column) {
+                    return isset($model->regiondistrict->name) ? $model->regiondistrict->name : '';
+                }
+            ],
 
             ['class' => 'yii\grid\ActionColumn', 'visibleButtons' => ['view' => false]],
         ],

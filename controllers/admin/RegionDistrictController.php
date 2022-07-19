@@ -153,7 +153,7 @@ class RegionDistrictController extends Controller
             //->forRegion($id)
             ->where(['region_id' => $id])
             ->select(['id', 'name'])
-            ->orderBy(['name' => SORT_DESC])
+            ->orderBy(['name' => SORT_ASC])
             ->asArray()
             ->all();
     }

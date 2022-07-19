@@ -87,6 +87,16 @@ class City extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[RegionDistrict]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRegiondistrict()
+    {
+        return $this->hasOne(RegionDistrict::className(), ['id' => 'region_district_id']);
+    }
+
+    /**
      * Gets query for [[Region]].
      *
      * @return \yii\db\ActiveQuery

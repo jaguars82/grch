@@ -79,7 +79,7 @@ class RegionDistrict extends \yii\db\ActiveRecord
     {
         $result = self::find()
             ->where(['region_id' => $regionId])
-            ->orderBy(['name' => SORT_DESC])
+            ->orderBy(['name' => SORT_ASC])
             ->indexBy('id')
             ->asArray()
             ->all();

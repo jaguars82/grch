@@ -17,10 +17,6 @@ $(function () {
     }
 
     $('#city-region_id').on('change', function() {
-        // console.log($(this).val());
-        //$(this).val().forEach(function(id) {
-            fillRegionDistricts($(this).val());
-        //});
+        fillRegionDistricts($(this).val());
     });
-
 });
