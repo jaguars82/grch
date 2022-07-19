@@ -12,27 +12,40 @@ use yii\helpers\Html;
     <div class="header--location__dropdown">
         <div class="content">
             <?php foreach ($regions as $region): ?>
-                <div class="location-item_container">
-                    <span><?= $region->name ?></span>
-                    <span class="material-icons-outlined">arrow_right</span>
+                <div id="region-<?= $region->id ?>-title" class="location-item_title" onclick="locationItemToggle('region', <?= $region->id ?>)">
+                    <span class="text"><?= $region->name ?></span>
+                    <span class="arrow material-icons-outlined">arrow_right</span>
                 </div>
-                <?= $region->center->name ?>
-                <?php foreach ($region->regionDistricts as $district): ?>
-                    <?php if (isset($district->name)): ?>
-                        <div class="location-item_container">
-                            <span><?= $district->name ?></span>
-                            <span class="material-icons-outlined">arrow_right</span>
-                        </div>
-                        <?php if (isset($district->center)): ?>
-                            <div><?= $district->center->name ?></div>
-                        <?php endif; ?>
-                        <?php foreach ($district->cities as $location): ?>
-                            <?php if ($location->is_district_center != 1): ?>
-                                <div><?= $location->name ?></div>
+                <div id="region-<?= $region->id ?>-content" class="location-item_content">
+                    <a class="location-item_title" href="<?= Url::current(['city' => $region->center->id]) ?>">
+                        <span class="material-icons-outlined selectable-location-icon">pin_drop</span>
+                        <span class="selectable-location-name"><?= $region->center->name ?></span>
+                    </a>
+                    <?php foreach ($region->regionDistricts as $district): ?>
+                        <?php if (isset($district->name)): ?>
+                            <div id="district-<?= $district->id ?>-title" class="location-item_title" onclick="locationItemToggle('district', <?= $district->id ?>)">
+                                <span><?= $district->name ?></span>
+                                <span class="arrow material-icons-outlined">arrow_right</span>
+                            </div>
+                            <div id="district-<?= $district->id ?>-content" class="location-item_content">
+                            <?php if (isset($district->center)): ?>
+                                <a class="location-item_title" href="<?= Url::current(['city' => $district->center->id]) ?>">
+                                    <span class="material-icons-outlined selectable-location-icon">pin_drop</span>
+                                    <span class="selectable-location-name"><?= $district->center->name ?></span>
+                                </a>
                             <?php endif; ?>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                <?php endforeach; ?>
+                            <?php foreach ($district->cities as $location): ?>
+                                <?php if ($location->is_district_center != 1): ?>
+                                    <a class="location-item_title" href="<?= Url::current(['city' => $location->id]) ?>">
+                                        <span class="material-icons-outlined selectable-location-icon">pin_drop</span>
+                                        <span class="selectable-location-name"><?= $location->name ?></span>
+                                    </a>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </div>
             <?php endforeach; ?>
 
             <!--
