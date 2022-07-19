@@ -21,26 +21,28 @@
   -ms-flex-negative: 0;
   flex-shrink: 0;
 }
+
+/** Header location select section */
 .header--location {
   -ms-flex-negative: 0;
   flex-shrink: 0;
   position: relative;
-  font-size: 18px;
-  line-height: 28px;
-  text-align: center;
-  color: #dae2e8;
-  cursor: pointer;
 }
 .header--location__selected {
   display: block;
   padding-left: 37px;
-  text-decoration: underline;
+  font-size: 16px;
+  line-height: 28px;
+  color: #dae2e8;
+  cursor: pointer;
+  text-align: center;
+  /*text-decoration: underline;*/
 }
 .header--location__selected::before {
   content: "";
   display: block;
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   background: url(../img/icons/location.svg) no-repeat 50% 50%;
   background-size: contain;
   position: absolute;
@@ -59,19 +61,24 @@
 }
 .header--location__dropdown .content {
   margin: 0;
-  max-width: 200px;
+  max-width: 400px;
   padding: 10px 40px;
   background: #ffffff;
   -webkit-box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
   border-radius: 5px;
 }
+.header--location__dropdown .content .location-item_container {
+  display: flex;
+  white-space: nowrap;
+  cursor: pointer;
+}
 .header--location__dropdown .content a {
   padding: 0;
   margin: 0;
-  font-size: 18px;
-  line-height: 28px;
-  color: #7d92a1;
+  font-size: 14px;
+  /*line-height: 28px;*/
+  /*color: #7d92a1;*/
   text-decoration: none;
 }
 .header--location__dropdown .content a.selected {
@@ -80,6 +87,8 @@
 .header--location:hover .header--location__dropdown {
   display: block;
 }
+/** End of Header location select section */
+
 .header--menu {
   display: -webkit-box;
   display: -ms-flexbox;

@@ -104,12 +104,22 @@ class RegionDistrict extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Districts]].
+     * Gets query for [[City]].
      *
      * @return \yii\db\ActiveQuery
      */
     public function getCities()
     {
-        return $this->hasMany(City::className(), ['region_district_id' => 'id']);
+        return $this->hasMany(City::className(), ['region_district_id' => 'id'])->orderBy(['name' => SORT_ASC]);
+    }
+
+    /**
+     * Gets query for [[City]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCenter()
+    {
+        return City::findOne(['region_district_id' => $this->id, 'is_district_center' => 1]);
     }
 }

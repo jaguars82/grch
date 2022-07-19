@@ -11,6 +11,8 @@ use app\components\CityLocation;
  */
 class LocationSelect extends Widget
 {
+
+    public $regions;
     public $cities;
 
     /**
@@ -19,6 +21,7 @@ class LocationSelect extends Widget
     public function run()
     {
         return $this->render('/widgets/location-select', [
+            'regions' => $this->regions,
             'cities' => $this->cities,
             'selectedCity' => CityLocation::get()
         ]);

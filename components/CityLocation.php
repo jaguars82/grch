@@ -23,8 +23,7 @@ class CityLocation extends Component
         $selectedCity = null;
         $cookie = \Yii::$app->request->cookies;
         $queryParams = \Yii::$app->request->queryParams;
-        // the segment below is commented to temprory disable location selection
-        // $defaultCityId = ($cookie->has('selected-city-' . \Yii::$app->user->id)) ? $cookie->get('selected-city-' . \Yii::$app->user->id) : static::$defaultCity;
+        $defaultCityId = ($cookie->has('selected-city-' . \Yii::$app->user->id)) ? $cookie->get('selected-city-' . \Yii::$app->user->id) : static::$defaultCity;
         $defaultCityId = static::$defaultCity;
         $queryCityId = isset($queryParams['city']) && !empty($queryParams['city']) ? $queryParams['city'] : NULL;
 
