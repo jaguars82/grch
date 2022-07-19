@@ -140,7 +140,7 @@ $(function () {
 
 
     selectedDeveloper = $('#developer-select > option[selected]');
-    console.log(selectedDeveloper);
+    // console.log(selectedDeveloper);
     
     if (selectedDeveloper.length) {
         newbuildingComplexes = String(selectedDeveloper.data('newbuilding-complexes')).split(",");

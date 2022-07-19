@@ -4,21 +4,19 @@ namespace app\controllers\admin;
 
 use Yii;
 use app\models\City;
-use app\models\District;
-use yii\data\ActiveDataProvider;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
-use app\components\traits\CustomRedirects;
 use app\models\Region;
 use app\models\RegionDistrict;
-use app\models\search\CitySearch;
+use yii\web\Controller;
+use yii\web\NotFoundHttpException;
+use app\components\traits\CustomRedirects;
+use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use app\models\search\RegionDistrictSearch;
 
 /**
- * CityController implements the CRUD actions for City model.
+ * RegionDistrictController implements the CRUD actions for City model.
  */
-class CityController extends Controller
+class RegionDistrictController extends Controller
 {
     use CustomRedirects;
 
@@ -55,13 +53,13 @@ class CityController extends Controller
     }
 
     /**
-     * Lists all City models.
+     * Lists all RegionDistrict models.
      * @return mixed
      */
     public function actionIndex()
     {
 
-        $searchModel = new CitySearch();
+        $searchModel = new RegionDistrictSearch();
         $dataProvider = $searchModel->search(\Yii::$app->request->queryParams);
         
         return $this->render('index', [
@@ -73,27 +71,26 @@ class CityController extends Controller
     }
 
     /**
-     * Creates a new City model.
+     * Creates a new RegionDistrict model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new City();
+        $model = new RegionDistrict();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirectWithSuccess(['index'], 'Город успешно добавлен');
+            return $this->redirectWithSuccess(['index'], 'Административный район успешно добавлен');
         }
 
         return $this->render('create', [
             'model' => $model,
             'regions' => Region::getAllAsList(),
-            'region_districts' => RegionDistrict::getAllAsList(),
         ]);
     }
 
     /**
-     * Updates an existing City model.
+     * Updates an existing RegionDistrict model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -104,18 +101,17 @@ class CityController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirectWithSuccess(['index'], 'Город успешно обновлен');
+            return $this->redirectWithSuccess(['index'], 'Административный район успешно обновлен');
         }
 
         return $this->render('update', [
             'model' => $model,
             'regions' => Region::getAllAsList(),
-            'region_districts' => RegionDistrict::getForRegionAsList($model->region->id),
         ]);
     }
 
     /**
-     * Deletes an existing City model.
+     * Deletes an existing RegionDistrict model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -125,27 +121,27 @@ class CityController extends Controller
     {
         $this->findModel($id)->delete();
 
-        return $this->redirectWithSuccess(['index'], 'Город удален');
+        return $this->redirectWithSuccess(['index'], 'Административный район удален');
     }
 
     /**
-     * Finds the City model based on its primary key value.
+     * Finds the RegionDistrict model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return City the loaded model
+     * @return RegionDistrict the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = City::findOne($id)) !== null) {
+        if (($model = RegionDistrict::findOne($id)) !== null) {
             return $model;
         }
 
-        throw new NotFoundHttpException('The requested page does not exist.');
+        throw new NotFoundHttpException('Административного района с таким ID не существует');
     }
 
     /**
-     * Getting cities for given region.
+     * Getting districts for given region.
      * 
      * @param integer $id Region ID
      * @return mixed
@@ -153,10 +149,11 @@ class CityController extends Controller
     public function actionGetForRegion($id)
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;        
-        \Yii::$app->response->data = City::find()
-            ->forRegion($id)
+        \Yii::$app->response->data = RegionDistrict::find()
+            //->forRegion($id)
+            ->where(['region_id' => $id])
             ->select(['id', 'name'])
-            ->orderBy(['id' => SORT_DESC])
+            ->orderBy(['name' => SORT_ASC])
             ->asArray()
             ->all();
     }

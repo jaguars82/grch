@@ -7,15 +7,15 @@ use yii\widgets\Pjax;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Города';
+$this->title = 'Административные районы';
 $this->params['breadcrumbs'][] = ['label' => 'Администрированние', 'url' => ['admin/index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="city-index white-block">
+<div class="region_district-index white-block">
     <h2 class="bordered"><?= Html::encode($this->title) ?></h2>
 
     <p style="margin-top: 20px;">
-        <?= Html::a('Добавить город', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Добавить административный район', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php Pjax::begin([
@@ -45,19 +45,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $model->region->name;
                 }
             ],
-            [
-                'attribute' => 'region_district_id',
-                'label' => 'Район',
-                'enableSorting' => true,
-                'content' => function ($model, $key, $index, $column) {
-                    return isset($model->regiondistrict->name) ? $model->regiondistrict->name : '';
-                }
-            ],
 
             ['class' => 'yii\grid\ActionColumn', 'visibleButtons' => ['view' => false]],
         ],
         'summary' => '',
-        'emptyText' => 'Города ещё не добавлены',
+        'emptyText' => 'Административные районы ещё не добавлены',
     ]); ?>
 
     <?php Pjax::end(); ?>

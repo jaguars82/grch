@@ -4,20 +4,19 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\City */
+/* @var $model app\models\RegionDistrict */
 
-$this->title = 'Обновить город: ' . $model->name;
+$this->title = 'Обновить административный район: ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Администрированние', 'url' => ['admin/index']];
 $this->params['breadcrumbs'][] = ['label' => 'Города', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="city-update white-block">
+<div class="region_district-update white-block">
     <h2 class="bordered"><?= Html::encode($this->title) ?></h2>
 
     <?= $this->render('_form', [
         'model' => $model,
         'regions' => $regions,
-        'region_districts' => $region_districts,
         'backUrl' => Url::to(['index']),
     ]) ?>
 </div>
