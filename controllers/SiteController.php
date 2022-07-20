@@ -167,6 +167,8 @@ class SiteController extends Controller
         $searchModel = new AdvancedFlatSearch();
         $dataProvider = $searchModel->search($queryParams, 'list-page', true);
 
+        //echo '<pre>'; var_dump($queryParams); echo '</pre>'; die(); 
+
         $newsDataProvider = new ActiveDataProvider([
             'query' => News::find()->limit(3),
             'pagination' => false,

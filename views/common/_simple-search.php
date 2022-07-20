@@ -57,7 +57,9 @@ use app\models\search\AdvancedFlatSearch;
             ]
         ])->dropDownList($developers, [
             'prompt' => '',
-            'data-placeholder' => 'Застройщик'
+            'data-placeholder' => 'Застройщик',
+            'data-close-on-select' => 'false',
+            'multiple' => true,
         ])->label(false) ?>
 
         <?= $form->field($model, 'newbuilding_complex', [
@@ -68,7 +70,7 @@ use app\models\search\AdvancedFlatSearch;
             'prompt' => '',
             'data-placeholder' => 'Жилой комплекс', 
             'data-close-on-select' => 'false',
-            //'multiple' => true
+            'multiple' => true
         ])->label(false) ?>
 
         <div class="search-index--form__item price-select">

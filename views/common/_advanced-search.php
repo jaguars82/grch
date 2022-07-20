@@ -59,6 +59,8 @@ use app\models\search\AdvancedFlatSearch;
     ])->dropDownList($developers, [
         'prompt' => '',
         'data-placeholder' => 'Застройщик',
+        'data-close-on-select' => 'false',
+        'multiple' => true
     ])->label(false) ?>
 
     
@@ -69,6 +71,8 @@ use app\models\search\AdvancedFlatSearch;
     ])->dropDownList($newbuildingComplexes, [
         'prompt' => '',
         'data-placeholder' => 'Жилой комплекс',
+        'data-close-on-select' => 'false',
+        'multiple' => true
     ])->label(false) ?>
 
     <?= $form->field($model, 'newbuilding_array[]', [

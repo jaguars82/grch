@@ -158,9 +158,10 @@ class NewbuildingComplexController extends Controller
      */
     public function actionGetForDeveloper($id)
     {
+        $idies = explode(',', $id);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;        
         \Yii::$app->response->data = NewbuildingComplex::find()
-            ->forDeveloper($id)
+            ->forDeveloper($idies)
             ->onlyActive(true)
             ->onlyWithActiveBuildings()
             ->select(['id', 'name'])

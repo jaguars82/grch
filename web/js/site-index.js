@@ -1,7 +1,9 @@
 $(function () {
     function getNewbuildingComplexes(developer) {
         $.post("/newbuilding-complex/get-for-developer?id=" + developer, function(answer) {
-            var newbuildingComplexSelect = $('select[name="AdvancedFlatSearch[newbuilding_complex]"]');
+            //var newbuildingComplexSelect = $('select[name="AdvancedFlatSearch[newbuilding_complex]"]');
+            //let newbuildingComplexSelect = $('#filter-newbuilding_complex-select');
+            let newbuildingComplexSelect = $('#advancedflatsearch-newbuilding_complex');
             console.log(newbuildingComplexSelect);
             newbuildingComplexSelect.find('option').remove();
             answer.forEach(function (currentValue, index, array) {
@@ -29,8 +31,10 @@ $(function () {
         });
     }
 
-    $('select[name="AdvancedFlatSearch[developer]"]').change(function(e) {
+    //$('select[name="AdvancedFlatSearch[developer]"]').change(function(e) {
+    $('#advancedflatsearch-developer').change(function(e) {
         getNewbuildingComplexes($(e.target).val());
+        //console.log($(e.target).val());
     });
 
     $('.js-map-search').on('click', function (e) {
