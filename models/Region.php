@@ -75,12 +75,22 @@ class Region extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[Cities]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCenter()
+    {
+        return City::findOne(['region_id' => $this->id, 'is_region_center' => 1]);
+    }
+
+    /**
      * Gets query for [[RegionDistricts]].
      *
      * @return \yii\db\ActiveQuery
      */
     public function getRegionDistricts()
     {
-        return $this->hasMany(RegionDistrict::className(), ['region_id' => 'id']);
+        return $this->hasMany(RegionDistrict::className(), ['region_id' => 'id'])->orderBy(['name' => SORT_ASC]);
     }
 }

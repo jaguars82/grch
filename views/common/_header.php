@@ -3,6 +3,7 @@ use app\assets\HeaderAsset;
 use yii\widgets\Menu;
 use yii\helpers\Html;
 use app\models\City;
+use app\models\Region;
 use app\components\widgets\LocationSelect;
 use app\components\async\ParamsGet;
 
@@ -30,6 +31,7 @@ $user = Yii::$app->user->identity;
         
         <?= LocationSelect::widget([
             'cities' => City::getAllAsList(),
+            'regions' => Region::find()->orderBy(['name' => SORT_ASC])->all(),
         ]); ?>
 
         <?= Menu::widget([
