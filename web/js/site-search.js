@@ -29,19 +29,25 @@ $(function () {
         location.href = '/site/map?' + query;
     });
 
-    $('select[name="AdvancedFlatSearch[developer]"]').change(function(e) {
+    // $('select[name="AdvancedFlatSearch[developer]"]').change(function(e) {
+    $('#advancedflatsearch-developer').change(function(e) {
         $.post("/newbuilding-complex/get-for-developer?id=" + $(e.target).val(), function(answer) {
-            var newbuildingComplexSelect = $('select[name="AdvancedFlatSearch[newbuilding_complex]"]');
+            // var newbuildingComplexSelect = $('select[name="AdvancedFlatSearch[newbuilding_complex]"]');
+            let newbuildingComplexSelect = $('#advancedflatsearch-newbuilding_complex');
             newbuildingComplexSelect.find('option').remove();
             newbuildingComplexSelect.append(new Option('Жилой комплекс', ''));
+            // console.log(answer);
             answer.forEach(function (currentValue, index, array) {
                 newbuildingComplexSelect.append(new Option(currentValue['name'], currentValue['id']));
             });
-            $('select[name="AdvancedFlatSearch[newbuilding_array][]"] option').remove();
+            // $('select[name="AdvancedFlatSearch[newbuilding_array][]"] option').remove();
+            $('#advancedflatsearch-newbuilding_array option').remove();
             
-            $('select[name="AdvancedFlatSearch[newbuilding_complex]"]').change(function(e) {
+            // $('select[name="AdvancedFlatSearch[newbuilding_complex]"]').change(function(e) {
+            $('#advancedflatsearch-newbuilding_complex').change(function(e) {
                 $.post("/newbuilding/get-for-newbuilding-complex?id=" + $(e.target).val(), function(answer) {
-                    var newbuildingSelect = $('select[name="AdvancedFlatSearch[newbuilding_array][]"]');
+                    // var newbuildingSelect = $('select[name="AdvancedFlatSearch[newbuilding_array][]"]');
+                    let newbuildingSelect = $('#advancedflatsearch-newbuilding_array');
                     newbuildingSelect.find('option').remove();
                     answer.forEach(function (currentValue, index, array) {
                         newbuildingSelect.append(new Option(currentValue['name'], currentValue['id']));
@@ -65,7 +71,8 @@ $(function () {
         }
     });
     
-    $('select[name="AdvancedFlatSearch[newbuilding_array][]"] option').each(function() {
+    // $('select[name="AdvancedFlatSearch[newbuilding_array][]"] option').each(function() {
+    $('#advancedflatsearch-newbuilding_array option').each(function() {
         if ((window.location.href.indexOf('AdvancedFlatSearch%5Bnewbuilding_array%5D%5B%5D=' + $(this).val()) !== -1)
             || (window.location.href.indexOf('AdvancedFlatSearch[newbuilding_array][]=' + $(this).val()) !== -1)) {
             $(this).attr('selected', true);

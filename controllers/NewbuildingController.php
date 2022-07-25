@@ -97,9 +97,10 @@ class NewbuildingController extends Controller
      */
     public function actionGetForNewbuildingComplex($id)
     {
+        $idies = explode(',', $id);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;        
         $newbuildings = Newbuilding::find()
-            ->forNewbuildingComplex($id)
+            ->forNewbuildingComplex($idies)
             ->select(['id', 'name'])
             ->asArray()
             ->all();

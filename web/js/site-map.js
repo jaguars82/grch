@@ -79,7 +79,7 @@ $(function () {
                             iconLayout: 'default#imageWithContent',
                             iconImageHref: '/img/icons/placemark.svg',
                             iconImageSize: [35, 35],
-                            iconImageOffset: [0, 0],
+                            iconImageOffset: [-17.5, -35],
                             balloonShadow: false,
                             balloonLayout: balloonLayout,
                             balloonContentLayout: balloonContentLayout,
@@ -168,19 +168,24 @@ $(function () {
         location.href = '/site/search?' + query;
     });
 
-    $('select[name="MapFlatSearch[developer]"]').change(function(e) {
+    // $('select[name="MapFlatSearch[developer]"]').change(function(e) {
+    $('#mapflatsearch-developer').change(function(e) {
         $.post("/newbuilding-complex/get-for-developer?id=" + $(e.target).val(), function(answer) {
-            var newbuildingComplexSelect = $('select[name="MapFlatSearch[newbuilding_complex]"]');
+            // var newbuildingComplexSelect = $('select[name="MapFlatSearch[newbuilding_complex]"]');
+            let newbuildingComplexSelect = $('#mapflatsearch-newbuilding_complex');
             newbuildingComplexSelect.find('option').remove();
             newbuildingComplexSelect.append(new Option('Жилой комплекс', ''));
             answer.forEach(function (currentValue, index, array) {
                 newbuildingComplexSelect.append(new Option(currentValue['name'], currentValue['id']));
             });
-            $('select[name="MapFlatSearch[newbuilding_array][]"] option').remove();
+            // $('select[name="MapFlatSearch[newbuilding_array][]"] option').remove();
+            $('#mapflatsearch-newbuilding_array option').remove();
             
-            $('select[name="MapFlatSearch[newbuilding_complex]"]').change(function(e) {
+            // $('select[name="MapFlatSearch[newbuilding_complex]"]').change(function(e) {
+            $('#mapflatsearch-newbuilding_complex').change(function(e) {
                 $.post("/newbuilding/get-for-newbuilding-complex?id=" + $(e.target).val(), function(answer) {
-                    var newbuildingSelect = $('select[name="MapFlatSearch[newbuilding_array][]"]');
+                    // var newbuildingSelect = $('select[name="MapFlatSearch[newbuilding_array][]"]');
+                    let newbuildingSelect = $('#mapflatsearch-newbuilding_array');
                     newbuildingSelect.find('option').remove();
                     answer.forEach(function (currentValue, index, array) {
                         newbuildingSelect.append(new Option(currentValue['name'], currentValue['id']));
