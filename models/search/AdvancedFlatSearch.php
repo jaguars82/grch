@@ -57,10 +57,12 @@ class AdvancedFlatSearch extends Flat
     public function rules()
     {
         return [
-            [['floorFrom', 'floorTo', 'developer', 'newbuilding_complex', 'region_id', 'city_id', 'flatType', 'priceType', 'totalFloorFrom', 'totalFloorTo', 'deadlineYear'], 'integer'],
+            [['floorFrom', 'floorTo', 'region_id', 'city_id', 'flatType', 'priceType', 'totalFloorFrom', 'totalFloorTo', 'deadlineYear'], 'integer'],
             [['priceFrom', 'priceTo', 'areaFrom', 'areaTo'], 'double'],
             [['street_name', 'material', 'update_date'], 'string'],
             [['newbuilding_status', 'district', 'roomsCount'], 'safe'],
+            ['developer', 'each', 'rule' => ['integer']],
+            ['newbuilding_complex', 'each', 'rule' => ['integer']],
         ];
     }
 

@@ -34,6 +34,7 @@ use yii\widgets\ActiveForm;
                 'multiple' => true,
                 'id' => 'newbuilding-complex-select2',
                 'data-placeholder' => 'Жилой комплекс',
+                'data-close-on-select' => 'false',
             ])->label(false) ?>
         </div>
 
@@ -47,6 +48,7 @@ use yii\widgets\ActiveForm;
                 'multiple' => true,
                 'id' => 'newbuildings-select2',
                 'data-placeholder' => 'Позиция',
+                'data-close-on-select' => 'false',
             ])->label(false) ?>
         </div>
 
@@ -60,6 +62,7 @@ use yii\widgets\ActiveForm;
                 'multiple' => true,
                 'id' => 'entrance-select2',
                 'data-placeholder' => 'Подъезд',
+                'data-close-on-select' => 'false',
             ])->label(false) ?>
         </div>
 
