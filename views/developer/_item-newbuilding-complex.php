@@ -52,8 +52,8 @@ $format = \Yii::$app->formatter;
                             <span class="newbuilding-complex-item-link">
                                 <?= Html::a('Поиск по ЖК', [
                                     '/site/search', 
-                                    'AdvancedFlatSearch[developer]' => $model->developer_id,
-                                    'AdvancedFlatSearch[newbuilding_complex]' => $model->id,
+                                    'AdvancedFlatSearch[developer][]' => $model->developer_id,
+                                    'AdvancedFlatSearch[newbuilding_complex][]' => $model->id,
                                 ]) ?>
                             </span>
                         </div>

@@ -1,8 +1,8 @@
 $(function () {    
     function setLoadMoreBtnLink() {
         form = $('#search-newbuilding-flats');
-        url = '/site/search?AdvancedFlatSearch[developer]=' + form.data('developer_id') 
-            + '&AdvancedFlatSearch[newbuilding_complex]=' + form.data('newbuilding_complex_id')
+        url = '/site/search?AdvancedFlatSearch[developer]=' + [form.data('developer_id')]
+            + '&AdvancedFlatSearch[newbuilding_complex]=' + [form.data('newbuilding_complex_id')]
             + '&AdvancedFlatSearch[newbuilding_array]=&AdvancedFlatSearch[newbuilding_array][]=' + form.data('newbuilding_id');
         queryString = window.location.href.split('?')[1];
         queryString = queryString.replace(/^id=[0-9]+&*/, '');

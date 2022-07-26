@@ -72,8 +72,8 @@ if ($model->isAction()) {
                         'site/search', 
                         'AdvancedFlatSearch[roomsCount]' => $flatfilter->rooms,
                         //'AdvancedFlatSearch[flatType]' => AdvancedFlatSearch::FLAT_TYPE_STANDARD,
-                        // 'AdvancedFlatSearch[newbuilding_complex]' => $flatfilter->newbuilding_complex,
-                        'AdvancedFlatSearch[developer]' => $flatfilter->developer,
+                        // 'AdvancedFlatSearch[newbuilding_complex][]' => $flatfilter->newbuilding_complex,
+                        'AdvancedFlatSearch[developer][]' => $flatfilter->developer,
                     ]); ?>" class="link-list--item">Квартиры</a>
                 </div>
                 -->

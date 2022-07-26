@@ -12,8 +12,8 @@ $format = Yii::$app->formatter;
                 'site/search', 
                 'AdvancedFlatSearch[roomsCount][0]' => 1,
                 'AdvancedFlatSearch[flatType]' => AdvancedFlatSearch::FLAT_TYPE_STANDARD,
-                'AdvancedFlatSearch[newbuilding_complex]' => $model->id,
-                'AdvancedFlatSearch[developer]' => $model->developer->id,
+                'AdvancedFlatSearch[newbuilding_complex][]' => $model->id,
+                'AdvancedFlatSearch[developer][]' => $model->developer->id,
             ]); ?>" class="link-list--item">
     <span>1- комнатные</span>
     <b>
@@ -27,8 +27,8 @@ $format = Yii::$app->formatter;
                 'site/search', 
                 'AdvancedFlatSearch[roomsCount][0]' => 2,
                 'AdvancedFlatSearch[flatType]' => AdvancedFlatSearch::FLAT_TYPE_STANDARD,
-                'AdvancedFlatSearch[newbuilding_complex]' => $model->id,
-                'AdvancedFlatSearch[developer]' => $model->developer->id,
+                'AdvancedFlatSearch[newbuilding_complex][]' => $model->id,
+                'AdvancedFlatSearch[developer][]' => $model->developer->id,
             ]); ?>" class="link-list--item">
     <span>2- комнатные</span>
     <b>
@@ -42,8 +42,8 @@ $format = Yii::$app->formatter;
                 'site/search', 
                 'AdvancedFlatSearch[roomsCount][0]' => 3,
                 'AdvancedFlatSearch[flatType]' => AdvancedFlatSearch::FLAT_TYPE_STANDARD,
-                'AdvancedFlatSearch[newbuilding_complex]' => $model->id,
-                'AdvancedFlatSearch[developer]' => $model->developer->id,
+                'AdvancedFlatSearch[newbuilding_complex][]' => $model->id,
+                'AdvancedFlatSearch[developer][]' => $model->developer->id,
             ]); ?>" class="link-list--item">
     <span>3- комнатные</span>
     <b>
@@ -56,8 +56,8 @@ $format = Yii::$app->formatter;
 <a href="<?= Url::to([
                 'site/search', 
                 'AdvancedFlatSearch[flatType]' => AdvancedFlatSearch::FLAT_TYPE_STUDIO,
-                'AdvancedFlatSearch[newbuilding_complex]' => $model->id,
-                'AdvancedFlatSearch[developer]' => $model->developer->id,
+                'AdvancedFlatSearch[newbuilding_complex][]' => $model->id,
+                'AdvancedFlatSearch[developer][]' =>$model->developer->id,
             ]); ?>" class="link-list--item">
     <span>Студии</span>
     <b>
