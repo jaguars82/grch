@@ -11,7 +11,9 @@ class SiteMapAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
-    public $css = [];
+    public $css = [
+        'css/search-forms.css',
+    ];
     public $js = [
         'https://mourner.github.io/simplify-js/simplify.js',
         'js/site-map.js',

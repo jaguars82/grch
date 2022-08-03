@@ -95,7 +95,8 @@ class Formatter extends BaseFormatter
     public function asArea($area)
     {
         $formatted_area = number_format($area, 2, '.', "");
-		return "$formatted_area кв.м.";
+		// return "$formatted_area кв.м.";
+		return "$formatted_area м²";
     }
     
     /**

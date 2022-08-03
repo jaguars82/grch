@@ -149,7 +149,267 @@ $(function () {
         ymaps.ready(init);
     }
 
+
+        /**
+     * FIELDS WITH RANGE OF VALUES
+     */
+
+    /** Price Range */
+
+    // initial values ('min' and 'max') for range (TO DO: get these values from DB)
+    const rangeForAllMin = 1000000;
+    const rangeForAllMax = 35000000;
+    const rangeForM2Min = 25000;
+    const rangeForM2Max = 250000;
+
+    // 'price for all' range slider
+    $("#price-range-for-all").kendoRangeSlider({
+        min: rangeForAllMin,
+        selectionStart: $('#mapflatsearch-pricefrom').val() && $("#mapflatsearch-pricetype input:checked").val() == 0 ? $('#mapflatsearch-pricefrom').val() : rangeForAllMin,
+        max: rangeForAllMax,
+        selectionEnd: $('#mapflatsearch-priceto').val() && $("#mapflatsearch-pricetype input:checked").val() == 0 ? $('#mapflatsearch-priceto').val() : rangeForAllMax,
+        smallStep: 10000,
+        largeStep: 50000,
+        tooltip: {
+            enabled: false
+        },
+        change: function (e) {
+            $('#mapflatsearch-pricefrom').val(e.value[0]);
+            $('#price-from-label').text(kendo.toString(e.value[0], 'n0').replaceAll(',', ' ') + ' ₽');
+            $('#mapflatsearch-priceto').val(e.value[1]);
+            $('#price-to-label').text(kendo.toString(e.value[1], 'n0').replaceAll(',', ' ') + ' ₽');
+        },
+        slide: function (e) {
+            $('#mapflatsearch-pricefrom').val(e.value[0]);
+            $('#price-from-label').text(kendo.toString(e.value[0], 'n0').replaceAll(',', ' ') + ' ₽');
+            $('#mapflatsearch-priceto').val(e.value[1]);
+            $('#price-to-label').text(kendo.toString(e.value[1], 'n0').replaceAll(',', ' ') + ' ₽');
+        },
+    });
+    let priceRangeForAll = $('#price-range-for-all').getKendoRangeSlider();
+
+    // 'price for m2' range slider 
+    $("#price-range-for-m2").kendoRangeSlider({
+        min: rangeForM2Min,
+        selectionStart: $('#mapflatsearch-pricefrom').val() && $("#mapflatsearch-pricetype input:checked").val() == 1 ? $('#mapflatsearch-pricefrom').val() : rangeForM2Min,
+        max: rangeForM2Max,
+        selectionEnd: $('#mapflatsearch-priceto').val() && $("#mapflatsearch-pricetype input:checked").val() == 1 ? $('#mapflatsearch-priceto').val() : rangeForM2Max,
+        smallStep: 1000,
+        largeStep: 5000,
+        tooltip: {
+            enabled: false
+        },
+        change: function (e) {
+            $('#mapflatsearch-pricefrom').val(e.value[0]);
+            $('#price-from-label').text(kendo.toString(e.value[0], 'n0').replaceAll(',', ' ') + ' ₽');
+            $('#mapflatsearch-priceto').val(e.value[1]);
+            $('#price-to-label').text(kendo.toString(e.value[1], 'n0').replaceAll(',', ' ') + ' ₽');
+        },
+        slide: function (e) {
+            $('#mapflatsearch-pricefrom').val(e.value[0]);
+            $('#price-from-label').text(kendo.toString(e.value[0], 'n0').replaceAll(',', ' ') + ' ₽');
+            $('#mapflatsearch-priceto').val(e.value[1]);
+            $('#price-to-label').text(kendo.toString(e.value[1], 'n0').replaceAll(',', ' ') + ' ₽');
+        },
+    });
+    let priceRangeForM2 = $('#price-range-for-m2').getKendoRangeSlider();
+
+    // hide one of the price sliders according to flat price
+    if ($("#mapflatsearch-pricetype input:checked").val() == 0) {
+        $("#price-range-for-m2-container").hide();
+    } else {
+        $("#price-range-for-all-container").hide();
+    }
+
+    // 'price for all' - 'price for m2' switch
+    $("#mapflatsearch-pricetype input[name='MapFlatSearch[priceType]']").change(function (e) {
+        const priceRangeForAllValues = priceRangeForAll.values();
+        let minForAllValue = priceRangeForAllValues[0];
+        let maxForAllValue = priceRangeForAllValues[1];
+        let minForAllLabel = kendo.toString(priceRangeForAllValues[0], 'n0').replaceAll(',', ' ') + ' ₽';
+        let maxForAllLabel = kendo.toString(priceRangeForAllValues[1], 'n0').replaceAll(',', ' ') + ' ₽';
+        // correct values if all range is used
+        if (priceRangeForAllValues[0] == rangeForAllMin && priceRangeForAllValues[1] == rangeForAllMax) {
+            minForAllValue = maxForAllValue = '';
+            minForAllLabel = maxForAllLabel = '-';
+        }
+
+        const priceRangeForM2Values = priceRangeForM2.values();
+        let minForM2Value = priceRangeForM2Values[0];
+        let maxForM2Value = priceRangeForM2Values[1];
+        let minForM2Label = kendo.toString(priceRangeForM2Values[0], 'n0').replaceAll(',', ' ') + ' ₽';
+        let maxForM2Label = kendo.toString(priceRangeForM2Values[1], 'n0').replaceAll(',', ' ') + ' ₽';
+        // correct values if all range is used
+        if (priceRangeForM2Values[0] == rangeForM2Min && priceRangeForM2Values[1] == rangeForM2Max) {
+            minForM2Value = maxForM2Value = '';
+            minForM2Label = maxForM2Label = '-';
+        }
+
+        if(e.target.value == 0) {
+            $('#mapflatsearch-pricefrom').val(minForAllValue);
+            $('#mapflatsearch-priceto').val(maxForAllValue);
+            $('#price-from-label').text(minForAllLabel);
+            $('#price-to-label').text(maxForAllLabel);
+            $("#price-range-for-m2-container").hide();
+            $("#price-range-for-all-container").show();
+        }
+        if (e.target.value == 1) {
+            $('#mapflatsearch-pricefrom').val(minForM2Value);
+            $('#mapflatsearch-priceto').val(maxForM2Value);
+            $('#price-from-label').text(minForM2Label);
+            $('#price-to-label').text(maxForM2Label);
+            $("#price-range-for-all-container").hide();
+            $("#price-range-for-m2-container").show();
+        }
+    });
+
+    // reset values
+    $('#price-range-for-all-reset').click(function(){
+        priceRangeForAll.values(rangeForAllMin, rangeForAllMax);
+        $('#price-from-label, #price-to-label').text('-');
+        $('#mapflatsearch-pricefrom, #mapflatsearch-priceto').val('');
+    });
+    $('#price-range-for-m2-reset').click(function(){
+        priceRangeForM2.values(rangeForM2Min, rangeForM2Max);
+        $('#price-from-label, #price-to-label').text('-');
+        $('#mapflatsearch-pricefrom, #mapflatsearch-priceto').val('');
+    });
+
+    /** END OF Price Range */
+
+
+    /** Area Range */
+
+    // initial values ('min' and 'max') for range (TO DO: get these values from DB)
+    const rangeAreaMin = 1;
+    const rangeAreaMax = 400;
+
+    // 'area' range slider
+    $("#area-range").kendoRangeSlider({
+        min: rangeAreaMin,
+        selectionStart: $('#mapflatsearch-areafrom').val() ? $('#mapflatsearch-areafrom').val() : rangeAreaMin,
+        max: rangeAreaMax,
+        selectionEnd: $('#mapflatsearch-areato').val() ? $('#mapflatsearch-areato').val() : rangeAreaMax,
+        tickPlacement: 'none',
+        smallStep: 1,
+        largeStep: 5,
+        tooltip: {
+            enabled: false
+        },
+        change: function (e) {
+            $('#mapflatsearch-areafrom').val(e.value[0]);
+            $('#area-from-label').text(kendo.toString(e.value[0], 'n0').replaceAll(',', ' ') + ' м²');
+            $('#mapflatsearch-areato').val(e.value[1]);
+            $('#area-to-label').text(kendo.toString(e.value[1], 'n0').replaceAll(',', ' ') + ' м²');
+        },
+        slide: function (e) {
+            $('#mapflatsearch-areafrom').val(e.value[0]);
+            $('#area-from-label').text(kendo.toString(e.value[0], 'n0').replaceAll(',', ' ') + ' м²');
+            $('#mapflatsearch-areato').val(e.value[1]);
+            $('#area-to-label').text(kendo.toString(e.value[1], 'n0').replaceAll(',', ' ') + ' м²');
+        },
+    });
+    let areaRange = $('#area-range').getKendoRangeSlider();
+
+    // reset values
+    $('#area-range-reset').click(function(){
+        areaRange.values(rangeAreaMin, rangeAreaMax);
+        $('#area-from-label, #area-to-label').text('-');
+        $('#mapflatsearch-areafrom, #mapflatsearch-areato').val('');
+    });
+
+    /** END OF Area Range */
+
+
+    /** Floor Range */
+
+    // initial values ('min' and 'max') for ranges 'floor' and 'total-floor' (TO DO: get these values from DB)
+    const rangeFloorMin = 1;
+    const rangeFloorMax = 30;
+
+    // 'floor' range slider
+    $("#floor-range").kendoRangeSlider({
+        min: rangeFloorMin,
+        selectionStart: $('#mapflatsearch-floorfrom').val() ? $('#mapflatsearch-floorfrom').val() : rangeFloorMin,
+        max: rangeFloorMax,
+        selectionEnd: $('#mapflatsearch-floorto').val() ? $('#mapflatsearch-floorto').val() : rangeFloorMax,
+        tickPlacement: 'none',
+        smallStep: 1,
+        largeStep: false,
+        tooltip: {
+            enabled: false
+        },
+        change: function (e) {
+            $('#mapflatsearch-floorfrom').val(e.value[0]);
+            $('#floor-from-label').text(e.value[0]);
+            $('#mapflatsearch-floorto').val(e.value[1]);
+            $('#floor-to-label').text(e.value[1]);
+        },
+        slide: function (e) {
+            $('#mapflatsearch-floorfrom').val(e.value[0]);
+            $('#floor-from-label').text(e.value[0]);
+            $('#mapflatsearch-floorto').val(e.value[1]);
+            $('#floor-to-label').text(e.value[1]);
+        },
+    });
+    let floorRange = $('#floor-range').getKendoRangeSlider();
+
+    // reset values
+    $('#floor-range-reset').click(function(){
+        floorRange.values(rangeFloorMin, rangeFloorMax);
+        $('#floor-from-label, #floor-to-label').text('-');
+        $('#mapflatsearch-floorfrom, #mapflatsearch-floorto').val('');
+    });
+
+    /** END OF Floor Range */
+
+
+    /** Total-Floor Range */
+
+    // 'total-floor' range slider
+    $("#total-floor-range").kendoRangeSlider({
+        min: rangeFloorMin,
+        selectionStart: $('#mapflatsearch-totalfloorfrom').val() ? $('#mapflatsearch-totalfloorfrom').val() : rangeFloorMin,
+        max: rangeFloorMax,
+        selectionEnd: $('#mapflatsearch-totalfloorto').val() ? $('#mapflatsearch-totalfloorto').val() : rangeFloorMax,
+        tickPlacement: 'none',
+        smallStep: 1,
+        largeStep: false,
+        tooltip: {
+            enabled: false
+        },
+        change: function (e) {
+            $('#mapflatsearch-totalfloorfrom').val(e.value[0]);
+            $('#total-floor-from-label').text(e.value[0]);
+            $('#mapflatsearch-totalfloorto').val(e.value[1]);
+            $('#total-floor-to-label').text(e.value[1]);
+        },
+        slide: function (e) {
+            $('#mapflatsearch-totalfloorfrom').val(e.value[0]);
+            $('#total-floor-from-label').text(e.value[0]);
+            $('#mapflatsearch-totalfloorto').val(e.value[1]);
+            $('#total-floor-to-label').text(e.value[1]);
+        },
+    });
+    let totaFloorRange = $('#total-floor-range').getKendoRangeSlider();
+
+    // reset values
+    $('#total-floor-range-reset').click(function(){
+        totaFloorRange.values(rangeFloorMin, rangeFloorMax);
+        $('#total-floor-from-label, #total-floor-to-label').text('-');
+        $('#mapflatsearch-totalfloorfrom, #mapflatsearch-totalfloorto').val('');
+    });
+
+    /** END OF Total-Floor Range */
+
+
+    /**
+     * END OFF FIELDS WITH RANGE OF VALUES
+     */
+
+
     $('#map-search').submit(function (e) {
+
         e.preventDefault();
 
         url = window.location.href.split('?')[0] + '?' + $("#map-search").serialize();
