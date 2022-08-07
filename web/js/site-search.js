@@ -260,6 +260,35 @@ $(function () {
      */
 
 
+    /** optional parameters panel visibility */
+    let optionalParamsOpened = false;
+
+    if ($('#advancedflatsearch-pricefrom').val() 
+    || $('#advancedflatsearch-priceto').val()
+    || $('#advancedflatsearch-areafrom').val()
+    || $('#advancedflatsearch-areato').val()
+    || $('#advancedflatsearch-floorfrom').val()
+    || $('#advancedflatsearch-floorto').val()
+    || $('#advancedflatsearch-totalfloorfrom').val()
+    || $('#advancedflatsearch-totalfloorto').val()
+    || $('#advancedflatsearch-newbuilding_array').val()
+    || $('#advancedflatsearch-material').val()
+    || $('advancedflatsearch-newbuilding_status').val()
+    || $('#advancedflatsearch-deadlineyear').val()) {
+        optionalParamsOpened = true;
+    }
+    
+    if (optionalParamsOpened === false) {
+        $('#optional-params').hide();
+    }
+
+     /** Hide or show more params in filters */
+     $('#more-less-params').click(function () {
+         $('#optional-params').slideToggle();
+     })
+ 
+
+
     $('#advanced-search').submit(function (e) {
         e.preventDefault();
         form = $(e.target);

@@ -50,9 +50,9 @@ $format = \Yii::$app->formatter;
         'multiple' => true
     ])->label(false) ?>
     
-    <?= $form->field($model, 'street_name')->textInput([
+    <!--<?= $form->field($model, 'street_name')->textInput([
         'placeholder' => 'Улица',
-    ])->label(false); ?>
+    ])->label(false); ?>-->
 
     <?= $form->field($model, 'developer', [
         'options' => [
@@ -76,17 +76,6 @@ $format = \Yii::$app->formatter;
         'data-close-on-select' => 'false',
         'multiple' => true
     ])->label(false) ?>
-
-    <?= $form->field($model, 'newbuilding_array[]', [
-        'options' => [
-            'class' => 'form-group inline-select'
-        ]
-    ])->dropDownList($positionArray, [
-        'prompt' => '',
-        'data-placeholder' => 'Строительная позиция',
-        'data-close-on-select' => 'false',
-        'multiple' => true
-    ]) ?>
 
     <div class="form-group">
         <label class="control-label"> Количество комнат </label>
@@ -177,168 +166,194 @@ $format = \Yii::$app->formatter;
             </div>
         </div>
     </div>
-    <div class="form-group">
-        <label class="control-label"> Площадь </label>
-        <div class="row">
-            <div class="col-xs-6">
-                <?= $form->field($model, 'areaFrom')->hiddenInput([
-                    'placeholder' => 'От',
-                ])->label(false) ?>
-            </div>
-            <div class="col-xs-6">
-                <?= $form->field($model, 'areaTo')->hiddenInput([
-                    'placeholder' => 'До',
-                ])->label(false) ?>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-6 text-left">
-                <span id="area-from-label">
-                    <?php if (!empty($model->areaFrom)): ?>
-                    <?= str_replace('.00', '', $format->asArea($model->areaFrom)) ?>
-                    <?php else: ?>
-                    -
-                    <?php endif; ?>
-                </span>
-            </div>
-            <div class="col-xs-6 text-right">
-                <span id="area-to-label">
-                    <?php if (!empty($model->areaTo)): ?>
-                    <?= str_replace('.00', '', $format->asArea($model->areaTo)) ?>
-                    <?php else: ?>
-                    -
-                    <?php endif; ?>
-                </span>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div id="area-range-container" class="range-container">
-                    <div id="area-range">
-                        <input />
-                        <input />
-                    </div>
-                    <div id="area-range-reset" class="range-reset-button"><span class="material-icons-outlined">restart_alt</span></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label"> Этаж </label>
-        <div class="row">
-            <div class="col-xs-6">
-                <?= $form->field($model, 'floorFrom')->hiddenInput([
-                    'placeholder' => 'От',
-                ])->label(false) ?>
-            </div>
-            <div class="col-xs-6">
-                <?= $form->field($model, 'floorTo')->hiddenInput([
-                    'placeholder' => 'До',
-                ])->label(false) ?>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-6 text-left">
-                <span id="floor-from-label">
-                    <?php if (!empty($model->floorFrom)): ?>
-                    <?= $model->floorFrom ?>
-                    <?php else: ?>
-                    -
-                    <?php endif; ?>
-                </span>
-            </div>
-            <div class="col-xs-6 text-right">
-                <span id="floor-to-label">
-                    <?php if (!empty($model->floorTo)): ?>
-                    <?= $model->floorTo ?>
-                    <?php else: ?>
-                    -
-                    <?php endif; ?>
-                </span>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div id="floor-range-container" class="range-container">
-                    <div id="floor-range">
-                        <input />
-                        <input />
-                    </div>
-                    <div id="floor-range-reset" class="range-reset-button"><span class="material-icons-outlined">restart_alt</span></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label"> Этажность </label>
-        <div class="row">
-            <div class="col-xs-6">
-                <?= $form->field($model, 'totalFloorFrom')->hiddenInput([
-                    'placeholder' => 'От',
-                ])->label(false); ?>
-            </div>
-            <div class="col-xs-6">
-                <?= $form->field($model, 'totalFloorTo')->hiddenInput([
-                    'placeholder' => 'От',
-                ])->label(false); ?>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-6 text-left">
-                <span id="total-floor-from-label">
-                    <?php if (!empty($model->totalFloorFrom)): ?>
-                    <?= $model->totalFloorFrom ?>
-                    <?php else: ?>
-                    -
-                    <?php endif; ?>
-                </span>
-            </div>
-            <div class="col-xs-6 text-right">
-                <span id="total-floor-to-label">
-                    <?php if (!empty($model->totalFloorTo)): ?>
-                    <?= $model->totalFloorTo ?>
-                    <?php else: ?>
-                    -
-                    <?php endif; ?>
-                </span>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div id="total-floor-range-container" class="range-container">
-                    <div id="total-floor-range">
-                        <input />
-                        <input />
-                    </div>
-                    <div id="total-floor-range-reset" class="range-reset-button"><span class="material-icons-outlined">restart_alt</span></div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <?= $form->field($model, 'material', [
+    <?php if (Yii::$app->controller->action->id !== 'map'): ?>
+    <div id="optional-params">
+    <?php endif; ?>
+
+        <div class="form-group">
+            <label class="control-label"> Площадь </label>
+            <div class="row">
+                <div class="col-xs-6">
+                    <?= $form->field($model, 'areaFrom')->hiddenInput([
+                        'placeholder' => 'От',
+                    ])->label(false) ?>
+                </div>
+                <div class="col-xs-6">
+                    <?= $form->field($model, 'areaTo')->hiddenInput([
+                        'placeholder' => 'До',
+                    ])->label(false) ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 text-left">
+                    <span id="area-from-label">
+                        <?php if (!empty($model->areaFrom)): ?>
+                        <?= str_replace('.00', '', $format->asArea($model->areaFrom)) ?>
+                        <?php else: ?>
+                        -
+                        <?php endif; ?>
+                    </span>
+                </div>
+                <div class="col-xs-6 text-right">
+                    <span id="area-to-label">
+                        <?php if (!empty($model->areaTo)): ?>
+                        <?= str_replace('.00', '', $format->asArea($model->areaTo)) ?>
+                        <?php else: ?>
+                        -
+                        <?php endif; ?>
+                    </span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="area-range-container" class="range-container">
+                        <div id="area-range">
+                            <input />
+                            <input />
+                        </div>
+                        <div id="area-range-reset" class="range-reset-button"><span class="material-icons-outlined">restart_alt</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label"> Этаж </label>
+            <div class="row">
+                <div class="col-xs-6">
+                    <?= $form->field($model, 'floorFrom')->hiddenInput([
+                        'placeholder' => 'От',
+                    ])->label(false) ?>
+                </div>
+                <div class="col-xs-6">
+                    <?= $form->field($model, 'floorTo')->hiddenInput([
+                        'placeholder' => 'До',
+                    ])->label(false) ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 text-left">
+                    <span id="floor-from-label">
+                        <?php if (!empty($model->floorFrom)): ?>
+                        <?= $model->floorFrom ?>
+                        <?php else: ?>
+                        -
+                        <?php endif; ?>
+                    </span>
+                </div>
+                <div class="col-xs-6 text-right">
+                    <span id="floor-to-label">
+                        <?php if (!empty($model->floorTo)): ?>
+                        <?= $model->floorTo ?>
+                        <?php else: ?>
+                        -
+                        <?php endif; ?>
+                    </span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="floor-range-container" class="range-container">
+                        <div id="floor-range">
+                            <input />
+                            <input />
+                        </div>
+                        <div id="floor-range-reset" class="range-reset-button"><span class="material-icons-outlined">restart_alt</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label"> Этажность </label>
+            <div class="row">
+                <div class="col-xs-6">
+                    <?= $form->field($model, 'totalFloorFrom')->hiddenInput([
+                        'placeholder' => 'От',
+                    ])->label(false); ?>
+                </div>
+                <div class="col-xs-6">
+                    <?= $form->field($model, 'totalFloorTo')->hiddenInput([
+                        'placeholder' => 'От',
+                    ])->label(false); ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 text-left">
+                    <span id="total-floor-from-label">
+                        <?php if (!empty($model->totalFloorFrom)): ?>
+                        <?= $model->totalFloorFrom ?>
+                        <?php else: ?>
+                        -
+                        <?php endif; ?>
+                    </span>
+                </div>
+                <div class="col-xs-6 text-right">
+                    <span id="total-floor-to-label">
+                        <?php if (!empty($model->totalFloorTo)): ?>
+                        <?= $model->totalFloorTo ?>
+                        <?php else: ?>
+                        -
+                        <?php endif; ?>
+                    </span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="total-floor-range-container" class="range-container">
+                        <div id="total-floor-range">
+                            <input />
+                            <input />
+                        </div>
+                        <div id="total-floor-range-reset" class="range-reset-button"><span class="material-icons-outlined">restart_alt</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <?= $form->field($model, 'newbuilding_array[]', [
         'options' => [
             'class' => 'form-group inline-select'
         ]
-    ])->dropDownList($materials, [
-        'prompt' => '',
-        'data-placeholder' => 'Материал',
-    ])->label(false) ?>
+        ])->dropDownList($positionArray, [
+            'prompt' => '',
+            'data-placeholder' => 'Строительная позиция',
+            'data-close-on-select' => 'false',
+            'multiple' => true
+        ]) ?>
 
-    <?= $form->field($model, 'newbuilding_status', [
-        'template' => "<label>{input}<span>Дом сдан</span></label>{error}",
-    ])->checkbox([
-        'value' => \app\models\Newbuilding::STATUS_FINISH,
-    ], false)->label(false) ?>
+        <?= $form->field($model, 'material', [
+            'options' => [
+                'class' => 'form-group inline-select'
+            ]
+        ])->dropDownList($materials, [
+            'prompt' => '',
+            'data-placeholder' => 'Материал',
+        ])->label(false) ?>
 
-    <?= $form->field($model, 'deadlineYear', [
-        'options' => [
-            'class' => 'form-group inline-select'
-        ]
-    ])->dropDownList($deadlineYears, [
-        'prompt' => '',
-        'data-placeholder' => 'Год сдачи',
-    ])->label(false) ?>
+        <?= $form->field($model, 'newbuilding_status', [
+            'template' => "<label>{input}<span>Дом сдан</span></label>{error}",
+        ])->checkbox([
+            'value' => \app\models\Newbuilding::STATUS_FINISH,
+        ], false)->label(false) ?>
+
+        <?= $form->field($model, 'deadlineYear', [
+            'options' => [
+                'class' => 'form-group inline-select'
+            ]
+        ])->dropDownList($deadlineYears, [
+            'prompt' => '',
+            'data-placeholder' => 'Год сдачи',
+        ])->label(false) ?>
+
+    <?php if (Yii::$app->controller->action->id !== 'map'): ?>
+    </div>
+    <?php endif; ?>
+
+    <?php if (Yii::$app->controller->action->id !== 'map'): ?>
+    <div>
+        <a id="more-less-params" href="javascript:void(0);">Больше параметров</a>
+    </div>
+    <?php endif; ?>
 
     <div class="text-center">
         <?= Html::submitButton('Найти', ['class' => 'btn btn-primary']) ?>

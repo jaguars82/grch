@@ -36,6 +36,19 @@
 }
 /** END OF simple-search buttons (on main page) */
 
+/*
+#optional-params {
+  transition: height 0.3s;
+  height: fit-content;
+}
+
+#optional-params.closed {
+  transition: height 0.3s;
+  height: 0px;
+  overflow: hidden;
+}
+*/
+
 .range-container {
   display: flex;
 }
