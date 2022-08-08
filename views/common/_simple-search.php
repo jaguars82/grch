@@ -109,7 +109,7 @@ use app\models\search\AdvancedFlatSearch;
                                     <?php if (!empty($model->priceFrom)): ?>
                                     <?= $format->asCurrency($model->priceFrom) ?>
                                     <?php else: ?>
-                                    -
+                                    От
                                     <?php endif; ?>
                                 </span>
                             </div>
@@ -118,7 +118,7 @@ use app\models\search\AdvancedFlatSearch;
                                     <?php if (!empty($model->priceTo)): ?>
                                     <?= $format->asCurrency($model->priceTo) ?>
                                     <?php else: ?>
-                                    -
+                                    До
                                     <?php endif; ?>
                                 </span>
                             </div>
