@@ -49,6 +49,10 @@
 }
 */
 
+#more-less-params {
+  display: flex;
+}
+
 .range-container {
   display: flex;
 }

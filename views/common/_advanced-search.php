@@ -7,6 +7,21 @@ use app\models\search\AdvancedFlatSearch;
 
 $format = \Yii::$app->formatter;
 
+$optionalParamsOpened = false;
+
+if (!empty($model->areaFrom)
+    or !empty($model->areaTo)
+    or !empty($model->floorFrom)
+    or !empty($model->floorToTo)
+    or !empty($model->totalFloorFrom)
+    or !empty($model->totalFloorTo)
+    or !empty($model->newbuilding_array)
+    or !empty($model->material)
+    or !empty($model->newbuilding_status)
+    or !empty($model->deadlineyear)) {
+        $optionalParamsOpened = true;
+    }
+
 /* @var $this yii\web\View */
 /* @var $model app\models\search\DeveloperSearch */
 /* @var $form yii\widgets\ActiveForm */
@@ -133,7 +148,7 @@ $format = \Yii::$app->formatter;
                     <?php if (!empty($model->priceFrom)): ?>
                     <?= $format->asCurrency($model->priceFrom) ?>
                     <?php else: ?>
-                    -
+                    От
                     <?php endif; ?>
                 </span>
             </div>
@@ -142,7 +157,7 @@ $format = \Yii::$app->formatter;
                     <?php if (!empty($model->priceTo)): ?>
                     <?= $format->asCurrency($model->priceTo) ?>
                     <?php else: ?>
-                    -
+                    До
                     <?php endif; ?>
                 </span>
             </div>
@@ -191,7 +206,7 @@ $format = \Yii::$app->formatter;
                         <?php if (!empty($model->areaFrom)): ?>
                         <?= str_replace('.00', '', $format->asArea($model->areaFrom)) ?>
                         <?php else: ?>
-                        -
+                        От
                         <?php endif; ?>
                     </span>
                 </div>
@@ -200,7 +215,7 @@ $format = \Yii::$app->formatter;
                         <?php if (!empty($model->areaTo)): ?>
                         <?= str_replace('.00', '', $format->asArea($model->areaTo)) ?>
                         <?php else: ?>
-                        -
+                        До
                         <?php endif; ?>
                     </span>
                 </div>
@@ -237,7 +252,7 @@ $format = \Yii::$app->formatter;
                         <?php if (!empty($model->floorFrom)): ?>
                         <?= $model->floorFrom ?>
                         <?php else: ?>
-                        -
+                        От
                         <?php endif; ?>
                     </span>
                 </div>
@@ -246,7 +261,7 @@ $format = \Yii::$app->formatter;
                         <?php if (!empty($model->floorTo)): ?>
                         <?= $model->floorTo ?>
                         <?php else: ?>
-                        -
+                        До
                         <?php endif; ?>
                     </span>
                 </div>
@@ -283,7 +298,7 @@ $format = \Yii::$app->formatter;
                         <?php if (!empty($model->totalFloorFrom)): ?>
                         <?= $model->totalFloorFrom ?>
                         <?php else: ?>
-                        -
+                        От
                         <?php endif; ?>
                     </span>
                 </div>
@@ -292,7 +307,7 @@ $format = \Yii::$app->formatter;
                         <?php if (!empty($model->totalFloorTo)): ?>
                         <?= $model->totalFloorTo ?>
                         <?php else: ?>
-                        -
+                        До
                         <?php endif; ?>
                     </span>
                 </div>
@@ -351,7 +366,22 @@ $format = \Yii::$app->formatter;
 
     <?php if (Yii::$app->controller->action->id !== 'map'): ?>
     <div>
-        <a id="more-less-params" href="javascript:void(0);">Больше параметров</a>
+        <a id="more-less-params" class="<?php if ($optionalParamsOpened === false): ?>closed<?php endif; ?>" href="javascript:void(0);">
+            <span class="more-less-label">
+                <?php if($optionalParamsOpened === false): ?>
+                Больше параметров
+                <?php else: ?>
+                Меньше параметров
+                <?php endif; ?>
+            </span>
+            <span class="material-icons-outlined more-less-icon">
+                <?php if($optionalParamsOpened): ?>
+                expand_less
+                <?php else: ?>
+                chevron_right
+                <?php endif; ?>
+            </span>
+        </a>
     </div>
     <?php endif; ?>
 
