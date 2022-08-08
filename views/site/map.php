@@ -15,7 +15,12 @@ SiteMapAsset::register($this);
         <a href="#" class="btn btn-white js-main-search">
             Показать списком
         </a>
+        <button id="toggle-mapfilter-panel-button" class="collapse-expand-btn">
+            <span class="material-icons-outlined">arrow_forward</span>
+        </button>
     </div>
+
+    
 
     <div class="search-map--content" data-latitude="<?= $selectedCity->latitude ?>" data-longitude="<?= $selectedCity->longitude ?>" id="map-content"></div>
     <div class="search-map--sidebar js-search-filter">

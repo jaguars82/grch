@@ -66,6 +66,7 @@ if ($model->isAction()) {
                         <?= Html::a('Квартиры', $model->search_link, ['class' => 'btn btn-white']) ?>
                     </div>
                 <?php endif; ?>
+                <?php if ($model->isAction()): ?>
                 <!--
                 <div class="labels">
                     <a href="<?= Url::to([
@@ -77,6 +78,7 @@ if ($model->isAction()) {
                     ]); ?>" class="link-list--item">Квартиры</a>
                 </div>
                 -->
+                <?php endif; ?>
                 <?php if(!is_null($model->actionData)): ?>
                     <p class="h3 bordered">
                         Суть акции

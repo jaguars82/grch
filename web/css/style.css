@@ -5685,6 +5685,14 @@ button.close_btn {
   max-height: 100%;
   right: 0;
   top: 0;
+  /*transition: transform 0.3s;*/
+  -webkit-transform: translateX(0);
+  transform: translateX(0);
+}
+.search-map--sidebar.collapsed {
+  transition: transform 0.3s;
+  -webkit-transform: translateX(100%);
+  transform: translateX(100%);
 }
 .search-map--sidebar .scrollbar {
   max-height: calc(100vh - 90px);
@@ -5708,6 +5716,9 @@ button.close_btn {
   height: 100%;
   overflow: hidden;
 }
+.search-map--content.fullwidth {
+  width: 100%;
+}
 .search-map .alert-container {
   width: calc(100% - 350px);
   position: absolute;
@@ -5729,12 +5740,18 @@ button.close_btn {
   -webkit-box-align: start;
   -ms-flex-align: start;
   align-items: flex-start;
+  justify-content: space-between;
   position: absolute;
+  width: calc(100% - 360px);
   max-width: 100%;
   top: 15px;
   left: 5px;
   z-index: 10;
   padding: 0 15px;
+}
+.search-map--buttons.fullwidth {
+  transition: width 0.3s;
+  width: 100%;
 }
 .search-map--buttons .btn-white {
   width: 190px;
@@ -5749,6 +5766,13 @@ button.close_btn {
   display: none;
   -ms-flex-negative: 0;
   flex-shrink: 0;
+}
+.search-map--buttons .collapse-expand-btn {
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 7px 10px 5px 10px;
+  background-color: rgb(37, 89, 150)
 }
 @media screen and (max-width: 991px) {
   .search-map .alert-container {

@@ -149,8 +149,21 @@ $(function () {
         ymaps.ready(init);
     }
 
+    /** Hide and show filfers panel */
+    $('#toggle-mapfilter-panel-button').click(function() {
+        $('.search-map--content, .search-map--buttons').toggleClass('fullwidth');
+        if ($('.search-map--buttons').hasClass('fullwidth')) {
+           $('#toggle-mapfilter-panel-button span').text('arrow_back'); 
+        } else {
+            $('#toggle-mapfilter-panel-button span').text('arrow_forward');
+        }
+        
+        myMap.container.fitToViewport();
+        $('.js-search-filter').toggleClass('collapsed');
+    });
 
-        /**
+
+    /**
      * FIELDS WITH RANGE OF VALUES
      */
 

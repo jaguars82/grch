@@ -84,7 +84,7 @@ $(function () {
         // correct values if all range is used
         if (priceRangeForAllValues[0] == rangeForAllMin && priceRangeForAllValues[1] == rangeForAllMax) {
             minForAllValue = maxForAllValue = '';
-            minForAllLabel = maxForAllLabel = '-';
+            minForAllLabel = maxForAllLabel = 'От';
         }
 
         const priceRangeForM2Values = priceRangeForM2.values();
@@ -95,7 +95,7 @@ $(function () {
         // correct values if all range is used
         if (priceRangeForM2Values[0] == rangeForM2Min && priceRangeForM2Values[1] == rangeForM2Max) {
             minForM2Value = maxForM2Value = '';
-            minForM2Label = maxForM2Label = '-';
+            minForM2Label = maxForM2Label = 'До';
         }
 
         if(e.target.value == 0) {
@@ -119,12 +119,14 @@ $(function () {
     // reset values
     $('#price-range-for-all-reset').click(function(){
         priceRangeForAll.values(rangeForAllMin, rangeForAllMax);
-        $('#price-from-label, #price-to-label').text('-');
+        $('#price-from-label').text('От');
+        $('#price-to-label').text('До');
         $('#advancedflatsearch-pricefrom, #advancedflatsearch-priceto').val('');
     });
     $('#price-range-for-m2-reset').click(function(){
         priceRangeForM2.values(rangeForM2Min, rangeForM2Max);
-        $('#price-from-label, #price-to-label').text('-');
+        $('#price-from-label').text('От');
+        $('#price-to-label').text('До');
         $('#advancedflatsearch-pricefrom, #advancedflatsearch-priceto').val('');
     });
 
@@ -167,7 +169,8 @@ $(function () {
     // reset values
     $('#area-range-reset').click(function(){
         areaRange.values(rangeAreaMin, rangeAreaMax);
-        $('#area-from-label, #area-to-label').text('-');
+        $('#area-from-label').text('От');
+        $('#area-to-label').text('До');
         $('#advancedflatsearch-areafrom, #advancedflatsearch-areato').val('');
     });
 
@@ -210,7 +213,8 @@ $(function () {
     // reset values
     $('#floor-range-reset').click(function(){
         floorRange.values(rangeFloorMin, rangeFloorMax);
-        $('#floor-from-label, #floor-to-label').text('-');
+        $('#floor-from-label').text('От');
+        $('#floor-to-label').text('До');
         $('#advancedflatsearch-floorfrom, #advancedflatsearch-floorto').val('');
     });
 
@@ -249,7 +253,8 @@ $(function () {
     // reset values
     $('#total-floor-range-reset').click(function(){
         totaFloorRange.values(rangeFloorMin, rangeFloorMax);
-        $('#total-floor-from-label, #total-floor-to-label').text('-');
+        $('#total-floor-from-label').text('От');
+        $('#total-floor-to-label').text('До');
         $('#advancedflatsearch-totalfloorfrom, #advancedflatsearch-totalfloorto').val('');
     });
 
@@ -259,6 +264,42 @@ $(function () {
      * END OF FIELDS WITH RANGE OF VALUES
      */
 
+
+    /** optional parameters panel visibility */
+    let optionalParamsOpened = false;
+
+    if ($('#advancedflatsearch-areafrom').val() 
+    || $('#advancedflatsearch-areato').val()
+    || $('#advancedflatsearch-floorfrom').val()
+    || $('#advancedflatsearch-floorto').val()
+    || $('#advancedflatsearch-totalfloorfrom').val()
+    || $('#advancedflatsearch-totalfloorto').val()
+    || $('#advancedflatsearch-newbuilding_array').val().length
+    || $('#advancedflatsearch-material').val()
+    //|| $('advancedflatsearch-newbuilding_status').val()
+    || $('#advancedflatsearch-deadlineyear').val()) {
+        optionalParamsOpened = true;
+    }
+
+   
+    if (optionalParamsOpened === false) {
+        $('#optional-params').hide();
+        console.log('dadasdasd');
+    }
+
+     /** Hide or show more params in filters */
+     $('#more-less-params').click(function () {
+        $('#more-less-params').toggleClass('closed');
+        $('#optional-params').slideToggle();
+        if ($('#more-less-params').hasClass('closed')) {
+            $('#more-less-params .more-less-label').text('Больше параметров');
+            $('#more-less-params .more-less-icon').text('chevron_right');
+        } else {
+            $('#more-less-params .more-less-label').text('Меньше параметров');
+            $('#more-less-params .more-less-icon').text('expand_less');
+        }
+     })
+ 
 
     $('#advanced-search').submit(function (e) {
         e.preventDefault();
