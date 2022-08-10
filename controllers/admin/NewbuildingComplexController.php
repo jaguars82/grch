@@ -148,6 +148,8 @@ class NewbuildingComplexController extends Controller
         $form->savedBanks = ArrayHelper::getColumn($newbuildingComplex->getBanks()->asArray()->all(), 'id');
         $form->stages = $newbuildingComplex->getStages()->asArray()->all();
         $form->advantages = ArrayHelper::getColumn($newbuildingComplex->getAdvantages()->asArray()->all(), 'id');
+        $form->virtual_structure = $newbuildingComplex->virtual_structure;
+        $form->use_virtual_structure = $newbuildingComplex->use_virtual_structure;
         $form->scenario = NewbuildingComplexForm::SCENARIO_UPDATE;
 
         $savedImages = $newbuildingComplex->getImages()->asArray()->all();
@@ -172,7 +174,7 @@ class NewbuildingComplexController extends Controller
 
             return $this->redirectWithSuccess(['update', 'id' => $newbuildingComplex->id], 'Жилой комплекс обновлен');
         }
-
+     
         return $this->render('update', [
             'model' => $newbuildingComplex,
             'newbuildingComplex' => $form,
@@ -471,7 +473,7 @@ class NewbuildingComplexController extends Controller
             $form->virtual_structure = $data['NewbuildingComplex']['virtual_structure'];
             // echo '<pre>'; var_dump($form);  var_dump(\Yii::$app->request->post()); echo '</pre>'; die();
             try {               
-                $newbuildingComplex->edit($form->attributes);
+                $newbuildingComplex->edit($form->attributes, false);
             } catch (\Exception $e) {
                 return $this->redirectBackWhenException($e);
             }

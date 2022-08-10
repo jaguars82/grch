@@ -85,61 +85,66 @@ class ServiceController extends Controller
 
 			$algorithm = $import->algorithmAsObject;
 
-			$data = $algorithm->getAndParse($import->endpoint);
-			
-			$dataTree = array();
-			
-			foreach ($data['newbuildingComplexes'] as $nbc_key => $newbuildingComplex) {
-				$newbuildingComplexFeedName = $newbuildingComplex['name'];
+			$endpoints = explode(', ', $import->endpoint);
+
+			foreach ($endpoints as $endpoint) {
+
+				$data = $algorithm->getAndParse($endpoint);
 				
-				foreach ($data['newbuildings'] as $nb_key => $newbuilding) {
-					if ($newbuilding['objectId'] === $nbc_key) {
-						$newbuildingFeedName = $newbuilding['name'];
-						
-						$dataTree[$newbuildingComplexFeedName][$newbuildingFeedName] = [
-							'flats' => array(),
-							'flats_in_feed_amount' => 0,
-							'flats_in_feed_numbers' => array()
-						];
-						
-						$newbuildingFlatCounter = 0;
-						
-						foreach ($data['flats'] as $flat) {
-							if ($flat['houseId'] === $nb_key) {
-								$newbuildingFlatCounter += 1;
-								$dataTree[$newbuildingComplexFeedName][$newbuildingFeedName]['flats'][] = $flat;
-								$dataTree[$newbuildingComplexFeedName][$newbuildingFeedName]['flats_in_feed_amount'] = $newbuildingFlatCounter;
-								$dataTree[$newbuildingComplexFeedName][$newbuildingFeedName]['flats_in_feed_numbers'][] = $flat['number'];
+				$dataTree = array();
+				
+				foreach ($data['newbuildingComplexes'] as $nbc_key => $newbuildingComplex) {
+					$newbuildingComplexFeedName = $newbuildingComplex['name'];
+					
+					foreach ($data['newbuildings'] as $nb_key => $newbuilding) {
+						if ($newbuilding['objectId'] === $nbc_key) {
+							$newbuildingFeedName = $newbuilding['name'];
+							
+							$dataTree[$newbuildingComplexFeedName][$newbuildingFeedName] = [
+								'flats' => array(),
+								'flats_in_feed_amount' => 0,
+								'flats_in_feed_numbers' => array()
+							];
+							
+							$newbuildingFlatCounter = 0;
+							
+							foreach ($data['flats'] as $flat) {
+								if ($flat['houseId'] === $nb_key) {
+									$newbuildingFlatCounter += 1;
+									$dataTree[$newbuildingComplexFeedName][$newbuildingFeedName]['flats'][] = $flat;
+									$dataTree[$newbuildingComplexFeedName][$newbuildingFeedName]['flats_in_feed_amount'] = $newbuildingFlatCounter;
+									$dataTree[$newbuildingComplexFeedName][$newbuildingFeedName]['flats_in_feed_numbers'][] = $flat['number'];
+								}
 							}
 						}
 					}
 				}
-			}
-			
-			// list positions from feeds, compare with positions on website
-			// var_dump($dataTree);
-			foreach ($dataTree as $newbuildingComplexName => $buildings) {
-				$complexFromDataBase = (new NewbuildingComplex())->find()->byFeedName($newbuildingComplexName)->one();
-				$buildingsFromDataBase = $complexFromDataBase->newbuildings;
-				//echo '----- '.$newbuildingComplexName.' -----';
-				echo '***** '.$complexFromDataBase->name.' *****';
-				echo PHP_EOL;
-				foreach ($buildings as $buildingName => $buildingData) {
-					foreach($buildingsFromDataBase as $building) {
-						if ($building->feed_name == $buildingName) {
-							$buildingFromDataBase = $building;
-						}
-					}
-					echo $buildingFromDataBase->name.' - ';
-					echo 'передаётся '.$buildingData['flats_in_feed_amount'].' квартир; ';
-					echo 'на сайте '.$buildingFromDataBase->activeFlatsAmount.' квартир;';
-					if ($buildingFromDataBase->activeFlatsAmount > $buildingData['flats_in_feed_amount']) {
-						echo ' - ВНИМАНИЕ, ПРОВЕРИТЬ!';
-					}
+				
+				// list positions from feeds, compare with positions on website
+				// var_dump($dataTree);
+				foreach ($dataTree as $newbuildingComplexName => $buildings) {
+					$complexFromDataBase = (new NewbuildingComplex())->find()->byFeedName($newbuildingComplexName)->one();
+					$buildingsFromDataBase = $complexFromDataBase->newbuildings;
+					//echo '----- '.$newbuildingComplexName.' -----';
+					echo '***** '.$complexFromDataBase->name.' *****';
 					echo PHP_EOL;
+					foreach ($buildings as $buildingName => $buildingData) {
+						foreach($buildingsFromDataBase as $building) {
+							if ($building->feed_name == $buildingName) {
+								$buildingFromDataBase = $building;
+							}
+						}
+						echo $buildingFromDataBase->name.' - ';
+						echo 'передаётся '.$buildingData['flats_in_feed_amount'].' квартир; ';
+						echo 'на сайте '.$buildingFromDataBase->activeFlatsAmount.' квартир;';
+						if ($buildingFromDataBase->activeFlatsAmount > $buildingData['flats_in_feed_amount']) {
+							echo ' - ВНИМАНИЕ, ПРОВЕРИТЬ!';
+						}
+						echo PHP_EOL;
+					}
 				}
+			
 			}
-		
 		}
     }
 	
