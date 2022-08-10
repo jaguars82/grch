@@ -40,7 +40,7 @@ class FlatsChess extends Widget
                     
                     $sectionsFlats[$newbuilding->id]['entrances_data'] = array();
                     foreach ($newbuilding->db_entrances as $entrance) {
-                        $sectionsFlats[$newbuilding->id]['entrances_data'][$entrance->number] =
+                        $sectionsFlats[$newbuilding->id]['entrances_data'][$entrance->id] =
                             [
                                 'id' => $entrance->id,
                                 'name' => $entrance->name,
@@ -55,9 +55,11 @@ class FlatsChess extends Widget
                                 'activeFlats' => $entrance->getActiveFlats()->count(),
                                 'reservedFlats' => $entrance->getReservedFlats()->count(),
                             ];
-                        $sectionsFlats[$newbuilding->id][$entrance->number] = $entrance->getFlats()->orderBy(['floor' => SORT_DESC, 'number' => SORT_DESC])->all();
-                        $sectionsData[$newbuilding->id][] = $entrance->number;
-                        $maxRoomsOnFloors[$newbuilding->id][$entrance->number] = $entrance->maxRoomsOnFloorsForEntrance($entrance->id);
+                        //$sectionsFlats[$newbuilding->id][$entrance->number] = $entrance->getFlats()->orderBy(['floor' => SORT_DESC, 'number' => SORT_DESC])->all();
+                        $sectionsFlats[$newbuilding->id][$entrance->id] = $entrance->getFlats()->orderBy(['floor' => SORT_DESC, 'number' => SORT_DESC])->all();
+                        //$sectionsData[$newbuilding->id][] = $entrance->number;
+                        $sectionsData[$newbuilding->id][] = $entrance->id;
+                        $maxRoomsOnFloors[$newbuilding->id][$entrance->id] = $entrance->maxRoomsOnFloorsForEntrance($entrance->id);
                     }
                 }
             }
@@ -107,7 +109,7 @@ class FlatsChess extends Widget
                 }
             }
         }
-        
+
         return $this->render('/widgets/flats-chess', [
             'use_virtual_structure' => $this->use_virtual_structure,
             'newbuildings' => $this->newbuildings,

@@ -249,8 +249,10 @@ class XmlImportService implements ImportServiceInterface
                     }
 
                     $unitPrice = ($flat->Square != 0) ? ((int)$flat->BaseAmount / (float)$flat->Square) : 0;
-
-                    $currentFlatNumber = (int)$flat->AppNumber;
+					
+					$flatNumber = preg_replace('/[^0-9]/', '', $flat->AppNumber);
+					
+                    $currentFlatNumber = (int)$flatNumber;
                     $currentFlatFloor = (int)$flat->Floor;
 
                     if (($lastFlatFloor - $currentFlatFloor) > 1) {
@@ -259,7 +261,7 @@ class XmlImportService implements ImportServiceInterface
 
                     $_flat = [
                         'houseId' => $currentHouseId,
-                        'number' => (int)$flat->AppNumber,
+                        'number' => (int)$flatNumber,
                         'section' => $section,
                         'floor' => (int)$flat->Floor,
                         'area' => (float)$flat->Square,
@@ -269,7 +271,6 @@ class XmlImportService implements ImportServiceInterface
                         'status' => $this->getStatus((string)$flat->Status),
                     ];
 
-
                     $flats[$currentFlatId] = $_flat;
                     $flatsByNumber[$currentObjectId][$currentHouseId][(int)$flat->apartment][] = $currentFlatId;
                     $currentFlatId++;
@@ -278,9 +279,6 @@ class XmlImportService implements ImportServiceInterface
                 }
             }
 		}
-
-        // print_r($objects);
-
 
 
         $floorLayouts = [];

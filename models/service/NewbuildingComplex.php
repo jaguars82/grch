@@ -76,12 +76,12 @@ class NewbuildingComplex extends \app\models\NewbuildingComplex
      * @param array $newbuildingComplexData
      * @throws \Exception
      */
-    public function edit($newbuildingComplexData)
+    public function edit($newbuildingComplexData, $appendix = true)
     {
         if (isset($newbuildingComplexData['developer_id'])) {
             unset($newbuildingComplexData['developer_id']);
         }
-        
+      
         $transaction = \Yii::$app->db->beginTransaction();
 
         try {
@@ -101,75 +101,78 @@ class NewbuildingComplex extends \app\models\NewbuildingComplex
             
             $this->save();
 
-            $banks = ArrayHelper::getColumn($this->getBanks()->asArray()->all(), 'id');
-            $receivedBanks = is_array($newbuildingComplexData['banks']) ? $newbuildingComplexData['banks'] : [];
-            
-            $addedBanks = Bank::findAll(array_diff($receivedBanks, $banks));
-            foreach ($addedBanks as $bank) {
-                $this->link('banks', $bank);
-            }
+            if ($appendix === true) {
 
-            $removedBanks = Bank::findAll(array_diff($banks, $receivedBanks));
-            foreach ($removedBanks as $bank) {
-                $this->unlink('banks', $bank, true);
-            }
+                $banks = ArrayHelper::getColumn($this->getBanks()->asArray()->all(), 'id');
+                $receivedBanks = is_array($newbuildingComplexData['banks']) ? $newbuildingComplexData['banks'] : [];
+                
+                $addedBanks = Bank::findAll(array_diff($receivedBanks, $banks));
+                foreach ($addedBanks as $bank) {
+                    $this->link('banks', $bank);
+                }
 
-            $advantages = ArrayHelper::getColumn($this->getAdvantages()->asArray()->all(), 'id');
-            $receivedAdvantages = is_array($newbuildingComplexData['advantages']) ? $newbuildingComplexData['advantages'] : [];
-            
-            $addedAdvantages = Advantage::findAll(array_diff($receivedAdvantages, $advantages));
-            foreach ($addedAdvantages as $advantage) {
-                $this->link('advantages', $advantage);
-            }
+                $removedBanks = Bank::findAll(array_diff($banks, $receivedBanks));
+                foreach ($removedBanks as $bank) {
+                    $this->unlink('banks', $bank, true);
+                }
 
-            $removedAdvantages = Advantage::findAll(array_diff($advantages, $receivedAdvantages));
-            foreach ($removedAdvantages as $advantage) {
-                $this->unlink('advantages', $advantage, true);
-            }
+                $advantages = ArrayHelper::getColumn($this->getAdvantages()->asArray()->all(), 'id');
+                $receivedAdvantages = is_array($newbuildingComplexData['advantages']) ? $newbuildingComplexData['advantages'] : [];
+                
+                $addedAdvantages = Advantage::findAll(array_diff($receivedAdvantages, $advantages));
+                foreach ($addedAdvantages as $advantage) {
+                    $this->link('advantages', $advantage);
+                }
 
-            $savedImages = is_array($newbuildingComplexData['savedImages']) ? $newbuildingComplexData['savedImages'] : [];
-            $addedImages = is_array($newbuildingComplexData['images']) ? $newbuildingComplexData['images'] : [];
-            
-            if(!is_null($this->images) && !empty($this->images)) {
-                foreach($this->images as $image) {
-                    if(!in_array($image->id, $savedImages)) {
-                        $this->unlink('images', $image, true);
+                $removedAdvantages = Advantage::findAll(array_diff($advantages, $receivedAdvantages));
+                foreach ($removedAdvantages as $advantage) {
+                    $this->unlink('advantages', $advantage, true);
+                }
+
+                $savedImages = is_array($newbuildingComplexData['savedImages']) ? $newbuildingComplexData['savedImages'] : [];
+                $addedImages = is_array($newbuildingComplexData['images']) ? $newbuildingComplexData['images'] : [];
+                
+                if(!is_null($this->images) && !empty($this->images)) {
+                    foreach($this->images as $image) {
+                        if(!in_array($image->id, $savedImages)) {
+                            $this->unlink('images', $image, true);
+                        }
                     }
                 }
-            }
 
-            foreach ($addedImages as $image) {
-                $model = new Image();
-                $model->file = $image;
-                if($model->save()) {
-                    $this->link('images', $model);
-                }
-            }
-
-            $addedStages = is_array($newbuildingComplexData['stages']) ? $newbuildingComplexData['stages'] : [];
-
-            $stagesIds = ArrayHelper::getColumn($this->getStages()->asArray()->all(), 'id');
-            $addedStagesIds = ArrayHelper::getColumn($addedStages, 'id');
-            
-            $removedStages = NewbuildingComplexStage::findAll(array_diff($stagesIds, $addedStagesIds));
-
-            foreach($removedStages as $stage) {
-                $stage->delete();
-            }
-            
-            foreach($addedStages as $stage) {
-
-                if($stage['id']) {
-                    $model = NewbuildingComplexStage::findOne($stage['id']);
-                } else {
-                    $model = new NewbuildingComplexStage();
-                    $model->newbuilding_complex_id = $this->id;
+                foreach ($addedImages as $image) {
+                    $model = new Image();
+                    $model->file = $image;
+                    if($model->save()) {
+                        $this->link('images', $model);
+                    }
                 }
 
-                $model->name = $stage['name'];
-                $model->description = $stage['description'];
+                $addedStages = is_array($newbuildingComplexData['stages']) ? $newbuildingComplexData['stages'] : [];
 
-                $model->save();
+                $stagesIds = ArrayHelper::getColumn($this->getStages()->asArray()->all(), 'id');
+                $addedStagesIds = ArrayHelper::getColumn($addedStages, 'id');
+                
+                $removedStages = NewbuildingComplexStage::findAll(array_diff($stagesIds, $addedStagesIds));
+
+                foreach($removedStages as $stage) {
+                    $stage->delete();
+                }
+                
+                foreach($addedStages as $stage) {
+
+                    if($stage['id']) {
+                        $model = NewbuildingComplexStage::findOne($stage['id']);
+                    } else {
+                        $model = new NewbuildingComplexStage();
+                        $model->newbuilding_complex_id = $this->id;
+                    }
+
+                    $model->name = $stage['name'];
+                    $model->description = $stage['description'];
+
+                    $model->save();
+                }
             }
 
             $transaction->commit();

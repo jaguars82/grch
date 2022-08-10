@@ -56,9 +56,18 @@ class ImportController extends Controller
         });
         
         touch($this->lockFile);
+
+        $endpoints = explode(', ', $import->endpoint);
+
+        foreach ($endpoints as $endpoint) {
+            $data = $algorithm->getAndParse($endpoint);
+            $developer->import($data);
+        }
         
+        /*
         $data = $algorithm->getAndParse($import->endpoint);
         $developer->import($data);
+        */
         
         unlink($this->lockFile);
         
