@@ -14,8 +14,8 @@ use app\models\search\SimpleFlatSearch;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\web\Controller;
-//use tebe\inertia\web\Controller;
+//use yii\web\Controller;
+use tebe\inertia\web\Controller;
 use app\models\City;
 use app\models\Region;
 use app\models\District;
@@ -137,11 +137,11 @@ class SiteController extends Controller
             ],
         ]);
 
-        return $this->render('index', [
-        //return $this->inertia('Main/Index', [
+        //return $this->render('index', [
+        return $this->inertia('Main/Index', [
             'searchModel' => $searchModel,
-            'newsList' => $newsList,
-            //'newsList' => News::find()->asArray()->all(),
+            //'newsList' => $newsList,
+            'newsList' => News::find()->asArray()->all(),
             'newsDataProvider' =>$newsDataProvider,
             'actionsDataProvider' => $actionsDataProvider,
             'developerDataProvider' => $developerDataProvider,

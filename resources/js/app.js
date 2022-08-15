@@ -1,7 +1,7 @@
 import { createApp, h } from 'vue'
 import { Quasar } from 'quasar'
 import quasarUserOptions from './quasar-user-options'
-import { createInertiaApp } from '@inertiajs/inertia-vue3'
+import { createInertiaApp, Link } from '@inertiajs/inertia-vue3'
 
 createInertiaApp({
   resolve: name => require(`./Pages/${name}`),
@@ -9,6 +9,7 @@ createInertiaApp({
     createApp({ render: () => h(App, props) })
       .use(plugin)
       .use(Quasar, quasarUserOptions)
+      .component('inertia-link', Link)
       .mount(el)
   },
 })

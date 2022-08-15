@@ -30,8 +30,18 @@ class ReservationController extends Controller
         ];
     }
 
-    public function actionMake()
+    /**
+     * @param type $flatId
+     */
+    public function actionMake($flatId)
     {
-        return $this->inertia('Reservation/Make', ['note' => 'Hello, there!!!']);
+        $flat = Flat::find()
+            ->where(['id' => $flatId])
+            ->asArray()
+            ->one();
+
+        return $this->inertia('Reservation/Make', [
+            'flat' => $flat,
+        ]);
     }
 }
