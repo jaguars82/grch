@@ -20,12 +20,13 @@ $config = [
             'class' => 'tebe\inertia\Inertia'
         ],
         'request' => [
+            'class' => 'tebe\inertia\web\Request',
             'cookieValidationKey' => 'QXFB9sWB1FlClPKQyGYTittb89LNcqMX',
             'enableCsrfValidation' => false,
             'enableCsrfCookie' => false,
             'parsers' => [
                 'application/json' => 'yii\web\JsonParser',
-            ]  
+            ]
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',

@@ -29,12 +29,12 @@ phpunit.phar
 tests/_output/*
 tests/_support/_generated
 
-#vagrant folder
+# vagrant folder
 /.vagrant
 
 web/uploads
 
-#private configs
+# private configs
 /config/db.php
 /config/private_params.php
 /config/mailer.php

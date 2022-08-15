@@ -365,6 +365,13 @@ $this->params['breadcrumbs'][] = $model->number;
                     ['offer/make', 'flatId' => $model->id],
                     ['class' => 'btn btn-red-fill']
                 ) ?>
+                <?= Html::a('Забронировать',
+                    ['reservation/make', 'flatId' => $model->id],
+                    ['class' => 'btn']
+                ) ?>
+                <!--<a href="/reservation">
+                    Забронировать
+                </a>-->
             </div>
         </div>
     </div>
