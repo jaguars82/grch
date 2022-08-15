@@ -1,0 +1,26 @@
+{
+  "scripts": {
+    "css-dev": "cross-env NODE_ENV=development postcss resources/css/app.css -o web/assets/inertia/css/app.css",
+    "css-prod": "cross-env NODE_ENV=development postcss resources/css/app.css -o web/assets/inertia/css/app.min.css",
+    "dev": "webpack --config webpack.config.js",
+    "prod": "webpack --config webpack.config.js --optimize-minimize --mode production",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@inertiajs/inertia": "^0.11.0",
+    "@inertiajs/inertia-vue3": "^0.6.0",
+    "@quasar/extras": "^1.0.0",
+    "quasar": "^2.0.0",
+    "vue": "^3.2.36"
+  },
+  "devDependencies": {
+    "css-loader": "^6.7.1",
+    "sass": "^1.32.12",
+    "sass-loader": "^12.6.0",
+    "style-loader": "^3.3.1",
+    "vue-cli-plugin-quasar": "~5.0.1",
+    "vue-loader": "^17.0.0",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0"
+  }
+}
