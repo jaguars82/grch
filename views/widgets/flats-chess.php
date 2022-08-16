@@ -15,7 +15,8 @@ $format = \Yii::$app->formatter;
     <?php if (count($newbuildings)): ?>
         <div class="white-block flat-chess">
             <p class="h3">Шахматки / Позиции</p>
-            <?php foreach($newbuildings as $key => $newbuilding): ?>
+            <?php foreach ($newbuildings as $key => $newbuilding): ?>
+                <?php if (($newbuilding->active_flats + $newbuilding->reserved_flats) > 0): ?>
                 <div class="flat-chess__item
                 <?php if(!is_null($currentFlat) && in_array($currentFlat->entrance_id, $newbuilding->entrance_idies)): ?>
                     flat-chess marked open
@@ -71,6 +72,7 @@ $format = \Yii::$app->formatter;
 
 
                 </div>
+                <?php endif; ?>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
