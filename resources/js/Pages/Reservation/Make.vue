@@ -21,11 +21,9 @@ export default ({
     FlatListItem
   },
   props: {
-    flat: Array
+    flat: Object
   },
   setup(props) {
-    const number = ref(99)
-    return {number}
   },
 })
 </script>

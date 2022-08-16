@@ -6,6 +6,7 @@ use app\models\Flat;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use tebe\inertia\web\Controller;
+use yii\helpers\ArrayHelper;
 
 class ReservationController extends Controller
 {
@@ -35,10 +36,14 @@ class ReservationController extends Controller
      */
     public function actionMake($flatId)
     {
-        $flat = Flat::find()
+        $model = Flat::find()
             ->where(['id' => $flatId])
-            ->asArray()
+            //->asArray()
             ->one();
+        
+        $flat = ArrayHelper::toArray($model);
+        $flat['newbuilding'] = ArrayHelper::toArray($model->newbuilding);
+        $flat['newbuildingComplex'] = ArrayHelper::toArray($model->newbuildingComplex);
 
         return $this->inertia('Reservation/Make', [
             'flat' => $flat,
