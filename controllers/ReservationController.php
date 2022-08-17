@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\Flat;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use app\components\SharedDataFilter;
 use tebe\inertia\web\Controller;
 use yii\helpers\ArrayHelper;
 
@@ -13,7 +14,7 @@ class ReservationController extends Controller
     public function behaviors()
     {
         return [ 
-                'access' => [
+            'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     /*[
@@ -27,6 +28,9 @@ class ReservationController extends Controller
                         'roles' => ['@'],
                     ],
                 ]
+            ],
+            [
+                'class' => SharedDataFilter::class
             ]
         ];
     }
