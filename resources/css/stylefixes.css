@@ -5,3 +5,8 @@
   margin-right: 0px;
   margin-left: 0px;
 }
+
+/* fix Bootstrap 3 (clearfix) row display to make q-field (Quasar) look properly */
+.row::after, .row::before {
+  display: block;
+}

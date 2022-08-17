@@ -8,6 +8,8 @@
     <div><span>{{ value1 }}</span> + <span>{{ value2 }}</span> = <span>{{ sum }}</span></div>
     <input type="text" v-model="value1" placeholder="первое число">
     <input type="text" v-model="value2" placeholder="второе число">
+    <!--<q-input outlined v-model="value1" label="первое число" />
+    <q-input  v-model="value2" label="второе число" />-->
       <!--<q-btn class="bg-positive" @click="doSomething" label="Do something" />
   <q-icon name="alarm" />
 

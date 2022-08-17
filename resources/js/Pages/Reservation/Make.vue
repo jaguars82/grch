@@ -10,8 +10,29 @@
             <q-form
               @submit="onSubmit"
               @reset="onReset"
-              class="q-gutter-md"
             >
+
+            <div class="row">
+              <div class="col q-mx-md">
+                <q-input v-model="formfields.client_lastname" label="Фамилия клиента" />
+              </div>
+              <div class="col q-mx-md">
+                <q-input v-model="formfields.client_firstname" label="Имя клиента" />
+              </div>
+              <div class="col q-mx-md">
+                <q-input v-model="formfields.client_middletname" label="Отчество клиента" />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col q-mx-md">
+                <q-input v-model="formfields.client_phone" label="Телефон клиента" />
+              </div>
+              <div class="col q-mx-md">
+                <q-input v-model="formfields.client_email" label="Email клиента" />
+              </div>
+            </div>
+
             <div class="text-center">
               <q-btn label="Отправить заявку" type="submit" color="primary"/>
               <q-btn label="Сбросить" type="reset" color="primary" flat class="q-ml-sm" />
@@ -27,10 +48,10 @@
 
 <script>
 
-import { usePage } from '@inertiajs/inertia-vue3'
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import MainLayout from '../../Layouts/MainLayout.vue'
 import FlatListItem from '../../Components/Flat/FlatListItem.vue'
+import { userInfo } from '../../helpers/shared-data'
 
 export default ({
   components: {
@@ -42,12 +63,22 @@ export default ({
   },
   setup(props) {
 
-    const user = computed(() => usePage().props.value.auth.user)
+    const { user } = userInfo()
 
-    const onSubmit = () => console.log('AreYou Sure?')
+    const formfields = ref(
+      {
+        client_firstname: '',
+        client_lastname: '',
+        client_middlename: '',
+        client_phone: '',
+        client_email: ''
+      }
+    )
+
+    const onSubmit = () => console.log(formfields.value)
     const onReset = () => console.log('Cansel?')
 
-    return { user, onSubmit, onReset }
+    return { user, formfields, onSubmit, onReset }
   },
 })
 </script>
