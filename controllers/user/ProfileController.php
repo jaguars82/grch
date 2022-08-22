@@ -3,11 +3,13 @@
 namespace app\controllers\user;
 
 use app\components\traits\CustomRedirects;
+use app\components\SharedDataFilter;
 use app\models\User;
 use app\models\form\UserForm;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\web\Controller;
+// use yii\web\Controller;
+use tebe\inertia\web\Controller;
 
 class ProfileController extends Controller
 {
@@ -33,13 +35,23 @@ class ProfileController extends Controller
                     ],
                 ]
             ],
+            [
+                'class' => SharedDataFilter::class
+            ],
         ];
     }
 
-    public function actionIndex()
+    /*public function actionIndex()
     {
         return $this->render('index', [
             'user' => \Yii::$app->user->identity
+        ]);
+    }*/
+
+    public function actionIndex()
+    {
+        return $this->inertia('User/Profile/Index', [
+            'user' => \Yii::$app->user->identity,
         ]);
     }
 
