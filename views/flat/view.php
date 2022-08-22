@@ -169,10 +169,10 @@ $this->params['breadcrumbs'][] = $model->number;
                     ]);?>
                 <?php endif; ?>
 
-                <?= Html::a('Сформировать КП',
+                <!--<?= Html::a('Сформировать КП',
                     ['offer/make', 'flatId' => $model->id],
                     ['class' => 'btn btn-red-fill']
-                ) ?>
+                ) ?>-->
             </div>
         </div>
         <?php if($flatDataProvider->totalCount > 0): ?>
@@ -361,10 +361,10 @@ $this->params['breadcrumbs'][] = $model->number;
                     ]);?>
                 <?php endif; ?>
 
-                <?= Html::a('Сформировать КП',
+                <!--<?= Html::a('Сформировать КП',
                     ['offer/make', 'flatId' => $model->id],
                     ['class' => 'btn btn-red-fill']
-                ) ?>
+                ) ?>-->
                 <?= Html::a('Забронировать',
                     ['reservation/make', 'flatId' => $model->id],
                     ['class' => 'btn']

@@ -41,20 +41,25 @@ class SharedDataFilter extends ActionFilter
      */
     private function getUser()
     {
-        $webUser = Yii::$app->getUser();
+        /*$webUser = Yii::$app->getUser();
         if ($webUser->isGuest) {
             return null;
-        }
+        }*/
 
         /** @var User */
-        $user = $webUser->getIdentity();
+        //$user = $webUser->getIdentity();
+        $user = Yii::$app->user->identity;
 
         $return = [
             'id' => $user->id,
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
+            'middle_name' => $user->middle_name,
+            'phone' => $user->phone,
             'email' => $user->email,
+            'photo' => $user->photo,
             'role' => $user->role,
+            'roleLabel' => $user->roleLabel,
             /*'account' => [
                 'id' => $user->account->id,
                 'name' => $user->account->name

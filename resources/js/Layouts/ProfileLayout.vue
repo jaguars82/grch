@@ -1,6 +1,7 @@
 <template>
   <div>
     <MainMenu></MainMenu>
+    <slot name="breadcrumbs"></slot>
     <div class="row">
       <div class="col-3">
         <ProfileMenu></ProfileMenu>
