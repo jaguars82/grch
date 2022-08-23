@@ -20,7 +20,7 @@
                 <q-input v-model="formfields.client_firstname" label="Имя клиента" />
               </div>
               <div class="col q-mx-md">
-                <q-input v-model="formfields.client_middletname" label="Отчество клиента" />
+                <q-input v-model="formfields.client_middlename" label="Отчество клиента" />
               </div>
             </div>
 
@@ -49,6 +49,7 @@
 <script>
 
 import { ref, computed } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
 import MainLayout from '../../Layouts/MainLayout.vue'
 import FlatListItem from '../../Components/Flat/FlatListItem.vue'
 import { userInfo } from '../../helpers/shared-data'
@@ -67,6 +68,8 @@ export default ({
 
     const formfields = ref(
       {
+        flat_id: props.flat.id,
+        applicant_id: user.value.id,
         client_firstname: '',
         client_lastname: '',
         client_middlename: '',
@@ -75,7 +78,10 @@ export default ({
       }
     )
 
-    const onSubmit = () => console.log(formfields.value)
+    function onSubmit() {
+      Inertia.post(`/reservation/make?flatId=${props.flat.id}`, formfields.value)
+    }
+    //const onSubmit = () => console.log(formfields.value)
     const onReset = () => console.log('Cansel?')
 
     return { user, formfields, onSubmit, onReset }
