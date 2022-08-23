@@ -10,8 +10,10 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property int $application_id
- * @property string $action
  * @property int $user_id
+ * @property string $action
+ * @property string $reason
+ * @property string $comment
  * @property string $made_at
  * 
  * @property Application $application
@@ -43,7 +45,7 @@ class ApplicationHistory extends ActiveRecord
         ];
     }
 
-        /**
+    /**
      * {@inheritdoc}
      */
     public function rules()
@@ -51,6 +53,7 @@ class ApplicationHistory extends ActiveRecord
         return [
             [['application_id', 'action', 'user_id'], 'required'],
             [['application_id', 'action', 'user_id'], 'integer'],
+            [['reason', 'comment'], 'string'],
             [['made_at'], 'safe'],
             [['application_id'], 'exist', 'skipOnError' => true, 'targetClass' => Application::className(), 'targetAttribute' => ['application_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
