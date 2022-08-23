@@ -30,6 +30,16 @@
           <q-item-section>Агенты</q-item-section>
         </q-item>
 
+        <inertia-link v-if="user.role === 'admin'" href="/user/application/index">
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon color="primary" name="real_estate_agent" />
+            </q-item-section>
+
+            <q-item-section>Заявки</q-item-section>
+          </q-item>
+        </inertia-link>
+
         <inertia-link href="/user/support/index">
         <q-item clickable v-ripple>
           <q-item-section avatar>
