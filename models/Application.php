@@ -36,19 +36,21 @@ class Application extends ActiveRecord
 {
     use FillAttributes;
 
-    const STATUS_RESERV_APPLICATED = 0;
-    const STATUS_RESERV_AWAIT_FOR_APPROVAL = 1;
-    const STATUS_RESERV_APPROVED_BY_DEVELOPER = 2;
-    const STATUS_RESERV_APPROVED_BY_ADMIN = 3;
-    const STATUS_APPLICATION_IN_WORK = 4;
-    const STATUS_RESERV_CANCEL_APPLICATED = 5;
-    const STATUS_RESERV_CANCELLED_BY_ADMIN = 6;
-    const STATUS_APPLICATION_CANCELED_BY_ADMIN = 7;
-    const STATUS_APPLICATION_APPROVAL_REQUEST = 8;
-    const STATUS_APPLICATION_APPROVAL_PROCESS = 9;
-    const STATUS_APPLICATION_SUCCESS = 10;
+    const STATUS_UNDEFINED = 0;
+    const STATUS_RESERV_APPLICATED = 1;
+    const STATUS_RESERV_AWAIT_FOR_APPROVAL = 2;
+    const STATUS_RESERV_APPROVED_BY_DEVELOPER = 3;
+    const STATUS_RESERV_APPROVED_BY_ADMIN = 4;
+    const STATUS_APPLICATION_IN_WORK = 5;
+    const STATUS_RESERV_CANCEL_APPLICATED = 6;
+    const STATUS_RESERV_CANCELLED_BY_ADMIN = 7;
+    const STATUS_APPLICATION_CANCELED_BY_ADMIN = 8;
+    const STATUS_APPLICATION_APPROVAL_REQUEST = 9;
+    const STATUS_APPLICATION_APPROVAL_PROCESS = 10;
+    const STATUS_APPLICATION_SUCCESS = 11;
 
     public static $status = [
+        self::STATUS_UNDEFINED => 'Статус заявки неопределён',
         self::STATUS_RESERV_APPLICATED => 'Заявка на бронирование подана',
         self::STATUS_RESERV_AWAIT_FOR_APPROVAL => 'Заявка на бронирование ожидает подтверждения от застройщика',
         self::STATUS_RESERV_APPROVED_BY_DEVELOPER => 'Бронирование подтверждено застройщиком',
@@ -93,7 +95,7 @@ class Application extends ActiveRecord
     public function rules()
     {
         return [
-            [['flat_id', 'applicant_id', 'status'], 'required'],
+            [['flat_id', 'applicant_id'/*, 'status'*/], 'required'],
             [['flat_id', 'applicant_id', 'status'], 'integer'],
             [['client_firstname', 'client_lastname', 'client_middlename', 'client_phone', 'client_email',  'applicant_comment', 'manager_firstname', 'manager_lastname', 'manager_middlename', 'manager_phone', 'manager_email', 'admin_comment'], 'string'],
             [['created_at', 'updated_at'], 'safe'],

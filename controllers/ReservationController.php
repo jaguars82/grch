@@ -9,12 +9,15 @@ use app\models\ApplicationHistory;
 use app\models\form\ApplicationHistoryForm;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use app\components\traits\CustomRedirects;
 use app\components\SharedDataFilter;
 use tebe\inertia\web\Controller;
 use yii\helpers\ArrayHelper;
 
 class ReservationController extends Controller
 {
+    use CustomRedirects;
+
     public function behaviors()
     {
         return [ 
@@ -48,14 +51,36 @@ class ReservationController extends Controller
         $flat['newbuildingComplex'] = ArrayHelper::toArray($model->newbuildingComplex);
 
         if (\Yii::$app->request->isPost) {
+
             $applicationForm = new ApplicationForm();
-            $applicationForm->load(\Yii::$app->request->post(), '');
-            // echo '<pre>'; var_dump(\Yii::$app->request->post()); echo '</pre>'; die();
-            echo '<pre>'; var_dump($applicationForm); echo '</pre>'; die();
+            $applicationHistoryForm = new ApplicationHistoryForm();
+
+            $transaction = \Yii::$app->db->beginTransaction();
+
+            try {
+                $applicationForm->load(\Yii::$app->request->post(), '');
+                $applicationModel = (new Application())->fill($applicationForm->attributes);
+                $applicationModel->save();
+
+                $applicationHistoryForm->application_id = $applicationModel->id;
+                $applicationHistoryForm->user_id = $applicationModel->applicant_id;
+                $applicationHistoryForm->action = Application::STATUS_RESERV_APPLICATED;
+                $applicationHistoryForm->comment = $applicationModel->applicant_comment;
+                $applicationHistoryModel = (new ApplicationHistory())->fill($applicationHistoryForm->attributes);
+                $applicationHistoryModel->save();
+
+                $transaction->commit();
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                return $this->redirect(['make', 'flatId' => $model->id, 'status' => 'err']);
+            }
+
+            return $this->redirect(['make', 'flatId' => $model->id, 'res' => 'ok']);
         }
 
         return $this->inertia('Reservation/Make', [
             'flat' => $flat,
+            'result' => \Yii::$app->request->get('res')
         ]);
     }
 }

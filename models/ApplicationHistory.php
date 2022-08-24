@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\components\traits\FillAttributes;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 
@@ -11,7 +12,7 @@ use yii\db\ActiveRecord;
  * @property int $id
  * @property int $application_id
  * @property int $user_id
- * @property string $action
+ * @property int $action
  * @property string $reason
  * @property string $comment
  * @property string $made_at
@@ -21,6 +22,7 @@ use yii\db\ActiveRecord;
  */
 class ApplicationHistory extends ActiveRecord
 {
+    use FillAttributes;
     /**
      * {@inheritdoc}
      */
