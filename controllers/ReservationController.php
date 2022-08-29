@@ -80,6 +80,7 @@ class ReservationController extends Controller
 
         return $this->inertia('Reservation/Make', [
             'flat' => $flat,
+            'applicationsAmount' => (new Application)->getApplicationsByAuthor(\Yii::$app->user->id)->count(),
             'result' => \Yii::$app->request->get('res')
         ]);
     }

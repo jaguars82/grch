@@ -10,6 +10,7 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 // use yii\web\Controller;
 use tebe\inertia\web\Controller;
+use yii\helpers\ArrayHelper;
 
 class SupportController extends Controller
 {
@@ -30,7 +31,7 @@ class SupportController extends Controller
                     [
                         'allow' => true,
                         'actions' => ['index'],
-                        'roles' => ['admin', 'manager', 'agent'],
+                        'roles' => ['admin', 'manager', 'agent', 'developer_repres'],
                     ],
                 ]
             ],
@@ -68,9 +69,11 @@ class SupportController extends Controller
             'tickets' => $tickets
         ]);*/
 
+        //echo '<pre>'; var_dump($tickets); echo '</pre>'; die();
+
         return $this->inertia('User/Support/Index', [
             'user' => \Yii::$app->user->identity,
-            'tickets' => $tickets
+            'tickets' => ArrayHelper::toArray($tickets)
         ]);
     }
 }

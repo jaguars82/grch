@@ -9,8 +9,10 @@ use app\models\form\SupportMessageForm;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use app\components\traits\CustomRedirects;
+use tebe\inertia\web\Controller;
+use yii\helpers\ArrayHelper;
 
-class SupportTicketController extends \yii\web\Controller
+class SupportTicketController extends Controller
 {
     use CustomRedirects;
 
@@ -38,26 +40,11 @@ class SupportTicketController extends \yii\web\Controller
         ];
     }
 
-    /* public function actionIndex() {
+    public function actionView($id) {
 
-        if (\Yii::$app->request->isPost && \Yii::$app->request->post('action') === 'refresh_ticket') {
+        // $ticketId = \Yii::$app->request->get('id');
 
-            $ticketId = \Yii::$app->request->post('id');
-
-            $ticket = (new SupportTicket())->findOne($ticketId);
-
-            return $this->renderPartial('view', [
-                'ticket' => $ticket,
-                'messages' => false,
-            ]);
-        }
-    } */
-
-    public function actionView() {
-
-        $ticketId = \Yii::$app->request->get('id');
-
-        $ticket = (new SupportTicket())->findOne($ticketId);
+        $ticket = (new SupportTicket())->findOne($id);
         $messages = $ticket->messages;
 
         foreach($messages as $key => $message) {
@@ -75,9 +62,9 @@ class SupportTicketController extends \yii\web\Controller
          */
         if (\Yii::$app->request->isPost && \Yii::$app->request->post('action') === 'refresh') {
         
-            $ticketId = \Yii::$app->request->post('id');
+            //$ticketId = \Yii::$app->request->post('id');
 
-            $ticket = (new SupportTicket())->findOne($ticketId);
+            $ticket = (new SupportTicket())->findOne($id);
             $messages = $ticket->messages;
 
             foreach($messages as $key => $message) {
@@ -150,9 +137,16 @@ class SupportTicketController extends \yii\web\Controller
             return $this->redirectWithSuccess(\Yii::$app->request->referrer, 'Сообщение отправлено');
         }
 
+        /*
         return $this->render('view', [
             'ticket' => $ticket,
             'messages' => $messages,
+        ]);
+        */
+
+        return $this->inertia('User/SupportTicket/View', [
+            'ticket' => ArrayHelper::toArray($ticket),
+            'messages' => ArrayHelper::toArray($messages),
         ]);
     }
 

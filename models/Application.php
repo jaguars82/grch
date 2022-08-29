@@ -28,6 +28,7 @@ use yii\db\ActiveRecord;
  * @property int $is_active
  * @property string $created_at
  * @property string $updated_at
+ * @property string $application_number
  * 
  * @property Flat $flat
  * @property User $applicant
@@ -97,7 +98,7 @@ class Application extends ActiveRecord
         return [
             [['flat_id', 'applicant_id'/*, 'status'*/], 'required'],
             [['flat_id', 'applicant_id', 'status'], 'integer'],
-            [['client_firstname', 'client_lastname', 'client_middlename', 'client_phone', 'client_email',  'applicant_comment', 'manager_firstname', 'manager_lastname', 'manager_middlename', 'manager_phone', 'manager_email', 'admin_comment'], 'string'],
+            [['client_firstname', 'client_lastname', 'client_middlename', 'client_phone', 'client_email',  'applicant_comment', 'manager_firstname', 'manager_lastname', 'manager_middlename', 'manager_phone', 'manager_email', 'admin_comment', 'application_number'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['is_active'], 'boolean'],
             [['flat_id'], 'exist', 'skipOnError' => true, 'targetClass' => Flat::className(), 'targetAttribute' => ['flat_id' => 'id']],
@@ -128,6 +129,20 @@ class Application extends ActiveRecord
             'admin_comment' => 'Комментарий адинистратора',
             'is_active' => 'Заявка активна',
         ];
+    }
+
+    public function getActiveApplications ()
+    {
+        return self::find()
+            ->where(['is_active' => 1])
+            ->orderBy(['created_at' => SORT_DESC])
+            ->all();
+    }
+
+    public function getApplicationsByAuthor ($authorId)
+    {
+        return $this->find()
+            ->where(['applicant_id' => $authorId]);
     }
     
 }

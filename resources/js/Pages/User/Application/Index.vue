@@ -4,13 +4,59 @@
       <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
     </template>
     <template v-slot:main>
-    <p>Заявки</p>
+      <input v-model="gridView" type="text" />
+      <p>Заявки</p>
+      <div class="q-pa-md">
+        <q-table
+          :grid="gridView"
+          title="Заявки"
+          :rows="rows"
+          :columns="columns"
+          row-key="application_number"
+        >
+          <template v-slot:body="props">
+            <q-tr :props="props">
+              <q-td key="application_number" :props="props">
+                {{ props.row.application_number }}
+              </q-td>
+              <q-td key="client_fio" :props="props">
+                {{ props.row.client_fio }}
+              </q-td>
+              <q-td key="link" :props="props">
+                <inertia-link :href="props.row.link">
+                  Подробнее
+                </inertia-link>
+              </q-td>
+            </q-tr>
+          </template>
+
+          <template v-slot:item="props">
+            <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
+              <q-card>
+                <q-card-section class="text-center">
+                  Заявка
+                  <br>
+                  <strong>{{ props.row.application_number }}</strong>
+                </q-card-section>
+                <q-separator />
+                <q-card-section class="flex flex-center" :style="{ fontSize: props.row.calories + 'px' }">
+                  <div>{{ props.row.id }} g</div>
+                </q-card-section>
+              </q-card>
+            </div>
+          </template>
+
+        </q-table>
+      </div>
+      <div>
+        <p v-for="application of applications" :key="application.id">{{ application.application_number }}</p>
+      </div>
     </template>
   </ProfileLayout>
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import ProfileLayout from '../../../Layouts/ProfileLayout.vue'
 import Breadcrumbs from '../../../Components/Layout/Breadcrumbs.vue'
 
@@ -20,9 +66,9 @@ export default ({
     Breadcrumbs
   },
   props: {
-    tickets: Array
+    applications: Array
   },
-  setup() {
+  setup(props) {
     const breadcrumbs = ref([
       {
         id: 1,
@@ -50,7 +96,29 @@ export default ({
       },
     ])
 
-    return { breadcrumbs }
+    let gridView = ref(false)
+
+    const columns = [
+      { name: 'application_number', required: true, align: 'left', label: 'Номер заявки', field: 'application_number', sortable: true },
+      { name: 'client_fio', align: 'center', label: 'ФИО клиента', field: 'client_fio', sortable: true },
+      { name: 'link', align: 'center', label: '', field: 'link', sortable: false },
+    ]
+
+    const rows = computed(() => {
+      const processedRows = []
+      props.applications.forEach(row => {
+        const processedItem = {
+          id: row.id,
+          application_number: row.application_number,
+          client_fio: `${row.client_lastname} ${row.client_firstname} ${row.client_middlename}`,
+          link: `/user/application/view?id=${row.id}`
+        }
+        processedRows.push(processedItem)
+      });
+      return processedRows
+    })
+
+    return { breadcrumbs, gridView, columns, rows }
   },
 })
 </script>

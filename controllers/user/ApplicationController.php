@@ -5,9 +5,11 @@ namespace app\controllers\user;
 use app\components\traits\CustomRedirects;
 use app\components\SharedDataFilter;
 use app\models\User;
+use app\models\Application;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use tebe\inertia\web\Controller;
+use yii\helpers\ArrayHelper;
 
 class ApplicationController extends Controller
 {
@@ -20,6 +22,7 @@ class ApplicationController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'index' => ['GET', 'POST'],
+                    'view' => ['GET', 'POST']
                 ],
             ],
             'access' => [
@@ -27,7 +30,7 @@ class ApplicationController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index'],
+                        'actions' => ['index', 'view'],
                         'roles' => ['admin', 'manager', 'agent', 'developer_repres'],
                     ],
                 ]
@@ -40,29 +43,24 @@ class ApplicationController extends Controller
 
     public function actionIndex()
     {
-        //$model = new SupportTicket();
+        $model = new Application();
 
-        /*if(\Yii::$app->user->can('admin')) {
-            $tickets = $model->getAllTickets();
-
-            foreach($tickets as $key => $ticket) {
-                $ticket->setUnreadFromAuthor();
-                $ticket->setAuthorName();
-                $ticket->setAuthorSurname();
-                $ticket->setAuthorAvatar();
-                $ticket->setAuthorRole();
-                $ticket->setAuthorAgency();
-            }            
-        } else {
-            $tickets = $model->getTicketsByAuthor(\Yii::$app->user->id);
-
-            foreach($tickets as $key => $ticket) {
-                $ticket->setUnreadFromAdmin();
-            }
-        }*/
+        if(\Yii::$app->user->can('admin')) {
+            $applications = $model->activeApplications;    
+        }
         
         return $this->inertia('User/Application/Index', [
             'user' => \Yii::$app->user->identity,
+            'applications' => ArrayHelper::toArray($applications)
+        ]);
+    }
+
+    public function actionView($id)
+    {
+        $application = (new Application())->findOne($id);
+        
+        return $this->inertia('User/Application/View', [
+            'application' => ArrayHelper::toArray($application)
         ]);
     }
 }

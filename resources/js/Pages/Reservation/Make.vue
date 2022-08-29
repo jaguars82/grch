@@ -26,7 +26,6 @@
               @submit="onSubmit"
               @reset="onReset"
             >
-
             <div class="row">
               <div class="col-sm-4 col-xs-12">
                 <q-input v-model="formfields.client_lastname" label="Фамилия клиента" />
@@ -82,6 +81,7 @@ export default ({
   },
   props: {
     flat: Object,
+    applicationsAmount: String,
     result: String
   },
   setup(props) {
@@ -89,6 +89,11 @@ export default ({
     const loading = ref(false)
 
     const { user } = userInfo()
+
+    const numberString = computed(function () {
+      const newAmount = parseInt(props.applicationsAmount) + 1
+      return `#${user.value.id}-${newAmount}`
+    })
 
     const formfields = ref(
       {
@@ -101,7 +106,8 @@ export default ({
         client_phone: '',
         client_email: '',
         applicant_comment: '',
-        is_active: true
+        is_active: true,
+        application_number: numberString
       }
     )
 
