@@ -72,7 +72,7 @@ import { ref, computed } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import MainLayout from '../../Layouts/MainLayout.vue'
 import FlatListItem from '../../Components/Flat/FlatListItem.vue'
-import { userInfo } from '../../helpers/shared-data'
+import { userInfo } from '../../composables/shared-data'
 
 export default ({
   components: {
@@ -92,7 +92,7 @@ export default ({
 
     const numberString = computed(function () {
       const newAmount = parseInt(props.applicationsAmount) + 1
-      return `#${user.value.id}-${newAmount}`
+      return `${user.value.id}-#${newAmount}`
     })
 
     const formfields = ref(
@@ -121,7 +121,7 @@ export default ({
 
     const onReset = () => console.log('Cansel?')
 
-    return { loading, user, formfields, onSubmit, onReset }
+    return { loading, user, numberString, formfields, onSubmit, onReset }
   },
 })
 </script>

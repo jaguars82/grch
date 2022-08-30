@@ -40,7 +40,7 @@
 import { ref } from 'vue'
 import ProfileLayout from '../../../Layouts/ProfileLayout.vue'
 import Breadcrumbs from '../../../Components/Layout/Breadcrumbs.vue'
-import { userInfo } from '../../../helpers/shared-data'
+import { userInfo } from '../../../composables/shared-data'
 
 export default ({
   components: {

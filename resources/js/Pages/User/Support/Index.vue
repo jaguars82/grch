@@ -4,26 +4,30 @@
       <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
     </template>
     <template v-slot:main>
-      <q-table
-        grid
-        :columns="columns"
-        :rows="rows"
-        row-key="ticket_number"
-      >
-        <template v-slot:item="props">
-          <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
-            <q-card>
-              <q-card-section>
-                <inertia-link :href="`/user/support-ticket/view?id=${props.row.id}`">
-                  <div>
-                    <span>{{ props.row.ticket_number }}</span>
-                  </div>
-                </inertia-link>
-              </q-card-section>
-            </q-card>
-          </div>
+      <RegularContentContainer>
+        <template v-slot:content>
+          <q-table
+            grid
+            :columns="columns"
+            :rows="rows"
+            row-key="ticket_number"
+          >
+            <template v-slot:item="props">
+              <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
+                <q-card>
+                  <q-card-section>
+                    <inertia-link :href="`/user/support-ticket/view?id=${props.row.id}`">
+                      <div>
+                        <span>{{ props.row.ticket_number }}</span>
+                      </div>
+                    </inertia-link>
+                  </q-card-section>
+                </q-card>
+              </div>
+            </template>
+          </q-table>
         </template>
-      </q-table>
+      </RegularContentContainer>
     </template>
   </ProfileLayout>
 </template>
@@ -32,11 +36,13 @@
 import { ref } from 'vue'
 import ProfileLayout from '../../../Layouts/ProfileLayout.vue'
 import Breadcrumbs from '../../../Components/Layout/Breadcrumbs.vue'
+import RegularContentContainer from '../../../Components/Layout/RegularContentContainer.vue'
 
 export default ({
   components: {
     ProfileLayout,
-    Breadcrumbs
+    Breadcrumbs,
+    RegularContentContainer
   },
   props: {
     tickets: Array

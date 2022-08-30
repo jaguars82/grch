@@ -56,7 +56,7 @@
 
 <script>
 import { ref } from 'vue'
-import { userInfo } from '../../helpers/shared-data'
+import { userInfo } from '../../composables/shared-data'
 
 export default ({
   setup() {

@@ -4,7 +4,11 @@
       <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
     </template>
     <template v-slot:main>
-      <div>Просмотр заявки  {{ application.application_number }}</div>
+      <RegularContentContainer>
+        <template v-slot:content>
+          <div>Просмотр заявки  {{ application.application_number }}</div>
+        </template>
+      </RegularContentContainer>
     </template>
   </ProfileLayout>
 </template>
@@ -13,11 +17,13 @@
 import { ref, computed } from 'vue'
 import ProfileLayout from '../../../Layouts/ProfileLayout.vue'
 import Breadcrumbs from '../../../Components/Layout/Breadcrumbs.vue'
+import RegularContentContainer from '../../../Components/Layout/RegularContentContainer.vue'
 
 export default ({
 components: {
     ProfileLayout,
-    Breadcrumbs
+    Breadcrumbs,
+    RegularContentContainer
   },
   props: {
     application: Array

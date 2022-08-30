@@ -9,6 +9,7 @@ use app\models\form\SupportMessageForm;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use app\components\traits\CustomRedirects;
+use app\components\SharedDataFilter;
 use tebe\inertia\web\Controller;
 use yii\helpers\ArrayHelper;
 
@@ -37,6 +38,9 @@ class SupportTicketController extends Controller
                     ],
                 ]
             ],
+            [
+                'class' => SharedDataFilter::class
+            ],        
         ];
     }
 
@@ -47,13 +51,13 @@ class SupportTicketController extends Controller
         $ticket = (new SupportTicket())->findOne($id);
         $messages = $ticket->messages;
 
-        foreach($messages as $key => $message) {
+        /*foreach($messages as $key => $message) {
             $message->setAuthorName();
             $message->setAuthorSurname();
             $message->setAuthorAvatar();
             $message->setAuthorRole();
             $message->setAuthorAgency();
-        }
+        }*/
 
         $message_form = new SupportMessageForm();
 
@@ -144,9 +148,23 @@ class SupportTicketController extends Controller
         ]);
         */
 
+        /** 
+         * Prepare messages arrray for Vue component
+        */
+        $messages_array = array();
+        foreach ($messages as $message) {
+            $message_entry = ArrayHelper::toArray($message);
+            $message_entry['author'] = ArrayHelper::toArray($message->author);
+            $message_entry['author']['roleLabel'] = $message->author->roleLabel;
+            if(!empty($message->author->agency_id)) {
+                $message_entry['author']['agency_name'] = $message->author->agency->name;
+            }
+            array_push($messages_array, $message_entry);
+        }
+
         return $this->inertia('User/SupportTicket/View', [
             'ticket' => ArrayHelper::toArray($ticket),
-            'messages' => ArrayHelper::toArray($messages),
+            'messages' => $messages_array,
         ]);
     }
 

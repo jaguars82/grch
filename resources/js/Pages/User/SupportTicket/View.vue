@@ -1,19 +1,61 @@
 <template>
-  <div>Ticket {{ ticket.ticket_number }}</div>
+  <ProfileLayout>
+    <template v-slot:breadcrumbs>
+      <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
+    </template>
+    <template v-slot:main>
+      <RegularContentContainer
+        :title="ticket.ticket_number" 
+        :subtitle="ticket.title"
+      >
+        <template v-slot:content>
+          <div class="q-py-sm q-px-md rounded-borders bg-grey-3">
+            <q-chat-message
+              v-for="message of messages"
+              :key="message.id"
+              :text="[message.text]"
+              sent
+              text-color="white"
+              bg-color="primary"
+            >
+              <template v-slot:name>
+                <span>{{ message.author.first_name }} {{ message.author.last_name }}</span>
+                <span class="text-lowercase">, {{ message.author.roleLabel }}</span>
+                <span v-if="message.author.agency_name">
+                  "{{ message.author.agency_name }}"
+                </span>
+              </template>
+              <template v-slot:stamp>{{ message.created_at }}</template>
+              <template v-slot:avatar>
+                <img
+                  class="q-message-avatar q-message-avatar--sent"
+                  :src="message.author.photo ? `/uploads/${message.author.photo}` : '/img/user-nofoto.jpg'"
+                >
+              </template>
+            </q-chat-message>
+
+          </div>
+        </template>
+      </RegularContentContainer>
+    </template>
+  </ProfileLayout>
 </template>
 
 <script>
 import { ref, computed } from 'vue'
 import ProfileLayout from '../../../Layouts/ProfileLayout.vue'
 import Breadcrumbs from '../../../Components/Layout/Breadcrumbs.vue'
+import RegularContentContainer from '../../../Components/Layout/RegularContentContainer.vue'
 
 export default ({
   components: {
     ProfileLayout,
-    Breadcrumbs
+    Breadcrumbs,
+    RegularContentContainer
   },
   props: {
-    ticket: Array
+    ticket: Array,
+    messages: Array
   },
   setup(props) {
     const breadcrumbs = [
