@@ -10,12 +10,11 @@ const emitter = mitt()
 createInertiaApp({
   resolve: name => require(`./Pages/${name}`),
   setup({ el, App, props, plugin }) {
-    App.config.globalProperties.emitter = emitter
-    createApp({ render: () => h(App, props) })
+    const app = createApp({ render: () => h(App, props) })
       .use(plugin)
       .use(Quasar, quasarUserOptions)
       .component('inertia-link', Link)
-      //.config(globalProperties.emitter = emitter)
-      .mount(el)
+      app.config.globalProperties.emitter = emitter
+      app.mount(el)
   },
 })

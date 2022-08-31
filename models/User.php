@@ -38,8 +38,8 @@ class User extends ActiveRecord implements IdentityInterface
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
             [['email', 'photo'], 'string'],
-            [['phone', 'telegram_id', 'telegram_chat_id', 'agency_id'], 'safe'],
-            [['agency_id', 'middle_name', 'phone', 'telegram_id', 'telegram_chat_id'], 'default', 'value' => NULL],
+            [['phone', 'telegram_id', 'telegram_chat_id', 'agency_id', 'developer_id'], 'safe'],
+            [['agency_id', 'developer_id', 'middle_name', 'phone', 'telegram_id', 'telegram_chat_id'], 'default', 'value' => NULL],
             [['photo'], 'unique'],
         ];
     }
@@ -75,6 +75,16 @@ class User extends ActiveRecord implements IdentityInterface
     public function getAgency()
     {
         return $this->hasOne(Agency::className(), ['id' => 'agency_id']);
+    }
+
+    /**
+     * Gets query for [[Developer]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDeveloper()
+    {
+        return $this->hasOne(Developer::className(), ['id' => 'developer_id']);
     }
 
     public function beforeSave($insert)
@@ -153,6 +163,7 @@ class User extends ActiveRecord implements IdentityInterface
             'admin' => 'Администратор',
             'manager' => 'Менеджер',
             'agent' => 'Агент',
+            'developer_repres' => 'Представитель застройщика',
         ];
 
         return $roleLabels[$this->role];

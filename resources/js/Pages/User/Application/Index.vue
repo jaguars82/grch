@@ -7,20 +7,23 @@
       <RegularContentContainer title="Заявки">
         <template v-slot:content>
           
-          <GridTableToggle :defaultMode="gridView" />
+          <GridTableToggle :defaultMode="appsGridView" />
 
-          <div class="q-pa-md">
+          <div class="q-pt-md">
             <q-table
-              :grid="gridView"
-              title="Заявки"
+              :grid="appsGridView"
               :rows="rows"
               :columns="columns"
               row-key="application_number"
+              hide-bottom
             >
               <template v-slot:body="props">
                 <q-tr :props="props">
                   <q-td key="application_number" :props="props">
                     {{ props.row.application_number }}
+                  </q-td>
+                  <q-td key="status" :props="props">
+                    {{ props.row.status }}
                   </q-td>
                   <q-td key="client_fio" :props="props">
                     {{ props.row.client_fio }}
@@ -51,9 +54,6 @@
 
             </q-table>
           </div>
-          <div>
-            <p v-for="application of applications" :key="application.id">{{ application.application_number }}</p>
-          </div>
         </template>
       </RegularContentContainer>
     </template>
@@ -76,9 +76,10 @@ export default ({
     GridTableToggle
   },
   props: {
-    applications: Array
+    applications: Array,
+    statusMap: Array
   },
-  setup(props, context) {
+  setup(props) {
     const breadcrumbs = ref([
       {
         id: 1,
@@ -106,10 +107,9 @@ export default ({
       },
     ])
 
-    let gridView = ref(false)
-
     const columns = [
       { name: 'application_number', required: true, align: 'left', label: 'Номер заявки', field: 'application_number', sortable: true },
+      { name: 'status', required: true, align: 'left', label: 'Статус', field: 'status', sortable: true },
       { name: 'client_fio', align: 'center', label: 'ФИО клиента', field: 'client_fio', sortable: true },
       { name: 'link', align: 'center', label: '', field: 'link', sortable: false },
     ]
@@ -120,6 +120,7 @@ export default ({
         const processedItem = {
           id: row.id,
           application_number: row.application_number,
+          status: props.statusMap[row.status],
           client_fio: `${row.client_lastname} ${row.client_firstname} ${row.client_middlename}`,
           link: `/user/application/view?id=${row.id}`
         }
@@ -128,14 +129,12 @@ export default ({
       return processedRows
     })
 
-    //on('toggle-grid-table', () => console.log('work'))
-    const emitter = useEmitter()
-    emitter.on('toggle-grid-table', () => console.log('work'))
+    const appsGridView = ref(false)
 
-    return { breadcrumbs, gridView, columns, rows }
+    const emitter = useEmitter()
+    emitter.on('toggle-grid-table', (e) => appsGridView.value = e)
+
+    return { breadcrumbs, appsGridView, columns, rows }
   },
-  /*mounted: function () {
-    this.$on('toggle-grid-table', () => console.log('work'))
-  }*/
 })
 </script>

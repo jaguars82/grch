@@ -6,11 +6,15 @@
     <template v-slot:main>
       <RegularContentContainer>
         <template v-slot:content>
+
+          <GridTableToggle :defaultMode="ticketsGridView" />
+
           <q-table
-            grid
+            :grid="ticketsGridView"
             :columns="columns"
             :rows="rows"
             row-key="ticket_number"
+            hide-bottom
           >
             <template v-slot:item="props">
               <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
@@ -37,12 +41,15 @@ import { ref } from 'vue'
 import ProfileLayout from '../../../Layouts/ProfileLayout.vue'
 import Breadcrumbs from '../../../Components/Layout/Breadcrumbs.vue'
 import RegularContentContainer from '../../../Components/Layout/RegularContentContainer.vue'
+import GridTableToggle from '../../../Components/Elements/GridTableToggle.vue'
+import useEmitter from '../../../composables/use-emitter'
 
 export default ({
   components: {
     ProfileLayout,
     Breadcrumbs,
-    RegularContentContainer
+    RegularContentContainer,
+    GridTableToggle
   },
   props: {
     tickets: Array
@@ -82,9 +89,12 @@ export default ({
 
     const rows = props.tickets
 
-    console.log(props.tickets)
+    const ticketsGridView = ref(false)
+    
+    const emitter = useEmitter()
+    emitter.on('toggle-grid-table', (e) => ticketsGridView.value = e)
 
-    return { breadcrumbs, columns, rows }
+    return { breadcrumbs, columns, rows, ticketsGridView }
   },
 })
 </script>

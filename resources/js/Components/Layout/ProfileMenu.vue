@@ -22,7 +22,7 @@
         </q-item>
         </inertia-link>
 
-        <q-item v-if="user.role === 'admin'" clickable v-ripple>
+        <q-item v-if="user.role === 'manager'" clickable v-ripple>
           <q-item-section avatar>
             <q-icon color="primary" name="people" />
           </q-item-section>
@@ -30,7 +30,13 @@
           <q-item-section>Агенты</q-item-section>
         </q-item>
 
-        <inertia-link v-if="user.role === 'admin'" href="/user/application/index">
+        <inertia-link
+          v-if="user.role === 'admin'
+              || user.role === 'manager'
+              || user.role === 'agent'
+              || user.role ==='developer_repres'"
+          href="/user/application/index"
+        >
           <q-item clickable v-ripple>
             <q-item-section avatar>
               <q-icon color="primary" name="real_estate_agent" />

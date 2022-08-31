@@ -7,6 +7,7 @@ use yii\base\Model;
 class ApplicationForm extends Model
 {
     public $flat_id;
+    public $developer_id;
     public $applicant_id;
     public $status;
     public $client_firstname;
@@ -30,8 +31,8 @@ class ApplicationForm extends Model
     public function rules()
     {
         return [
-            [['flat_id', 'applicant_id'/*, 'status'*/], 'required'],
-            [['flat_id', 'applicant_id', 'status'], 'integer'],
+            [['flat_id', 'applicant_id', 'developer_id'/*, 'status'*/], 'required'],
+            [['flat_id', 'developer_id', 'applicant_id', 'status'], 'integer'],
             [['client_firstname', 'client_lastname', 'client_middlename', 'client_phone', 'client_email',  'applicant_comment', 'manager_firstname', 'manager_lastname', 'manager_middlename', 'manager_phone', 'manager_email', 'admin_comment', 'application_number'], 'string'],
             [['is_active'], 'boolean'],
         ];

@@ -26,7 +26,7 @@ import useEmitter from '../../composables/use-emitter'
 
 export default {
   props: ['defaultMode'],
-  setup (props, {emit}) {
+  setup (props) {
     const mode = ref(props.defaultMode)
     const emitter = useEmitter()
     watch(mode, () => emitter.emit('toggle-grid-table', mode.value))

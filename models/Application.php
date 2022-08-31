@@ -31,6 +31,7 @@ use yii\db\ActiveRecord;
  * @property string $application_number
  * 
  * @property Flat $flat
+ * @property Developer $developer
  * @property User $applicant
  */
 class Application extends ActiveRecord
@@ -96,12 +97,13 @@ class Application extends ActiveRecord
     public function rules()
     {
         return [
-            [['flat_id', 'applicant_id'/*, 'status'*/], 'required'],
-            [['flat_id', 'applicant_id', 'status'], 'integer'],
+            [['flat_id', 'applicant_id', 'developer_id'/*, 'status'*/], 'required'],
+            [['flat_id', 'applicant_id', 'developer_id', 'status'], 'integer'],
             [['client_firstname', 'client_lastname', 'client_middlename', 'client_phone', 'client_email',  'applicant_comment', 'manager_firstname', 'manager_lastname', 'manager_middlename', 'manager_phone', 'manager_email', 'admin_comment', 'application_number'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['is_active'], 'boolean'],
             [['flat_id'], 'exist', 'skipOnError' => true, 'targetClass' => Flat::className(), 'targetAttribute' => ['flat_id' => 'id']],
+            [['developer_id'], 'exist', 'skipOnError' => true, 'targetClass' => Developer::className(), 'targetAttribute' => ['developer_id' => 'id']],
             [['applicant_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['applicant_id' => 'id']],
         ];
     }
@@ -142,7 +144,15 @@ class Application extends ActiveRecord
     public function getApplicationsByAuthor ($authorId)
     {
         return $this->find()
-            ->where(['applicant_id' => $authorId]);
+            ->where(['applicant_id' => $authorId, 'is_active' => 1])
+            ->orderBy(['created_at' => SORT_DESC]);
+    }
+
+    public function getApplicationsForDeveloper ($developerId)
+    {
+        return $this->find()
+            ->where(['developer_id' => $developerId, 'is_active' => 1])
+            ->orderBy(['created_at' => SORT_DESC]);
     }
     
 }

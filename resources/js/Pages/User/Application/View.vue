@@ -26,7 +26,8 @@ components: {
     RegularContentContainer
   },
   props: {
-    application: Array
+    application: Array,
+    statusMap: Array
   },
   setup(props) {
     const breadcrumbs = ref([

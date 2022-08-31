@@ -57,10 +57,13 @@ class InitController extends Controller
         $admin = $auth->createRole('admin');
 	    $manager = $auth->createRole('manager');
         $agent = $auth->createRole('agent');
+        $developer_repres = $auth->createRole('developer_repres');
 
         $auth->add($admin);
         $auth->add($manager);
         $auth->add($agent);
+        $auth->add($agent);
+        $auth->add($developer_repres);
     }
 
     /**

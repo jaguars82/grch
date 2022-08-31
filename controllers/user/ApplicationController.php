@@ -45,13 +45,18 @@ class ApplicationController extends Controller
     {
         $model = new Application();
 
-        if(\Yii::$app->user->can('admin')) {
+        if (\Yii::$app->user->can('admin')) {
             $applications = $model->activeApplications;    
+        } elseif (\Yii::$app->user->can('developer_repres')) {
+            $applications = $model->getApplicationsForDeveloper(\Yii::$app->user->developer_id)->all();
+        } elseif (\Yii::$app->user->can('agent') || \Yii::$app->user->can('manager')) {
+            $applications = $model->getApplicationsByAuthor(\Yii::$app->user->id)->all();
         }
         
         return $this->inertia('User/Application/Index', [
             'user' => \Yii::$app->user->identity,
-            'applications' => ArrayHelper::toArray($applications)
+            'applications' => ArrayHelper::toArray($applications),
+            'statusMap' => Application::$status
         ]);
     }
 
@@ -60,7 +65,8 @@ class ApplicationController extends Controller
         $application = (new Application())->findOne($id);
         
         return $this->inertia('User/Application/View', [
-            'application' => ArrayHelper::toArray($application)
+            'application' => ArrayHelper::toArray($application),
+            'statusMap' => Application::$status
         ]);
     }
 }

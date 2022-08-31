@@ -98,6 +98,7 @@ export default ({
     const formfields = ref(
       {
         flat_id: props.flat.id,
+        developer_id: props.flat.newbuildingComplex.developer_id,
         applicant_id: user.value.id,
         status: 1,
         client_firstname: '',
