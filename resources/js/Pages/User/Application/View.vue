@@ -6,7 +6,14 @@
     <template v-slot:main>
       <RegularContentContainer>
         <template v-slot:content>
-          <div>Просмотр заявки  {{ application.application_number }}</div>
+          <TitleSubtitle
+            :title="`Заявка ${application.application_number}`"
+            :subtitle="`от ${createDate}`"
+          />
+          <p>
+            Статус: <span class="text-lowercase">{{ statusMap[application.status] }}</span>
+            <span> (последнее обновление {{ updateDate }})</span>
+          </p>
         </template>
       </RegularContentContainer>
     </template>
@@ -15,21 +22,27 @@
 
 <script>
 import { ref, computed } from 'vue'
-import ProfileLayout from '../../../Layouts/ProfileLayout.vue'
-import Breadcrumbs from '../../../Components/Layout/Breadcrumbs.vue'
-import RegularContentContainer from '../../../Components/Layout/RegularContentContainer.vue'
+import ProfileLayout from '@/Layouts/ProfileLayout.vue'
+import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
+import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
+import TitleSubtitle from '@/Components/Elements/TitleSubtitle.vue'
+import { asDateTime } from '../../../helpers/formatter' 
 
 export default ({
 components: {
     ProfileLayout,
     Breadcrumbs,
-    RegularContentContainer
+    RegularContentContainer,
+    TitleSubtitle
   },
   props: {
     application: Array,
     statusMap: Array
   },
   setup(props) {
+    const createDate = computed( () => asDateTime(props.application.created_at))
+    const updateDate = computed( () => asDateTime(props.application.update_at))
+
     const breadcrumbs = ref([
       {
         id: 1,
@@ -65,7 +78,7 @@ components: {
       },
     ])
     
-    return { breadcrumbs }
+    return { breadcrumbs, createDate, updateDate }
   },
 })
 </script>

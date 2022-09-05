@@ -46,7 +46,34 @@
               />
             </div>
             <div v-else-if="result === 'err'">
-              ошибка в заявке
+              <MessageScreen
+                type='error'
+                :textMessages="{ 
+                  title: 'Ошибка в формировании заявки',
+                  content: 'Пожалуйста, проверьте корректность введённых данных и параметров заявки'
+                }"
+                :actions="[ 
+                  {
+                    id: 1,
+                    icon: 'article',
+                    text: 'Назад к заявке',
+                    action: goBackToApplication,
+                    style: {
+                      color: 'primary'
+                    }
+                  },
+                  {
+                    id: 2,
+                    icon: 'close',
+                    text: 'Закрыть',
+                    action: closeApplication,
+                    style: {
+                      color: 'primary',
+                      outline: true
+                    }
+                  }
+                 ]"
+              />
             </div>
             <q-form
               v-else
@@ -83,6 +110,7 @@
             <div class="text-center">
               <q-btn label="Отправить заявку" type="submit" color="primary"/>
               <q-btn label="Сбросить" type="reset" color="primary" flat class="q-ml-sm" />
+              <q-btn label="Отмена" color="primary" flat class="q-ml-sm" @click="closeApplication" />
             </div>
             </q-form>
           </q-card-section>
@@ -150,14 +178,25 @@ export default ({
       })
     }
 
-    const onReset = () => console.log('Cansel?')
+    const onReset = () => {
+      formfields.value.client_firstname = ''
+      formfields.value.client_lastname = ''
+      formfields.value.client_middlename = ''
+      formfields.value.client_phone = ''
+      formfields.value.client_email = ''
+      formfields.value.applicant_comment = ''
+    }
 
-    // success message
+    const closeApplication = () => window.location.href = `/flat/view?id=${ props.flat.id }`
+
+    // success screen
     const goToApplication = () => Inertia.get('/user/application/view', { id: props.appId })
-
     const goToProfile = () => Inertia.get('/user/profile')
 
-    return { loading, user, numberString, formfields, onSubmit, onReset, goToApplication, goToProfile }
+    // error screen
+    const goBackToApplication = () => Inertia.get('/reservation/make', { flatId: props.flat.id })
+
+    return { loading, user, numberString, formfields, onSubmit, onReset, goToApplication, goToProfile, goBackToApplication, closeApplication }
   },
 })
 </script>
