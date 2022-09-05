@@ -4,7 +4,7 @@
       <template v-slot:main>
         <q-card class="q-my-md shadow-7">
           <q-card-section>
-            <h3 class="text-center">Заявка на бронирование квартиры {{ user.first_name }} {{ user.role }}  {{ result }}</h3>
+            <h3 class="text-center">Заявка на бронирование квартиры</h3>
           </q-card-section>
           <q-card-section>
             <div class="text-center" v-if="loading">
@@ -16,7 +16,34 @@
               />
             </div>
             <div v-else-if="result === 'ok'">
-              заявка отправлена
+              <MessageScreen
+                type='success'
+                :textMessages="{ 
+                  title: 'Заявка отправлена',
+                  content: 'Дождитесь подтверждения от администратора. Статус заявки и уведомления Вы можете отслеживать в Кабинете Пользователя'
+                }"
+                :actions="[ 
+                  {
+                    id: 1,
+                    icon: 'article',
+                    text: 'Перейти к заявке',
+                    action: goToApplication,
+                    style: {
+                      color: 'primary'
+                    }
+                  },
+                  {
+                    id: 2,
+                    icon: 'business_center',
+                    text: 'В кабинет',
+                    action: goToProfile,
+                    style: {
+                      color: 'primary',
+                      outline: true
+                    }
+                  }
+                 ]"
+              />
             </div>
             <div v-else-if="result === 'err'">
               ошибка в заявке
@@ -72,17 +99,20 @@ import { ref, computed } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import MainLayout from '../../Layouts/MainLayout.vue'
 import FlatListItem from '../../Components/Flat/FlatListItem.vue'
+import MessageScreen from '../../Components/MessageScreen.vue'
 import { userInfo } from '../../composables/shared-data'
 
 export default ({
   components: {
     MainLayout,
-    FlatListItem
+    FlatListItem,
+    MessageScreen
   },
   props: {
     flat: Object,
     applicationsAmount: String,
-    result: String
+    result: String,
+    appId: String
   },
   setup(props) {
 
@@ -122,7 +152,12 @@ export default ({
 
     const onReset = () => console.log('Cansel?')
 
-    return { loading, user, numberString, formfields, onSubmit, onReset }
+    // success message
+    const goToApplication = () => Inertia.get('/user/application/view', { id: props.appId })
+
+    const goToProfile = () => Inertia.get('/user/profile')
+
+    return { loading, user, numberString, formfields, onSubmit, onReset, goToApplication, goToProfile }
   },
 })
 </script>

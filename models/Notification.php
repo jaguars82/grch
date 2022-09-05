@@ -63,29 +63,14 @@ class Notification extends ActiveRecord
     {
         return [
             [['initiator_id'], 'required'],
-            [['initiator_id', 'recepient_id'], 'integer'],
-            [['new_price_cash', 'new_price_credit'], 'number'],
-            [['settings'], 'string'],
-            [['created_at', 'updated_at'], 'safe'],
-            [['url'], 'string', 'max' => 200],
-            [['flat_id'], 'exist', 'skipOnError' => true, 'targetClass' => Flat::className(), 'targetAttribute' => ['flat_id' => 'id']],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
+            [['initiator_id', 'recipient_id', 'type'], 'integer'],
+            [['seen_by_recipient'], 'boolean'],
+            [['recipient_group', 'topic', 'body', 'initiator_comment', 'action_text', 'action_url'], 'string'],
+            [['created_at', 'updated_at', 'seen_by_recipient_at'], 'safe'],
+            [['initiator_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['initiator_id' => 'id']],
+            [['recipient_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['recipient_id' => 'id']],
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function attributeLabels()
-    {
-        return [
-            'flat_id' => 'Квартира',
-            'new_price' => 'Новая цена',
-            'url' => 'Короткая ссылка',
-            'settings' => 'Настройки',
-            'created_at' => 'Дата создания',
-            'updated_at' => 'Дата обновления',
-        ];
-    }
     
 }

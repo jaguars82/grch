@@ -7,6 +7,8 @@ use app\models\Application;
 use app\models\form\ApplicationForm;
 use app\models\ApplicationHistory;
 use app\models\form\ApplicationHistoryForm;
+use app\models\Notification;
+use app\models\form\NotificationForm;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use app\components\traits\CustomRedirects;
@@ -54,6 +56,7 @@ class ReservationController extends Controller
 
             $applicationForm = new ApplicationForm();
             $applicationHistoryForm = new ApplicationHistoryForm();
+            $notificationForm = new NotificationForm();
 
             $transaction = \Yii::$app->db->beginTransaction();
 
@@ -69,19 +72,30 @@ class ReservationController extends Controller
                 $applicationHistoryModel = (new ApplicationHistory())->fill($applicationHistoryForm->attributes);
                 $applicationHistoryModel->save();
 
+                $notificationForm->initiator_id = $applicationModel->applicant_id;
+                $notificationForm->type = 2;
+                $notificationForm->recipient_group = 'admin';
+                $notificationForm->topic = 'Новая заявка на бронирование '.$applicationModel->application_number;
+                $notificationForm->body = 'Для просмотра подробностей перейдите на страницу заявки';
+                $notificationForm->action_text = 'Перейти';
+                $notificationForm->action_url = '/user/application/view?id='.$applicationModel->id;
+                $notificationModel = (new Notification())->fill($notificationForm->attributes);              
+                $notificationModel->save();
+
                 $transaction->commit();
             } catch (\Exception $e) {
                 $transaction->rollBack();
-                return $this->redirect(['make', 'flatId' => $model->id, 'status' => 'err']);
+                return $this->redirect(['make', 'flatId' => $model->id, 'res' => 'err']);
             }
 
-            return $this->redirect(['make', 'flatId' => $model->id, 'res' => 'ok']);
+            return $this->redirect(['make', 'flatId' => $model->id, 'res' => 'ok', 'appId' => $applicationModel->id]);
         }
 
         return $this->inertia('Reservation/Make', [
             'flat' => $flat,
             'applicationsAmount' => (new Application)->getApplicationsByAuthor(\Yii::$app->user->id)->count(),
-            'result' => \Yii::$app->request->get('res')
+            'result' => \Yii::$app->request->get('res'),
+            'appId' => \Yii::$app->request->get('appId'),
         ]);
     }
 }
