@@ -11,7 +11,7 @@
             <span> (последнее обновление {{ updateDate }})</span>
           </p>
           <div v-if="statusChangesForm">
-            <Loading v-if="loadig" />
+            <Loading v-if="loading" />
             <template v-else>
               <p>Требуемое действие:</p>
               <p>{{ statusChangesForm.operationLabel }}</p>
