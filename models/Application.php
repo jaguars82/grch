@@ -154,5 +154,10 @@ class Application extends ActiveRecord
             ->where(['developer_id' => $developerId, 'is_active' => 1])
             ->orderBy(['created_at' => SORT_DESC]);
     }
+
+    public function getFlat ()
+    {
+        return $this->hasOne(Flat::className(), ['id' => 'flat_id']);
+    }
     
 }

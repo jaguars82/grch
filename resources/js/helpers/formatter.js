@@ -11,7 +11,9 @@ function asCurrency (amount, fractionDigits = false) {
 
 function asDateTime (rawDate) {
   const date = new Date(rawDate)
-  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}, ${date.getHours()}:${date.getMinutes()}`
+  const day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+  const month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
+  return `${day}.${month}.${date.getFullYear()}, ${date.getHours()}:${date.getMinutes()}`
 }
 
 function asFloor (floor, totalFloors) {

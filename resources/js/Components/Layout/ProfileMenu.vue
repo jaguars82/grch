@@ -55,6 +55,16 @@
           <q-item-section>Техподдержка</q-item-section>
         </q-item>
         </inertia-link>
+
+        <inertia-link href="/user/notification/index">
+        <q-item clickable v-ripple>
+          <q-item-section avatar>
+            <q-icon color="primary" name="speaker_notes" />
+          </q-item-section>
+
+          <q-item-section>Уведомления</q-item-section>
+        </q-item>
+        </inertia-link>
       </q-list>
     </q-card-section>
   </q-card>
@@ -62,7 +72,7 @@
 
 <script>
 import { ref } from 'vue'
-import { userInfo } from '../../composables/shared-data'
+import { userInfo } from '@/composables/shared-data'
 
 export default ({
   setup() {

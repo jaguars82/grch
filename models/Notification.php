@@ -72,5 +72,19 @@ class Notification extends ActiveRecord
         ];
     }
 
+    public function getNotificationsForAdmin ()
+    {
+        return self::find()
+            ->where(['recipient_group' => 'admin'])
+            ->orderBy(['created_at' => SORT_DESC])
+            ->all();
+    }
+
+    public function getNotificationsForUser($userId)
+    {
+        return $this->find()
+            ->where(['recipient_id' => $userId])
+            ->orderBy(['created_at' => SORT_DESC]);
+    }
     
 }

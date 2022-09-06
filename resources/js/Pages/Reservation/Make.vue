@@ -7,14 +7,7 @@
             <h3 class="text-center">Заявка на бронирование квартиры</h3>
           </q-card-section>
           <q-card-section>
-            <div class="text-center" v-if="loading">
-              <q-circular-progress
-                indeterminate
-                size="100px"
-                color="primary"
-                class="q-my-lg"
-              />
-            </div>
+            <Loading v-if="loading" />
             <div v-else-if="result === 'ok'">
               <MessageScreen
                 type='success'
@@ -80,34 +73,34 @@
               @submit="onSubmit"
               @reset="onReset"
             >
-            <div class="row">
+            <div class="row q-py-sm">
               <div class="col-sm-4 col-xs-12">
-                <q-input v-model="formfields.client_lastname" label="Фамилия клиента" />
+                <q-input outlined v-model="formfields.client_lastname" label="Фамилия клиента" />
               </div>
               <div class="col-sm-4 col-xs-12">
-                <q-input v-model="formfields.client_firstname" label="Имя клиента" />
+                <q-input outlined v-model="formfields.client_firstname" label="Имя клиента" />
               </div>
               <div class="col-sm-4 col-xs-12">
-                <q-input v-model="formfields.client_middlename" label="Отчество клиента" />
+                <q-input outlined v-model="formfields.client_middlename" label="Отчество клиента" />
               </div>
             </div>
 
-            <div class="row">
+            <div class="row q-py-sm">
               <div class="col-sm-6 col-xs-12">
-                <q-input v-model="formfields.client_phone" label="Телефон клиента" />
+                <q-input outlined v-model="formfields.client_phone" label="Телефон клиента" />
               </div>
               <div class="col-sm-6 col-xs-12">
-                <q-input v-model="formfields.client_email" label="Email клиента" />
+                <q-input outlined v-model="formfields.client_email" label="Email клиента" />
               </div>
             </div>
 
-            <div class="row">
+            <div class="row q-py-sm">
               <div class="col q-mx-md">
-                <q-input autogrow v-model="formfields.applicant_comment" label="Комментарий к заявке" />
+                <q-input outlined autogrow v-model="formfields.applicant_comment" label="Комментарий к заявке" />
               </div>
             </div>
 
-            <div class="text-center">
+            <div class="q-mt-lg text-center">
               <q-btn label="Отправить заявку" type="submit" color="primary"/>
               <q-btn label="Сбросить" type="reset" color="primary" flat class="q-ml-sm" />
               <q-btn label="Отмена" color="primary" flat class="q-ml-sm" @click="closeApplication" />
@@ -125,14 +118,16 @@
 
 import { ref, computed } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
-import MainLayout from '../../Layouts/MainLayout.vue'
-import FlatListItem from '../../Components/Flat/FlatListItem.vue'
-import MessageScreen from '../../Components/MessageScreen.vue'
-import { userInfo } from '../../composables/shared-data'
+import MainLayout from '@/Layouts/MainLayout.vue'
+import Loading from "@/Components/Elements/Loading.vue"
+import FlatListItem from '@/Components/Flat/FlatListItem.vue'
+import MessageScreen from '@/Components/MessageScreen.vue'
+import { userInfo } from '@/composables/shared-data'
 
 export default ({
   components: {
     MainLayout,
+    Loading,
     FlatListItem,
     MessageScreen
   },
