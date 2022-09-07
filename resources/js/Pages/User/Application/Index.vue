@@ -62,11 +62,11 @@
 
 <script>
 import { ref, computed } from 'vue'
-import ProfileLayout from '../../../Layouts/ProfileLayout.vue'
-import Breadcrumbs from '../../../Components/Layout/Breadcrumbs.vue'
-import RegularContentContainer from '../../../Components/Layout/RegularContentContainer.vue'
-import GridTableToggle from '../../../Components/Elements/GridTableToggle.vue'
-import useEmitter from '../../../composables/use-emitter'
+import ProfileLayout from '@/Layouts/ProfileLayout.vue'
+import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
+import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
+import GridTableToggle from '@/Components/Elements/GridTableToggle.vue'
+import useEmitter from '@/composables/use-emitter'
 
 export default ({
   components: {

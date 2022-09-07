@@ -28,7 +28,8 @@ class ApplicationController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'index' => ['GET', 'POST'],
-                    'view' => ['GET', 'POST']
+                    'view' => ['GET', 'POST'],
+                    'update' => ['GET', 'POST'],
                 ],
             ],
             'access' => [
@@ -36,7 +37,7 @@ class ApplicationController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'view'],
+                        'actions' => ['index', 'view', 'update'],
                         'roles' => ['admin', 'manager', 'agent', 'developer_repres'],
                     ],
                 ]
@@ -130,5 +131,15 @@ class ApplicationController extends Controller
             'statusMap' => Application::$status,
             'flat' => $flat,
         ]);
+    }
+
+    public function actionUpdate($id)
+    {
+        $application = (new Application())->findOne($id);
+
+        return $this->inertia('User/Application/View', [
+            'application' => ArrayHelper::toArray($application),
+            'statusMap' => Application::$status,
+        ]);   
     }
 }

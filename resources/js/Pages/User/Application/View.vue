@@ -15,12 +15,17 @@
             <template v-else>
               <p>Требуемое действие:</p>
               <p>{{ statusChangesForm.operationLabel }}</p>
+              <!--
               <q-form
                 @submit="onSubmit"
               >
                 <input type="hidden" v-model="formfields.operation">
                 <q-btn :label="statusChangesForm.submitLabel" type="submit" color="primary"/>
               </q-form>
+              -->
+              <inertia-link :href="`update?id=${application.id}`">
+                <q-btn :label="statusChangesForm.submitLabel" />
+              </inertia-link>
             </template>
           </div>
         </template>
