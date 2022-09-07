@@ -100,7 +100,7 @@ class ApplicationController extends Controller
         
                         $notificationForm->initiator_id = \Yii::$app->user->id;
                         $notificationForm->type = 1;
-                        $notificationForm->recipient_id = 118;
+                        $notificationForm->recipient_id = 117;
                         $notificationForm->recipient_group = 'developer_repres';
                         $notificationForm->topic = 'Требуется подтверждение бронирования по заявке '.$application->application_number;
                         $notificationForm->body = 'Для подтверждения перейдите на страницу заявки';
@@ -119,7 +119,12 @@ class ApplicationController extends Controller
                     }
                     //return $this->redirectWithSuccess('view>id='.$application->id, 'Успешно. Заявка отправлена застройщику для подтверждения брони.');
                     \Yii::$app->session->setFlash('success', 'Успешно. Заявка отправлена застройщику для подтверждения брони.');
-                    return $this->redirect(['view', 'id' => $application->id]);
+                    return $this->inertia('User/Application/View', [
+                        'application' => ArrayHelper::toArray($application),
+                        'statusMap' => Application::$status,
+                        'flat' => $flat,
+                    ]);
+                    //return $this->redirect(['view', 'id' => $application->id]);
 
                     break;
             }
