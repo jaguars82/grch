@@ -87,6 +87,13 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasOne(Developer::className(), ['id' => 'developer_id']);
     }
 
+    public function getDeveloperRepresentative($developerId)
+    {
+        return $this->find()
+            ->where(['developer_id' => $developerId])
+            ->one();
+    }
+
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {

@@ -33,6 +33,9 @@ use app\components\flat\SvgDom;
  * @property float $azimuth
  * @property string|null $notification
  * @property int $status
+ * @property boolean $sold_by_application
+ * @property boolean $is_reserved
+ * @property boolean $is_applicated
  * @property string $created_at
  * @property string $updated_at
  * @property string $extra_data
@@ -131,7 +134,7 @@ class Flat extends ActiveRecord
             [['area', 'azimuth', 'section', 'floor_position'], 'number'],
             [['created_at', 'updated_at', 'entrance_id'], 'safe'],
             [['newbuilding_id'], 'exist', 'skipOnError' => true, 'targetClass' => Newbuilding::className(), 'targetAttribute' => ['newbuilding_id' => 'id']],
-            [['is_euro', 'is_studio'], 'boolean'],
+            [['is_reserved', 'is_applicated', 'sold_by_application', 'is_euro', 'is_studio'], 'boolean'],
         ];
     }
 

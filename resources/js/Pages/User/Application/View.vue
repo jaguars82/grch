@@ -10,24 +10,23 @@
             Статус: <span class="text-lowercase">{{ statusMap[application.status] }}</span>
             <span> (последнее обновление {{ updateDate }})</span>
           </p>
-          <div v-if="statusChangesForm">
-            <Loading v-if="loading" />
-            <template v-else>
+            <template v-if="statusChangesForm">
               <p>Требуемое действие:</p>
               <p>{{ statusChangesForm.operationLabel }}</p>
-              <!--
-              <q-form
-                @submit="onSubmit"
-              >
-                <input type="hidden" v-model="formfields.operation">
-                <q-btn :label="statusChangesForm.submitLabel" type="submit" color="primary"/>
-              </q-form>
-              -->
               <inertia-link :href="`update?id=${application.id}`">
                 <q-btn :label="statusChangesForm.submitLabel" />
               </inertia-link>
             </template>
-          </div>
+            <p class="text-h5 q-mb-xs">История</p>
+            <div class="q-pt-md">
+              <q-table
+                :rows="rows"
+                :columns="columns"
+                row-key="id"
+                hide-bottom
+              >
+              </q-table>
+            </div>
         </template>
       </RegularContentContainer>
       <FlatListItem class="q-ml-md q-mt-md" :flat="flat" />
@@ -37,12 +36,11 @@
 
 <script>
 import { ref, computed } from 'vue'
-import { Inertia } from '@inertiajs/inertia'
 import ProfileLayout from '@/Layouts/ProfileLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
-import Loading from "@/Components/Elements/Loading.vue"
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
 import FlatListItem from '@/Components/Flat/FlatListItem.vue'
+import { getApplicationFormParamsByStatus } from '@/composables/components-configurations'
 import { asDateTime } from '@/helpers/formatter'
 import { userInfo } from '@/composables/shared-data'
 
@@ -50,12 +48,12 @@ export default ({
 components: {
     ProfileLayout,
     Breadcrumbs,
-    Loading,
     RegularContentContainer,
     FlatListItem
   },
   props: {
     application: Array,
+    applicationHistory: Array,
     statusMap: Array,
     flat: Object
   },
@@ -100,44 +98,27 @@ components: {
       },
     ])
 
-    // application status change form
-    const loading = ref(false)
+    const columns = [
+      { name: 'action', required: true, align: 'left', label: 'Статус', field: 'action', sortable: true },
+      { name: 'made_at', required: true, align: 'center', label: 'Дата', field: 'made_at', sortable: true },
+    ]
 
-    const formConfigurationByStatus = {
-      1: 
-        [
-          {
-            role: 'admin',
-            operationLabel: 'Подтвердите получение заявки от агента',
-            operation: 'approve_app_by_admin',
-            submitLabel: 'Подтвердить'
-          }
-        ],
-      2:
-        []
-    } 
-
-    const formParams = formConfigurationByStatus[props.application.status].filter((el) => {
-      return el.role === user.value.role
+    const rows = computed(() => {
+      const processedRows = []
+      props.applicationHistory.forEach(row => {
+        const processedItem = {
+          id: row.id,
+          action: props.statusMap[row.action],
+          made_at: asDateTime(row.made_at),
+        }
+        processedRows.push(processedItem)
+      });
+      return processedRows
     })
 
-    const statusChangesForm = formParams.length > 0 ? formParams[0] : false
+    const statusChangesForm = getApplicationFormParamsByStatus(props.application.status, user.value.role)
 
-    const formfields = ref(
-      {
-        operation: statusChangesForm ? statusChangesForm.operation : '',
-      }
-    )
-
-    function onSubmit() {
-      loading.value = true
-      Inertia.post(`/user/application/view?id=${props.application.id}`, formfields.value)
-      Inertia.on('finish', (event) => {
-        loading.value = false
-      })
-    }
-    
-    return { user, breadcrumbs, createDate, updateDate, loading, statusChangesForm, formfields, onSubmit }
+    return { user, breadcrumbs, createDate, updateDate, columns, rows, statusChangesForm }
   },
 })
 </script>

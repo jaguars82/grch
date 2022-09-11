@@ -39,15 +39,13 @@
               <template v-slot:item="props">
                 <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
                   <q-card>
-                    <q-card-section class="text-center">
-                      Заявка
-                      <br>
-                      <strong>{{ props.row.application_number }}</strong>
-                    </q-card-section>
+                    <inertia-link :href="`/user/application/view?id=${props.row.id}`">
+                      <q-card-section class="text-center">
+                        <p>Заявка</p>
+                        <p class="q-mb-xs text-h4">{{ props.row.application_number }}</p>
+                      </q-card-section>
+                    </inertia-link>
                     <q-separator />
-                    <q-card-section class="flex flex-center" :style="{ fontSize: props.row.calories + 'px' }">
-                      <div>{{ props.row.id }} g</div>
-                    </q-card-section>
                   </q-card>
                 </div>
               </template>

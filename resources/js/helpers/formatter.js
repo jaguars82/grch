@@ -13,7 +13,9 @@ function asDateTime (rawDate) {
   const date = new Date(rawDate)
   const day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
   const month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
-  return `${day}.${month}.${date.getFullYear()}, ${date.getHours()}:${date.getMinutes()}`
+  const hour = date.getHours() < 10 ? '0' + date.getHours() : date.getHours()
+  const minute = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
+  return `${day}.${month}.${date.getFullYear()}, ${hour}:${minute}`
 }
 
 function asFloor (floor, totalFloors) {

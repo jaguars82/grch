@@ -24,11 +24,13 @@ use yii\db\ActiveRecord;
  * @property string $manager_middlename
  * @property string $manager_phone
  * @property string $manager_email
+ * @property string $reservation_conditions
  * @property string $admin_comment
  * @property int $is_active
  * @property string $created_at
  * @property string $updated_at
  * @property string $application_number
+ * @property string $deal_success_docs
  * 
  * @property Flat $flat
  * @property Developer $developer
@@ -99,7 +101,7 @@ class Application extends ActiveRecord
         return [
             [['flat_id', 'applicant_id', 'developer_id'/*, 'status'*/], 'required'],
             [['flat_id', 'applicant_id', 'developer_id', 'status'], 'integer'],
-            [['client_firstname', 'client_lastname', 'client_middlename', 'client_phone', 'client_email',  'applicant_comment', 'manager_firstname', 'manager_lastname', 'manager_middlename', 'manager_phone', 'manager_email', 'admin_comment', 'application_number'], 'string'],
+            [['client_firstname', 'client_lastname', 'client_middlename', 'client_phone', 'client_email',  'applicant_comment', 'manager_firstname', 'manager_lastname', 'manager_middlename', 'manager_phone', 'manager_email', 'reservation_conditions', 'admin_comment', 'application_number', 'deal_success_docs'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['is_active'], 'boolean'],
             [['flat_id'], 'exist', 'skipOnError' => true, 'targetClass' => Flat::className(), 'targetAttribute' => ['flat_id' => 'id']],
@@ -158,6 +160,11 @@ class Application extends ActiveRecord
     public function getFlat ()
     {
         return $this->hasOne(Flat::className(), ['id' => 'flat_id']);
+    }
+
+    public function getHistory ()
+    {
+        return $this->hasMany(ApplicationHistory::className(), ['application_id' => 'id']); 
     }
     
 }

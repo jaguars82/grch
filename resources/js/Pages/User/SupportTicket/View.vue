@@ -25,7 +25,7 @@
                   "{{ message.author.agency_name }}"
                 </span>
               </template>
-              <template v-slot:stamp>{{ message.created_at }}</template>
+              <template v-slot:stamp>{{ asDateTime(message.created_at) }}</template>
               <template v-slot:avatar>
                 <img
                   class="q-message-avatar q-message-avatar--sent"
@@ -46,6 +46,7 @@ import { ref, computed } from 'vue'
 import ProfileLayout from '../../../Layouts/ProfileLayout.vue'
 import Breadcrumbs from '../../../Components/Layout/Breadcrumbs.vue'
 import RegularContentContainer from '../../../Components/Layout/RegularContentContainer.vue'
+import { asDateTime } from '../../../helpers/formatter'
 
 export default ({
   components: {
@@ -93,7 +94,7 @@ export default ({
       },
     ]
 
-    return { breadcrumbs }
+    return { breadcrumbs, asDateTime }
   },
 })
 </script>

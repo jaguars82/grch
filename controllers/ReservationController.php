@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Flat;
+use app\models\AuthAssignment;
 use app\models\Application;
 use app\models\form\ApplicationForm;
 use app\models\ApplicationHistory;
@@ -65,6 +66,10 @@ class ReservationController extends Controller
                 $applicationModel = (new Application())->fill($applicationForm->attributes);
                 $applicationModel->save();
 
+                $flat = (new Flat())->findOne($applicationModel->flat_id);
+                $flat->is_applicated = 1;
+                $flat->save();
+
                 $applicationHistoryForm->application_id = $applicationModel->id;
                 $applicationHistoryForm->user_id = $applicationModel->applicant_id;
                 $applicationHistoryForm->action = Application::STATUS_RESERV_APPLICATED;
@@ -83,6 +88,21 @@ class ReservationController extends Controller
                 $notificationModel->save();
 
                 $transaction->commit();
+
+                /** Send email-notifications for admins */
+                /*$admins = (new AuthAssignment())->admins;
+
+                foreach ($admins as $admin) {
+                    if (!empty ($admin)) {
+                        \Yii::$app->mailer->compose()
+                        ->setTo($admin->email)
+                        ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
+                        ->setSubject('Поступила новая заявка на бронирование')
+                        ->setTextBody("Ссылка для просмотра заявки: https://grch.ru/user/application/view?id=$applicationModel->id")
+                        ->send(); 
+                    }
+                }*/
+
             } catch (\Exception $e) {
                 $transaction->rollBack();
                 return $this->redirect(['make', 'flatId' => $model->id, 'res' => 'err']);
