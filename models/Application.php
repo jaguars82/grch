@@ -64,7 +64,7 @@ class Application extends ActiveRecord
         self::STATUS_RESERV_CANCELLED_BY_ADMIN => 'Бронирование прекращено',
         self::STATUS_APPLICATION_CANCELED_BY_ADMIN => 'Заявка прекращена',
         self::STATUS_APPLICATION_APPROVAL_REQUEST => 'Подтверждающие документы отправлены',
-        self::STATUS_APPLICATION_APPROVAL_PROCESS => 'Документы получены, ожидается оплата',
+        self::STATUS_APPLICATION_APPROVAL_PROCESS => 'Документы получены, ожидается подтверждение и оплата',
         self::STATUS_APPLICATION_SUCCESS => 'Сделка успешно завершена',
     ];
 

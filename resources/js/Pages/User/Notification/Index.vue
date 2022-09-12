@@ -11,6 +11,7 @@
             <q-table
               :rows="rows"
               :columns="columns"
+              :pagination="{ rowsPerPage: 25 }"
               row-key="id"
               hide-header
               hide-bottom

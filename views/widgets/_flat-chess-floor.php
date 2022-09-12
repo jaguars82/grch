@@ -9,7 +9,8 @@ $format = \Yii::$app->formatter;
         <?= $flatsArray[0]->floor ?>
     </td>
     <?php foreach(array_reverse($flatsArray) as $flatItem): ?>
-        <td class="<?= FlatsChess::STATUS_CLASS[$flatItem->status] ?>
+        <td class="<?= $flatItem->is_reserved ? FlatsChess::STATUS_CLASS[
+            1] : FlatsChess::STATUS_CLASS[$flatItem->status] ?>
                    <?= !is_null($currentFlat) && $currentFlat->id == $flatItem->id ? 'current' : '' ?>
                    flat-item"
             data-flaturl="<?= Url::to(['flat/view', 'id' => $flatItem->id]) ?>">

@@ -100,6 +100,7 @@ function getApplicationFormParamsByStatus (applicationStatus, userRole) {
           role: 'manager',
           operationLabel: 'Подтвердите завершение сделки, загрузите документы',
           operation: 'report_success_deal_by_manager',
+          formCaption: 'Подтверждение завершения сделки',
           formContent: '<p>После отравки подтверждения информация поступит для проверки администратору площадки.</p>\
                         <p>Пожалуйста, дождитесь её окончания.</p>',
           submitLabel: 'Подтвердить'
@@ -128,11 +129,16 @@ function getApplicationFormParamsByStatus (applicationStatus, userRole) {
           submitLabel: 'Подтвердить'       
         }
       ],
+    11: []
   }
 
-  const formParams = configuration[applicationStatus].filter((el) => {
-    return el.role === userRole
-  })
+  let formParams = []
+
+  if (applicationStatus in configuration) {
+    formParams = configuration[applicationStatus].filter((el) => {
+      return el.role === userRole
+    })
+  }
 
   return formParams.length > 0 ? formParams[0] : false
 

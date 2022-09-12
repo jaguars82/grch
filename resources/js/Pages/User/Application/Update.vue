@@ -57,7 +57,9 @@
                     multiple
                   />
                 </div>
-              <q-btn :label="statusChangesForm.submitLabel" type="submit" color="primary"/>
+              <div class="text-right">
+                <q-btn unelevated :label="statusChangesForm.submitLabel" type="submit" color="primary"/>
+              </div>
             </q-form>
           </div>
         </template>

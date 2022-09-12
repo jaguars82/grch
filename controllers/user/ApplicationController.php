@@ -56,7 +56,7 @@ class ApplicationController extends Controller
         if (\Yii::$app->user->can('admin')) {
             $applications = $model->activeApplications;    
         } elseif (\Yii::$app->user->can('developer_repres')) {
-            $applications = $model->getApplicationsForDeveloper(\Yii::$app->user->developer_id)->all();
+            $applications = $model->getApplicationsForDeveloper(\Yii::$app->user->identity->developer_id)->all();
         } elseif (\Yii::$app->user->can('agent') || \Yii::$app->user->can('manager')) {
             $applications = $model->getApplicationsByAuthor(\Yii::$app->user->id)->all();
         }
@@ -335,6 +335,7 @@ class ApplicationController extends Controller
                         $applicationHistoryForm->user_id = \Yii::$app->user->id;
                         $applicationHistoryForm->action = Application::STATUS_APPLICATION_APPROVAL_REQUEST;
                         $applicationHistoryModel = (new ApplicationHistory())->fill($applicationHistoryForm->attributes);
+                        //echo '<pre>'; var_dump($applicationHistoryModel); echo '</pre>'; die();
                         $applicationHistoryModel->save();
 
                         $notificationForm->initiator_id = \Yii::$app->user->id;;
@@ -374,7 +375,7 @@ class ApplicationController extends Controller
                  * Admin confirms recieving information about successful deal (from agent or manager)
                  * If success, application status changes from 9 to 10 
                  */
-                case 'confirm_recirving_success_deal_info_by_admin':
+                case 'confirm_recieving_success_deal_info_by_admin':
                     
                     $transaction = \Yii::$app->db->beginTransaction();
 

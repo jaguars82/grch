@@ -4,18 +4,20 @@
       <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
     </template>
     <template v-slot:main>
-      <RegularContentContainer :title="`Заявка ${application.application_number}`" :subtitle="`от ${createDate}`">
+      <RegularContentContainer :title="`Заявка ${application.application_number}`" :subtitle="`от ${asDateTime(application.created_at)}`">
         <template v-slot:content>
           <p>
             Статус: <span class="text-lowercase">{{ statusMap[application.status] }}</span>
-            <span> (последнее обновление {{ updateDate }})</span>
+            <!--<span> (последнее обновление {{ asDateTime(application.updated_at) }})</span>-->
           </p>
             <template v-if="statusChangesForm">
               <p>Требуемое действие:</p>
               <p>{{ statusChangesForm.operationLabel }}</p>
-              <inertia-link :href="`update?id=${application.id}`">
-                <q-btn :label="statusChangesForm.submitLabel" />
-              </inertia-link>
+              <div>
+                <inertia-link :href="`update?id=${application.id}`">
+                  <q-btn color="primary" class="float-right" unelevated :label="statusChangesForm.submitLabel" />
+                </inertia-link>
+              </div>
             </template>
             <p class="text-h5 q-mb-xs q-mt-lg">История</p>
             <div class="q-pt-md">
@@ -23,6 +25,7 @@
                 :rows="rows"
                 :columns="columns"
                 row-key="id"
+                :pagination="{ rowsPerPage: 15 }"
                 hide-bottom
               >
               </q-table>
@@ -59,9 +62,6 @@ components: {
   },
   setup(props) {
     const { user } = userInfo()
-
-    const createDate = computed( () => asDateTime(props.application.created_at))
-    const updateDate = computed( () => asDateTime(props.application.updated_at))
 
     const breadcrumbs = ref([
       {
@@ -118,7 +118,7 @@ components: {
 
     const statusChangesForm = getApplicationFormParamsByStatus(props.application.status, user.value.role)
 
-    return { user, breadcrumbs, createDate, updateDate, columns, rows, statusChangesForm }
+    return { user, breadcrumbs, asDateTime, columns, rows, statusChangesForm }
   },
 })
 </script>
