@@ -17,7 +17,7 @@
                 <q-btn :label="statusChangesForm.submitLabel" />
               </inertia-link>
             </template>
-            <p class="text-h5 q-mb-xs">История</p>
+            <p class="text-h5 q-mb-xs q-mt-lg">История</p>
             <div class="q-pt-md">
               <q-table
                 :rows="rows"
