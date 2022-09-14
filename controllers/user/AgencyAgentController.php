@@ -3,11 +3,14 @@
 namespace app\controllers\user;
 
 use yii\filters\AccessControl;
+use app\components\SharedDataFilter;
 use yii\filters\VerbFilter;
-use yii\web\Controller;
+//use yii\web\Controller;
+use tebe\inertia\web\Controller;
 use app\models\Agency;
 use yii\web\NotFoundHttpException;
 use yii\data\ActiveDataProvider;
+use yii\helpers\ArrayHelper;
 
 /**
  * UserController implements the CRUD actions for agency's agent.
@@ -45,6 +48,9 @@ class AgencyAgentController extends Controller
                         'roles' => ['@'],
                     ], */
                 ]
+            ],
+            [
+                'class' => SharedDataFilter::class
             ],
         ];
     }
@@ -102,9 +108,15 @@ class AgencyAgentController extends Controller
             'sort' => ['attributes' => ['id'], 'defaultOrder' => ['id' => SORT_DESC]],
         ]);
         
-        return $this->render('index', [
+        /*return $this->render('index', [
             'agency' => $agency,
             'dataProvider' => $dataProvider,
+        ]);*/
+        
+        return $this->inertia('User/AgencyAgent/Index', [
+            'agency' => ArrayHelper::toArray($agency),
+            'agents' => ArrayHelper::toArray($dataProvider),
         ]);
+
     }    
 }
