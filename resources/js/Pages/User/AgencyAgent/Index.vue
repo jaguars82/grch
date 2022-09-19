@@ -20,23 +20,32 @@
             >
               <template v-slot:body="props">
                 <q-tr :props="props">
-                  <q-td key="application_number" :props="props">
-                    {{ props.row.application_number }}
+                  <q-td key="id" :props="props">
+                    {{ props.row.id }}
                   </q-td>
-                  <q-td key="status" :props="props">
-                    {{ props.row.status }}
+                  <q-td key="fio" :props="props">
+                    {{ props.row.fio }}
                   </q-td>
-                  <q-td key="client_fio" :props="props">
-                    {{ props.row.client_fio }}
+                  <q-td key="emil" :props="props">
+                    {{ props.row.email }}
                   </q-td>
-                  <q-td key="link" :props="props">
-                    <inertia-link :href="props.row.link">
-                      Подробнее
-                    </inertia-link>
+                  <q-td key="phone" :props="props">
+                    {{ props.row.phone }}
+                  </q-td>
+                  <q-td key="edit" :props="props">
+                    <a :href="props.row.edit">
+                      Edit
+                    </a>
+                  </q-td>
+                  <q-td key="edit" :props="props">
+                    <a :href="props.row.delete">
+                      Delete
+                    </a>
                   </q-td>
                 </q-tr>
               </template>
 
+              <!--
               <template v-slot:item="props">
                 <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
                   <q-card>
@@ -50,6 +59,7 @@
                   </q-card>
                 </div>
               </template>
+              -->
 
             </q-table>
           </div>
@@ -76,7 +86,7 @@ export default ({
   },
   props: {
     agency: Array,
-    agent: Array
+    agents: Array
   },
   setup(props) {
     const breadcrumbs = ref([
@@ -107,21 +117,26 @@ export default ({
     ])
 
     const columns = [
-      { name: 'application_number', required: true, align: 'left', label: 'Номер заявки', field: 'application_number', sortable: true },
-      { name: 'status', required: true, align: 'left', label: 'Статус', field: 'status', sortable: true },
-      { name: 'client_fio', align: 'center', label: 'ФИО клиента', field: 'client_fio', sortable: true },
-      { name: 'link', align: 'center', label: '', field: 'link', sortable: false },
+      { name: 'id', required: true, align: 'left', label: 'ID', field: 'id', sortable: true },
+      { name: 'fio', required: true, align: 'center', label: 'ФИО', field: 'fio', sortable: true },
+      { name: 'email', align: 'center', label: 'Email', field: 'emial', sortable: true },
+      { name: 'phone', align: 'center', label: 'Телефон', field: 'pkone', sortable: true },
+      { name: 'edit', align: 'center', label: '', field: 'edit', sortable: false },
+      { name: 'delete', align: 'center', label: '', field: 'delete', sortable: false },
     ]
+
+    console.log(props.agents)
 
     const rows = computed(() => {
       const processedRows = []
-      props.applications.forEach(row => {
+      props.agents.forEach(row => {
         const processedItem = {
           id: row.id,
-          application_number: row.application_number,
-          status: props.statusMap[row.status],
-          client_fio: `${row.client_lastname} ${row.client_firstname} ${row.client_middlename}`,
-          link: `/user/application/view?id=${row.id}`
+          fio: `${row.last_name} ${row.first_name} ${row.middle_name ? row.middle_name : ''}`,
+          email: row.email,
+          email: row.phone,
+          edit: `/user/agency-agent/update?id=${row.id}`,
+          delete: `/user/agency-agent/delete?id=${row.id}`
         }
         processedRows.push(processedItem)
       });

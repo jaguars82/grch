@@ -13,22 +13,25 @@
     <q-card-section>
       <q-list bordered>
         <inertia-link href="/user/profile/index">
-        <q-item clickable v-ripple>
-          <q-item-section avatar>
-            <q-icon color="primary" name="account_box" />
-          </q-item-section>
-
-          <q-item-section>Профиль</q-item-section>
-        </q-item>
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon color="primary" name="account_box" />
+            </q-item-section>
+            <q-item-section>Профиль</q-item-section>
+          </q-item>
         </inertia-link>
 
-        <q-item v-if="user.role === 'manager'" clickable v-ripple>
-          <q-item-section avatar>
-            <q-icon color="primary" name="people" />
-          </q-item-section>
-
-          <q-item-section>Агенты</q-item-section>
-        </q-item>
+         <inertia-link
+          v-if="user.role === 'manager' || user.role === 'admin'"
+         :href="`/user/agency-agent/index?agencyId=${user.agency_id}`"
+        >
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon color="primary" name="people" />
+            </q-item-section>
+            <q-item-section>Агенты</q-item-section>
+          </q-item>
+         </inertia-link>
 
         <inertia-link
           v-if="user.role === 'admin'

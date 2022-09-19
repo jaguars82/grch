@@ -52,6 +52,8 @@ class SharedDataFilter extends ActionFilter
 
         $return = [
             'id' => $user->id,
+            'agency_id' => $user->agency_id,
+            'developer_id' => $user->developer_id,
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
             'middle_name' => $user->middle_name,

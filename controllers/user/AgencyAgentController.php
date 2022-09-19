@@ -102,12 +102,12 @@ class AgencyAgentController extends Controller
             throw new NotFoundHttpException('Данные отсутсвуют');
         }
 
-        $dataProvider = new ActiveDataProvider([
+        /*$dataProvider = new ActiveDataProvider([
             'query' => $agency->getAgents(),
             'pagination' => false,
             'sort' => ['attributes' => ['id'], 'defaultOrder' => ['id' => SORT_DESC]],
-        ]);
-        
+        ]);*/
+
         /*return $this->render('index', [
             'agency' => $agency,
             'dataProvider' => $dataProvider,
@@ -115,7 +115,7 @@ class AgencyAgentController extends Controller
         
         return $this->inertia('User/AgencyAgent/Index', [
             'agency' => ArrayHelper::toArray($agency),
-            'agents' => ArrayHelper::toArray($dataProvider),
+            'agents' => ArrayHelper::toArray($agency->agents),
         ]);
 
     }    
