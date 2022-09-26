@@ -1,6 +1,6 @@
 <?php
 
-namespace app\components\import\Vdk;
+namespace app\components\import\OtdelProdazh;
 
 use app\components\exceptions\AppException;
 use app\components\import\ImportServiceInterface;
