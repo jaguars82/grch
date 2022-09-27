@@ -109,22 +109,6 @@ class XmlImportService implements ImportServiceInterface
 		return $deadline;
 	}
 
-	/*private function getFlatLayout($flat)
-	{
-		if (!isset($flat->plan)) {
-			return NULL;
-		}
-		$layout = (string)$flat->plan;
-		if ($layout == '') {
-			return NULL;
-		}
-
-		if (strpos($layout, 'Null')) {
-			$layout = str_replace('Null', 'null', $layout);
-		}
-		return $layout;
-	}*/
-
     /**
      * Parse flats data
      *
@@ -164,8 +148,6 @@ class XmlImportService implements ImportServiceInterface
 
             foreach ($district->Позиция as $building) {
 
-                // echo '<pre>'; var_dump($building['Имя']); echo '</pre>'; die();
-
                 // check if a position has name
                 $this->checkBuildingName($building);
 
@@ -190,11 +172,9 @@ class XmlImportService implements ImportServiceInterface
                     ];
 
                     $currentObjectId = $objectId++;
-                }
+                
 
-                // Парсим позиции
-                //foreach ($complex->buildings->building as $building) {
-
+                    // Парсим позиции
                     $houseName = (string)$building['Имя'];
                     $deadline = $this->getDeadline($building);
 
@@ -207,16 +187,6 @@ class XmlImportService implements ImportServiceInterface
                     ];
 
                     $currentHouseId = $houseId++;
-
-                    /*if (!isset($building->flats->flat)) {
-                        continue;
-                    }*/
-
-                    /*
-                    $lastFlatNumber = 1;
-                    $lastFlatFloor = 1;
-                    $section = 1;
-                    */
 
                     // pass through entrances
                     foreach ($building->Подъезд as $entrance) {
@@ -237,59 +207,18 @@ class XmlImportService implements ImportServiceInterface
                                     'rooms' => $flat['КоличествоКомнат'] == 'Свободная планировка' ? 1 : (int)$flat['КоличествоКомнат'],
                                     'unit_price_cash' => (float)$flat['ЦенаЗаМетр'],
                                     'price_cash' => (float)preg_replace("/[^,.0-9]/", '', $flat['СтоимостьПомещения']),
-                                    // 'status' => $this->getStatus((string)$flat->window_view),
                                     'status' => empty($flat['СтоимостьПомещения']) ? Flat::STATUS_SOLD : Flat::STATUS_SALE,
                                     'layout' => '',
                                 ];
 								
-								/*echo '|';
-								echo preg_replace("/[^,.0-9]/", '', $flat['СтоимостьПомещения']);
-								echo '|';*/
-
                                 $flats[$currentFlatId] = $_flat;
-                                //$flatsByNumber[$currentObjectId][$currentHouseId][$flat['Номер']][] = $currentFlatId;
                                 $currentFlatId++;
                             }
                         }
                     }
-
-                    /*foreach ($building->flats->flat as $flat) {
-                        $unitPrice = ($flat->area != 0) ? ((int)$flat->price / (float)$flat->area) : 0;
-                        $layout =  $this->getFlatLayout($flat);
-
-                        $currentFlatNumber = (int)$flat->apartment;
-                        $currentFlatFloor = (int)$flat->floor;
-
-                        if (($lastFlatFloor - $currentFlatFloor) > 1) {
-                            $section++;
-                        }
-
-                        $_flat = [
-                            'houseId' => $currentHouseId,
-                            'number' => (int)$flat->apartment,
-                            'section' => $section,
-                            'floor' => (int)$flat->floor,
-                            'area' => (float)$flat->area,
-                            'rooms' => (int)$flat->room,
-                            'unit_price_cash' => $unitPrice,
-                            'price_cash' => (float)$flat->price,
-                            // 'status' => $this->getStatus((string)$flat->window_view),
-                            'status' => Flat::STATUS_SALE,
-                            'layout' => $layout,
-                        ];
-
-                        $flats[$currentFlatId] = $_flat;
-                        $flatsByNumber[$currentObjectId][$currentHouseId][(int)$flat->apartment][] = $currentFlatId;
-                        $currentFlatId++;
-
-                        $lastFlatFloor = $currentFlatFloor;
-                    }*/
-                //}
+                }
             }
-            
 		}
-
-		//var_dump($objects); die();
 
         $floorLayouts = [];
 
