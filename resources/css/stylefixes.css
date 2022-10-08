@@ -1,0 +1,12 @@
+/** This file is for temporary fixes in a period of migration from old front-end to the new one */
+
+/* remove Bootstrap row gaps */
+.row {
+  margin-right: 0px;
+  margin-left: 0px;
+}
+
+/* fix Bootstrap 3 (clearfix) row display to make q-field (Quasar) look properly */
+.row::after, .row::before {
+  display: block;
+}

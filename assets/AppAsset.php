@@ -19,6 +19,7 @@ class AppAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
+    
     public $css = [
         'css/site.css',
     ];
@@ -29,4 +30,16 @@ class AppAsset extends AssetBundle
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',
     ];
+
+    /*public function init()
+    {
+        parent::init();
+        if (YII_ENV === 'dev') {
+            $this->css[] = 'assets/inertia/css/app.css';
+            $this->js[] = 'assets/inertia/js/app.js';
+        } else {
+            $this->css[] = 'assets/inertia/css/app.min.css';
+            $this->js[] = 'assets/inertia/js/app.min.js';
+        }
+    }*/
 }

@@ -12,6 +12,8 @@ class NewAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
+        'assets/inertia/css/app.css',
+        //'https://cdn.jsdelivr.net/npm/quasar@2.7.5/dist/quasar.prod.css',
         'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap',
         'https://fonts.googleapis.com/css2?family=Material+Icons',
         'https://fonts.googleapis.com/css2?family=Material+Icons+Outlined',
@@ -23,10 +25,10 @@ class NewAsset extends AssetBundle
         'vendor/kendoui/kendo.common.min.css',
         'vendor/kendoui/kendo.default.min.css',
         'vendor/kendoui/kendo.default.mobile.min.css',
-        /* 'vendor/berry-css/berry.css', */
         'css/style.css',
     ];
     public $js = [
+        'assets/inertia/js/app.js', 
         'vendor/swiper/swiper-bundle.min.js',
         'vendor/select2/select2.full.min.js',
         'vendor/select2/ru.js',
@@ -36,7 +38,6 @@ class NewAsset extends AssetBundle
         'vendor/match-height/jquery.matchHeight-min.js',
         'vendor/fancybox/jquery.fancybox.min.js',
         'vendor/kendoui/kendo.all.min.js',
-        /*'https://cdn.tailwindcss.com',*/
         'js/common.js',
     ];
     public $depends = [

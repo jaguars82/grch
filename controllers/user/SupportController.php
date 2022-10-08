@@ -3,11 +3,14 @@
 namespace app\controllers\user;
 
 use app\components\traits\CustomRedirects;
+use app\components\SharedDataFilter;
 use app\models\SupportTicket;
 use app\models\User;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\web\Controller;
+// use yii\web\Controller;
+use tebe\inertia\web\Controller;
+use yii\helpers\ArrayHelper;
 
 class SupportController extends Controller
 {
@@ -28,9 +31,12 @@ class SupportController extends Controller
                     [
                         'allow' => true,
                         'actions' => ['index'],
-                        'roles' => ['admin', 'manager', 'agent'],
+                        'roles' => ['admin', 'manager', 'agent', 'developer_repres'],
                     ],
                 ]
+            ],
+            [
+                'class' => SharedDataFilter::class
             ],
         ];
     }
@@ -58,23 +64,16 @@ class SupportController extends Controller
             }
         }
         
-        return $this->render('index', [
+        /*return $this->render('index', [
             'user' => \Yii::$app->user->identity,
             'tickets' => $tickets
-        ]);
+        ]);*/
 
-        /*
-        if(\Yii::$app->request->post('action') == 'refresh_ticket') {
-            return $this->renderPartial('index', [
-                'user' => \Yii::$app->user->identity,
-                'tickets' => $tickets
-            ]);
-        } else {
-            return $this->render('index', [
-                'user' => \Yii::$app->user->identity,
-                'tickets' => $tickets
-            ]);
-        }
-        */
+        //echo '<pre>'; var_dump($tickets); echo '</pre>'; die();
+
+        return $this->inertia('User/Support/Index', [
+            'user' => \Yii::$app->user->identity,
+            'tickets' => ArrayHelper::toArray($tickets)
+        ]);
     }
 }

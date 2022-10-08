@@ -1,0 +1,25 @@
+<?php
+
+use yii\db\Migration;
+
+/**
+ * Handles adding columns to table `{{%flat}}`.
+ */
+class m220911_082457_add_is_reserved_column_to_flat_table extends Migration
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function safeUp()
+    {
+        $this->addColumn('{{%flat}}', 'is_reserved', $this->integer(1)->after('status')->defaultValue(0)->notNull()->comment('reservation status by application'));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function safeDown()
+    {
+        $this->dropColumn('{{%flat}}', 'is_reserved');
+    }
+}

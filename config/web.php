@@ -9,15 +9,24 @@ $config = [
     'name' => 'ГРЧ',
     'language' => 'ru-RU',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => ['inertia'],
     'layout' => 'new',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
     'components' => [
+        'inertia' => [
+            'class' => 'tebe\inertia\Inertia'
+        ],
         'request' => [
+            'class' => 'tebe\inertia\web\Request',
             'cookieValidationKey' => 'QXFB9sWB1FlClPKQyGYTittb89LNcqMX',
+            'enableCsrfValidation' => false,
+            'enableCsrfCookie' => false,
+            'parsers' => [
+                'application/json' => 'yii\web\JsonParser',
+            ]
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
