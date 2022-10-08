@@ -7,7 +7,7 @@ use app\components\import\ImportServiceInterface;
 use app\models\Flat;
 
 /**
- * Service for importing flat's data from xml-feed for developer "Инстеп"
+ * Service for importing flat's data from xml-feed for developer "Развитие"
  */
 class XmlImportService implements ImportServiceInterface
 {
@@ -191,10 +191,18 @@ class XmlImportService implements ImportServiceInterface
             // echo stripos($complexName, 'секция');
             // continue;
 
-            // temporary fix
+            // temporary fixes
             if (strpos($objectName, 'ЖК "Молодежный" 2') !== false) {
 				$objectName = 'ЖК "Молодежный" 1';
 			}
+
+            if (strpos($objectName, 'ЖК Ростовская 73д') !== false) {
+				$objectName = 'ЖК "АВИАТОР-2"';
+			}
+
+            /*if ($objectName == "ЖК Ростовская 73д") {
+				$objectName = 'ЖК "АВИАТОР-2"';
+			}*/
 
             if (mb_stripos($objectName, 'секция') !== false) {
                 $objectName = mb_substr($objectName, 0, mb_stripos($objectName, 'секция') - 1);
