@@ -3,6 +3,7 @@
 namespace app\components\async;
 
 use app\models\SupportTicket;
+use app\models\Notification;
 
 class ParamsGet
 {
@@ -17,6 +18,13 @@ class ParamsGet
             $status = true;
         }
 
+        // check notifications
+        $notifications_amount = $this->getNotificationsAmount();
+        if($notifications_amount > 0) {
+            $amount = $amount + $notifications_amount;
+            $status = true;
+        }
+
         $result = array();
 
         $result['status'] = $status;
@@ -26,7 +34,7 @@ class ParamsGet
     }
 
     /**
-     * Get if there are uread support messages
+     * Get amount of unread user support messages (if there are any)
      */
     public function getSupportMessagesAmount() {
         $ticket_model = new SupportTicket();
@@ -35,6 +43,21 @@ class ParamsGet
             $result = $ticket_model->getTicketsWithUnreadFromAuthor();
         } else {
             $result = $ticket_model->getTicketsWithUnreadFromAdmin(\Yii::$app->user->id);
+        }
+        return $result;
+    }
+
+    /**
+     * Get amount of unread notifications (if therer are any)
+     */
+    public function getNotificationsAmount()
+    {
+        $notification = new Notification();
+
+        if(\Yii::$app->user->can('admin')) {
+            $result = $notification->getUnreadNotificationsAmountForAdmin();
+        } else {
+            $result = $notification->getUnreadNotificationsAmountForUser(\Yii::$app->user->id);
         }
         return $result;
     }

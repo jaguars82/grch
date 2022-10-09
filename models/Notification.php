@@ -86,5 +86,24 @@ class Notification extends ActiveRecord
             ->where(['recipient_id' => $userId])
             ->orderBy(['created_at' => SORT_DESC]);
     }
+
+    public function getUnreadNotificationsAmountForAdmin ()
+    {
+        return self::find()
+            ->where(['recipient_group' => 'admin'])
+            ->andWhere(['seen_by_recipient' => 0])
+            ->count();
+    }
+
+    public function getUnreadNotificationsAmountForUser($userId)
+    {
+        return $this->find()
+            ->where(['recipient_id' => $userId])
+            ->andWhere(['seen_by_recipient' => 0])
+            ->count();
+    }
+
+
+
     
 }
