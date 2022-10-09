@@ -246,5 +246,18 @@ class Developer extends \yii\db\ActiveRecord
                 ->join('INNER JOIN', 'newbuilding_complex', 'newbuilding_complex.id = news_newbuilding_complex.newbuilding_complex_id')
                 ->where(['developer_id' => $this->id])
                 ->groupBy('news.id');
-    }    
+    } 
+    
+    /**
+     * if developer has representative in User table
+     */
+    public function hasRepresentative()
+    {
+        $result = false;
+        $repres_amount = User::find()
+            ->where(['developer_id' => $this->id])
+            ->count();
+        if ($repres_amount > 0) { $result = true; }
+        return $result;
+    }
 }
