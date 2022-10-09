@@ -55,7 +55,12 @@
             <q-icon color="primary" name="support_agent" />
           </q-item-section>
 
-          <q-item-section>Техподдержка</q-item-section>
+          <q-item-section>
+            <div class="btn-text-with-badge">
+              <span>Техподдержка</span>
+              <StatusIndicator :amount="messages.support" />
+            </div>
+          </q-item-section>
         </q-item>
         </inertia-link>
 
@@ -65,7 +70,12 @@
             <q-icon color="primary" name="speaker_notes" />
           </q-item-section>
 
-          <q-item-section>Уведомления</q-item-section>
+          <q-item-section>
+            <div class="btn-text-with-badge">
+              <span>Уведомления</span>
+              <StatusIndicator :amount="messages.notifications" />
+            </div>
+          </q-item-section>
         </q-item>
         </inertia-link>
       </q-list>
@@ -75,12 +85,25 @@
 
 <script>
 import { ref } from 'vue'
-import { userInfo } from '@/composables/shared-data'
+import { userInfo, messagesAmount } from '@/composables/shared-data'
+import StatusIndicator from '@/Components/StatusIndicator.vue'
 
 export default ({
+  components: {
+    StatusIndicator
+  },
   setup() {
     const { user } = userInfo()
-    return { user }
+    const { messages } = messagesAmount()
+    return { user, messages }
   },
 })
 </script>
+
+<style scoped>
+  .btn-text-with-badge {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+</style>

@@ -6,7 +6,8 @@ use app\models\SupportTicket;
 use app\components\async\ParamsGet;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\web\Controller;
+// use yii\web\Controller;
+use tebe\inertia\web\Controller;
 
 class ParamsGetController extends Controller
 {
@@ -26,7 +27,7 @@ class ParamsGetController extends Controller
                     [
                         'allow' => true,
                         'actions' => ['event', 'support-messages'],
-                        'roles' => ['admin', 'manager', 'agent'],
+                        'roles' => ['admin', 'manager', 'agent', 'developer_repres'],
                     ],
                 ]
             ],
@@ -47,7 +48,9 @@ class ParamsGetController extends Controller
         ]);
     }
 
-    public function actionSupportMessages() {
+    /** Support messages for old frontend - DELETE LATER */
+    public function actionSupportMessages()
+    {
         $messages_amount = (new ParamsGet())->getSupportMessagesAmount();
 
         return $this->renderPartial('/widgets/status-indicator', [

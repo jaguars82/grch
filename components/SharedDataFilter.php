@@ -7,6 +7,7 @@ use Yii;
 use yii\base\Action;
 use yii\base\ActionFilter;
 use yii\base\InvalidConfigException;
+use app\components\async\ParamsGet;
 
 class SharedDataFilter extends ActionFilter
 {
@@ -21,6 +22,10 @@ class SharedDataFilter extends ActionFilter
         $shared = [
             'auth' => [
                 'user' => $this->getUser()
+            ],
+            'messages' => [
+                'support' => (new ParamsGet())->getSupportMessagesAmount(),
+                'notifications' => (new ParamsGet())->getNotificationsAmount(),
             ],
             'flash' => $this->getFlashMessages(),
             'errors' => $this->getErrors(),
@@ -41,13 +46,7 @@ class SharedDataFilter extends ActionFilter
      */
     private function getUser()
     {
-        /*$webUser = Yii::$app->getUser();
-        if ($webUser->isGuest) {
-            return null;
-        }*/
-
         /** @var User */
-        //$user = $webUser->getIdentity();
         $user = Yii::$app->user->identity;
 
         $return = [
@@ -62,10 +61,6 @@ class SharedDataFilter extends ActionFilter
             'photo' => $user->photo,
             'role' => $user->role,
             'roleLabel' => $user->roleLabel,
-            /*'account' => [
-                'id' => $user->account->id,
-                'name' => $user->account->name
-            ],*/
         ];
 
         return $return;
