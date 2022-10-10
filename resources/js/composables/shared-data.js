@@ -6,4 +6,9 @@ function userInfo() {
    return { user }
 }
 
-export { userInfo }
+function messagesAmount() {
+   const messages = computed(() => usePage().props.value.messages)
+   return { messages }
+}
+
+export { userInfo, messagesAmount }

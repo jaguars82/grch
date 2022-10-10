@@ -365,7 +365,7 @@ $this->params['breadcrumbs'][] = $model->number;
                     ['offer/make', 'flatId' => $model->id],
                     ['class' => 'btn btn-red-fill']
                 ) ?>-->
-                <?php if ($model->is_reserved != 1 && $model->status == 0): ?>
+                <?php if ($model->is_reserved != 1 && $model->status == 0 && $model->developer->hasRepresentative()): ?>
                 <?= Html::a('Забронировать',
                     ['reservation/make', 'flatId' => $model->id],
                     ['class' => 'btn btn-red-fill']

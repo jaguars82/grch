@@ -49,7 +49,7 @@ class NotificationController extends Controller
         } else {
             $notifications = $model->getNotificationsForUser(\Yii::$app->user->id)->all();
         }
-        
+
         return $this->inertia('User/Notification/Index', [
             'user' => \Yii::$app->user->identity,
             'notifications' => ArrayHelper::toArray($notifications),
@@ -59,6 +59,21 @@ class NotificationController extends Controller
     public function actionView($id)
     {
         $notification = (new Notification())->findOne($id);
+
+        /** match notification seen by recipient */
+        if ($notification->seen_by_recipient == 0) {
+            if (\Yii::$app->user->can('admin')) {
+                if ($notification->recipient_group == 'admin') {
+                    $notification->seen_by_recipient = 1;
+                    $notification->save();
+                }
+            } else {
+                if ($notification->recipient_id == \Yii::$app->user->identity->id) {
+                    $notification->seen_by_recipient = 1;
+                    $notification->save();
+                }
+            }
+        }
         
         return $this->inertia('User/Notification/View', [
             'notification' => ArrayHelper::toArray($notification),

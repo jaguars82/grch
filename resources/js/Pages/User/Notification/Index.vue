@@ -18,14 +18,15 @@
             >
               <template v-slot:body="props">
                 <q-tr :props="props">
+                <q-td key="seen_by_recipient" :props="props">
+                    <q-icon size="xs" v-if="props.row.seen_by_recipient" name="drafts" />
+                    <q-icon size="xs" v-else name="mail" />
+                  </q-td>
                   <q-td key="topic" :props="props">
                     {{ props.row.topic }}
                   </q-td>
                   <q-td key="created_at" :props="props">
                     {{ props.row.created_at }}
-                  </q-td>
-                  <q-td key="seen_by_recipient" :props="props">
-                    {{ props.row.seen_by_recipient }}
                   </q-td>
                   <q-td key="link" :props="props">
                     <inertia-link :href="props.row.link">

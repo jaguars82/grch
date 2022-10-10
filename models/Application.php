@@ -166,5 +166,10 @@ class Application extends ActiveRecord
     {
         return $this->hasMany(ApplicationHistory::className(), ['application_id' => 'id']); 
     }
+
+    public function getApplicant ()
+    {
+        return $this->hasOne(User::className(), ['id' => 'applicant_id']);
+    }
     
 }

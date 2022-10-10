@@ -149,7 +149,7 @@ class SupportTicketController extends Controller
         */
 
         /** 
-         * Prepare messages arrray for Vue component
+         * Prepare messages array for Vue component
         */
         $messages_array = array();
         foreach ($messages as $message) {

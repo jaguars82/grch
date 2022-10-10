@@ -60,10 +60,24 @@ class ApplicationController extends Controller
         } elseif (\Yii::$app->user->can('agent') || \Yii::$app->user->can('manager')) {
             $applications = $model->getApplicationsByAuthor(\Yii::$app->user->id)->all();
         }
-        
+
+        /**
+         * Prepare applications array for Vue component
+         */
+        $applications_array = array();
+        foreach ($applications as $application) {
+            $application_entry = ArrayHelper::toArray($application);
+            $application_entry['author'] = ArrayHelper::toArray($application->applicant);
+            $application_entry['author']['roleLabel'] = $application->applicant->roleLabel;
+            if(!empty($application->applicant->agency_id)) {
+                $application_entry['author']['agency_name'] = $application->applicant->agency->name;
+            }
+            array_push($applications_array, $application_entry);
+        }
+               
         return $this->inertia('User/Application/Index', [
             'user' => \Yii::$app->user->identity,
-            'applications' => ArrayHelper::toArray($applications),
+            'applications' => $applications_array,
             'statusMap' => Application::$status
         ]);
     }
@@ -469,9 +483,17 @@ class ApplicationController extends Controller
                     break;
             }
         }
+
+        $application_array = ArrayHelper::toArray($application);
+        $application_array['author'] = ArrayHelper::toArray($application->applicant);
+        $application_array['author']['roleLabel'] = $application->applicant->roleLabel;
+        if(!empty($application->applicant->agency_id)) {
+            $application_array['author']['agency_name'] = $application->applicant->agency->name;
+        }
         
         return $this->inertia('User/Application/View', [
-            'application' => ArrayHelper::toArray($application),
+            // 'application' => ArrayHelper::toArray($application),
+            'application' => $application_array,
             'applicationHistory' => ArrayHelper::toArray($application->history),
             'statusMap' => Application::$status,
             'flat' => $flat,
