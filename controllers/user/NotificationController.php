@@ -49,7 +49,7 @@ class NotificationController extends Controller
         } else {
             $notifications = $model->getNotificationsForUser(\Yii::$app->user->id)->all();
         }
-        
+
         return $this->inertia('User/Notification/Index', [
             'user' => \Yii::$app->user->identity,
             'notifications' => ArrayHelper::toArray($notifications),

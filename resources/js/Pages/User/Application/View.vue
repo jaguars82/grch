@@ -7,6 +7,9 @@
       <RegularContentContainer :title="`Заявка ${application.application_number}`" :subtitle="`от ${asDateTime(application.created_at)}`">
         <template v-slot:content>
           <p>
+            Автор: {{ application.author.last_name }} {{ application.author.first_name }}, <span class="text-lowercase">{{ application.author.roleLabel }}</span> {{ application.author.agency_name }}
+          </p>
+          <p>
             Статус: <span class="text-lowercase">{{ statusMap[application.status] }}</span>
             <!--<span> (последнее обновление {{ asDateTime(application.updated_at) }})</span>-->
           </p>

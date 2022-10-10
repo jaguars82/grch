@@ -23,6 +23,9 @@
                   <q-td key="application_number" :props="props">
                     {{ props.row.application_number }}
                   </q-td>
+                  <q-td key="application_number" :props="props">
+                    {{ props.row.author }}
+                  </q-td>
                   <q-td key="status" :props="props">
                     {{ props.row.status }}
                   </q-td>
@@ -44,6 +47,7 @@
                       <q-card-section class="text-center">
                         <p>Заявка</p>
                         <p class="q-mb-xs text-h4">{{ props.row.application_number }}</p>
+                        <p>{{ props.row.author }}</p>
                       </q-card-section>
                     </inertia-link>
                     <q-separator />
@@ -108,6 +112,7 @@ export default ({
 
     const columns = [
       { name: 'application_number', required: true, align: 'left', label: 'Номер заявки', field: 'application_number', sortable: true },
+      { name: 'author', required: true, align: 'left', label: 'Автор', field: 'author', sortable: true },
       { name: 'status', required: true, align: 'left', label: 'Статус', field: 'status', sortable: true },
       { name: 'client_fio', align: 'center', label: 'ФИО клиента', field: 'client_fio', sortable: true },
       { name: 'link', align: 'center', label: '', field: 'link', sortable: false },
@@ -118,6 +123,7 @@ export default ({
       props.applications.forEach(row => {
         const processedItem = {
           id: row.id,
+          author: `${row.author.last_name} ${row.author.first_name}, ${row.author.roleLabel} ${row.author.agency_name}`,
           application_number: row.application_number,
           status: props.statusMap[row.status],
           client_fio: `${row.client_lastname} ${row.client_firstname} ${row.client_middlename}`,
