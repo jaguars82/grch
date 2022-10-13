@@ -33,8 +33,18 @@
                 >
               </template>
             </q-chat-message>
-
           </div>
+            <q-form  @submit="onSubmit">
+              <div class="row q-py-sm">
+                <div class="col q-mx-md">
+                  <q-input outlined autogrow v-model="formfields.text" label="Написать сообщение" />
+                </div>
+              </div>
+              <div class="q-mt-lg text-center">
+                <q-btn label="Отправить сообщение" type="submit" color="primary"/>
+              </div>
+            </q-form>
+
         </template>
       </RegularContentContainer>
     </template>
@@ -43,6 +53,7 @@
 
 <script>
 import { ref, computed } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
 import ProfileLayout from '../../../Layouts/ProfileLayout.vue'
 import Breadcrumbs from '../../../Components/Layout/Breadcrumbs.vue'
 import RegularContentContainer from '../../../Components/Layout/RegularContentContainer.vue'
@@ -94,7 +105,27 @@ export default ({
       },
     ]
 
-    return { breadcrumbs, asDateTime }
+        const loading = ref(false)
+
+    //const { user } = userInfo()
+
+    const formfields = ref(
+      {
+        text: '',
+      }
+    )
+
+    function onSubmit() {
+      
+      loading.value = true
+      Inertia.post(`/user/support-ticket/view?id=${props.ticket.id}`, formfields.value)
+      Inertia.on('finish', (event) => {
+        console.log('rwrer1111')
+        loading.value = false
+      })
+    }
+
+    return { breadcrumbs, asDateTime, formfields, onSubmit }
   },
 })
 </script>

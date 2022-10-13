@@ -7,6 +7,12 @@
       <RegularContentContainer>
         <template v-slot:content>
 
+          <div v-if="user.role !== 'admin'">
+            <inertia-link href="/user/support-ticket/create">
+              <q-btn color="primary" unelevated label="Создать запрос" />
+            </inertia-link>
+          </div>
+
           <GridTableToggle :defaultMode="ticketsGridView" />
 
           <q-table
@@ -66,6 +72,7 @@ import RegularContentContainer from '../../../Components/Layout/RegularContentCo
 import GridTableToggle from '../../../Components/Elements/GridTableToggle.vue'
 import useEmitter from '../../../composables/use-emitter'
 import { asDateTime } from '../../../helpers/formatter' 
+import { userInfo } from '../../../composables/shared-data'
 
 export default ({
   components: {
@@ -78,6 +85,9 @@ export default ({
     tickets: Array
   },
   setup(props) {
+
+    const { user } = userInfo()
+
     const breadcrumbs = ref([
       {
         id: 1,
@@ -134,7 +144,7 @@ export default ({
     const emitter = useEmitter()
     emitter.on('toggle-grid-table', (e) => ticketsGridView.value = e)
 
-    return { breadcrumbs, columns, rows, asDateTime, ticketsGridView }
+    return { user, breadcrumbs, columns, rows, asDateTime, ticketsGridView }
   },
 })
 </script>
