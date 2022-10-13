@@ -34,7 +34,7 @@ class SupportTicketController extends Controller
                     [
                         'allow' => true,
                         'actions' => ['index', 'view', 'create'],
-                        'roles' => ['admin', 'manager', 'agent'],
+                        'roles' => ['admin', 'manager', 'agent', 'developer_repres'],
                     ],
                 ]
             ],
@@ -50,14 +50,6 @@ class SupportTicketController extends Controller
 
         $ticket = (new SupportTicket())->findOne($id);
         $messages = $ticket->messages;
-
-        /*foreach($messages as $key => $message) {
-            $message->setAuthorName();
-            $message->setAuthorSurname();
-            $message->setAuthorAvatar();
-            $message->setAuthorRole();
-            $message->setAuthorAgency();
-        }*/
 
         $message_form = new SupportMessageForm();
 
@@ -141,13 +133,6 @@ class SupportTicketController extends Controller
             return $this->redirectWithSuccess(\Yii::$app->request->referrer, 'Сообщение отправлено');
         }
 
-        /*
-        return $this->render('view', [
-            'ticket' => $ticket,
-            'messages' => $messages,
-        ]);
-        */
-
         /** 
          * Prepare messages array for Vue component
         */
@@ -177,7 +162,6 @@ class SupportTicketController extends Controller
          * Fill some initial attributes
          */
         $ticket_model->author_id = $message_model->author_id = \Yii::$app->user->id;
-        // $ticket_model->is_archived = $message_model->seen_by_interlocutor = 0;
         $message_model->author_role = array_key_first(\Yii::$app->authManager->getRolesByUser(\Yii::$app->user->id));
 
         /*
@@ -190,15 +174,16 @@ class SupportTicketController extends Controller
         */
 
         if (\Yii::$app->request->isPost && 
-            ($ticket_model->load(\Yii::$app->request->post())
-            /*& $ticket_model->process()*/ && $message_model->load(\Yii::$app->request->post()) /*& $message_model->process()*/)
-        ) {
+            $ticket_model->load(\Yii::$app->request->post(), '')
+            /*& $ticket_model->process()*/ && $message_model->load(\Yii::$app->request->post(), '') /*& $message_model->process()*/)
+         {
             try {
                 $transaction = \Yii::$app->db->beginTransaction();
 
                 try {
 
                     $ticket = (new SupportTicket())->fill($ticket_model->attributes);
+                    $ticket->ticket_number = \Yii::$app->user->id.'-#'.((new SupportTicket())->getTicketsAmountByAuthor(\Yii::$app->user->id) + 1);
                     $ticket->is_archived = 0;
                     $ticket->is_closed = 0;
                     $ticket->has_unread_messages_from_support = 0;
@@ -218,19 +203,16 @@ class SupportTicketController extends Controller
                     throw $e;
                 }
 
-                // return $ticket;
-
             } catch (\Exception $e) {
                 return $this->redirectBackWhenException($e);
             }
 
-            return $this->redirectWithSuccess(['/user/support/index'], 'Ваш запрос отправлен в службу поддержки');
+            //return $this->redirectWithSuccess(['/user/support/index'], 'Ваш запрос отправлен в службу поддержки');
+            return $this->redirect(['/user/support/index']);
         }
 
-        return $this->render('create', [
+        return $this->inertia('User/SupportTicket/Create', [
             'tickets_amount' => (new SupportTicket())->getTicketsAmountByAuthor(\Yii::$app->user->id),
-            'ticket_model' => $ticket_model,
-            'message_model' => $message_model,
         ]);
     }
 }

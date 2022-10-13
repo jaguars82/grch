@@ -281,6 +281,11 @@ $this->params['breadcrumbs'][] = $model->number;
                         <?= $model->newbuildingComplex->address ?>
                     </p>
                 <?php endif; ?>
+                <?php if ($model->is_reserved != 1 && $model->status == 0 && $model->developer->hasRepresentative()): ?>
+                <?= Html::a('Забронировать',
+                    ['reservation/make', 'flatId' => $model->id],
+                    ['class' => 'btn btn-red-fill']
+                ) ?>
                 <div class="title advantages" style="margin-bottom: 10px;">
                     <!--<span>Стоимость</span>-->
                     <span class="value">
@@ -365,11 +370,6 @@ $this->params['breadcrumbs'][] = $model->number;
                     ['offer/make', 'flatId' => $model->id],
                     ['class' => 'btn btn-red-fill']
                 ) ?>-->
-                <?php if ($model->is_reserved != 1 && $model->status == 0 && $model->developer->hasRepresentative()): ?>
-                <?= Html::a('Забронировать',
-                    ['reservation/make', 'flatId' => $model->id],
-                    ['class' => 'btn btn-red-fill']
-                ) ?>
                 <?php endif; ?>
                 <!--<a href="/reservation">
                     Забронировать

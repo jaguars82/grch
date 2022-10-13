@@ -64,12 +64,21 @@ class NewbuildingComplexSearch extends NewbuildingComplex
             return; 
         }
 
-        $developers = Developer::find()->whereNewbuildingComplexesExist()
-                ->onlyWithActiveFlats($this->only_active)
-                ->andFilterWhere(['developer.id' => $this->developer_id])
-                ->andFilterWhere(['like', 'newbuilding_complex.name', $this->name])
-                ->orderBy(['sort' => SORT_ASC])
+        // if user is a developer representative - show only for his developer
+        if(\Yii::$app->user->identity->role === 'developer_repres') {
+            $developers = Developer::find()
+                ->where(['id' => \Yii::$app->user->identity->developer_id])
                 ->all();
+        // show for all developers
+        } else {
+            $developers = Developer::find()->whereNewbuildingComplexesExist()
+                    ->onlyWithActiveFlats($this->only_active)
+                    ->andFilterWhere(['developer.id' => $this->developer_id])
+                    ->andFilterWhere(['like', 'newbuilding_complex.name', $this->name])
+                    ->orderBy(['sort' => SORT_ASC])
+                    ->all();           
+        }
+
                 
         $developersData = [];
         

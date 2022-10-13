@@ -41,8 +41,14 @@ class DeveloperSearch extends Developer
      */
     public function search($params)
     {
-        $query = Developer::find();
-
+        // if user is a developer representative - show only for his developer
+        if(\Yii::$app->user->identity->role === 'developer_repres') {
+            $query = Developer::find()->where(['id' => \Yii::$app->user->identity->developer_id]);
+        } else {
+            // show for all developers
+            $query = Developer::find();
+        }
+        
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
