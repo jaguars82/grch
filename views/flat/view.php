@@ -286,6 +286,7 @@ $this->params['breadcrumbs'][] = $model->number;
                     ['reservation/make', 'flatId' => $model->id],
                     ['class' => 'btn btn-red-fill']
                 ) ?>
+                <?php endif; ?>
                 <div class="title advantages" style="margin-bottom: 10px;">
                     <!--<span>Стоимость</span>-->
                     <span class="value">
@@ -370,7 +371,6 @@ $this->params['breadcrumbs'][] = $model->number;
                     ['offer/make', 'flatId' => $model->id],
                     ['class' => 'btn btn-red-fill']
                 ) ?>-->
-                <?php endif; ?>
                 <!--<a href="/reservation">
                     Забронировать
                 </a>-->
