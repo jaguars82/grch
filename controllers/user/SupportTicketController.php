@@ -53,6 +53,20 @@ class SupportTicketController extends Controller
 
         $message_form = new SupportMessageForm();
 
+                /** 
+         * Prepare messages array for Vue component
+        */
+        $messages_array = array();
+        foreach ($messages as $message) {
+            $message_entry = ArrayHelper::toArray($message);
+            $message_entry['author'] = ArrayHelper::toArray($message->author);
+            $message_entry['author']['roleLabel'] = $message->author->roleLabel;
+            if(!empty($message->author->agency_id)) {
+                $message_entry['author']['agency_name'] = $message->author->agency->name;
+            }
+            array_push($messages_array, $message_entry);
+        }
+
         /**
          * refresh messages in support chat via pjax
          */
@@ -96,7 +110,7 @@ class SupportTicketController extends Controller
 
         /** Create new message in support chat */
         if (\Yii::$app->request->isPost && 
-        ($message_form->load(\Yii::$app->request->post())
+        ($message_form->load(\Yii::$app->request->post(), '')
         /*& $message_form->process()*/)
         ) {
             try {
@@ -130,21 +144,11 @@ class SupportTicketController extends Controller
             } catch (\Exception $e) {
                 return $this->redirectBackWhenException($e);
             }
-            return $this->redirectWithSuccess(\Yii::$app->request->referrer, 'Сообщение отправлено');
-        }
-
-        /** 
-         * Prepare messages array for Vue component
-        */
-        $messages_array = array();
-        foreach ($messages as $message) {
-            $message_entry = ArrayHelper::toArray($message);
-            $message_entry['author'] = ArrayHelper::toArray($message->author);
-            $message_entry['author']['roleLabel'] = $message->author->roleLabel;
-            if(!empty($message->author->agency_id)) {
-                $message_entry['author']['agency_name'] = $message->author->agency->name;
-            }
-            array_push($messages_array, $message_entry);
+            //return $this->redirectWithSuccess(\Yii::$app->request->referrer, 'Сообщение отправлено');
+            return $this->inertia('User/SupportTicket/View', [
+                'ticket' => ArrayHelper::toArray($ticket),
+                'messages' => $messages_array,
+            ]);
         }
 
         return $this->inertia('User/SupportTicket/View', [
