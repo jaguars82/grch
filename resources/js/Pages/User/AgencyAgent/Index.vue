@@ -6,7 +6,11 @@
     <template v-slot:main>
       <RegularContentContainer :title="`Агенты «${agency.name}»`">
         <template v-slot:content>
-          
+          <div class="q-py-md">
+            <a :href="`/user/agency-agent/create?agencyId=${agency.id}`">
+              <q-btn color="primary" unelevated label="Добавить агента" />
+            </a>
+          </div>
           <GridTableToggle :defaultMode="agentsGridView" />
 
           <div class="q-pt-md">
@@ -34,12 +38,12 @@
                   </q-td>
                   <q-td key="edit" :props="props">
                     <a :href="props.row.edit">
-                      Edit
+                      <q-icon name="edit" />
                     </a>
                   </q-td>
                   <q-td key="edit" :props="props">
                     <a :href="props.row.delete">
-                      Delete
+                      <q-icon name="delete" />
                     </a>
                   </q-td>
                 </q-tr>
@@ -125,8 +129,6 @@ export default ({
       { name: 'delete', align: 'center', label: '', field: 'delete', sortable: false },
     ]
 
-    console.log(props.agents)
-
     const rows = computed(() => {
       const processedRows = []
       props.agents.forEach(row => {
@@ -135,7 +137,7 @@ export default ({
           fio: `${row.last_name} ${row.first_name} ${row.middle_name ? row.middle_name : ''}`,
           email: row.email,
           email: row.phone,
-          edit: `/user/agency-agent/update?id=${row.id}`,
+          edit: `/user/agency-agent/update?id=${row.id}&agencyId=${props.agency.id}`,
           delete: `/user/agency-agent/delete?id=${row.id}`
         }
         processedRows.push(processedItem)
