@@ -14,8 +14,10 @@ use yii\db\ActiveRecord;
  * @property int $id
  * @property int $initiator_id
  * @property string $number
- * @property array $object_idies
+ * @property string $name
  * @property boolean $active
+ * @property boolean $is_formed
+ * @property string $settings
  * @property string|null $created_at
  * @property string|null $updated_at
  *
@@ -58,7 +60,8 @@ class Commercial extends ActiveRecord
     {
         return [
             [['initiator_id'], 'required'],
-            [['initiator_id', 'active'], 'integer'],
+            [['initiator_id', 'active', 'is_formed'], 'integer'],
+            [['settings', 'name'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['initiator_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['initiator_id' => 'id']],
         ];
@@ -96,15 +99,14 @@ class Commercial extends ActiveRecord
         return $this->hasOne(Newbuilding::className(), ['id' => 'user_id']);
     }
 
-    /**
-     * Gets query for [[Flats]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    /*public function getFlats()
-    {
-        return $this->hasMany(Flat::className(), ['entrance_id' => 'id']);
-    }*/
-
+    /** Gets query for [[Flat]].
+    *
+    * @return \yii\db\ActiveQuery
+    */
+   public function getFlats()
+   {
+       return $this->hasMany(Flat::className(), ['id' => 'flat_id'])
+               ->viaTable('commercial_flat', ['commercial_id' => 'id']);
+   }
    
 }

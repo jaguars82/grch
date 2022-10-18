@@ -4,7 +4,8 @@ namespace app\controllers\user;
 
 use app\components\traits\CustomRedirects;
 use app\components\SharedDataFilter;
-use app\models\Commerciai;
+use app\models\Flat;
+use app\models\Commercial;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use tebe\inertia\web\Controller;
@@ -20,6 +21,7 @@ class CommercialController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
+                    'make' => ['GET', 'POST'],
                     'index' => ['GET', 'POST'],
                     'view' => ['GET', 'POST']
                 ],
@@ -29,7 +31,7 @@ class CommercialController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'view'],
+                        'actions' => ['make', 'index', 'view'],
                         'roles' => ['admin', 'manager', 'agent', 'developer_repres'],
                     ],
                 ]
@@ -38,6 +40,25 @@ class CommercialController extends Controller
                 'class' => SharedDataFilter::class
             ],
         ];
+    }
+
+    public function actionMake($flatId) {
+
+        $model = Flat::find()
+        ->where(['id' => $flatId])
+        ->one();
+    
+        $flat = ArrayHelper::toArray($model);
+        $flat['newbuilding'] = ArrayHelper::toArray($model->newbuilding);
+        $flat['newbuildingComplex'] = ArrayHelper::toArray($model->newbuildingComplex);
+
+        $commercials = '';
+
+        return $this->inertia('User/Commercial/Make', [
+            'user' => \Yii::$app->user->identity,
+            'flat' => $flat,
+            'commercials' => ArrayHelper::toArray($commercials),
+        ]);
     }
 
     public function actionIndex()
