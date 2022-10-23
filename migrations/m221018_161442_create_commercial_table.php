@@ -15,7 +15,7 @@ class m221018_161442_create_commercial_table extends Migration
         $this->createTable('{{%commercial}}', [
             'id' => $this->primaryKey(),
             'initiator_id'=> $this->integer()->notNull(), 
-            'number'=> $this->string(10)->notNull(),
+            'number'=> $this->string(10)->defaultValue(null),
             'name'=> $this->string()->append('CHARACTER SET utf8 COLLATE utf8_general_ci NULL'),
             'active'=> $this->integer(1)->defaultValue(1), 
             'is_formed'=> $this->integer(1)->defaultValue(0), 

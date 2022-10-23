@@ -12,7 +12,8 @@
     "@quasar/extras": "^1.0.0",
     "mitt": "^3.0.0",
     "quasar": "^2.0.0",
-    "vue": "^3.2.37"
+    "vue": "^3.2.37",
+    "vue-yandex-maps": "^0.12.3"
   },
   "devDependencies": {
     "css-loader": "^6.7.1",

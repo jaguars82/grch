@@ -7,7 +7,12 @@
       <RegularContentContainer title="Коммерческое предложение">
         <template v-slot:content>
           <h5>Действие с выбранным объектом:</h5>
-          <q-btn color="primary" unelevated label="Сформировать новое КП" />
+          <q-btn
+            color="primary"
+            unelevated
+            label="Сформировать новое КП"
+            @click="crateNew"
+          />
           <q-btn class="q-ml-md" color="primary" unelevated label="Добавить к существующему КП" />
         </template>
       </RegularContentContainer>
@@ -18,6 +23,7 @@
 
 <script>
 import { ref, computed } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
 import ProfileLayout from '@/Layouts/ProfileLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
@@ -34,7 +40,19 @@ export default {
   props: {
     flat: Object,
   }, 
-  setup() {
+  setup(props) {
+
+    const formfields = ref({
+      mode: ''
+    })
+
+    function crateNew() {
+      formfields.value.mode = 'new'
+      Inertia.post(`/user/commercial/make?&flatId=${props.flat.id}`, formfields.value)
+    }
+
+    return { crateNew }
+
   },
 }
 </script>

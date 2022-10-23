@@ -372,10 +372,10 @@ $this->params['breadcrumbs'][] = $model->number;
                     ]);?>
                 <?php endif; ?>
 
-                <!--<?= Html::a('Сформировать КП',
+                <?= Html::a('Сформировать КП',
                     ['offer/make', 'flatId' => $model->id],
                     ['class' => 'btn btn-red-fill']
-                ) ?>-->
+                ) ?>
                 <!--<a href="/reservation">
                     Забронировать
                 </a>-->

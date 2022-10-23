@@ -60,7 +60,8 @@ class Commercial extends ActiveRecord
     {
         return [
             [['initiator_id'], 'required'],
-            [['initiator_id', 'active', 'is_formed'], 'integer'],
+            [['initiator_id'], 'integer'],
+            [['active', 'is_formed'], 'boolean'],
             [['settings', 'name'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['initiator_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['initiator_id' => 'id']],
@@ -96,7 +97,7 @@ class Commercial extends ActiveRecord
      */
     public function getInitiator()
     {
-        return $this->hasOne(Newbuilding::className(), ['id' => 'user_id']);
+        return $this->hasOne(User::className(), ['id' => 'initiator_id']);
     }
 
     /** Gets query for [[Flat]].
