@@ -282,10 +282,15 @@ $this->params['breadcrumbs'][] = $model->number;
                     </p>
                 <?php endif; ?>
                 <?php if ($model->is_reserved != 1 && $model->status == 0 && $model->developer->hasRepresentative()): ?>
-                <?= Html::a('Забронировать',
-                    ['reservation/make', 'flatId' => $model->id],
-                    ['class' => 'btn btn-red-fill']
-                ) ?>
+                    <?= Html::a('Забронировать',
+                        ['reservation/make', 'flatId' => $model->id],
+                        ['class' => 'btn btn-red-fill']
+                    ) ?>
+                <?php endif; ?>
+                <?php if ($model->status == 0): ?>
+                    <?= Html::a('КП',
+                    ['user/commercial/make', 'flatId' => $model->id],
+                    ['class' => 'btn btn-red-fill']) ?>
                 <?php endif; ?>
                 <div class="title advantages" style="margin-bottom: 10px;">
                     <!--<span>Стоимость</span>-->
@@ -367,10 +372,10 @@ $this->params['breadcrumbs'][] = $model->number;
                     ]);?>
                 <?php endif; ?>
 
-                <!--<?= Html::a('Сформировать КП',
+                <?= Html::a('Сформировать КП',
                     ['offer/make', 'flatId' => $model->id],
                     ['class' => 'btn btn-red-fill']
-                ) ?>-->
+                ) ?>
                 <!--<a href="/reservation">
                     Забронировать
                 </a>-->

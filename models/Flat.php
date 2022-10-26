@@ -53,6 +53,7 @@ use app\components\flat\SvgDom;
  * @property Entrance $entrance
  * @property NewbuildingComplex $newbuildingComplex
  * @property News[] $news
+ * @property Commercial[] $commercials
  */
 class Flat extends ActiveRecord
 {
@@ -495,6 +496,17 @@ class Flat extends ActiveRecord
     {
         return $this->hasMany(News::className(), ['id' => 'news_id'])
                 ->viaTable('news_flat', ['flat_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Commercials]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCommercials()
+    {
+        return $this->hasMany(Commercial::className(), ['id' => 'commercial_id'])
+                ->viaTable('commercial_flat', ['flat_id' => 'id']);
     }
 
     /**
