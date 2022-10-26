@@ -124,7 +124,7 @@ class CommercialController extends Controller
         }
 
         $commercialMode = count($flatsArray) > 1 ? 'multiple' : 'single';
-       
+        
         return $this->inertia('User/Commercial/View', [
             'commercial' => $commercialArray,
             'flats' => $flatsArray,

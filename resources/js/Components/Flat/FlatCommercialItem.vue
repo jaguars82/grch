@@ -8,10 +8,12 @@
     </q-card-section>
 
     <q-card-section class="q-px-md q-py-xs">
-      <q-img v-if="flat.layout"
+      <img ref="floorImage" v-if="flat.layout"
         :src="`/uploads/${flat.layout}`"
       />
       <div class="no-pointer-events" v-if="flat.floorLayoutImage" v-html="flat.floorLayoutImage"></div>
+      <!--<img :src="floorLayoutImage" />-->
+      <q-btn label="check" @click="onCheck" />
     </q-card-section>
 
     <q-card-section v-if="flat.newbuildingComplex.longitude && flat.newbuildingComplex.latitude">
@@ -39,7 +41,9 @@
 
 <script>
 
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
+//import svg64 from 'svg64'
+import html2canvas from 'html2canvas'
 import { asArea, asCurrency, asFloor, asNumberString, asQuarterAndYearDate, asPricePerArea } from '@/helpers/formatter'
 import { yaMapsSettings } from '@/configurations/custom-configs'
 import { yandexMap, ymapMarker } from 'vue-yandex-maps'
@@ -60,8 +64,20 @@ export default ({
     const flatPriceCash = computed(() => asCurrency(props.flat.price_cash))
     const flatPricePerMeter = computed(() => asPricePerArea(props.flat.price_cash / props.flat.area))
     const flatDeadline = computed(() => !props.flat.newbuilding.deadline ? 'нет данных' : new Date() > new Date(props.flat.newbuilding.deadline) ? 'позиция сдана' : asQuarterAndYearDate(props.flat.newbuilding.deadline))
+    //const floorLayoutImage = computed( () => props.flat.floorLayoutImage ? svg64(props.flat.floorLayoutImage) : false )
+    //const floorLayoutImage = computed( () => props.flat.floorLayoutImage ? "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(props.flat.floorLayoutImage))) : false )
 
-    return { flatArea, flatFloor, flatPriceCash, flatRoomTitle, flatPricePerMeter, flatDeadline, yaMapsSettings }
+    const floorImage = ref(null)
+
+    const onCheck = function () {
+      html2canvas(floorImage.value).then(canvas => {
+          document.body.appendChild(canvas)
+          console.log(canvas)
+      })
+      //console.log(floorImage.value)
+    }
+
+    return { flatArea, flatFloor, flatPriceCash, flatRoomTitle, flatPricePerMeter, flatDeadline, floorImage, onCheck, /*floorLayoutImage,*/ yaMapsSettings }
     
   },
 })

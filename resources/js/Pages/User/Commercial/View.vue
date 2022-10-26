@@ -32,7 +32,7 @@
                     <q-item-section avatar>
                       <q-icon name="picture_as_pdf"/>
                     </q-item-section>
-                    <q-item-section>
+                    <q-item-section @click="savePDF">
                       Скачать PDF
                     </q-item-section>
                   </q-item>
@@ -97,12 +97,14 @@
             </q-btn>
           </q-bar>
 
+          <div ref="pdfContent">
           <q-card flat bordered class="q-mt-sm">
             <q-card-section>
               <UserInfoBar :user="commercial.initiator" />
             </q-card-section>
           </q-card>
           <FlatCommercialItem class="q-mt-md q-ml-md" :flat="flats[0]"></FlatCommercialItem>
+          </div>
         </template>
       </RegularContentContainer>
     </template>
@@ -112,6 +114,8 @@
 <script>
 import { ref, computed } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
+import { jsPDF } from 'jspdf'
+import html2pdf from 'html2pdf.js'
 import ProfileLayout from '@/Layouts/ProfileLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
@@ -139,7 +143,25 @@ export default {
       finishing: false,
     })
 
-    return { commercialSettings }
+    const pdfContent = ref(null)
+
+    const savePDF = function () {
+      //let doc = new jsPDF()
+      const html = pdfContent.value.innerHTML
+      /*doc.html(html, {
+        callback: function (doc) {
+          doc.save()
+        }
+      })*/
+      html2pdf(html)
+      //doc.save('example.pdf')
+      // console.log (doc)
+      //console.log (html)
+    }
+
+    //console.log (pdfContent)
+
+    return { commercialSettings, pdfContent, savePDF }
   },
 }
 </script>
