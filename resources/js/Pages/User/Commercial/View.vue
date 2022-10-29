@@ -93,18 +93,37 @@
                   </q-item>
 
                 </q-list>
+                <q-btn
+                  class="q-mt-sm"
+                  label="Сохранить настройки"
+                  icon="save"
+                  @click="saveSettings"
+                  :disable="JSON.stringify(commercialSettings) == commercial.settings"
+                />
               </q-menu>
             </q-btn>
           </q-bar>
-
-          <div ref="pdfContent">
           <q-card flat bordered class="q-mt-sm">
             <q-card-section>
-              <UserInfoBar :user="commercial.initiator" />
+                      <div v-if="PDFloading">
+            !!!!!!!!!!!!
+            Генерируем PDF, пожалуйста, подождите...
+          </div>
+          <a
+            ref="pdfLink"
+            download
+            href="/uploads/Коммерческое предложение - 10.pdf"
+          >
+          Загрузить...
+          </a>
+
+          <UserInfoBar :user="commercial.initiator" />
             </q-card-section>
           </q-card>
-          <FlatCommercialItem class="q-mt-md q-ml-md" :flat="flats[0]"></FlatCommercialItem>
-          </div>
+          <template v-for="flat in flats">
+          <FlatCommercialItem class="q-mt-md q-ml-md" :flat="flat"></FlatCommercialItem>
+          </template>
+
         </template>
       </RegularContentContainer>
     </template>
@@ -114,8 +133,8 @@
 <script>
 import { ref, computed } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
-import { jsPDF } from 'jspdf'
-import html2pdf from 'html2pdf.js'
+//import { jsPDF } from 'jspdf'
+//import html2pdf from 'html2pdf.js'
 import ProfileLayout from '@/Layouts/ProfileLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
@@ -134,34 +153,58 @@ export default {
     commercial: Array,
     commercialMode: String,
     flats: Array,
+    operation: String,
+    status: String
   },
-  setup() {
-    const commercialSettings = ref({
-      initiator: true,
-      developer: false,
-      newbuildingComplex: false,
-      finishing: false,
-    })
+  setup(props) {
+
+    const PDFloading = ref(false)
+
+    const formfields = ref({})
+    const clearFormFields = function () {
+      formfields.value = {}
+    }
+
+    /*const commercialSettings = ref({
+      initiator: props.commercial.settings && props.commercial.settings.initiator ? props.commercial.settings.initiator : true,
+      developer: props.commercial.settings && props.commercial.settings.developer ? props.commercial.settings.developer : false,
+      newbuildingComplex: props.commercial.settings && props.commercial.settings.newbuildingComplex ? props.commercial.settings.newbuildingComplex : false,
+      finishing: props.commercial.settings && props.commercial.settings.finishing ? props.commercial.settings.finishing : false,
+    })*/
+
+    const commercialSettings = props.commercial.settings ? ref(JSON.parse(props.commercial.settings)) : ref({ initiator: true, developer: false, newbuildingComplex: false, finishing: false })
 
     const pdfContent = ref(null)
+    const pdfLink = ref(null)
 
     const savePDF = function () {
-      //let doc = new jsPDF()
-      const html = pdfContent.value.innerHTML
-      /*doc.html(html, {
-        callback: function (doc) {
-          doc.save()
-        }
-      })*/
-      html2pdf(html)
-      //doc.save('example.pdf')
-      // console.log (doc)
-      //console.log (html)
+      formfields.value.operation = 'pdf'
+      PDFloading.value = true
+      //Inertia.post(`/user/commercial/download-pdf?flatId=82452`, formfields.value)
+      Inertia.post(`/user/commercial/view?id=${props.commercial.id}`, formfields.value)
+      Inertia.on('finish', (event) => {
+        PDFloading.value = false
+        clearFormFields()
+        pdfLink.value.click()
+      })
+    }
+
+    const saveSettings = function () {
+      formfields.value.operation = 'settings'
+      formfields.value.settings = commercialSettings.value
+      Inertia.post(`/user/commercial/view?id=${props.commercial.id}`, formfields.value)
     }
 
     //console.log (pdfContent)
 
-    return { commercialSettings, pdfContent, savePDF }
+    return { 
+      commercialSettings,
+      PDFloading,
+      pdfLink,
+      pdfContent,
+      savePDF,
+      saveSettings
+    }
   },
 }
 </script>
