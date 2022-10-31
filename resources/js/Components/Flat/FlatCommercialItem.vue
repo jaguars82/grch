@@ -13,7 +13,6 @@
       />
       <div class="no-pointer-events" v-if="flat.floorLayoutImage" v-html="flat.floorLayoutImage"></div>
       <!--<img :src="floorLayoutImage" />-->
-      <q-btn label="check" @click="onCheck" />
     </q-card-section>
 
     <q-card-section v-if="flat.newbuildingComplex.longitude && flat.newbuildingComplex.latitude">
@@ -42,8 +41,6 @@
 <script>
 
 import { ref, computed } from 'vue'
-//import svg64 from 'svg64'
-import html2canvas from 'html2canvas'
 import { asArea, asCurrency, asFloor, asNumberString, asQuarterAndYearDate, asPricePerArea } from '@/helpers/formatter'
 import { yaMapsSettings } from '@/configurations/custom-configs'
 import { yandexMap, ymapMarker } from 'vue-yandex-maps'
@@ -68,16 +65,7 @@ export default ({
     //const floorLayoutImage = computed( () => props.flat.floorLayoutImage ? "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(props.flat.floorLayoutImage))) : false )
 
     const floorImage = ref(null)
-
-    const onCheck = function () {
-      html2canvas(floorImage.value).then(canvas => {
-          document.body.appendChild(canvas)
-          console.log(canvas)
-      })
-      //console.log(floorImage.value)
-    }
-
-    return { flatArea, flatFloor, flatPriceCash, flatRoomTitle, flatPricePerMeter, flatDeadline, floorImage, onCheck, /*floorLayoutImage,*/ yaMapsSettings }
+    return { flatArea, flatFloor, flatPriceCash, flatRoomTitle, flatPricePerMeter, flatDeadline, floorImage, /*floorLayoutImage,*/ yaMapsSettings }
     
   },
 })

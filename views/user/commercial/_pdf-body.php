@@ -8,32 +8,35 @@ use app\components\offer\SvgImage;
 
 
 $format = \Yii::$app->formatter;
-$title = $flat->roomsTitle . ' №' . $flat->number . ', ' . $format->asArea($flat->area);
 
-$imagePath = isset($path) ? $path : '';
-$floorLayoutPath = isset($floorLayout)
-    ? $floorLayout
-    : (
-    !is_null($flat->floor_layout) && !empty($flat->floor_layout)
-        ? "$imagePath/uploads/{$flat->floor_layout}"
+// $title = $flat->roomsTitle . ' №' . $flat->number . ', ' . $format->asArea($flat->area);
+
+foreach ($flats as $flat) {
+    $flat->imagePath = isset($path) ? $path : '';
+    $flat->floorLayoutPath = isset($floorLayout)
+        ? $floorLayout
         : (
-    !is_null($flat->floorLayout)
-        ? "$imagePath/uploads/{$flat->floorLayout->image}"
-        : ''
-    )
-);
+        !is_null($flat->floor_layout) && !empty($flat->floor_layout)
+            ? "$flat->imagePath/uploads/{$flat->floor_layout}"
+            : (
+        !is_null($flat->floorLayout)
+            ? "$flat->imagePath/uploads/{$flat->floorLayout->image}"
+            : ''
+        )
+    );
+}
 
 if (isset($isView)) {
     if (isset($offer)) {
         $priceCache = $offer->new_price_cash;
         $priceCredit = $offer->new_price_credit;
     } else {
-        // $priceCache = $flat->price_cash;
-        if($flat->hasDiscount()) {
+        $priceCache = $flat->price_cash;
+        /*if($flat->hasDiscount()) {
             $priceCache = $flat->cashPriceWithDiscount; 
         } else {
             $priceCache = $flat->price_cash;
-        }
+        }*/
         $priceCredit = $flat->price_credit;
     }
 
@@ -61,11 +64,12 @@ $this->registerCssFile('/css/offer-print.css', ['media' => 'print']);
 $this->registerCssFile('/css/offer.css', ['media' => 'print']);
 ?>
 
+<?php foreach($flats as $flat): ?>
 <div class="commercial-offer">
     <div class="page">
         <div class="gray-bg">
             <p class="commercial-offer-title">
-                <?= $title ?>
+                <?= $flat->roomsTitle . ' №' . $flat->number . ', ' . $format->asArea($flat->area) ?>
             </p>
             <?php if(!is_null($flat->newbuilding->address) && !empty($flat->newbuilding->address) ||
                     !is_null($flat->newbuildingComplex->address) && !empty($flat->newbuildingComplex->address)): ?>
@@ -232,7 +236,7 @@ $this->registerCssFile('/css/offer.css', ['media' => 'print']);
                             <?php if(SvgDom::isNameSvg($flat->layout)): ?>
                                 <?= SvgImage::get(\Yii::getAlias("@webroot/uploads/{$flat->layout}")) ?>
                             <?php else: ?>
-                                <?= Html::img(["$imagePath/uploads/{$flat->layout}"]) ?>
+                                <?= Html::img(["$flat->imagePath/uploads/{$flat->layout}"]) ?>
                             <?php endif; ?>
                         </p>
                     </div>
@@ -246,7 +250,7 @@ $this->registerCssFile('/css/offer.css', ['media' => 'print']);
                             <?php if(SvgDom::isNameSvg($flat->floorLayout->image)): ?>
                                 <?= SvgImage::get(\Yii::getAlias("@webroot/uploads/{$flat->floorLayout->image}")) ?>
                             <?php else: ?>
-                                <?= Html::img([$floorLayoutPath]) ?>
+                                <?= Html::img([$flat->floorLayoutPath]) ?>
                             <?php endif; ?>
                         </p>
                     </div>
@@ -314,7 +318,7 @@ $this->registerCssFile('/css/offer.css', ['media' => 'print']);
                                 <?php if(SvgDom::isNameSvg($advantage->icon)): ?>
                                     <?= SvgImage::get(\Yii::getAlias("@webroot/uploads/{$advantage->icon}")) ?>
                                 <?php else: ?>
-                                    <?= Html::img("$imagePath/uploads/{$advantage->icon}")?>
+                                    <?= Html::img("$flat->imagePath/uploads/{$advantage->icon}")?>
                                 <?php endif; ?>
                             </span>
                             <?= $advantage->name ?>
@@ -338,7 +342,7 @@ $this->registerCssFile('/css/offer.css', ['media' => 'print']);
 
             <?php if(!is_null($flat->newbuildingComplex->logo)): ?>
                 <div style="margin-top: 15px; margin-bottom: 15px">
-                    <?= Html::img(["$imagePath/uploads/{$flat->newbuildingComplex->logo}"], ['height' => 80]) ?>
+                    <?= Html::img(["$flat->imagePath/uploads/{$flat->newbuildingComplex->logo}"], ['height' => 80]) ?>
                 </div>
             <?php endif ?>
 
@@ -382,7 +386,7 @@ $this->registerCssFile('/css/offer.css', ['media' => 'print']);
                         </div>
                         <div class="image">
                             <?php if(!is_null($furnish->furnishImages) && ($furnishImage = $furnish->furnishImages[0])): ?>
-                                <?= Html::img("$imagePath/uploads/{$furnishImage->image}") ?>
+                                <?= Html::img("$flat->imagePath/uploads/{$furnishImage->image}") ?>
                             <?php endif; ?>
                         </div>
                 </div>
@@ -398,7 +402,7 @@ $this->registerCssFile('/css/offer.css', ['media' => 'print']);
 
                 <?php if(!is_null($flat->developer->logo)): ?>
                     <div style="margin-top: 15px; margin-bottom: 15px">
-                        <?= Html::img(["$imagePath/uploads/{$flat->developer->logo}"], ['height' => 80]) ?>
+                        <?= Html::img(["$flat->imagePath/uploads/{$flat->developer->logo}"], ['height' => 80]) ?>
                     </div>
                 <?php endif ?>
 
@@ -438,3 +442,4 @@ $this->registerCssFile('/css/offer.css', ['media' => 'print']);
             </div>
         </div>
 </div>
+<?php endforeach; ?>

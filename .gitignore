@@ -33,6 +33,7 @@ tests/_support/_generated
 /.vagrant
 
 web/uploads
+web/downloads
 
 # private configs
 /config/db.php

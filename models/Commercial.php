@@ -62,7 +62,7 @@ class Commercial extends ActiveRecord
             [['initiator_id'], 'required'],
             [['initiator_id'], 'integer'],
             [['active', 'is_formed'], 'boolean'],
-            [['settings', 'name'], 'string'],
+            [['settings', 'name', 'number'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['initiator_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['initiator_id' => 'id']],
         ];
@@ -108,6 +108,13 @@ class Commercial extends ActiveRecord
    {
        return $this->hasMany(Flat::className(), ['id' => 'flat_id'])
                ->viaTable('commercial_flat', ['commercial_id' => 'id']);
+   }
+
+   public function getEditableCommercials() {
+        return $this->find()
+            ->where(['initiator_id' => \Yii::$app->user->id, 'active' => 1, 'is_formed' => 0])
+            ->orderBy(['created_at' => SORT_DESC])
+            ->all();
    }
    
 }

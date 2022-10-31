@@ -15,6 +15,7 @@ use yii\filters\VerbFilter;
 use tebe\inertia\web\Controller;
 use yii\helpers\ArrayHelper;
 use kartik\mpdf\Pdf;
+use yii\web\NotFoundHttpException;
 
 class CommercialController extends Controller
 {
@@ -58,7 +59,7 @@ class CommercialController extends Controller
         $flat['newbuilding'] = ArrayHelper::toArray($model->newbuilding);
         $flat['newbuildingComplex'] = ArrayHelper::toArray($model->newbuildingComplex);
 
-        $commercials = '';
+        $commercials = (new Commercial())->editableCommercials;
 
         if (\Yii::$app->request->isPost) {
             
@@ -67,13 +68,22 @@ class CommercialController extends Controller
             $transaction = \Yii::$app->db->beginTransaction();
 
             try {
-                $commercialForm->load(\Yii::$app->request->post(), '');
-                $commercialForm->initiator_id = \Yii::$app->user->id;
-                $commercialForm->active = 1;
-                $commercialForm->is_formed = 0;
-                $commercialForm->number = 'N1';
-                $commercialModel = (new Commercial())->fill($commercialForm->attributes);
-                $commercialModel->save();
+
+                if (\Yii::$app->request->post('mode') === 'new') {
+                    $commertialsAmount = (new Commercial())->find()
+                        ->where(['initiator_id' => \Yii::$app->user->id])
+                        ->count();
+                    $newCommercialNumber = $commertialsAmount + 1;
+                    $commercialForm->load(\Yii::$app->request->post(), '');
+                    $commercialForm->initiator_id = \Yii::$app->user->id;
+                    $commercialForm->active = 1;
+                    $commercialForm->is_formed = 0;
+                    $commercialForm->number = $newCommercialNumber.'-'.\Yii::$app->user->id;
+                    $commercialModel = (new Commercial())->fill($commercialForm->attributes);
+                    $commercialModel->save();
+                } else {
+                    $commercialModel =  $this->findModel(\Yii::$app->request->post('commercialId'));
+                }
 
                 $commercialModel->link('flats', $model);
 
@@ -83,6 +93,7 @@ class CommercialController extends Controller
                 $transaction->rollBack();
                 return $this->redirect(['make', 'flatId' => $flatId, 'res' => 'err']);
             }
+            //echo '<pre>'; var_dump($commercialModel->id); echo '</pre>'; die;
 
             return $this->redirect(['view', 'id' => $commercialModel->id]);
         }
@@ -96,9 +107,11 @@ class CommercialController extends Controller
 
     public function actionIndex()
     {
-        $model = new Commercial();
 
-        $commercials = '';
+        $commercials = (new Commercial())->find()
+            ->where(['initiator_id' => \Yii::$app->user->id])
+            ->orderBy(['created_at' => SORT_DESC])
+            ->all();
 
         return $this->inertia('User/Commercial/Index', [
             'user' => \Yii::$app->user->identity,
@@ -138,9 +151,9 @@ class CommercialController extends Controller
             switch(\Yii::$app->request->post('operation')) {
                 /** Generate PDF-file */
                 case 'pdf':
-                    $this->downloadPdf(82452);
+                    $this->downloadPdf($commercialModel->id);
                     $viewOptions = array_merge($viewOptions, [
-                        'id' => 2,
+                        'id' => $commercialModel->id,
                         'operation' => 'pdf',
                         'status' => 'ok'
                     ]);
@@ -165,17 +178,17 @@ class CommercialController extends Controller
      * @throws NotFoundHttpException
      */
     // public function actionDownloadPdf($flatId)
-    private function downloadPdf($flatId)
+    private function downloadPdf($commercialId)
     {
         error_reporting(0);
         try {
             \Yii::$app->getModule('debug')->instance->allowedIPs = [];
 
-            if (($flat = Flat::findOne($flatId)) === null) {
+            if (($commercial = Commercial::findOne($commercialId)) === null) {
                 throw new NotFoundHttpException('Данные отсутсвуют');
             }
 
-            $pdf = $this->getPdfFile($flat, true);
+            $pdf = $this->getPdfFile($commercial, true);
             //$result = $pdf->render();
         } catch (\Exception $e) {
             echo '<pre>'; var_dump($e); echo '</pre>';
@@ -201,7 +214,7 @@ class CommercialController extends Controller
      * @return Pdf
      * @throws NotFoundHttpException
      */
-    private function getPdfFile($flat, $isReturnFile = false)
+    private function getPdfFile($commercial, $isReturnFile = false)
     {        
         ini_set('pcre.backtrack_limit', 30000000);
         
@@ -228,9 +241,8 @@ class CommercialController extends Controller
             'format' => Pdf::FORMAT_A4,
             'orientation' => Pdf::ORIENT_PORTRAIT,
             'destination' => Pdf::DEST_BROWSER,
-            'content' => $this->renderPartial('pdf', ['flat' => $flat, 'settings' => $settings, 'newPriceCash' => $newPriceCash, 'newPriceCredit' => $newPriceCredit]),
-            'filename' => $this->getOfferName(10) . '.pdf',
-            //'filename' => 'Commercial.pdf',
+        'content' => $this->renderPartial('pdf', ['commercial' => $commercial, 'settings' => $settings]),
+            'filename' => $this->getOfferName($commercial->number) . '.pdf',
             'cssFile' => [
                 '@vendor/kartik-v/yii2-mpdf/src/assets/kv-mpdf-bootstrap.min.css',
                 '@webroot/css/offer.css'
@@ -248,7 +260,7 @@ class CommercialController extends Controller
             return $pdf;
         }*/
         
-        $filename = \Yii::getAlias('@webroot/uploads')."/{$pdf->filename}";
+        $filename = \Yii::getAlias('@webroot/downloads')."/{$pdf->filename}";
         $pdf->Output($pdf->content, $filename, \Mpdf\Output\Destination::FILE);
         
         return $filename;

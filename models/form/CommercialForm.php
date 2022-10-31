@@ -22,7 +22,7 @@ class CommercialForm extends Model
             [['initiator_id'], 'required'],
             [['initiator_id'], 'integer'],
             [['active', 'is_formed'], 'boolean'],
-            [['settings', 'name'], 'string'],
+            [['settings', 'name', 'number'], 'string'],
         ];
     }
 }

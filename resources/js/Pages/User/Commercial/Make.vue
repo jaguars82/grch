@@ -13,7 +13,27 @@
             label="Сформировать новое КП"
             @click="crateNew"
           />
-          <q-btn class="q-ml-md" color="primary" unelevated label="Добавить к существующему КП" />
+          <q-btn
+            v-if="commercials.length > 0"
+            class="q-ml-md"
+            color="primary"
+            unelevated
+            label="Добавить к существующему КП"
+          >
+            <q-menu>
+              <q-list>
+                <q-item
+                  v-for="commercial in commercials"
+                  :key="commercial.id"
+                  clickable
+                  v-ripple
+                  @click="addTo(commercial.id)"
+                >
+                  {{ commercial.id }}
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
         </template>
       </RegularContentContainer>
       <FlatListItem class="q-mt-md q-ml-md" :flat="flat"></FlatListItem>
@@ -39,6 +59,7 @@ export default {
   },
   props: {
     flat: Object,
+    commercials: Object
   }, 
   setup(props) {
 
@@ -51,7 +72,13 @@ export default {
       Inertia.post(`/user/commercial/make?&flatId=${props.flat.id}`, formfields.value)
     }
 
-    return { crateNew }
+    function addTo(commersialId) {
+      formfields.value.mode = 'add'
+      formfields.value.commercialId = commersialId
+      Inertia.post(`/user/commercial/make?&flatId=${props.flat.id}`, formfields.value)
+    }
+
+    return { crateNew, addTo }
 
   },
 }

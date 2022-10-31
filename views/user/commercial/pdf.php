@@ -4,7 +4,8 @@ use yii\helpers\Html;
 $this->title = 'Коммерческое предложение';
 
 $params = [
-    'flat' => $flat, 
+    //'flat' => $flat, 
+    'commercial' => $commercial, 
     'settings' => $settings,
     'path' => \Yii::getAlias('@webroot'),
     //'floorLayout' => $floorLayout,
