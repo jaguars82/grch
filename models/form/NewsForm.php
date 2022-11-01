@@ -25,6 +25,7 @@ class NewsForm extends Model
     public $image;
     public $is_image_reset = 0;
     public $search_link;
+    public $is_archived;
     public $resume;
     public $files = [];
     public $savedFiles = [];
@@ -36,7 +37,7 @@ class NewsForm extends Model
      */
     public function scenarios()
     {
-        $commonFields = ['title', 'detail', 'search_link', 'category', 'developerId', 'newbuildingComplexes', 'is_image_reset'];
+        $commonFields = ['title', 'detail', 'search_link', 'is_archived', 'category', 'developerId', 'newbuildingComplexes', 'is_image_reset'];
         
         return [
             self::SCENARIO_DEFAULT => array_merge($commonFields, ['image', 'files']),
@@ -55,6 +56,7 @@ class NewsForm extends Model
             [['title'], 'string', 'max' => 200],
             [['detail', 'search_link'], 'string'],
             [['files', 'savedFiles', 'newbuildingComplexes', 'search_link'], 'safe'],
+            [['is_archived'], 'boolean'],
             [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, gif, jpeg, svg'],
             [['search_link'], 'default', 'value' => NULL],
         ];
@@ -71,6 +73,7 @@ class NewsForm extends Model
             'category' => 'Категория',
             'image' => 'Изображение',
             'search_link' => 'Cсылки на страницу поиска',
+            'is_archived' => 'В архиве',
             'files' => 'Документ',
             'newbuildingComplexes' => 'Жилой комплекс',
         ];

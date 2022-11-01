@@ -40,7 +40,7 @@ class NewsSearch extends News
      */
     public function search($params)
     {
-        $query = News::find()->with(['newsFiles', 'newbuildingComplexes.developer']);
+        $query = News::find()->where(['is_archived' => 0])->with(['newsFiles', 'newbuildingComplexes.developer']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

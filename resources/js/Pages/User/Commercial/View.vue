@@ -4,7 +4,7 @@
       <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
     </template>
     <template v-slot:main>
-      <RegularContentContainer title="Коммерческое предложение">
+      <RegularContentContainer :title="`Коммерческое предложение №${commercial.number}`">
         <template v-slot:content>
 
           <q-bar class="q-px-none bg-white">
@@ -197,8 +197,9 @@
             </div>
           </template>
 
-          <template v-for="flat in flats">
+          <template v-for="flat in flats" :key="flat.id">
             <FlatCommercialItem class="q-mt-md q-ml-md" :flat="flat" />
+            <AdvantagesBlock :advantages="flat.advantages" />
           </template>
 
         </template>
@@ -214,7 +215,8 @@ import ProfileLayout from '@/Layouts/ProfileLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
 import UserInfoBar from '@/Components/Elements/UserInfoBar.vue'
-import FlatCommercialItem from '../../../Components/Flat/FlatCommercialItem.vue'
+import FlatCommercialItem from '@/Components/Flat/FlatCommercialItem.vue'
+import AdvantagesBlock from '@/Components/Elements/AdvantagesBlock.vue'
 import Loading from '@/Components/Elements/Loading.vue'
 import { asQuarterAndYearDate, asArea } from '@/helpers/formatter'
 
@@ -225,6 +227,7 @@ export default {
     RegularContentContainer,
     UserInfoBar,
     FlatCommercialItem,
+    AdvantagesBlock,
     Loading
   },
   props: {
@@ -235,6 +238,40 @@ export default {
     status: String
   },
   setup(props) {
+      const breadcrumbs = ref([
+      {
+        id: 1,
+        label: 'Главная',
+        icon: 'home',
+        url: '/',
+        data: false,
+        options: false
+      },
+      {
+        id: 2,
+        label: 'Кабинет пользователя',
+        icon: 'business_center',
+        url: '/user/profile',
+        data: false,
+        options: false
+      },
+      {
+        id: 3,
+        label: 'Коммерческие предложения',
+        icon: 'share',
+        url: '/user/commercial/index',
+        data: false,
+        options: false
+      },
+      {
+        id: 4,
+        label: `№ ${props.commercial.number}`,
+        icon: 'description',
+        url: '/user/commercial/index',
+        data: {id: props.commercial.id},
+        options: false
+      },
+    ])
 
     const PDFloading = ref(false)
     // const PDFReady = ref(false)
@@ -282,6 +319,7 @@ export default {
     }
 
     return { 
+      breadcrumbs,
       asQuarterAndYearDate,
       asArea,
       flatsForCompare,

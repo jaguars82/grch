@@ -512,7 +512,8 @@ class NewbuildingComplex extends ActiveRecord
     public function getNews()
     {
         return $this->hasMany(News::className(), ['id' => 'news_id'])
-                ->viaTable('news_newbuilding_complex', ['newbuilding_complex_id' => 'id']);
+                ->viaTable('news_newbuilding_complex', ['newbuilding_complex_id' => 'id'])
+                ->onlyActual();
     }
 
     /**

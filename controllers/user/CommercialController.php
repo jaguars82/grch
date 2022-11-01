@@ -134,7 +134,9 @@ class CommercialController extends Controller
             $flatItem['floorLayoutImage'] = !is_null($flat->floorLayoutSvg) ? $flat->floorLayoutSvg : NULL;
             $flatItem['developer'] = ArrayHelper::toArray($flat->developer);
             $flatItem['newbuildingComplex'] = ArrayHelper::toArray($flat->newbuilding->newbuildingComplex);
+            $flatItem['newbuildingComplex']['address'] = $flat->newbuilding->newbuildingComplex->address;
             $flatItem['newbuilding'] = ArrayHelper::toArray($flat->newbuilding);
+            $flatItem['advantages'] = ArrayHelper::toArray($flat->newbuilding->newbuildingComplex->advantages);
             array_push($flatsArray, $flatItem);
         }
 

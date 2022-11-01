@@ -242,9 +242,10 @@ class Developer extends \yii\db\ActiveRecord
     public function getNews()
     {
         return News::find()
+                ->where(['is_archived' => 0])
                 ->join('INNER JOIN', 'news_newbuilding_complex', 'news.id = news_newbuilding_complex.news_id')
                 ->join('INNER JOIN', 'newbuilding_complex', 'newbuilding_complex.id = news_newbuilding_complex.newbuilding_complex_id')
-                ->where(['developer_id' => $this->id])
+                ->andWhere(['developer_id' => $this->id])
                 ->groupBy('news.id');
     } 
     

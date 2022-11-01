@@ -90,10 +90,10 @@ class SiteController extends Controller
         $searchModel = new AdvancedFlatSearch();
         $searchModel->scenario = AdvancedFlatSearch::SCENARIO_SIMPLE;
 
-        $newsList = (new News())->find()->all();
+        $newsList = (new News())->find()->onlyActual()->orderBy(['created_at' => SORT_DESC])->all();
 
         $newsDataProvider = new ActiveDataProvider([
-            'query' => News::find()->onlyNews()->limit(4),
+            'query' => News::find()->onlyNews()->onlyActual()->limit(4),
             'pagination' => false,
             'sort' => [
                 'attributes' => ['created_at'],
@@ -102,7 +102,7 @@ class SiteController extends Controller
         ]);
 
         $actionsDataProvider = new ActiveDataProvider([
-            'query' => News::find()->onlyActions()->limit(2),
+            'query' => News::find()->onlyActions()->onlyActual()->limit(2),
             'pagination' => false,
             'sort' => [
                 'attributes' => ['created_at'],
@@ -173,7 +173,7 @@ class SiteController extends Controller
         //echo '<pre>'; var_dump($queryParams); echo '</pre>'; die(); 
 
         $newsDataProvider = new ActiveDataProvider([
-            'query' => News::find()->limit(3),
+            'query' => News::find()->onlyActual()->limit(3),
             'pagination' => false,
             'sort' => [
                 'attributes' => ['created_at'],
