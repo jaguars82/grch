@@ -57,6 +57,11 @@ class ShareController extends Controller
             $flatItem['developer'] = ArrayHelper::toArray($flat->developer);
             $flatItem['newbuildingComplex'] = ArrayHelper::toArray($flat->newbuilding->newbuildingComplex);
             $flatItem['newbuildingComplex']['address'] = $flat->newbuilding->newbuildingComplex->address;
+            foreach ($flat->furnishes as $key => $furnish) {
+                $finishing = ArrayHelper::toArray($furnish);
+                $finishing['furnishImages'] = $furnish->furnishImages;
+                $flatItem['finishing'][] = ArrayHelper::toArray($finishing);
+            } 
             $flatItem['newbuilding'] = ArrayHelper::toArray($flat->newbuilding);
             $flatItem['advantages'] = ArrayHelper::toArray($flat->newbuilding->newbuildingComplex->advantages);
             array_push($flatsArray, $flatItem);

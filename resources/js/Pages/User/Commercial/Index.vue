@@ -21,6 +21,11 @@
                 <q-td key="created_at" :props="props">
                   {{ props.row.created_at }}
                 </q-td>
+                <q-td key="flats" :props="props" class="text-left">
+                  <div v-for="flat in props.row.flats" :key="flat.id">
+                    {{ flat.newbuildingComplex.name }} > {{ flat.newbuilding.name }} > №{{ flat.number }}
+                  </div>
+                </q-td>
                 <q-td key="link" :props="props">
                   <inertia-link :href="props.row.link">
                     Открыть
@@ -83,6 +88,7 @@ export default {
     const columns = [
       { name: 'number', align: 'left', label: 'Номер', field: 'number', sortable: true },
       { name: 'created_at', required: true, align: 'center', label: 'От', field: 'created_at', sortable: true },
+      { name: 'flats', required: true, align: 'center', label: 'Объекты', field: 'flats', sortable: false },
       { name: 'link', align: 'center', label: '', field: 'link', sortable: false },
     ]
 
@@ -93,6 +99,7 @@ export default {
           id: row.id,
           number: row.number,
           created_at: asDateTime(row.created_at),
+          flats: row.flats,
           link: `/user/commercial/view?id=${row.id}`
         }
         processedRows.push(processedItem)

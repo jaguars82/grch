@@ -16,7 +16,7 @@
                     <q-item-section avatar>
                       <q-icon name="link"/>
                     </q-item-section>
-                    <q-item-section>
+                    <q-item-section @click="shareDialogs.copyLink = true">
                       Ссылка
                     </q-item-section>
                   </q-item>
@@ -24,7 +24,7 @@
                     <q-item-section avatar>
                       <q-icon name="mail"/>
                     </q-item-section>
-                    <q-item-section>
+                    <q-item-section @click="shareDialogs.sendEmail = true">
                       Электронная почта
                     </q-item-section>
                   </q-item>
@@ -41,7 +41,7 @@
                       <q-icon name="send"/>
                     </q-item-section>
                     <q-item-section>
-                      <a target="_blank" class="undecorated" href="https://telegram.me/share/url?url=https://grch.ru&text=Коммерческое предложение">Telegram</a>
+                      <a target="_blank" class="undecorated" :href="`https://telegram.me/share/url?url=https://grch.ru/share/commercial?id=${commercial.id}&text=Коммерческое предложение №${commercial.number}`">Telegram</a>
                     </q-item-section>
                   </q-item>
                   <q-item clickable v-ripple>
@@ -49,7 +49,7 @@
                       <q-icon name="phone"/>
                     </q-item-section>
                     <q-item-section>
-                      <a target="_blank" class="undecorated" href="https://api.whatsapp.com/send/?url=grch.ru&text=Коммерческое предложение: https://grch.ru">WhatsApp</a>
+                      <a target="_blank" class="undecorated" :href="`https://api.whatsapp.com/send/?text=Коммерческое предложение №${commercial.number}: https://grch.ru/share/commercial?id=${commercial.id}`">WhatsApp</a>
                     </q-item-section>
                   </q-item>
                 </q-list>
@@ -131,6 +131,43 @@
               </q-menu>
             </q-btn>
           </q-bar>
+
+          <q-dialog v-model="shareDialogs.copyLink" persistent>
+            <q-card>
+              <q-card-section class="row items-center">
+                <div class="col-2">
+                  <q-avatar icon="link" color="primary" text-color="white" />
+                </div>
+                <div class="col-10 q-px-md">
+                  <p class="q-mb-sm">Ссылка на КП:</p>
+                  <a target="_blank" :href="`https://grch.ru/share/commercial?id=${commercial.id}`">https://grch.ru/share/commercial?id={{ commercial.id }}</a>
+                </div>
+              </q-card-section>
+
+              <q-card-actions align="right">
+                <q-btn flat label="Закрыть" color="primary" v-close-popup />
+                <!--<q-btn flat label="Скопировать в буфер" color="primary" v-close-popup />-->
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
+
+          <q-dialog v-model="shareDialogs.sendEmail" persistent>
+            <q-card style="min-width: 350px">
+              <q-card-section>
+                <div class="text-h6">Электронная почта получателя</div>
+              </q-card-section>
+
+              <q-card-section class="q-pt-none">
+                <q-input dense v-model="address" autofocus @keyup.enter="prompt = false" />
+              </q-card-section>
+
+              <q-card-actions align="right" class="text-primary">
+                <q-btn flat label="Отмена" v-close-popup />
+                <q-btn flat label="Отправить" v-close-popup />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
+
           <q-card flat bordered class="q-mt-sm">
             <q-card-section>
               <Loading v-if="PDFloading" size="md" text="Идёт подготовка PDF-файла" />
@@ -154,52 +191,16 @@
             </q-card-section>
           </q-card>
 
-          <template v-if="commercialSettings.compareTable && flats.length > 1">
-            <div class="compare-table" v-for="(tablePage, i) of flatsForCompare" :key="i">
-              <div class="compare-table-titlecolumn">
-                <div class="compare-table-rowname layuot">Планировка</div>
-                <div class="compare-table-rowname price">Цена</div>
-                <div class="compare-table-rowname area">Площадь</div>
-                <div class="compare-table-rowname type">Тип</div>
-                <div class="compare-table-rowname floor">Этаж</div>
-                <div class="compare-table-rowname deadline">Срок сдачи</div>
-                <div class="compare-table-rowname developer">Застройщик</div>
-                <div class="compare-table-rowname nbc">ЖК</div>
-              </div>
-              <div class="compare-table-column" v-for="flat in tablePage" :key="flat.id">
-                <div class="compare-table-cell layout">
-                  <img class="compare-table-layout" v-if="flat.layout" :src="`/uploads/${flat.layout}`" />
-                </div>
-                <div class="compare-table-cell price"><strong>{{ flat.price_cash }} ₽</strong></div>
-                <div class="compare-table-cell area">{{ asArea(flat.area) }}</div>
-                <div class="compare-table-cell type">
-                  <span>{{ flat.rooms }}</span>
-                  <span v-if="flat.rooms > 0 && flat.rooms < 2">-но</span>
-                  <span v-else-if="flat.rooms >= 2 && flat.rooms < 5">-х</span>
-                  <span v-else>-и</span>
-                  <span> комнатная</span>
-                  <span v-if="flat.is_studio"> студия</span>
-                  <span v-else> квартира</span>
-                </div>
-                <div class="compare-table-cell floor">{{ flat.floor }}</div>
-                <div class="compare-table-cell deadline">
-                  <span v-if="flat.newbuilding.deadline">
-                    <span v-if="new Date() > new Date(flat.newbuilding.deadline)">позиция сдана</span>
-                    <span v-else>{{ asQuarterAndYearDate(flat.newbuilding.deadline) }}</span>
-                  </span>
-                  <span v-else>нет данных</span>
-                </div>
-                <div class="compare-table-cell developer">
-                  {{ flat.developer.name }}
-                </div>
-                <div class="compare-table-cell nbc">{{ flat.newbuildingComplex.name }}</div>
-              </div>
-            </div>
-          </template>
+          <CompareTableFlats v-if="commercialSettings.compareTable && flats.length > 1" :flats="flats" />
 
           <template v-for="flat in flats" :key="flat.id">
             <FlatCommercialItem class="q-mt-md q-ml-md" :flat="flat" />
             <AdvantagesBlock :advantages="flat.advantages" />
+            <NewbuildingComplexCard v-if="commercialSettings.newbuildingComplex" :newbuildingComplex="flat.newbuildingComplex" :developer="flat.developer" />
+            <DeveloperCard v-if="commercialSettings.developer" :developer="flat.developer" />
+            <template v-if="commercialSettings.finishing">
+              <FinishingCard v-for="finishing of flat.finishing" :key="finishing.id" :finishing="finishing" />
+            </template>
           </template>
 
         </template>
@@ -215,10 +216,13 @@ import ProfileLayout from '@/Layouts/ProfileLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
 import UserInfoBar from '@/Components/Elements/UserInfoBar.vue'
+import CompareTableFlats from '@/Components/CompareTableFlats.vue'
 import FlatCommercialItem from '@/Components/Flat/FlatCommercialItem.vue'
+import NewbuildingComplexCard from '@/Components/NewbuildingComplex/NewbuildingComplexCard.vue'
+import DeveloperCard from '@/Components/Developer/DeveloperCard.vue'
+import FinishingCard from '@/Components/FinishingCard.vue'
 import AdvantagesBlock from '@/Components/Elements/AdvantagesBlock.vue'
 import Loading from '@/Components/Elements/Loading.vue'
-import { asQuarterAndYearDate, asArea } from '@/helpers/formatter'
 
 export default {
   components: {
@@ -226,7 +230,11 @@ export default {
     Breadcrumbs,
     RegularContentContainer,
     UserInfoBar,
+    CompareTableFlats,
     FlatCommercialItem,
+    NewbuildingComplexCard,
+    DeveloperCard,
+    FinishingCard,
     AdvantagesBlock,
     Loading
   },
@@ -281,14 +289,9 @@ export default {
       formfields.value = {}
     }
 
-    const flatsForCompare = computed(() => {
-      const chunkedArray = []
-      const chunkSize = 5
-      for (let i = 0; i < props.flats.length; i += chunkSize) {
-        const chunk = props.flats.slice(i, i + chunkSize);
-        chunkedArray.push(chunk)
-      }
-      return chunkedArray
+    const shareDialogs = ref({
+      copyLink: false,
+      sendEmail: false,
     })
 
     const commercialSettings = props.commercial.settings ? ref(JSON.parse(props.commercial.settings)) : ref({ compareTable:  true, initiator: true, developer: false, newbuildingComplex: false, finishing: false })
@@ -320,9 +323,7 @@ export default {
 
     return { 
       breadcrumbs,
-      asQuarterAndYearDate,
-      asArea,
-      flatsForCompare,
+      shareDialogs,
       commercialSettings,
       PDFloading,
       pdfLink,
@@ -337,63 +338,6 @@ export default {
 </script>
 
 <style scoped>
-.compare-table {
-  display: flex;
-}
-
-.compare-table-titlecolumn, .compare-table-column {
-  display: flex;
-  flex-direction: column;
-}
-
-.compare-table-rowname, .compare-table-cell {
-  display: flex;
-  align-items: center;
-  border: solid thin #555;
-  padding: 5px 15px;
-}
-
-.compare-table-cell {
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.compare-table-rowname.layuot, .compare-table-cell.layout {
-  height: 160px;
-  max-height: 160px;
-}
-
-.compare-table-rowname.price,
-.compare-table-cell.price,
-.compare-table-rowname.area,
-.compare-table-cell.area {
-  height: 35px;
-  max-height: 35px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.compare-table-rowname.type,
-.compare-table-cell.type,
-.compare-table-rowname.deadline,
-.compare-table-cell.deadline,
-.compare-table-rowname.nbc,
-.compare-table-cell.nbc {
-  height: 54px;
-  max-height: 54px;
-}
-
-.compare-table-rowname {
-  font-weight: 600;
-}
-
-.compare-table-layout {
-  height: 150px;
-  max-height: 150px;
-  max-width: 100%;
-}
-
 a.undecorated {
   color: inherit;
   text-decoration: none;

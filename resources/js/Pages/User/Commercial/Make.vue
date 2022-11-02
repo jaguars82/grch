@@ -29,7 +29,7 @@
                   v-ripple
                   @click="addTo(commercial.id)"
                 >
-                  {{ commercial.id }}
+                  <strong>{{ commercial.number }}</strong> от {{ asDateTime(commercial.created_at) }}
                 </q-item>
               </q-list>
             </q-menu>
@@ -78,7 +78,7 @@ export default {
       Inertia.post(`/user/commercial/make?&flatId=${props.flat.id}`, formfields.value)
     }
 
-    return { crateNew, addTo }
+    return { crateNew, addTo, asDateTime }
 
   },
 }

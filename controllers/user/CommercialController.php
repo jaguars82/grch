@@ -93,7 +93,6 @@ class CommercialController extends Controller
                 $transaction->rollBack();
                 return $this->redirect(['make', 'flatId' => $flatId, 'res' => 'err']);
             }
-            //echo '<pre>'; var_dump($commercialModel->id); echo '</pre>'; die;
 
             return $this->redirect(['view', 'id' => $commercialModel->id]);
         }
@@ -113,9 +112,23 @@ class CommercialController extends Controller
             ->orderBy(['created_at' => SORT_DESC])
             ->all();
 
+        $commercialsArray = array();
+        foreach ($commercials as $commercial) {
+            $commercialItem = ArrayHelper::toArray($commercial);
+            $flatsArray = array();
+            foreach ($commercial->flats as $flat) {
+                $flatItem = ArrayHelper::toArray($flat);
+                $flatItem['newbuildingComplex'] = ArrayHelper::toArray($flat->newbuilding->newbuildingComplex);
+                $flatItem['newbuilding'] = ArrayHelper::toArray($flat->newbuilding);
+                array_push($flatsArray, $flatItem);
+            }
+            $commercialItem['flats'] = $flatsArray;
+            array_push($commercialsArray, $commercialItem);
+        }
+
         return $this->inertia('User/Commercial/Index', [
             'user' => \Yii::$app->user->identity,
-            'commercials' => ArrayHelper::toArray($commercials),
+            'commercials' => $commercialsArray,
         ]);
     }
 
@@ -135,6 +148,11 @@ class CommercialController extends Controller
             $flatItem['developer'] = ArrayHelper::toArray($flat->developer);
             $flatItem['newbuildingComplex'] = ArrayHelper::toArray($flat->newbuilding->newbuildingComplex);
             $flatItem['newbuildingComplex']['address'] = $flat->newbuilding->newbuildingComplex->address;
+            foreach ($flat->furnishes as $key => $furnish) {
+                $finishing = ArrayHelper::toArray($furnish);
+                $finishing['furnishImages'] = $furnish->furnishImages;
+                $flatItem['finishing'][] = ArrayHelper::toArray($finishing);
+            }
             $flatItem['newbuilding'] = ArrayHelper::toArray($flat->newbuilding);
             $flatItem['advantages'] = ArrayHelper::toArray($flat->newbuilding->newbuildingComplex->advantages);
             array_push($flatsArray, $flatItem);
