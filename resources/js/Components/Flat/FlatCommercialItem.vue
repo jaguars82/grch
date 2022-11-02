@@ -1,5 +1,6 @@
 <template>
   <q-card class="no-shadow">
+
     <q-card-section>
       <p class="text-h4 q-mb-xs"><span class="text-capitalize">{{ flatRoomTitle }}</span> квартира № {{ flat.number }}, {{ flatArea }}</p>
       <p>{{ flat.newbuildingComplex.name }} > {{ flat.newbuilding.name }} > {{ flatFloor }}, сдача: {{ flatDeadline }}</p>
@@ -8,11 +9,16 @@
     </q-card-section>
 
     <q-card-section class="q-px-md q-py-xs">
-      <img ref="floorImage" v-if="flat.layout"
-        :src="`/uploads/${flat.layout}`"
-      />
-      <div class="no-pointer-events" v-if="flat.floorLayoutImage" v-html="flat.floorLayoutImage"></div>
-      <!--<img :src="floorLayoutImage" />-->
+      <div class="row">
+        <div :class="{'col-6': viewOptions.groupLayouts === true, 'col-12': viewOptions.groupLayouts === false}">
+          <img ref="floorImage" v-if="flat.layout"
+            :src="`/uploads/${flat.layout}`"
+          />
+        </div>
+        <div :class="{'col-6': viewOptions.groupLayouts === true, 'col-12': viewOptions.groupLayouts === false}">
+          <div class="no-pointer-events" v-if="flat.floorLayoutImage" v-html="flat.floorLayoutImage"></div>
+        </div>
+      </div>
     </q-card-section>
 
     <q-card-section v-if="flat.newbuildingComplex.longitude && flat.newbuildingComplex.latitude">
@@ -47,7 +53,8 @@ import { yandexMap, ymapMarker } from 'vue-yandex-maps'
 
 export default ({
   props: {
-    flat: Object
+    flat: Object,
+    viewOptions: Object
   },
   components: {
     yandexMap,
@@ -55,17 +62,25 @@ export default ({
   },
   setup(props) {
 
+    const viewOptions = computed(()=>{
+      const options = props.configuration
+        ? props.configuration
+        : {
+          groupLayouts: false
+        }
+      return options
+    })
+
     const flatRoomTitle = computed(() => `${asNumberString(props.flat.rooms)}комнатная`)
     const flatFloor = computed(()=> asFloor(props.flat.floor, props.flat.newbuilding.total_floor))
     const flatArea = computed(() => asArea(props.flat.area))
     const flatPriceCash = computed(() => asCurrency(props.flat.price_cash))
     const flatPricePerMeter = computed(() => asPricePerArea(props.flat.price_cash / props.flat.area))
     const flatDeadline = computed(() => !props.flat.newbuilding.deadline ? 'нет данных' : new Date() > new Date(props.flat.newbuilding.deadline) ? 'позиция сдана' : asQuarterAndYearDate(props.flat.newbuilding.deadline))
-    //const floorLayoutImage = computed( () => props.flat.floorLayoutImage ? svg64(props.flat.floorLayoutImage) : false )
-    //const floorLayoutImage = computed( () => props.flat.floorLayoutImage ? "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(props.flat.floorLayoutImage))) : false )
 
     const floorImage = ref(null)
-    return { flatArea, flatFloor, flatPriceCash, flatRoomTitle, flatPricePerMeter, flatDeadline, floorImage, /*floorLayoutImage,*/ yaMapsSettings }
+
+    return { viewOptions, flatArea, flatFloor, flatPriceCash, flatRoomTitle, flatPricePerMeter, flatDeadline, floorImage, /*floorLayoutImage,*/ yaMapsSettings }
     
   },
 })

@@ -74,6 +74,34 @@
 
                   <q-item tag="label" v-ripple>
                     <q-item-section side top>
+                      <q-checkbox v-model="commercialSettings.compareTable" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>Сгруппировать планировки</q-item-label>
+                      <q-item-label caption>
+                        Настроить перечень и расположение планировок
+                      </q-item-label>
+                    </q-item-section>
+                    <q-item-section>
+                      <q-btn icon="dashboard_customize">
+                        <q-menu>
+                          <q-list>
+                            <q-item>
+                              <q-item-section>
+                                <q-checkbox v-model="commercialSettings.layouts.flat" />
+                              </q-item-section>
+                              <q-item-section>
+                                <q-item-label>План квартиры</q-item-label>
+                              </q-item-section>
+                            </q-item>
+                          </q-list>
+                        </q-menu>
+                      </q-btn>
+                    </q-item-section>
+                  </q-item>
+
+                  <q-item tag="label" v-ripple>
+                    <q-item-section side top>
                       <q-checkbox v-model="commercialSettings.initiator" />
                     </q-item-section>
                     <q-item-section>
@@ -294,7 +322,7 @@ export default {
       sendEmail: false,
     })
 
-    const commercialSettings = props.commercial.settings ? ref(JSON.parse(props.commercial.settings)) : ref({ compareTable:  true, initiator: true, developer: false, newbuildingComplex: false, finishing: false })
+    const commercialSettings = props.commercial.settings ? ref(JSON.parse(props.commercial.settings)) : ref({ compareTable:  true, initiator: true, developer: false, newbuildingComplex: false, finishing: false, layouts: { group: true, flat: true } })
 
     const pdfContent = ref(null)
     const pdfLink = ref(null)
