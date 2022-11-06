@@ -19,7 +19,7 @@ class m221018_161442_create_commercial_table extends Migration
             'name'=> $this->string()->append('CHARACTER SET utf8 COLLATE utf8_general_ci NULL'),
             'active'=> $this->integer(1)->defaultValue(1), 
             'is_formed'=> $this->integer(1)->defaultValue(0), 
-            'settings'=> $this->string()->defaultValue(null),
+            'settings'=> $this->string(1000)->defaultValue(null),
             'created_at'=>  $this->timestamp()->defaultValue(null), 
             'updated_at'=>  $this->timestamp()->defaultValue(null),
            

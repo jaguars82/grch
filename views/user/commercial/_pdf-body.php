@@ -11,7 +11,7 @@ $format = \Yii::$app->formatter;
 
 // $title = $flat->roomsTitle . ' №' . $flat->number . ', ' . $format->asArea($flat->area);
 
-foreach ($flats as $flat) {
+/*foreach ($flats as $flat) {
     $flat->imagePath = isset($path) ? $path : '';
     $flat->floorLayoutPath = isset($floorLayout)
         ? $floorLayout
@@ -24,7 +24,7 @@ foreach ($flats as $flat) {
             : ''
         )
     );
-}
+}*/
 
 if (isset($isView)) {
     if (isset($offer)) {
@@ -49,7 +49,7 @@ if (isset($isView)) {
     }
 }
 
-if (isset($flat)) {
+/*if (isset($flat)) {
     // $priceCachePrint = $flat->price_cash;
     if($flat->hasDiscount()) {
         $priceCachePrint = $flat->cashPriceWithDiscount; 
@@ -57,41 +57,121 @@ if (isset($flat)) {
         $priceCachePrint = $flat->price_cash;
     }
     $priceCreditPrint = $flat->price_credit;
-}
+}*/
 
 OfferMakeAsset::register($this);
 $this->registerCssFile('/css/offer-print.css', ['media' => 'print']);
 $this->registerCssFile('/css/offer.css', ['media' => 'print']);
+
+$settings = json_decode($settings);
+
+if(count($flats) > 1) {
+    $commercialMode = 'multiple';
+    $chunkedFlats = array_chunk($flats, 5);
+}
+
 ?>
+
+<div class="gray-bg">
+    <p class="commercial-offer-title">
+        Коммерческое предложение № <?= $commercial->number ?>
+    </p>
+</div>
+
+<?php if(isset($commercialMode) && $commercialMode === 'multiple' && $settings->compareTable === true): ?>
+
+    <table class="compare-table">
+        <colgroup>
+            <col span="1" style="width: 150px;">
+            <col span="1">
+            <col span="1">
+            <col span="1">
+            <col span="1">
+            <col span="1">
+            <col span="1">
+            <col span="1">
+        </colgroup>
+        <tbody>
+            <tr>
+                <td class="compare-table-rowtitle">Планировка</td>
+                <td class="compare-table-rowtitle">Цена</td>
+                <td class="compare-table-rowtitle">Площадь</td>
+                <td class="compare-table-rowtitle">Тип</td>
+                <td class="compare-table-rowtitle">Этаж</td>
+                <td class="compare-table-rowtitle">Сдача</td>
+                <td class="compare-table-rowtitle">Застройщик</td>
+                <td class="compare-table-rowtitle">ЖК</td>
+            </tr>
+            <?php foreach ($flats as $flat): ?>
+                <tr class="compare-table-row">
+                    <td class="compare-table-cell layout">
+                    <?php if($flat->layout): ?>
+                        <img class="compare-table-layout" src="/uploads/<?= $flat->layout ?>" />
+                    <?php endif; ?>
+                    </td>
+                    <td class="compare-table-cell"><strong><?= $format->asCurrency($flat->price_cash) ?></strong></td>
+                    <td class="compare-table-cell"><?= $format->asArea($flat->area) ?></td>
+                    <td class="compare-table-cell">
+                        <span><?= $flat->rooms ?></span>
+                        <?php if($flat->rooms > 0 && $flat->rooms < 2): ?>
+                        <span>-но</span>
+                        <?php elseif($flat->rooms >= 2 && $flat->rooms < 5): ?>
+                        <span>-х</span>
+                        <?php else: ?>
+                        <span>-и</span>
+                        <?php endif; ?>
+                        <span> комнатная</span>
+                        <?php if($flat->is_studio): ?>
+                        <span> студия</span>
+                        <?php else: ?>
+                        <span> квартира</span>
+                        <?php endif; ?>
+                    </td>
+                    <td class="compare-table-cell"><?= $flat->floor ?></td>
+                    <td class="compare-table-cell">
+                        <?php if ($flat->newbuilding->deadline): ?>
+                            <?php if (strtotime(date("Y-m-d")) > strtotime($flat->newbuilding->deadline)): ?>
+                            позиция сдана
+                            <?php else: ?>
+                                <?= $format->asQuarterAndYearDate($flat->newbuilding->deadline) ?>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <span>нет данных</span>
+                        <?php endif; ?>
+                    </td>
+                    <td class="compare-table-cell"><?php $flat->developer->name ?></td>
+                    <td class="compare-table-cell"><?= $flat->newbuildingComplex->name ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+
+<?php endif; ?>
 
 <?php foreach($flats as $flat): ?>
 <div class="commercial-offer">
     <div class="page">
-        <div class="gray-bg">
-            <p class="commercial-offer-title">
-                <?= $flat->roomsTitle . ' №' . $flat->number . ', ' . $format->asArea($flat->area) ?>
-            </p>
-            <?php if(!is_null($flat->newbuilding->address) && !empty($flat->newbuilding->address) ||
-                    !is_null($flat->newbuildingComplex->address) && !empty($flat->newbuildingComplex->address)): ?>
-                <p class="commercial-offer-address">
-                    <?= !empty($flat->newbuilding->address) ? $flat->newbuilding->address : $flat->newbuildingComplex->address ?>
-                </p>
-            <?php endif ?>
-        </div>
 
         <?php if(!\Yii::$app->user->isGuest): ?>
         <div class="white-bg">
-            <div class="flex-row">
-                <div class="person">
-                    <div class="image">
-                        <?php if(!is_null($user->photo)): ?>
-                            <?= Html::img(\Yii::getAlias("@web/uploads/{$user->photo}")) ?>
-                        <?php else: ?>
-                            <?= Html::img(\Yii::getAlias("@web/img/blank-person.png")); ?>
-                        <?php endif; ?>
-                    </div>
-                    <div class="content">
-                        <div class="flex-row">
+            <table class="contact-table" style="width: 100%;">
+                <tr>
+                    <td style="width: 100px;">
+                        <div class="agency-image">
+                            <?php if(
+                                !is_null($user->agency)
+                                && !is_null($user->agency->logo)
+                            ): ?>
+                                <img src="@web/uploads/<?= $user->agency->logo ?>" style="width: 100px; max-width: 100px;" />
+                                <!--<?= Html::img(Yii::getAlias("/uploads/{$user->agency->logo}")) ?>-->
+                            <?php else: ?>
+                                <!--<?= Html::img(Yii::getAlias("@web/img/office.png")) ?>-->
+                                <img src="/img/office.png" style="width: 100px; max-width: 100px;" />
+                            <?php endif ?>
+                        </div>
+                    </td>
+                    <td style="text-align: right;">
+                        <div style="width: 100%; text-align: right;">
                             <?php if(!is_null($user->roleLabel)): ?>
                             <b>
                                 <?= $user->roleLabel ?>
@@ -102,37 +182,74 @@ $this->registerCssFile('/css/offer.css', ['media' => 'print']);
                             </span>
                         </div>
                         <?php if(!is_null($user->phone)): ?>
+                        <div style="width: 100%; text-align: right;">
                         <a href="tel:<?= $user->phone ?>" class="phone">
                             <span class="icon">
                                 <?= Html::img(Yii::getAlias('@web/img/icons/phone.png'));?>
                             </span>
                             <?= $user->phone ?>
                         </a>
+                        </div>
                         <?php endif; ?>
                         <?php if(!is_null($user->email)): ?>
+                        <div style="width: 100%; text-align: right;">
                         <a href="mailto:<?= $user->email ?>" class="email">
                             <span class="icon">
                                 <?= Html::img(Yii::getAlias('@web/img/icons/mail.png'));?>
                             </span>
                             <?= $user->email ?>
                         </a>
+                        </div>
                         <?php endif; ?>
-                    </div>
-                </div>
-                <div class="agency-image">
-                    <?php if(
-                        !is_null($user->agency)
-                        && !is_null($user->agency->logo)
-                    ): ?>
-                        <?= Html::img(Yii::getAlias("@web/uploads/{$user->agency->logo}")) ?>
-                    <?php else: ?>
-                        <?= Html::img(Yii::getAlias("@web/img/office.png")) ?>
-                    <?php endif ?>
-                </div>
-            </div>
+                    </td>
+                    <td style="width: 100px;">
+                        <?php if(!is_null($user->photo)): ?>
+                            <img src="/uploads/<?= $user->photo ?>" style="width: 100px; height: 100px; border-radius: 50px;" />
+                            <!--<?= Html::img(\Yii::getAlias("@web/uploads/{$user->photo}")) ?>-->
+                        <?php else: ?>
+                            <img src="/img/blank-person.png" style="width: 100px; height: 100px; border-radius: 50px;" />
+                            <!--<?= Html::img(\Yii::getAlias("@web/img/blank-person.png")); ?>-->
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            </table>
         </div>
         <?php endif;?>
 
+        <div class="gray-bg">
+            <p class="commercial-offer-title">
+                <?= $flat->roomsTitle . ' №' . $flat->number . ', ' . $format->asArea($flat->area) ?>
+            </p>
+            <!--<?php if(!is_null($flat->newbuilding->address) && !empty($flat->newbuilding->address) ||
+                    !is_null($flat->newbuildingComplex->address) && !empty($flat->newbuildingComplex->address)): ?>
+                <p class="commercial-offer-address">
+                    <?= !empty($flat->newbuilding->address) ? $flat->newbuilding->address : $flat->newbuildingComplex->address ?>
+                </p>
+                <p></p>
+            <?php endif ?>-->
+                <?= $flat->newbuilding->newbuildingComplex->name.' > '.$flat->newbuilding->name. ' > '.$flat->floor.'-й этаж' ?>
+                <?php if (!empty($flat->newbuilding->total_floor)): ?>
+                    <?= ' (из '.$flat->newbuilding->total_floor.')' ?>
+                <?php endif; ?>
+                    сдача 
+                <?php if (strtotime(date("Y-m-d")) > strtotime($flat->newbuilding->deadline)): ?>
+                    позиция сдана
+                <?php else: ?>
+                    <?= $format->asQuarterAndYearDate($flat->newbuilding->deadline) ?>
+                <?php endif; ?>
+            </p>
+        </div>
+
+        <div class="white-bg">
+            <p style="font-size: 36px; fon-weight: 600; color: #5197f7; margin-bottom: 5px;">
+                <?= $format->asCurrency($flat->price_cash) ?>
+            </p>
+            <p>
+                <b><?= $format->asPricePerArea($flat->pricePerArea) ?></b>
+            </p>
+        </div>
+
+        <!--
         <div class="gray-bg">
             <div class="row info">
                 <div class="col-xs-6">
@@ -223,6 +340,7 @@ $this->registerCssFile('/css/offer.css', ['media' => 'print']);
                 </div>
             </div>
         </div>
+        -->
 
         <?php if(!is_null($flat->layout) || !is_null($flat->floorLayout)): ?>
         <div class="white-bg">
@@ -234,9 +352,9 @@ $this->registerCssFile('/css/offer.css', ['media' => 'print']);
                         </p>
                         <p class="center layout-img">
                             <?php if(SvgDom::isNameSvg($flat->layout)): ?>
-                                <?= SvgImage::get(\Yii::getAlias("@webroot/uploads/{$flat->layout}")) ?>
+                                <img src="/uploads/<?= $flat->layout ?>" style="height: 200px; max-height: 200px;" />
                             <?php else: ?>
-                                <?= Html::img(["$flat->imagePath/uploads/{$flat->layout}"]) ?>
+                                <img src="/uploads/<?= $flat->layout ?>" style="height: 200px; max-height: 200px;" />
                             <?php endif; ?>
                         </p>
                     </div>
@@ -259,45 +377,37 @@ $this->registerCssFile('/css/offer.css', ['media' => 'print']);
         </div>
         <?php endif; ?>
 
-        <div class="gray-bg">
-            <p class="price">
-                <?= $this->render('/common/_price', [
-                    'condition' => false,
-                    'onePrice' => $priceCachePrint,
-                ]) ?>
-            </p>
-        </div>
+        <?php
+        $hasCoords = !is_null($flat->newbuildingComplex->latitude) && !is_null($flat->newbuildingComplex->longitude) && !empty($flat->newbuildingComplex->latitude) && !empty($flat->newbuildingComplex->longitude);
+        if($hasCoords || !is_null($flat->newbuildingComplex->address)): ?>
+            <div class="address-inline">
+                <div class="address-inline-info">
+                    <span class="address-inline-info--title"> На карте </span>
+                    <?php if(!is_null($flat->newbuildingComplex->address)): ?>
+                    <span class="address-inline-info--text">
+                        <?= $flat->newbuildingComplex->address ?>
+                    </span>
+                    <?php endif; ?>
+                </div>
+                <?php if($hasCoords): ?>  
+                    <div class="address-inline-map">
+                        <?php if(isset($isPlacemarkImage) && $hasCoords): ?>
+                            <?= Html::img("https://static-maps.yandex.ru/1.x/?ll={$flat->newbuildingComplex->latitude},{$flat->newbuildingComplex->longitude}&size=650,379&z=16&l=map&pt={$flat->newbuildingComplex->latitude},{$flat->newbuildingComplex->longitude},pm2vvm") ?>
+                        <?php else: ?>
+                            <?= Placemark::widget([
+                                'longitude' => $flat->newbuildingComplex->longitude,
+                                'latitude' => $flat->newbuildingComplex->latitude,
+                                'inline' => true
+                            ]) ?>
+                        <?php endif ?>
+                    </div>
+                <?php endif ?>
+            </div>
+        <?php endif ?>
+
     </div>
               
-    <?php
-    $hasCoords = !is_null($flat->newbuildingComplex->latitude) && !is_null($flat->newbuildingComplex->longitude) && !empty($flat->newbuildingComplex->latitude) && !empty($flat->newbuildingComplex->longitude);
-    if($hasCoords || !is_null($flat->newbuildingComplex->address)): ?>
-        <div class="address-inline">
-            <div class="address-inline-info">
-                <span class="address-inline-info--title"> На карте </span>
-                <?php if(!is_null($flat->newbuildingComplex->address)): ?>
-                <span class="address-inline-info--text">
-                    <?= $flat->newbuildingComplex->address ?>
-                </span>
-                <?php endif; ?>
-            </div>
-            <?php if($hasCoords): ?>  
-                <div class="address-inline-map">
-                    <?php if(isset($isPlacemarkImage) && $hasCoords): ?>
-                        <?= Html::img("https://static-maps.yandex.ru/1.x/?ll={$flat->newbuildingComplex->latitude},{$flat->newbuildingComplex->longitude}&size=650,379&z=16&l=map&pt={$flat->newbuildingComplex->latitude},{$flat->newbuildingComplex->longitude},pm2vvm") ?>
-                    <?php else: ?>
-                        <?= Placemark::widget([
-                            'longitude' => $flat->newbuildingComplex->longitude,
-                            'latitude' => $flat->newbuildingComplex->latitude,
-                            'inline' => true
-                        ]) ?>
-                    <?php endif ?>
-                </div>
-            <?php endif ?>
-        </div>
-    <?php endif ?>
-
-    <?php if(!is_null($flat->newbuildingComplex->advantages)): ?>
+    <?php if(!is_null($flat->newbuildingComplex->advantages) && count($flat->newbuildingComplex->advantages) > 0): ?>
         <div class="gray-bg advantages-row">
             <p class="advantages-row--title">
                 Преимущества
@@ -316,9 +426,11 @@ $this->registerCssFile('/css/offer.css', ['media' => 'print']);
                         <td style="width: 30%;">
                             <span class="icon">
                                 <?php if(SvgDom::isNameSvg($advantage->icon)): ?>
-                                    <?= SvgImage::get(\Yii::getAlias("@webroot/uploads/{$advantage->icon}")) ?>
+                                    <!--<?= SvgImage::get(\Yii::getAlias("@webroot/uploads/{$advantage->icon}")) ?>-->
+                                    <img src="/uploads/<?= $advantage->icon ?>" style="width: 30px; height: 30px;" />
                                 <?php else: ?>
-                                    <?= Html::img("$flat->imagePath/uploads/{$advantage->icon}")?>
+                                    <!--<?= Html::img("/uploads/{$advantage->icon}")?>-->
+                                    <img src="/uploads/<?= $advantage->icon ?>" style="width: 30px; height: 30px;" />
                                 <?php endif; ?>
                             </span>
                             <?= $advantage->name ?>
@@ -333,113 +445,5 @@ $this->registerCssFile('/css/offer.css', ['media' => 'print']);
         </div>
     <?php endif; ?>
 
-    <div class="collapse <?php if(isset($settings) && isset($settings['newbuilding_complex']) && $settings['newbuilding_complex']): ?>in<?php endif ?>" id="newbuilding-complex-info">
-        <div class="white-bg">
-            <h3><?= $flat->newbuildingComplex->name ?></h3>
-        </div>
-            
-        <div class="gray-bg">
-
-            <?php if(!is_null($flat->newbuildingComplex->logo)): ?>
-                <div style="margin-top: 15px; margin-bottom: 15px">
-                    <?= Html::img(["$flat->imagePath/uploads/{$flat->newbuildingComplex->logo}"], ['height' => 80]) ?>
-                </div>
-            <?php endif ?>
-
-            <?php if(!is_null($flat->newbuildingComplex->address) && !empty($flat->newbuildingComplex->address)): ?>
-                <p><?= $flat->newbuildingComplex->address ?></p>
-            <?php endif ?>
-
-            <?php if(!is_null($flat->newbuildingComplex->district) && !empty($flat->newbuildingComplex->district->name)): ?>
-                <p><?= $format->asDistrict($flat->newbuildingComplex->district->name) ?></p>
-            <?php endif ?>
-
-            <?php if(!is_null($flat->newbuildingComplex->detail) && !empty($flat->newbuildingComplex->detail)): ?>
-                <p class="text-justify">
-                    <?= $format->asHtml($flat->newbuildingComplex->detail) ?>
-                </p>
-            <?php endif ?>
-
-            <?php if(!is_null($flat->newbuildingComplex->offer_info) && !empty($flat->newbuildingComplex->offer_info)): ?>
-                <p class="text-justify">
-                    <?= $format->asHtml($flat->newbuildingComplex->offer_info) ?>
-                </p>
-            <?php endif ?>
-        </div>
-    </div>
-
-    <div class="collapse <?php if(isset($settings) && isset($settings['furnishes']) && $settings['furnishes']): ?>in<?php endif ?>" id="furnishes-info">
-        <div class="furnish-block">
-            <?php foreach($flat->furnishes as $key => $furnish): ?>
-                <div class="white-bg">
-                    <p class="furnish-block--title">
-                        <?= $furnish->name ?>
-                    </p>
-                </div>
-                <div class="gray-bg clearfix">
-                        <div class="desc">
-                            <div class="inner">
-                                <p>
-                                    <?= $furnish->detail ?>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="image">
-                            <?php if(!is_null($furnish->furnishImages) && ($furnishImage = $furnish->furnishImages[0])): ?>
-                                <?= Html::img("$flat->imagePath/uploads/{$furnishImage->image}") ?>
-                            <?php endif; ?>
-                        </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-
-        <div class="collapse <?php if(isset($settings) && isset($settings['developer']) && $settings['developer']): ?>in<?php endif ?>" id="developer-info">
-            <div class="white-bg">
-                <h3><?= $flat->developer->name ?></h3>
-            </div>
-            <div class="gray-bg">
-
-                <?php if(!is_null($flat->developer->logo)): ?>
-                    <div style="margin-top: 15px; margin-bottom: 15px">
-                        <?= Html::img(["$flat->imagePath/uploads/{$flat->developer->logo}"], ['height' => 80]) ?>
-                    </div>
-                <?php endif ?>
-
-                <?php if(!is_null($flat->developer->address) && !empty($flat->developer->address)): ?>
-                    <p><?= $flat->developer->address ?></p>
-                <?php endif ?>
-
-                <?php if(!is_null($flat->developer->detail) && !empty($flat->developer->detail)): ?>
-                    <p class="text-justify">
-                        <?= $format->asHtml($flat->developer->detail) ?>
-                    </p>
-                <?php endif ?>
-
-                <?php if(!is_null($flat->developer->offer_info) && !empty($flat->developer->offer_info)): ?>
-                    <p class="text-justify">
-                        <?= $format->asHtml($flat->developer->offer_info) ?>
-                    </p>
-                <?php endif ?>
-
-                <?php if(!is_null($flat->developer->free_reservation) && !empty($flat->developer->free_reservation)): ?>
-                    <p>
-                    <h4>Условия бесплатной брони</h4>
-                    <p class="text-justify">
-                        <?= $format->asHtml($flat->developer->free_reservation) ?>
-                    </p>
-                    </p>
-                <?php endif ?>
-
-                <?php if(!is_null($flat->developer->paid_reservation) && !empty($flat->developer->paid_reservation)): ?>
-                    <p>
-                    <h4>Условия платной брони</h4>
-                    <p class="text-justify">
-                        <?= $format->asHtml($flat->developer->paid_reservation) ?>
-                    </p>
-                    </p>
-                <?php endif ?>
-            </div>
-        </div>
 </div>
 <?php endforeach; ?>

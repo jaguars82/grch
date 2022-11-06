@@ -74,12 +74,23 @@
 
                   <q-item tag="label" v-ripple>
                     <q-item-section side top>
-                      <q-checkbox v-model="commercialSettings.compareTable" />
+                      <q-checkbox v-model="commercialSettings.layouts.group.show" />
                     </q-item-section>
                     <q-item-section>
-                      <q-item-label>Сгруппировать планировки</q-item-label>
+                      <q-item-label>Планировки группой</q-item-label>
                       <q-item-label caption>
-                        Настроить перечень и расположение планировок
+                        Отображать планировку квартиры, этажа, генплан в группе
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+
+                  <q-item tag="label" v-ripple>
+                    <q-item-section side top>
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>Планировки отдельно</q-item-label>
+                      <q-item-label caption>
+                        Настроить перечень и расположение планировок, показываемых отдельно
                       </q-item-label>
                     </q-item-section>
                     <q-item-section>
@@ -87,11 +98,35 @@
                         <q-menu>
                           <q-list>
                             <q-item>
-                              <q-item-section>
-                                <q-checkbox v-model="commercialSettings.layouts.flat" />
+                              <q-item-section side top>
+                                <q-checkbox v-model="commercialSettings.layouts.separate.flat" />
                               </q-item-section>
                               <q-item-section>
                                 <q-item-label>План квартиры</q-item-label>
+                              </q-item-section>
+                            </q-item>
+                            <q-item>
+                              <q-item-section side top>
+                                <q-checkbox v-model="commercialSettings.layouts.separate.floor" />
+                              </q-item-section>
+                              <q-item-section>
+                                <q-item-label>План этажа</q-item-label>
+                              </q-item-section>
+                            </q-item>
+                            <q-item>
+                              <q-item-section side top>
+                                <q-checkbox v-model="commercialSettings.layouts.separate.entrance" />
+                              </q-item-section>
+                              <q-item-section>
+                                <q-item-label>Расположение подъезда</q-item-label>
+                              </q-item-section>
+                            </q-item>
+                            <q-item>
+                              <q-item-section side top>
+                                <q-checkbox v-model="commercialSettings.layouts.separate.genplan" />
+                              </q-item-section>
+                              <q-item-section>
+                                <q-item-label>Генплан</q-item-label>
                               </q-item-section>
                             </q-item>
                           </q-list>
@@ -222,7 +257,7 @@
           <CompareTableFlats v-if="commercialSettings.compareTable && flats.length > 1" :flats="flats" />
 
           <template v-for="flat in flats" :key="flat.id">
-            <FlatCommercialItem class="q-mt-md q-ml-md" :flat="flat" />
+            <FlatCommercialItem class="q-mt-md q-ml-md" :flat="flat" :configuration="commercialSettings.layouts" />
             <AdvantagesBlock :advantages="flat.advantages" />
             <NewbuildingComplexCard v-if="commercialSettings.newbuildingComplex" :newbuildingComplex="flat.newbuildingComplex" :developer="flat.developer" />
             <DeveloperCard v-if="commercialSettings.developer" :developer="flat.developer" />
@@ -310,6 +345,7 @@ export default {
     ])
 
     const PDFloading = ref(false)
+    const PDFLinkAutoclicked = ref(false)
     // const PDFReady = ref(false)
 
     const formfields = ref({})
@@ -322,7 +358,31 @@ export default {
       sendEmail: false,
     })
 
-    const commercialSettings = props.commercial.settings ? ref(JSON.parse(props.commercial.settings)) : ref({ compareTable:  true, initiator: true, developer: false, newbuildingComplex: false, finishing: false, layouts: { group: true, flat: true } })
+    const commercialSettings = props.commercial.settings
+      ? ref(JSON.parse(props.commercial.settings))
+      : ref({ 
+        compareTable: true,
+        initiator: true,
+        developer: false,
+        newbuildingComplex: false,
+        finishing: false,
+        layouts: {
+          group: {
+            show: true,
+            flat: true,
+            floor: true,
+            entrance: false,
+            genplan: true
+          },
+          separate: {
+            flat: false,
+            floor: false,
+            entrance: false,
+            genplan: false            
+          }
+        },
+        map: true
+      })
 
     const pdfContent = ref(null)
     const pdfLink = ref(null)
@@ -330,12 +390,16 @@ export default {
     const savePDF = function () {
       formfields.value.operation = 'pdf'
       PDFloading.value = true
+      PDFLinkAutoclicked.value = false
       Inertia.post(`/user/commercial/view?id=${props.commercial.id}`, formfields.value)
       Inertia.on('finish', (event) => {
         PDFloading.value = false
         clearFormFields()
         //PDFReady.value = true
-        pdfLink.value.click()
+        if(PDFLinkAutoclicked.value === false) {
+          pdfLink.value.click()
+        }
+        PDFLinkAutoclicked.value = true
       })
     }
 

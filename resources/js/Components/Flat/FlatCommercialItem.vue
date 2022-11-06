@@ -8,14 +8,16 @@
       <p class="text-grey-7">{{ flatPricePerMeter }}</p>
     </q-card-section>
 
-    <q-card-section class="q-px-md q-py-xs">
+    <q-card-section v-if="viewOptions.group.show" class="q-px-md q-py-xs">
       <div class="row">
-        <div :class="{'col-6': viewOptions.groupLayouts === true, 'col-12': viewOptions.groupLayouts === false}">
+        <div v-if="viewOptions.group.flat" class="col-7">
+          <p class="text-h4">Планировка квартиры</p>
           <img ref="floorImage" v-if="flat.layout"
             :src="`/uploads/${flat.layout}`"
           />
         </div>
-        <div :class="{'col-6': viewOptions.groupLayouts === true, 'col-12': viewOptions.groupLayouts === false}">
+        <div v-if="viewOptions.group.floor" class="col-5">
+          <p class="text-h4">План этажа</p>
           <div class="no-pointer-events" v-if="flat.floorLayoutImage" v-html="flat.floorLayoutImage"></div>
         </div>
       </div>
@@ -54,7 +56,7 @@ import { yandexMap, ymapMarker } from 'vue-yandex-maps'
 export default ({
   props: {
     flat: Object,
-    viewOptions: Object
+    configuration: Object
   },
   components: {
     yandexMap,

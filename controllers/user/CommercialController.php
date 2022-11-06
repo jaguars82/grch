@@ -78,6 +78,7 @@ class CommercialController extends Controller
                     $commercialForm->initiator_id = \Yii::$app->user->id;
                     $commercialForm->active = 1;
                     $commercialForm->is_formed = 0;
+                    $commercialForm->settings = '{"compareTable":true,"initiator":true,"developer":false,"newbuildingComplex":false,"finishing":false,"layouts":{"group":{"show":true,"flat":true,"floor":true,"entrance":false,"genplan":true},"separate":{"flat":false,"floor":false,"entrance":false,"genplan":false}},"map":true}';
                     $commercialForm->number = $newCommercialNumber.'-'.\Yii::$app->user->id;
                     $commercialModel = (new Commercial())->fill($commercialForm->attributes);
                     $commercialModel->save();
@@ -178,12 +179,12 @@ class CommercialController extends Controller
                         'status' => 'ok'
                     ]);
                     break;
-                    /** Ghange commercial settings */
-                    case 'settings':
-                        //echo '<pre>'; var_dump(\Yii::$app->request->post('settings')); echo '</pre>'; die;
-                        $commercialModel->settings = json_encode(\Yii::$app->request->post('settings'));
-                        $commercialModel->save();
-                        break;
+                /** Ghange commercial settings */
+                case 'settings':
+                    //echo '<pre>'; var_dump(\Yii::$app->request->post('settings')); echo '</pre>'; die;
+                    $commercialModel->settings = json_encode(\Yii::$app->request->post('settings'));
+                    $commercialModel->save();
+                    break;
             }
         }      
         
@@ -261,7 +262,7 @@ class CommercialController extends Controller
             'format' => Pdf::FORMAT_A4,
             'orientation' => Pdf::ORIENT_PORTRAIT,
             'destination' => Pdf::DEST_BROWSER,
-        'content' => $this->renderPartial('pdf', ['commercial' => $commercial, 'settings' => $settings]),
+            'content' => $this->renderPartial('pdf', ['flats' => $commercial->flats, 'settings' => $commercial->settings, 'commercial' => $commercial]),
             'filename' => $this->getOfferName($commercial->number) . '.pdf',
             'cssFile' => [
                 '@vendor/kartik-v/yii2-mpdf/src/assets/kv-mpdf-bootstrap.min.css',
@@ -284,6 +285,7 @@ class CommercialController extends Controller
         $pdf->Output($pdf->content, $filename, \Mpdf\Output\Destination::FILE);
         
         return $filename;
+        //return $this->render('pdf', ['flats' => $commercial->flats, 'settings' => $settings, 'commercial' => $commercial]);
     }
 
     /**

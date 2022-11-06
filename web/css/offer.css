@@ -92,15 +92,15 @@
 }
 
 .person {
-  width: 400px;
-  float: left;
+  width: 350px;
+  /*float: right;*/
 }
 
 .person .image {
   width: 85px;
   height: 100px;
   text-align: center;
-  float: left;
+  float: right;
 }
 
 .person .image img {
@@ -157,9 +157,10 @@
 }
 
 .agency-image {
-  margin-right: 39px;
-  margin-left: auto;
+  /*margin-left: 39px;
+  margin-right: auto;*/
   width: 100px;
+  max-width: 100px;
 }
 
 @media screen and (max-width: 450px) {
@@ -180,7 +181,9 @@
 }
 
 .agency-image img {
-  max-width: 100%;
+  width: 100px;
+  max-width: 100px;
+  /*max-width: 100%;*/
 }
 .info-item {
   margin-bottom: 15px;
@@ -415,6 +418,12 @@
   margin-bottom: -15px;
 } */
 
+
+.contact-block {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
 .advantages-row {
   padding-bottom: 5px;
 }
@@ -544,4 +553,39 @@ table td {
   line-height: 1.42857143;
   vertical-align: top;
   border: 1px solid #dae2e8;
+}
+
+.compare-table {
+  margin: 10px 25px;
+  border-collapse: collapse;
+  border: thin solid grey;
+}
+
+.compare-table-layout
+{
+  width: 150px;
+  max-width: 150px;
+  max-height: 250px;
+}
+
+.compare-table-rowtitle {
+  font-weight: 600;
+}
+
+.compare-table-rowtitle,
+.compare-table-cell {
+  padding: 5px 10px;
+  text-align: center;
+  vertical-align: middle;
+  border: thin solid grey;
+}
+
+.compare-table-cell.layout {
+  width: 150px;
+  max-width: 150px;
+  overflow: hidden;
+}
+
+.contact-table {
+  border: none;
 }
