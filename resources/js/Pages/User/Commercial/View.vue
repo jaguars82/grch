@@ -77,13 +77,14 @@
                       <q-checkbox v-model="commercialSettings.layouts.group.show" />
                     </q-item-section>
                     <q-item-section>
-                      <q-item-label>Планировки группой</q-item-label>
+                      <q-item-label>Планировки <!--группой--></q-item-label>
                       <q-item-label caption>
                         Отображать планировку квартиры, этажа, генплан в группе
                       </q-item-label>
                     </q-item-section>
                   </q-item>
 
+                  <!--
                   <q-item tag="label" v-ripple>
                     <q-item-section side top>
                     </q-item-section>
@@ -134,6 +135,7 @@
                       </q-btn>
                     </q-item-section>
                   </q-item>
+                  -->
 
                   <q-item tag="label" v-ripple>
                     <q-item-section side top>
@@ -221,12 +223,13 @@
               </q-card-section>
 
               <q-card-section class="q-pt-none">
-                <q-input dense v-model="address" autofocus @keyup.enter="prompt = false" />
+                <q-input dense v-model="formfields.email" autofocus @keyup.enter="prompt = false" />
+                <p> {{ formfields.email }} </p>
               </q-card-section>
 
               <q-card-actions align="right" class="text-primary">
                 <q-btn flat label="Отмена" v-close-popup />
-                <q-btn flat label="Отправить" v-close-popup />
+                <q-btn flat label="Отправить" v-close-popup @click="onSendEmail" />
               </q-card-actions>
             </q-card>
           </q-dialog>
@@ -257,8 +260,12 @@
           <CompareTableFlats v-if="commercialSettings.compareTable && flats.length > 1" :flats="flats" />
 
           <template v-for="flat in flats" :key="flat.id">
-            <FlatCommercialItem class="q-mt-md q-ml-md" :flat="flat" :configuration="commercialSettings.layouts" />
-            <AdvantagesBlock :advantages="flat.advantages" />
+            <FlatCommercialItem class="q-mt-md" :flat="flat" :configuration="commercialSettings.layouts" />
+            <q-card flat v-if="flat.advantages.length > 0">
+              <q-card-section>
+                <AdvantagesBlock :advantages="flat.advantages" />
+              </q-card-section>
+            </q-card>
             <NewbuildingComplexCard v-if="commercialSettings.newbuildingComplex" :newbuildingComplex="flat.newbuildingComplex" :developer="flat.developer" />
             <DeveloperCard v-if="commercialSettings.developer" :developer="flat.developer" />
             <template v-if="commercialSettings.finishing">
@@ -286,6 +293,7 @@ import DeveloperCard from '@/Components/Developer/DeveloperCard.vue'
 import FinishingCard from '@/Components/FinishingCard.vue'
 import AdvantagesBlock from '@/Components/Elements/AdvantagesBlock.vue'
 import Loading from '@/Components/Elements/Loading.vue'
+import { initialCommercialSettings } from '@/composables/components-configurations'
 
 export default {
   components: {
@@ -360,29 +368,7 @@ export default {
 
     const commercialSettings = props.commercial.settings
       ? ref(JSON.parse(props.commercial.settings))
-      : ref({ 
-        compareTable: true,
-        initiator: true,
-        developer: false,
-        newbuildingComplex: false,
-        finishing: false,
-        layouts: {
-          group: {
-            show: true,
-            flat: true,
-            floor: true,
-            entrance: false,
-            genplan: true
-          },
-          separate: {
-            flat: false,
-            floor: false,
-            entrance: false,
-            genplan: false            
-          }
-        },
-        map: true
-      })
+      : ref(initialCommercialSettings)
 
     const pdfContent = ref(null)
     const pdfLink = ref(null)
@@ -403,6 +389,14 @@ export default {
       })
     }
 
+    const onSendEmail = function () {
+      formfields.value.operation = 'email'
+      Inertia.post(`/user/commercial/view?id=${props.commercial.id}`, formfields.value)
+      Inertia.on('finish', (event) => {
+        clearFormFields()
+      })
+    }
+
     /*const closePDFLink = function () {
       PDFReady.value = false
     }*/
@@ -415,12 +409,14 @@ export default {
 
     return { 
       breadcrumbs,
+      formfields,
       shareDialogs,
       commercialSettings,
       PDFloading,
       pdfLink,
       pdfContent,
       savePDF,
+      onSendEmail,
       //PDFReady,
       //closePDFLink,
       saveSettings

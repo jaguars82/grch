@@ -144,4 +144,28 @@ function getApplicationFormParamsByStatus (applicationStatus, userRole) {
 
 }
 
-export { getApplicationFormParamsByStatus }
+const initialCommercialSettings = { 
+  compareTable: true,
+  initiator: true,
+  developer: false,
+  newbuildingComplex: false,
+  finishing: false,
+  layouts: {
+    group: {
+      show: true,
+      flat: true,
+      floor: true,
+      entrance: false,
+      genplan: true
+    },
+    separate: {
+      flat: false,
+      floor: false,
+      entrance: false,
+      genplan: false            
+    }
+  },
+  map: true
+}
+
+export { getApplicationFormParamsByStatus, initialCommercialSettings }

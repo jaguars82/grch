@@ -6,8 +6,12 @@
           <UserInfoBar v-if="commercialSettings.initiator" :user="commercial.initiator" />
           <CompareTableFlats v-if="commercialSettings.compareTable && flats.length > 1" :flats="flats" />
           <template v-for="flat of flats" :key="flat.id">
-            <FlatCommercialItem class="q-mt-md q-ml-md" :flat="flat" />
-            <AdvantagesBlock :advantages="flat.advantages" />
+            <FlatCommercialItem class="q-mt-md" :flat="flat" :configuration="commercialSettings.layouts" />
+            <q-card flat v-if="flat.advantages.length > 0">
+              <q-card-section>
+                <AdvantagesBlock :advantages="flat.advantages" />
+              </q-card-section>
+            </q-card>
             <NewbuildingComplexCard v-if="commercialSettings.newbuildingComplex" :newbuildingComplex="flat.newbuildingComplex" :developer="flat.developer" />
             <DeveloperCard v-if="commercialSettings.developer" :developer="flat.developer" />
             <template v-if="commercialSettings.finishing">
@@ -31,6 +35,7 @@ import NewbuildingComplexCard from '@/Components/NewbuildingComplex/NewbuildingC
 import DeveloperCard from '@/Components/Developer/DeveloperCard.vue'
 import FinishingCard from '@/Components/FinishingCard.vue'
 import AdvantagesBlock from '@/Components/Elements/AdvantagesBlock.vue'
+import { initialCommercialSettings } from '@/composables/components-configurations'
 
 export default {
   components: {
@@ -50,7 +55,9 @@ export default {
     flats: Array,
   },
   setup (props) {
-    const commercialSettings = props.commercial.settings ? ref(JSON.parse(props.commercial.settings)) : ref({ compareTable:  true, initiator: true, developer: false, newbuildingComplex: false, finishing: false })
+    const commercialSettings = props.commercial.settings
+      ? ref(JSON.parse(props.commercial.settings))
+      : ref( initialCommercialSettings )
 
     return { commercialSettings }
   }

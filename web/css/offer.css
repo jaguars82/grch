@@ -48,7 +48,8 @@
 }
 
 .commercial-offer-layout .layout-img img {
-  max-height: 100%;
+  height: 200px;
+  max-height: 200px;
 }
 
 .commercial-offer {
@@ -72,7 +73,7 @@
 
 .white-bg {
   background: #fff;
-  padding: 15px 20px;
+  padding: 10px 20px;
 }
 
 .commercial-offer-title {

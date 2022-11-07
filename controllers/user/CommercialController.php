@@ -179,6 +179,14 @@ class CommercialController extends Controller
                         'status' => 'ok'
                     ]);
                     break;
+                case 'email':
+                    \Yii::$app->mailer->compose()
+                    ->setTo(\Yii::$app->request->post('email'))
+                    ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
+                    ->setSubject(\Yii::t('app', 'Коммерческое предложение №  '. $commercialModel->number))
+                    ->setTextBody('Ссылка на страницу коммерческого предложения: https://grch.ru/share/commercial?id='.$commercialModel->id)
+                    ->send();
+                    break;
                 /** Ghange commercial settings */
                 case 'settings':
                     //echo '<pre>'; var_dump(\Yii::$app->request->post('settings')); echo '</pre>'; die;

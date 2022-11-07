@@ -1,5 +1,5 @@
 <template>
-  <q-card class="no-shadow">
+  <q-card flat>
 
     <q-card-section>
       <p class="text-h4 q-mb-xs"><span class="text-capitalize">{{ flatRoomTitle }}</span> квартира № {{ flat.number }}, {{ flatArea }}</p>
@@ -10,20 +10,32 @@
 
     <q-card-section v-if="viewOptions.group.show" class="q-px-md q-py-xs">
       <div class="row">
-        <div v-if="viewOptions.group.flat" class="col-7">
-          <p class="text-h4">Планировка квартиры</p>
-          <img ref="floorImage" v-if="flat.layout"
+        <div v-if="viewOptions.group.flat" class="col-12 text-center">
+          <p class="text-h4 text-center">Планировка квартиры</p>
+          <img class="floorImage" ref="floorImage" v-if="flat.layout"
             :src="`/uploads/${flat.layout}`"
           />
         </div>
-        <div v-if="viewOptions.group.floor" class="col-5">
-          <p class="text-h4">План этажа</p>
-          <div class="no-pointer-events" v-if="flat.floorLayoutImage" v-html="flat.floorLayoutImage"></div>
+      </div>
+      <div class="row">
+        <div v-if="viewOptions.group.floor" class="col-6 q-pa-sm">
+          <p class="text-h4 text-center">План этажа</p>
+          <div class="no-pointer-events c" v-if="flat.floorLayoutImage" v-html="flat.floorLayoutImage"></div>
+        </div>
+        <div class="col-6 q-pa-sm">
+          <p class="text-h4 text-center">Генплан</p>
+              <img
+                class="genplan-image"
+                v-if="flat.layout"
+                :src="`/uploads/${flat.newbuildingComplex.master_plan}`"
+              />
         </div>
       </div>
     </q-card-section>
 
     <q-card-section v-if="flat.newbuildingComplex.longitude && flat.newbuildingComplex.latitude">
+
+      <p class="text-h4 q-mb-xs">На карте</p>
       
       <yandex-map
         :settings="yaMapsSettings"
@@ -92,5 +104,16 @@ export default ({
 .ya-map-container {
   width: 100%;
   height: 300px!important;
+  margin-top: -35px;
 }
+
+.floorImage {
+  width: 100%;
+  max-height: 450px;
+}
+
+/*.genplan-image,
+.floor-layout-image {
+  width: 100%;
+}*/
 </style>

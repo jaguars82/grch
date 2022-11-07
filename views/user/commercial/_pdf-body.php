@@ -244,7 +244,7 @@ if(count($flats) > 1) {
             <p style="font-size: 36px; fon-weight: 600; color: #5197f7; margin-bottom: 5px;">
                 <?= $format->asCurrency($flat->price_cash) ?>
             </p>
-            <p>
+            <p style="margin-bottom: 10px;">
                 <b><?= $format->asPricePerArea($flat->pricePerArea) ?></b>
             </p>
         </div>
@@ -343,10 +343,10 @@ if(count($flats) > 1) {
         -->
 
         <?php if(!is_null($flat->layout) || !is_null($flat->floorLayout)): ?>
-        <div class="white-bg">
-            <div class="row">
+        <div class="white-bg" style="height: 200px; max-height: 200px; overflow: hidden;">
+            <div class="row" style="height: 200px; max-height: 200px; overflow: hidden;">
                 <?php if(!is_null($flat->layout)): ?>
-                    <div class="col-xs-6">
+                    <div class="col-xs-6" style="height: 200px; max-height: 200px; overflow: hidden;">
                         <p class="layout-title">
                             Планировка квартиры
                         </p>
@@ -360,17 +360,18 @@ if(count($flats) > 1) {
                     </div>
                 <?php endif ?>
                 <?php if(!is_null($flat->floorLayout)): ?>
-                    <div class="col-xs-6">
+                    <div class="col-xs-6" style="height: 200px; max-height: 200px; overflow: hidden;">
                         <p class="layout-title">
                             Поэтажный план
                         </p>
-                        <p class="center layout-img">
+                        <div class="center layout-img" style="height: 200px; max-height: 200px; overflow: hidden;">
                             <?php if(SvgDom::isNameSvg($flat->floorLayout->image)): ?>
                                 <?= SvgImage::get(\Yii::getAlias("@webroot/uploads/{$flat->floorLayout->image}")) ?>
                             <?php else: ?>
-                                <?= Html::img([$flat->floorLayoutPath]) ?>
+                                <!--<?= Html::img([$flat->floorLayoutPath]) ?>-->
+                                <img src="<?= $flat->floorLayoutPath ?>" style="height: 200px; max-height: 200px;" />
                             <?php endif; ?>
-                        </p>
+                            </div>
                     </div>
                 <?php endif; ?>
             </div>
@@ -392,7 +393,7 @@ if(count($flats) > 1) {
                 <?php if($hasCoords): ?>  
                     <div class="address-inline-map">
                         <?php if(isset($isPlacemarkImage) && $hasCoords): ?>
-                            <?= Html::img("https://static-maps.yandex.ru/1.x/?ll={$flat->newbuildingComplex->latitude},{$flat->newbuildingComplex->longitude}&size=650,379&z=16&l=map&pt={$flat->newbuildingComplex->latitude},{$flat->newbuildingComplex->longitude},pm2vvm") ?>
+                            <?= Html::img("https://static-maps.yandex.ru/1.x/?ll={$flat->newbuildingComplex->latitude},{$flat->newbuildingComplex->longitude}&size=650,300&z=16&l=map&pt={$flat->newbuildingComplex->latitude},{$flat->newbuildingComplex->longitude},pm2vvm") ?>
                         <?php else: ?>
                             <?= Placemark::widget([
                                 'longitude' => $flat->newbuildingComplex->longitude,
