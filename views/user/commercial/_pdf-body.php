@@ -72,11 +72,11 @@ if(count($flats) > 1) {
 
 ?>
 
-<div class="gray-bg">
+<!--<div class="gray-bg">
     <p class="commercial-offer-title">
         Коммерческое предложение № <?= $commercial->number ?>
     </p>
-</div>
+</div>-->
 
 <?php if(isset($commercialMode) && $commercialMode === 'multiple' && $settings->compareTable === true): ?>
 
@@ -92,8 +92,8 @@ if(count($flats) > 1) {
             <col span="1">
         </colgroup>
         <tbody>
-            <tr>
-                <td class="compare-table-rowtitle">Планировка</td>
+            <tr style="width: 170px;">
+                <td class="compare-table-rowtitle" style="width: 170px;">Планировка</td>
                 <td class="compare-table-rowtitle">Цена</td>
                 <td class="compare-table-rowtitle">Площадь</td>
                 <td class="compare-table-rowtitle">Тип</td>
@@ -104,10 +104,24 @@ if(count($flats) > 1) {
             </tr>
             <?php foreach ($flats as $flat): ?>
                 <tr class="compare-table-row">
-                    <td class="compare-table-cell layout">
-                    <?php if($flat->layout): ?>
-                        <img class="compare-table-layout" src="/uploads/<?= $flat->layout ?>" />
-                    <?php endif; ?>
+                    <td class="compare-table-cell layout" style="text-align: left;">
+                        <table style="width: 200px;  max-width: 200px;">
+                            <tr>
+                                <td style="width: 30%;">
+                                    <?php if($flat->layout): ?>
+                                        <img class="compare-table-layout" src="/uploads/<?= $flat->layout ?>" style="width: 150px; max-width: 150px;" />
+                                    <?php else: ?>
+                                        <img class="compare-table-layout" src="/img/blank.png" />
+                                    <?php endif; ?>
+                                </td>
+                                <td style="width: 70%;">
+                                    <span><?= $flat->newbuildingComplex->name ?></span>
+                                    <span> > <?= $flat->newbuilding->name ?></span>
+                                    <span> > <?= $flat->entrance->name ?></span>
+                                    <span> > № <?=$flat->number?></span>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                     <td class="compare-table-cell"><strong><?= $format->asCurrency($flat->price_cash) ?></strong></td>
                     <td class="compare-table-cell"><?= $format->asArea($flat->area) ?></td>
@@ -162,11 +176,11 @@ if(count($flats) > 1) {
                                 !is_null($user->agency)
                                 && !is_null($user->agency->logo)
                             ): ?>
-                                <img src="@web/uploads/<?= $user->agency->logo ?>" style="width: 100px; max-width: 100px;" />
+                                <img src="@web/uploads/<?= $user->agency->logo ?>" style="width: 85px; max-width: 85px;" />
                                 <!--<?= Html::img(Yii::getAlias("/uploads/{$user->agency->logo}")) ?>-->
                             <?php else: ?>
                                 <!--<?= Html::img(Yii::getAlias("@web/img/office.png")) ?>-->
-                                <img src="/img/office.png" style="width: 100px; max-width: 100px;" />
+                                <img src="/img/office.png" style="width: 85px; max-width: 85px;" />
                             <?php endif ?>
                         </div>
                     </td>
@@ -204,10 +218,10 @@ if(count($flats) > 1) {
                     </td>
                     <td style="width: 100px;">
                         <?php if(!is_null($user->photo)): ?>
-                            <img src="/uploads/<?= $user->photo ?>" style="width: 100px; height: 100px; border-radius: 50px;" />
+                            <img src="/uploads/<?= $user->photo ?>" style="width: 85px; height: 85px; border-radius: 50px;" />
                             <!--<?= Html::img(\Yii::getAlias("@web/uploads/{$user->photo}")) ?>-->
                         <?php else: ?>
-                            <img src="/img/blank-person.png" style="width: 100px; height: 100px; border-radius: 50px;" />
+                            <img src="/img/blank-person.png" style="width: 85px; height: 85x; border-radius: 50px;" />
                             <!--<?= Html::img(\Yii::getAlias("@web/img/blank-person.png")); ?>-->
                         <?php endif; ?>
                     </td>
@@ -217,37 +231,44 @@ if(count($flats) > 1) {
         <?php endif;?>
 
         <div class="gray-bg">
-            <p class="commercial-offer-title">
-                <?= $flat->roomsTitle . ' №' . $flat->number . ', ' . $format->asArea($flat->area) ?>
-            </p>
-            <!--<?php if(!is_null($flat->newbuilding->address) && !empty($flat->newbuilding->address) ||
-                    !is_null($flat->newbuildingComplex->address) && !empty($flat->newbuildingComplex->address)): ?>
-                <p class="commercial-offer-address">
-                    <?= !empty($flat->newbuilding->address) ? $flat->newbuilding->address : $flat->newbuildingComplex->address ?>
-                </p>
-                <p></p>
-            <?php endif ?>-->
-                <?= $flat->newbuilding->newbuildingComplex->name.' > '.$flat->newbuilding->name. ' > '.$flat->floor.'-й этаж' ?>
-                <?php if (!empty($flat->newbuilding->total_floor)): ?>
-                    <?= ' (из '.$flat->newbuilding->total_floor.')' ?>
-                <?php endif; ?>
-                    сдача 
-                <?php if (strtotime(date("Y-m-d")) > strtotime($flat->newbuilding->deadline)): ?>
-                    позиция сдана
-                <?php else: ?>
-                    <?= $format->asQuarterAndYearDate($flat->newbuilding->deadline) ?>
-                <?php endif; ?>
-            </p>
+            <table style="width:100%;">
+                <tr>
+                    <td style="width: 75%;">
+                        <p class="commercial-offer-title">
+                            <?= $flat->roomsTitle . ' №' . $flat->number . ', ' . $format->asArea($flat->area) ?>
+                        </p>
+                            <?= $flat->newbuilding->newbuildingComplex->name.' > '.$flat->newbuilding->name. ' > '.$flat->floor.'-й этаж' ?>
+                            <?php if (!empty($flat->newbuilding->total_floor)): ?>
+                                <?= ' (из '.$flat->newbuilding->total_floor.')' ?>
+                            <?php endif; ?>
+                                сдача 
+                            <?php if (strtotime(date("Y-m-d")) > strtotime($flat->newbuilding->deadline)): ?>
+                                позиция сдана
+                            <?php else: ?>
+                                <?= $format->asQuarterAndYearDate($flat->newbuilding->deadline) ?>
+                            <?php endif; ?>
+                        </p>
+                    </td>
+                    <td style="width: 25%; text-align: right;">
+                        <p style="font-size: 24px; fon-weight: 600; color: #5197f7; margin: 5px 0;">
+                            <?= $format->asCurrency($flat->price_cash) ?>
+                        </p>
+                        <p style="margin: 5px 0;">
+                            <b><?= $format->asPricePerArea($flat->pricePerArea) ?></b>
+                        </p>
+                    </td>
+                </tr>
+            </table>
         </div>
 
-        <div class="white-bg">
-            <p style="font-size: 36px; fon-weight: 600; color: #5197f7; margin-bottom: 5px;">
+        <!--<div class="white-bg">
+            <p style="font-size: 24px; fon-weight: 600; color: #5197f7; margin: 5px 0;">
                 <?= $format->asCurrency($flat->price_cash) ?>
             </p>
-            <p style="margin-bottom: 10px;">
+            <p style="margin: 5px 0;">
                 <b><?= $format->asPricePerArea($flat->pricePerArea) ?></b>
             </p>
-        </div>
+        </div>-->
 
         <!--
         <div class="gray-bg">
@@ -381,19 +402,29 @@ if(count($flats) > 1) {
         <?php
         $hasCoords = !is_null($flat->newbuildingComplex->latitude) && !is_null($flat->newbuildingComplex->longitude) && !empty($flat->newbuildingComplex->latitude) && !empty($flat->newbuildingComplex->longitude);
         if($hasCoords || !is_null($flat->newbuildingComplex->address)): ?>
+            <div class="gray-bg">
+            <p class="commercial-offer-title">
+                <span>На карте</span>
+            </p>
+                <?php if(!is_null($flat->newbuildingComplex->address)): ?>
+                    <span>
+                        <?= $flat->newbuildingComplex->address ?>
+                    </span>
+                <?php endif; ?>
+            </div>
             <div class="address-inline">
-                <div class="address-inline-info">
+                <!--<div class="address-inline-info">
                     <span class="address-inline-info--title"> На карте </span>
                     <?php if(!is_null($flat->newbuildingComplex->address)): ?>
                     <span class="address-inline-info--text">
                         <?= $flat->newbuildingComplex->address ?>
                     </span>
                     <?php endif; ?>
-                </div>
+                </div>-->
                 <?php if($hasCoords): ?>  
                     <div class="address-inline-map">
                         <?php if(isset($isPlacemarkImage) && $hasCoords): ?>
-                            <?= Html::img("https://static-maps.yandex.ru/1.x/?ll={$flat->newbuildingComplex->latitude},{$flat->newbuildingComplex->longitude}&size=650,300&z=16&l=map&pt={$flat->newbuildingComplex->latitude},{$flat->newbuildingComplex->longitude},pm2vvm") ?>
+                            <?= Html::img("https://static-maps.yandex.ru/1.x/?ll={$flat->newbuildingComplex->latitude},{$flat->newbuildingComplex->longitude}&size=650,280&z=16&l=map&pt={$flat->newbuildingComplex->latitude},{$flat->newbuildingComplex->longitude},pm2vvm") ?>
                         <?php else: ?>
                             <?= Placemark::widget([
                                 'longitude' => $flat->newbuildingComplex->longitude,
@@ -406,14 +437,13 @@ if(count($flats) > 1) {
             </div>
         <?php endif ?>
 
-    </div>
-              
-    <?php if(!is_null($flat->newbuildingComplex->advantages) && count($flat->newbuildingComplex->advantages) > 0): ?>
-        <div class="gray-bg advantages-row">
-            <p class="advantages-row--title">
+
+        <?php if(!is_null($flat->newbuildingComplex->advantages) && count($flat->newbuildingComplex->advantages) > 0): ?>
+        <div class="gray-bg" style="margin-top: 10px;">
+            <p class="commercial-offer-title">
                 Преимущества
             </p>
-                <table style="width: 100%;">
+            <table style="width: 100%;">
                 <?php 
                 $count = 0;
                 foreach($flat->newbuildingComplex->advantages as $advantage): 
@@ -442,9 +472,11 @@ if(count($flats) > 1) {
 
                     <?php ++$count ?>
                 <?php endforeach; ?>
-                </table>
+            </table>
         </div>
     <?php endif; ?>
 
+    </div>
+              
 </div>
 <?php endforeach; ?>
