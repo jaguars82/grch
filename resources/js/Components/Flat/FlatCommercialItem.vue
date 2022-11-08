@@ -20,7 +20,7 @@
       <div class="row">
         <div v-if="viewOptions.group.floor" class="col-6 q-pa-sm">
           <p class="text-h4 text-center">План этажа</p>
-          <div class="no-pointer-events c" v-if="flat.floorLayoutImage" v-html="flat.floorLayoutImage"></div>
+          <div class="no-pointer-events floor-layout-container" v-if="flat.floorLayoutImage" v-html="flat.floorLayoutImage"></div>
         </div>
         <div class="col-6 q-pa-sm">
           <p class="text-h4 text-center">Генплан</p>
@@ -110,6 +110,12 @@ export default ({
 .floorImage {
   width: 100%;
   max-height: 450px;
+}
+
+.floor-layout-container svg {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
 }
 
 /*.genplan-image,
