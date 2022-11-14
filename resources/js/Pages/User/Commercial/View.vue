@@ -280,7 +280,12 @@
             </q-card-section>
           </q-card>
 
-          <CompareTableFlats v-if="commercialSettings.compareTable && flats.length > 1" :flats="flats" />
+          <div
+            class="compare-table-container"
+            v-if="commercialSettings.compareTable && flats.length > 1"
+          >
+            <CompareTableFlats :flats="flats" />
+          </div>
 
           <template v-for="flat in flats" :key="flat.id">
             <FlatCommercialItem class="q-mt-md" :flat="flat" :configuration="commercialSettings.layouts" />
@@ -464,5 +469,10 @@ export default {
 a.undecorated {
   color: inherit;
   text-decoration: none;
+}
+
+.compare-table-container {
+  max-width: 100%;
+  overflow-x: auto;
 }
 </style>

@@ -1,10 +1,15 @@
 <template>
   <ShareLayout>
     <template v-slot:main>
-      <RegularContentContainer class="q-mt-md" :title="`Коммерческое предложение № ${commercial.number}`">
+      <RegularContentContainer v-if="commercial.active" class="q-mt-md" :title="`Коммерческое предложение № ${commercial.number}`">
         <template v-slot:content>
           <UserInfoBar v-if="commercialSettings.initiator" :user="commercial.initiator" />
-          <CompareTableFlats v-if="commercialSettings.compareTable && flats.length > 1" :flats="flats" />
+          <div
+            class="compare-table-container"
+            v-if="commercialSettings.compareTable && flats.length > 1"
+          >
+            <CompareTableFlats :flats="flats" />
+          </div>
           <template v-for="flat of flats" :key="flat.id">
             <FlatCommercialItem class="q-mt-md" :flat="flat" :configuration="commercialSettings.layouts" />
             <q-card flat v-if="flat.advantages.length > 0">
@@ -20,6 +25,9 @@
           </template>
         </template>
       </RegularContentContainer>
+      <div v-else>
+        <p class="q-mt-lg text-h4 text-center">Данное коммерческое предложение не существует или более неактуально</p>
+      </div>
     </template>
   </ShareLayout>
 </template>
@@ -63,3 +71,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.compare-table-container {
+  max-width: 100%;
+  overflow-x: auto;
+}
+</style>

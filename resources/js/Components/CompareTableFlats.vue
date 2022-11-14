@@ -14,7 +14,7 @@
       <div class="compare-table-cell layout">
         <img class="compare-table-layout" v-if="flat.layout" :src="`/uploads/${flat.layout}`" />
       </div>
-      <div class="compare-table-cell price"><strong>{{ flat.price_cash }} ₽</strong></div>
+      <div class="compare-table-cell price"><strong>{{ asCurrency(flat.price_cash) }}</strong></div>
       <div class="compare-table-cell area">{{ asArea(flat.area) }}</div>
       <div class="compare-table-cell type">
         <span>{{ flat.rooms }}</span>
@@ -43,7 +43,7 @@
 
 <script>
 import { computed } from 'vue'
-import { asQuarterAndYearDate, asArea } from '@/helpers/formatter'
+import { asQuarterAndYearDate, asCurrency, asArea } from '@/helpers/formatter'
 
 export default {
   props: {
@@ -60,7 +60,7 @@ export default {
       return chunkedArray
     })
 
-    return { flatsForCompare, asQuarterAndYearDate, asArea }
+    return { flatsForCompare, asQuarterAndYearDate, asCurrency, asArea }
   },
 }
 </script>
@@ -68,6 +68,7 @@ export default {
 <style scoped>
 .compare-table {
   display: flex;
+  max-width: 100%;
 }
 
 .compare-table-titlecolumn, .compare-table-column {
@@ -103,14 +104,18 @@ export default {
   text-overflow: ellipsis;
 }
 
-.compare-table-rowname.type,
-.compare-table-cell.type,
 .compare-table-rowname.deadline,
 .compare-table-cell.deadline,
 .compare-table-rowname.nbc,
 .compare-table-cell.nbc {
   height: 54px;
   max-height: 54px;
+}
+
+.compare-table-rowname.type,
+.compare-table-cell.type {
+   height: 87px;
+    max-height: 87px;
 }
 
 .compare-table-rowname {

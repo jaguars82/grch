@@ -72,14 +72,82 @@ if(count($flats) > 1) {
 
 ?>
 
-<!--<div class="gray-bg">
-    <p class="commercial-offer-title">
-        Коммерческое предложение № <?= $commercial->number ?>
-    </p>
-</div>-->
-
 <?php if(isset($commercialMode) && $commercialMode === 'multiple' && $settings->compareTable === true): ?>
 
+    <div class="gray-bg">
+        <p class="no-public-offert">не является публичной офертой</p>
+        <p class="commercial-offer-title">
+            Коммерческое предложение № <?= $commercial->number ?>
+        </p>
+    </div>
+
+    <!-- initiator (user) info on 1st page (above comparison table) -->
+    <?php if(!\Yii::$app->user->isGuest): ?>
+        <div class="white-bg">
+            <table class="contact-table" style="width: 100%;">
+                <tr>
+                    <td style="width: 100px;">
+                        <div class="agency-image">
+                            <?php if(
+                                !is_null($user->agency)
+                                && !is_null($user->agency->logo)
+                            ): ?>
+                                <img src="@web/uploads/<?= $user->agency->logo ?>" style="width: 85px; max-width: 85px;" />
+                                <!--<?= Html::img(Yii::getAlias("/uploads/{$user->agency->logo}")) ?>-->
+                            <?php else: ?>
+                                <!--<?= Html::img(Yii::getAlias("@web/img/office.png")) ?>-->
+                                <img src="/img/office.png" style="width: 85px; max-width: 85px;" />
+                            <?php endif ?>
+                        </div>
+                    </td>
+                    <td style="text-align: right;">
+                        <div style="width: 100%; text-align: right;">
+                            <?php if(!is_null($user->roleLabel)): ?>
+                            <b>
+                                <?= $user->roleLabel ?>
+                            </b>
+                            <?php endif; ?>
+                            <span class="name">
+                                <?= $user->fullName ?>
+                            </span>
+                        </div>
+                        <?php if(!is_null($user->phone)): ?>
+                        <div style="width: 100%; text-align: right;">
+                        <a href="tel:<?= $user->phone ?>" class="phone">
+                            <span class="icon">
+                                <?= Html::img(Yii::getAlias('@web/img/icons/phone.png'));?>
+                            </span>
+                            <?= $user->phone ?>
+                        </a>
+                        </div>
+                        <?php endif; ?>
+                        <?php if(!is_null($user->email)): ?>
+                        <div style="width: 100%; text-align: right;">
+                        <a href="mailto:<?= $user->email ?>" class="email">
+                            <span class="icon">
+                                <?= Html::img(Yii::getAlias('@web/img/icons/mail.png'));?>
+                            </span>
+                            <?= $user->email ?>
+                        </a>
+                        </div>
+                        <?php endif; ?>
+                    </td>
+                    <td style="width: 100px;">
+                        <?php if(!is_null($user->photo)): ?>
+                            <img src="/uploads/<?= $user->photo ?>" style="width: 85px; height: 85px; border-radius: 50px;" />
+                            <!--<?= Html::img(\Yii::getAlias("@web/uploads/{$user->photo}")) ?>-->
+                        <?php else: ?>
+                            <img src="/img/blank-person.png" style="width: 85px; height: 85x; border-radius: 50px;" />
+                            <!--<?= Html::img(\Yii::getAlias("@web/img/blank-person.png")); ?>-->
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    <?php endif;?>
+    <!-- END OF initiator (user) info on 1st page (above comparison table) -->
+
+    <!-- comparison table -->
     <table class="compare-table">
         <colgroup>
             <col span="1" style="width: 150px;">
@@ -159,12 +227,20 @@ if(count($flats) > 1) {
             <?php endforeach; ?>
         </tbody>
     </table>
+    <!-- END OF comparison table -->
 
 <?php endif; ?>
 
 <?php foreach($flats as $flat): ?>
 <div class="commercial-offer">
     <div class="page">
+
+        <div class="gray-bg">
+            <p class="no-public-offert">не является публичной офертой</p>
+            <p class="commercial-offer-title">
+                Коммерческое предложение № <?= $commercial->number ?>
+            </p>
+        </div>
 
         <?php if(!\Yii::$app->user->isGuest): ?>
         <div class="white-bg">
@@ -368,31 +444,35 @@ if(count($flats) > 1) {
             <div class="row" style="height: 200px; max-height: 200px; overflow: hidden;">
                 <?php if(!is_null($flat->layout)): ?>
                     <div class="col-xs-6" style="height: 200px; max-height: 200px; overflow: hidden;">
-                        <p class="layout-title">
-                            Планировка квартиры
-                        </p>
-                        <p class="center layout-img">
-                            <?php if(SvgDom::isNameSvg($flat->layout)): ?>
-                                <img src="/uploads/<?= $flat->layout ?>" style="height: 200px; max-height: 200px;" />
-                            <?php else: ?>
-                                <img src="/uploads/<?= $flat->layout ?>" style="height: 200px; max-height: 200px;" />
-                            <?php endif; ?>
-                        </p>
+                        <div class="image-holder">
+                            <p class="layout-title">
+                                Планировка квартиры
+                            </p>
+                            <p class="center layout-img">
+                                <?php if(SvgDom::isNameSvg($flat->layout)): ?>
+                                    <img src="/uploads/<?= $flat->layout ?>" class="flat-image" />
+                                <?php else: ?>
+                                    <img src="/uploads/<?= $flat->layout ?>" style="flat-image" />
+                                <?php endif; ?>
+                            </p>
+                        </div>
                     </div>
                 <?php endif ?>
                 <?php if(!is_null($flat->floorLayout)): ?>
                     <div class="col-xs-6" style="height: 200px; max-height: 200px; overflow: hidden;">
-                        <p class="layout-title">
-                            Поэтажный план
-                        </p>
-                        <div class="center layout-img" style="height: 200px; max-height: 200px; overflow: hidden;">
+                        <div class="image-holder">
+                            <p class="layout-title">
+                                Поэтажный план
+                            </p>
+                            <div class="center layout-img" style="height: 200px; max-height: 200px; overflow: hidden;">
                             <?php if(SvgDom::isNameSvg($flat->floorLayout->image)): ?>
-                                <?= SvgImage::get(\Yii::getAlias("@webroot/uploads/{$flat->floorLayout->image}")) ?>
+                                <img src="/uploads/floorlayout-selections/<?= $flat->floorLayout->image ?>" class="floor-image" />
                             <?php else: ?>
                                 <!--<?= Html::img([$flat->floorLayoutPath]) ?>-->
                                 <img src="<?= $flat->floorLayoutPath ?>" style="height: 200px; max-height: 200px;" />
                             <?php endif; ?>
                             </div>
+                        </div>
                     </div>
                 <?php endif; ?>
             </div>
