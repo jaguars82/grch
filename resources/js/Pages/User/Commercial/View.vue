@@ -195,10 +195,12 @@
                 />
               </q-menu>
             </q-btn>
+
+            <q-btn unelevated label="Управление объектами" icon="maps_home_work" @click="controlDialogs.flats = true" />
           </q-bar>
 
           <q-dialog v-model="shareDialogs.copyLink" persistent>
-            <q-card>
+            <q-card style="min-width: 450px">
               <q-card-section class="row items-center">
                 <div class="col-2">
                   <q-avatar icon="link" color="primary" text-color="white" />
@@ -230,6 +232,27 @@
               <q-card-actions align="right" class="text-primary">
                 <q-btn flat label="Отмена" v-close-popup />
                 <q-btn flat label="Отправить" v-close-popup @click="onSendEmail" />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
+
+          <q-dialog v-model="controlDialogs.flats">
+            <q-card style="width: 85%;">
+              <q-card-section>
+                <div class="text-h4">Список объектов, добавленных в КП</div>
+              </q-card-section>
+              <q-card-section>
+                <div class="row" v-for="flat in flats" :key="flat.id">
+                  <div class="col-10">{{ flat.newbuildingComplex.name }} > {{ flat.newbuilding.name }} > {{ flat.entrance.name }} > № {{ flat.number }}</div>
+                  <div class="col-2 text-right">
+                    <q-btn icon="delete" @click="removeFlat(flat.id)">
+                      <q-tooltip :delay="1000" :offset="[0, 5]">Удалить этот объект из КП</q-tooltip>
+                    </q-btn>
+                  </div>
+                </div>
+              </q-card-section>
+              <q-card-actions align="right" class="text-primary">
+                <q-btn flat label="Закрыть окно" v-close-popup />
               </q-card-actions>
             </q-card>
           </q-dialog>
@@ -366,6 +389,10 @@ export default {
       sendEmail: false,
     })
 
+    const controlDialogs = ref({
+      flats: false,
+    })
+
     const commercialSettings = props.commercial.settings
       ? ref(JSON.parse(props.commercial.settings))
       : ref(initialCommercialSettings)
@@ -397,29 +424,37 @@ export default {
       })
     }
 
-    /*const closePDFLink = function () {
-      PDFReady.value = false
-    }*/
-
     const saveSettings = function () {
       formfields.value.operation = 'settings'
       formfields.value.settings = commercialSettings.value
       Inertia.post(`/user/commercial/view?id=${props.commercial.id}`, formfields.value)
+      Inertia.on('finish', (event) => {
+        clearFormFields()
+      })
+    }
+
+    const removeFlat = function (flatId) {
+      formfields.value.operation = 'removeFlat'
+      formfields.value.flatId = flatId
+      Inertia.post(`/user/commercial/view?id=${props.commercial.id}`, formfields.value)
+      Inertia.on('finish', (event) => {
+        clearFormFields()
+      })
     }
 
     return { 
       breadcrumbs,
       formfields,
       shareDialogs,
+      controlDialogs,
       commercialSettings,
       PDFloading,
       pdfLink,
       pdfContent,
       savePDF,
       onSendEmail,
-      //PDFReady,
-      //closePDFLink,
-      saveSettings
+      saveSettings,
+      removeFlat
     }
   },
 }

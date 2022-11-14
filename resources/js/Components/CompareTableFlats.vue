@@ -1,5 +1,5 @@
 <template>
-  <div class="compare-table" v-for="(tablePage, i) of flatsForCompare" :key="i">
+  <div class="compare-table q-mt-md q-mb-lg q-mx-md" v-for="(tablePage, i) of flatsForCompare" :key="i">
     <div class="compare-table-titlecolumn">
       <div class="compare-table-rowname layuot">Планировка</div>
       <div class="compare-table-rowname price">Цена</div>

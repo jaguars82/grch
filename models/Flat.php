@@ -709,6 +709,30 @@ class Flat extends ActiveRecord
     }
 
     /**
+     * Return floor layout with selected flat
+     *
+     * @return string svg
+     */
+    public function getFloorLayoutWithSelectedFlatSvg()
+    {
+        $floorLayoutImage = null;
+        if(!is_null($this->layout_coords) && !is_null($this->floorLayout) && !is_null($this->floorLayout->image)) {
+            $floorLayoutPath = \Yii::getAlias("@webroot/uploads/{$this->floorLayout->image}");
+            
+            if(file_exists($floorLayoutPath) && SvgDom::isNameSvg($this->floorLayout->image)) {
+                $floorLayoutDom = new SvgDom($floorLayoutPath);
+                $floorLayoutDom->appendNode('polygon', [
+                    'class' => 'flat-polygon-main',
+                    'points' => $this->layout_coords
+                ]);
+               
+                $floorLayoutImage = $floorLayoutDom->getFileContent();
+            }
+        }
+        return $floorLayoutImage;
+    }
+
+    /**
      * Gets query for flats with rooms count [[Flat]].
      *
      * @param int $roomsCount

@@ -474,9 +474,9 @@ if(count($flats) > 1) {
                 <?php endforeach; ?>
             </table>
         </div>
-    <?php endif; ?>
+        <?php endif; ?>
 
     </div>
-              
+
 </div>
 <?php endforeach; ?>

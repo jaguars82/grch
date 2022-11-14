@@ -11,24 +11,42 @@
     <q-card-section v-if="viewOptions.group.show" class="q-px-md q-py-xs">
       <div class="row">
         <div v-if="viewOptions.group.flat" class="col-12 text-center">
+          <div class="image-frame rounded-borders q-px-sm q-py-md">
           <p class="text-h4 text-center">Планировка квартиры</p>
-          <img class="floorImage" ref="floorImage" v-if="flat.layout"
-            :src="`/uploads/${flat.layout}`"
-          />
+            <div class="image-aligner">
+              <img
+                class="flatImage"
+                ref="flatImage"
+                v-if="flat.layout"
+                :src="`/uploads/${flat.layout}`"
+              />
+            </div>
+          </div>
         </div>
       </div>
       <div class="row">
-        <div v-if="viewOptions.group.floor" class="col-6 q-pa-sm">
-          <p class="text-h4 text-center">План этажа</p>
-          <div class="no-pointer-events floor-layout-container" v-if="flat.floorLayoutImage" v-html="flat.floorLayoutImage"></div>
+        <div v-if="viewOptions.group.floor" class="col-6 q-my-md">
+          <div class="image-frame rounded-borders q-mr-sm q-px-sm q-py-md">
+            <p class="text-h4 text-center">План этажа</p>
+            <div class="image-aligner small">
+              <img
+                class="floorImage"
+                :src="`/uploads/floorlayout-selections/${flat.floorLayoutImage}`"
+              />
+            </div>
+          </div>
         </div>
-        <div class="col-6 q-pa-sm">
-          <p class="text-h4 text-center">Генплан</p>
+        <div class="col-6 q-my-md">
+          <div class="image-frame rounded-borders q-ml-sm q-px-sm q-py-md">
+            <p class="text-h4 text-center">Генплан</p>
+            <div class="image-aligner small">
               <img
                 class="genplan-image"
                 v-if="flat.layout"
                 :src="`/uploads/${flat.newbuildingComplex.master_plan}`"
               />
+            </div>
+          </div>
         </div>
       </div>
     </q-card-section>
@@ -60,7 +78,7 @@
 
 <script>
 
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { asArea, asCurrency, asFloor, asNumberString, asQuarterAndYearDate, asPricePerArea } from '@/helpers/formatter'
 import { yaMapsSettings } from '@/configurations/custom-configs'
 import { yandexMap, ymapMarker } from 'vue-yandex-maps'
@@ -86,15 +104,15 @@ export default ({
     })
 
     const flatRoomTitle = computed(() => `${asNumberString(props.flat.rooms)}комнатная`)
-    const flatFloor = computed(()=> asFloor(props.flat.floor, props.flat.newbuilding.total_floor))
+    const flatFloor = computed(() => asFloor(props.flat.floor, props.flat.newbuilding.total_floor))
     const flatArea = computed(() => asArea(props.flat.area))
     const flatPriceCash = computed(() => asCurrency(props.flat.price_cash))
     const flatPricePerMeter = computed(() => asPricePerArea(props.flat.price_cash / props.flat.area))
     const flatDeadline = computed(() => !props.flat.newbuilding.deadline ? 'нет данных' : new Date() > new Date(props.flat.newbuilding.deadline) ? 'позиция сдана' : asQuarterAndYearDate(props.flat.newbuilding.deadline))
 
-    const floorImage = ref(null)
+    const flatImage = ref(null)
 
-    return { viewOptions, flatArea, flatFloor, flatPriceCash, flatRoomTitle, flatPricePerMeter, flatDeadline, floorImage, /*floorLayoutImage,*/ yaMapsSettings }
+    return { viewOptions, flatArea, flatFloor, flatPriceCash, flatRoomTitle, flatPricePerMeter, flatDeadline, flatImage, /*floorLayoutImage,*/ yaMapsSettings }
     
   },
 })
@@ -107,19 +125,32 @@ export default ({
   margin-top: -35px;
 }
 
-.floorImage {
+.image-frame {
+  height: 100%;
+  border-style: solid;
+  border-width: thin;
+  border-color: grey;
+}
+
+.image-aligner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-aligner.small {
+  height: 350px;
+}
+
+.flatImage {
   width: 100%;
   max-height: 450px;
 }
 
-.floor-layout-container svg {
+.floorImage,
+.genplan-image {
   width: 100%;
-  height: auto;
-  max-width: 100%;
+  max-height: 350px;
 }
 
-/*.genplan-image,
-.floor-layout-image {
-  width: 100%;
-}*/
 </style>

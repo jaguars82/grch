@@ -6,7 +6,31 @@
     <template v-slot:main>
       <RegularContentContainer title="Коммерческие предложения">
         <template v-slot:content>
+
+          <div class="text-right">
+            <q-btn icon="event" label="Выбрать дату" color="primary">
+              <q-popup-proxy
+                cover
+                transition-show="scale"
+                transition-hide="scale"
+              >
+                <q-date
+                  v-model="date"
+                  :events="events"
+                  @update:model-value="onDateSelect"
+                >
+                  <div class="row items-center justify-end q-gutter-sm">
+                    <q-btn label="Закрыть" color="primary" flat v-close-popup />
+                    <q-btn label="Сбросить" color="primary" flat @click="onDateReset" />
+                  </div>
+                </q-date>
+              </q-popup-proxy>
+            </q-btn>
+          </div>
+
+          <loading v-if="loading" size="md" text="Загрузка данных" />
           <q-table
+            v-else
             :rows="rows"
             :columns="columns"
             :pagination="{ rowsPerPage: 25 }"
@@ -31,6 +55,11 @@
                     Открыть
                   </inertia-link>
                 </q-td>
+                <q-td key="archive" :props="props">
+                  <q-btn flat icon="folder_copy" @click="moveToArchive(props.row.id)">
+                    <q-tooltip :delay="1000" :offset="[0, 5]">Поместить в архив</q-tooltip>
+                  </q-btn>
+                </q-td>
               </q-tr>
             </template>
 
@@ -42,20 +71,24 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
 import ProfileLayout from '@/Layouts/ProfileLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
 import { asDateTime } from '@/helpers/formatter'
+import Loading from '@/Components/Elements/Loading.vue'
 
 export default {
   components: {
     ProfileLayout,
     Breadcrumbs,
-    RegularContentContainer
+    RegularContentContainer,
+    Loading
   },
   props: {
-    commercials: Array
+    commercials: Array,
+    events: Array,
   },
   setup(props) {
       const breadcrumbs = ref([
@@ -85,11 +118,16 @@ export default {
       },
     ])
 
+    const loading = ref(false)
+
+    const date = ref(null)
+
     const columns = [
       { name: 'number', align: 'left', label: 'Номер', field: 'number', sortable: true },
       { name: 'created_at', required: true, align: 'center', label: 'От', field: 'created_at', sortable: true },
       { name: 'flats', required: true, align: 'center', label: 'Объекты', field: 'flats', sortable: false },
       { name: 'link', align: 'center', label: '', field: 'link', sortable: false },
+      { name: 'archive', align: 'center', label: '', field: 'archive', sortable: false },
     ]
 
     const rows = computed(() => {
@@ -107,7 +145,48 @@ export default {
       return processedRows
     })
 
-    return { breadcrumbs, columns, rows }
+    const onDateSelect = function() {
+      loading.value = true
+      Inertia.post(`/user/commercial/index`, { operation: 'selectByDate', ondate: date.value })
+      Inertia.on('finish', (event) => {
+        loading.value = false
+      })
+    }
+
+    function setToday() {
+      const currentDay = new Date()
+      const yyyy = currentDay.getFullYear()
+      let mm = currentDay.getMonth() + 1
+      let dd = currentDay.getDate()
+
+      if (dd < 10) dd = '0' + dd
+      if (mm < 10) mm = '0' + mm
+
+      const formattedToday = yyyy + '/' + mm + '/' + dd
+      date.value = formattedToday
+    }
+
+    const onDateReset = function() {
+      setToday()
+      loading.value = true
+      Inertia.post(`/user/commercial/index`, { operation: 'resetDate' })
+      Inertia.on('finish', (event) => {
+        loading.value = false
+      })
+    }
+
+    const moveToArchive = function(id) {
+      Inertia.post(`/user/commercial/index`, { operation: 'moveToArchive', id: id })
+      Inertia.on('finish', (event) => {
+        //loading.value = false
+      })
+    }
+
+    onMounted(() => {
+      setToday()
+    })
+
+    return { breadcrumbs, loading, date, columns, rows, onDateSelect, onDateReset, moveToArchive }
   },
 }
 </script>

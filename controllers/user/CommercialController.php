@@ -4,6 +4,8 @@ namespace app\controllers\user;
 
 use app\components\traits\CustomRedirects;
 use app\components\SharedDataFilter;
+use app\components\flat\Layout;
+use app\components\flat\SvgDom;
 use app\models\Flat;
 use app\models\Commercial;
 use app\models\CommercialFlat;
@@ -52,9 +54,12 @@ class CommercialController extends Controller
     public function actionMake($flatId) {
 
         $model = Flat::find()
-        ->where(['id' => $flatId])
-        ->one();
-    
+            ->where(['id' => $flatId])
+            ->one();
+
+        /** creating floor layout with selected flat as svg file */
+        $selectionLayout = (new Layout())->createFloorLayoutWithSelectedFlat($model);
+
         $flat = ArrayHelper::toArray($model);
         $flat['newbuilding'] = ArrayHelper::toArray($model->newbuilding);
         $flat['newbuildingComplex'] = ArrayHelper::toArray($model->newbuildingComplex);
@@ -107,11 +112,44 @@ class CommercialController extends Controller
 
     public function actionIndex()
     {
+        if(\Yii::$app->request->isPost) {
+
+            switch(\Yii::$app->request->post('operation')) {
+                case 'selectByDate':
+                    $targetDate = str_ireplace("/", "-", \Yii::$app->request->post('ondate'));
+                    $commercialsOnDate = (new Commercial())->find()
+                        ->where(['initiator_id' => \Yii::$app->user->id])
+                        ->andWhere(['active' => 1])
+                        ->andWhere(['>=', 'created_at', $targetDate.'  00:00:00'])
+                        ->andWhere(['<=', 'created_at', $targetDate.'  23:59:59'])
+                        ->orderBy(['created_at' => SORT_DESC])
+                        ->all();
+                    break;
+                case 'moveToArchive':
+                    $commercialToArchive = (new Commercial())->findOne(\Yii::$app->request->post('id'));
+                    $commercialToArchive->active = 0;
+                    $commercialToArchive->save();
+                    break;
+                default:
+                    continue;
+            }
+        }
 
         $commercials = (new Commercial())->find()
             ->where(['initiator_id' => \Yii::$app->user->id])
+            ->andWhere(['active' => 1])
             ->orderBy(['created_at' => SORT_DESC])
             ->all();
+
+        // create array with all commercial dates (for calendar)
+        $calendarEvents = array();
+        foreach ($commercials as $commercial) {
+            array_push($calendarEvents, date("Y/m/d", strtotime($commercial->created_at)));
+        }
+
+        if(isset($commercialsOnDate)) {
+            $commercials = $commercialsOnDate;
+        }
 
         $commercialsArray = array();
         foreach ($commercials as $commercial) {
@@ -130,6 +168,7 @@ class CommercialController extends Controller
         return $this->inertia('User/Commercial/Index', [
             'user' => \Yii::$app->user->identity,
             'commercials' => $commercialsArray,
+            'events' => $calendarEvents,
         ]);
     }
 
@@ -141,30 +180,8 @@ class CommercialController extends Controller
         $commercialArray['initiator'] = ArrayHelper::toArray($commercialModel->initiator);
         $commercialArray['initiator']['organization'] = ArrayHelper::toArray($commercialModel->initiator->agency);
 
-        $flats = $commercialModel->flats;
-        $flatsArray = array();
-        foreach ($flats as $flat) {
-            $flatItem = ArrayHelper::toArray($flat);
-            $flatItem['floorLayoutImage'] = !is_null($flat->floorLayoutSvg) ? $flat->floorLayoutSvg : NULL;
-            $flatItem['developer'] = ArrayHelper::toArray($flat->developer);
-            $flatItem['newbuildingComplex'] = ArrayHelper::toArray($flat->newbuilding->newbuildingComplex);
-            $flatItem['newbuildingComplex']['address'] = $flat->newbuilding->newbuildingComplex->address;
-            foreach ($flat->furnishes as $key => $furnish) {
-                $finishing = ArrayHelper::toArray($furnish);
-                $finishing['furnishImages'] = $furnish->furnishImages;
-                $flatItem['finishing'][] = ArrayHelper::toArray($finishing);
-            }
-            $flatItem['newbuilding'] = ArrayHelper::toArray($flat->newbuilding);
-            $flatItem['advantages'] = ArrayHelper::toArray($flat->newbuilding->newbuildingComplex->advantages);
-            array_push($flatsArray, $flatItem);
-        }
-
-        $commercialMode = count($flatsArray) > 1 ? 'multiple' : 'single';
-
         $viewOptions = [
             'commercial' => $commercialArray,
-            'flats' => $flatsArray,
-            'commercialMode' => $commercialMode,
         ];
         
         /** Commercial operations */
@@ -189,13 +206,47 @@ class CommercialController extends Controller
                     break;
                 /** Ghange commercial settings */
                 case 'settings':
-                    //echo '<pre>'; var_dump(\Yii::$app->request->post('settings')); echo '</pre>'; die;
                     $commercialModel->settings = json_encode(\Yii::$app->request->post('settings'));
                     $commercialModel->save();
                     break;
+                /** Deleting a flat from commercial */
+                case 'removeFlat':
+                    $flat = Flat::find()
+                        ->where(['id' => \Yii::$app->request->post('flatId')])
+                        ->one();
+                    $commercialModel->unlink('flats', $flat, true);
+                    break;
             }
-        }      
+        }
         
+        $flats = $commercialModel->flats;
+        $flatsArray = array();
+        foreach ($flats as $flat) {
+
+            /** creating floor layout with selected flat as svg file */
+            $selectionLayout = (new Layout())->createFloorLayoutWithSelectedFlat($flat);
+
+            $flatItem = ArrayHelper::toArray($flat);
+            $flatItem['floorLayoutImage'] = !is_null($flat->floorLayout) ? $flat->floorLayout->image : NULL;
+            $flatItem['developer'] = ArrayHelper::toArray($flat->developer);
+            $flatItem['newbuildingComplex'] = ArrayHelper::toArray($flat->newbuilding->newbuildingComplex);
+            $flatItem['newbuildingComplex']['address'] = $flat->newbuilding->newbuildingComplex->address;
+            foreach ($flat->furnishes as $key => $furnish) {
+                $finishing = ArrayHelper::toArray($furnish);
+                $finishing['furnishImages'] = $furnish->furnishImages;
+                $flatItem['finishing'][] = ArrayHelper::toArray($finishing);
+            }
+            $flatItem['newbuilding'] = ArrayHelper::toArray($flat->newbuilding);
+            $flatItem['entrance'] = ArrayHelper::toArray($flat->entrance);
+            $flatItem['advantages'] = ArrayHelper::toArray($flat->newbuilding->newbuildingComplex->advantages);
+            array_push($flatsArray, $flatItem);
+        }
+
+        $commercialMode = count($flatsArray) > 1 ? 'multiple' : 'single';
+
+        $viewOptions['flats'] = $flatsArray;
+        $viewOptions['commercialMode'] = $commercialMode;
+
         return $this->inertia('User/Commercial/View', $viewOptions);
     }
 
@@ -218,22 +269,10 @@ class CommercialController extends Controller
             }
 
             $pdf = $this->getPdfFile($commercial, true);
-            //$result = $pdf->render();
         } catch (\Exception $e) {
             echo '<pre>'; var_dump($e); echo '</pre>';
             return $this->redirectBackWhenException($e);
         }
-        //echo '<pre>'; var_dump($result); echo '</pre>'; die();
-        //return \Yii::$app->response->sendFile('/uploads/Коммерческое предложение - 10.pdf');
-
-        /*return $this->redirect([
-            'view',
-            'id' => 2,
-            'operation' => 'pdf',
-            'status' => 'ok'
-        ]);*/
-
-        //return $result;
     }
 
     /**
@@ -246,24 +285,13 @@ class CommercialController extends Controller
     private function getPdfFile($commercial, $isReturnFile = false)
     {        
         ini_set('pcre.backtrack_limit', 30000000);
+        ini_set('memory_limit', '600M');
         
         if (isset(\Yii::$app->request->get()['settings'])) {
             $settings = \Yii::$app->request->get()['settings'];
         } else {
             $settings = [];
         }
-        
-        /* if (isset(\Yii::$app->request->get()['new_price_cash'])) {
-            $newPriceCash = \Yii::$app->request->get()['new_price_cash'];
-        } else {
-            $newPriceCash = NULL;
-        } */
-        
-        /* if (isset(\Yii::$app->request->get()['new_price_credit'])) {
-            $newPriceCredit = \Yii::$app->request->get()['new_price_credit'];
-        } else {
-            $newPriceCredit = NULL;
-        } */
         
         $pdf = new Pdf([
             'mode' => Pdf::MODE_UTF8,
@@ -285,15 +313,10 @@ class CommercialController extends Controller
             'methods' => [],
         ]);
         
-        /*if ($isReturnFile) {
-            return $pdf;
-        }*/
-        
         $filename = \Yii::getAlias('@webroot/downloads')."/{$pdf->filename}";
         $pdf->Output($pdf->content, $filename, \Mpdf\Output\Destination::FILE);
         
         return $filename;
-        //return $this->render('pdf', ['flats' => $commercial->flats, 'settings' => $settings, 'commercial' => $commercial]);
     }
 
     /**

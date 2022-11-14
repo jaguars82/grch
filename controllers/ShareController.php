@@ -8,6 +8,7 @@ use yii\filters\VerbFilter;
 use tebe\inertia\web\Controller;
 use yii\helpers\ArrayHelper;
 use app\components\traits\CustomRedirects;
+use app\components\flat\Layout;
 
 class ShareController extends Controller
 {
@@ -52,8 +53,12 @@ class ShareController extends Controller
 
         $flatsArray = array();
         foreach ($flats as $flat) {
+
+            /** creating floor layout with selected flat as svg file */
+            $selectionLayout = (new Layout())->createFloorLayoutWithSelectedFlat($flat);
+
             $flatItem = ArrayHelper::toArray($flat);
-            $flatItem['floorLayoutImage'] = !is_null($flat->floorLayoutSvg) ? $flat->floorLayoutSvg : NULL;
+            $flatItem['floorLayoutImage'] = !is_null($flat->floorLayout) ? $flat->floorLayout->image : NULL;
             $flatItem['developer'] = ArrayHelper::toArray($flat->developer);
             $flatItem['newbuildingComplex'] = ArrayHelper::toArray($flat->newbuilding->newbuildingComplex);
             $flatItem['newbuildingComplex']['address'] = $flat->newbuilding->newbuildingComplex->address;
@@ -63,6 +68,7 @@ class ShareController extends Controller
                 $flatItem['finishing'][] = ArrayHelper::toArray($finishing);
             } 
             $flatItem['newbuilding'] = ArrayHelper::toArray($flat->newbuilding);
+            $flatItem['entrance'] = ArrayHelper::toArray($flat->entrance);
             $flatItem['advantages'] = ArrayHelper::toArray($flat->newbuilding->newbuildingComplex->advantages);
             array_push($flatsArray, $flatItem);
         }
