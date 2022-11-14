@@ -30,7 +30,9 @@ class SvgDom
 
         $svgData = file_get_contents($filePath);
 
+        
         $svgData =  preg_replace("/<!DOCTYPE[\s\S]+?(]>)/", '', $svgData);
+        //$svgData =  preg_replace('/[а-яА-ЯёЁ]/u', '', $svgData);
         $svgData = str_replace('xmlns:x="&ns_extend;" xmlns:i="&ns_ai;" xmlns:graph="&ns_graphs;"', '', $svgData);
         $svgData = preg_replace('/<\?xml[\s\S]+?\?>/', '', $svgData);
 
@@ -46,8 +48,9 @@ class SvgDom
         if(!$this->svgDom) {
             $this->createDom();
         }
-        $rootSvg = $this->svgDom->getElementsByTagName('svg');
-        $rootSvg = $rootSvg->item(0);
+        $rootSvg = $this->svgDom->getElementsByTagName('svg')->item(0);
+        /*$rootSvg = $rootSvg->item(0);
+        $rootSvg->setAttribute("id", "left");*/
 
         if($rootSvg) {
             foreach($nodeList as $nodeItem) {

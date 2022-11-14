@@ -75,6 +75,7 @@ class NewsController extends Controller
         $newsDataProvider = new ActiveDataProvider([
             'query' => News::find()
                 ->onlyNews()
+                ->onlyActual()
                 ->forNewbuildingComplex($newbuildingComplex)
                 ->forDeveloper($developer)
                 ->with(['newsFiles', 'newbuildingComplexes.developer']),
@@ -89,6 +90,7 @@ class NewsController extends Controller
         $actionsDataProvider = new ActiveDataProvider([
             'query' => News::find()
                 ->onlyActions()
+                ->onlyActual()
                 ->forNewbuildingComplex($newbuildingComplex)
                 ->forDeveloper($developer)
                 ->with(['newsFiles', 'newbuildingComplexes.developer']),

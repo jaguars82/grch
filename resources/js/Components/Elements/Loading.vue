@@ -7,6 +7,9 @@
       :class="cssClass"
     />
   </div>
+  <div v-if="text">
+    <p class="text-center">{{ text }}</p>
+  </div>
 </template>
 
 <script>
@@ -23,6 +26,9 @@ export default {
     cssClass: {
       type: String,
       default: 'q-my-lg'
+    },
+    text: {
+      type: String
     }
   }
 }

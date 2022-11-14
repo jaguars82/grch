@@ -18,6 +18,7 @@ use yii\db\ActiveRecord;
  * @property string|null $image
  * @property int $category
  * @property string|null $search_link
+ * @property boolean $is_archived
  * @property string|null $created_at
  * @property string|null $updated_at
  *
@@ -71,6 +72,7 @@ class News extends ActiveRecord
             [['title', 'detail'], 'required'],
             [['detail'], 'string'],
             [['category'], 'integer'],
+            [['is_archived'], 'boolean'],
             [['created_at', 'updated_at', 'search_link'], 'safe'],
             [['title', 'image'], 'string', 'max' => 200],
         ];
@@ -86,6 +88,7 @@ class News extends ActiveRecord
             'detail' => 'Описание',
             'image' => 'Изображение',
             'search_link' => 'Cсылки на страницу поиска',
+            'is_archived' => 'В архиве',
             'category' => 'Категория',
             'created_at' => 'Дата размещения',
             'updated_at' => 'Дата обновления',
@@ -191,7 +194,7 @@ class News extends ActiveRecord
     public function getActions() {
         $actions = $this->find()
         ->where(
-            ['category' => 1]
+            ['category' => 1, 'is_archived' => 0]
         )
         ->all();
         return $actions;

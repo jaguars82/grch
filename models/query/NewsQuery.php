@@ -21,6 +21,16 @@ class NewsQuery extends ActiveQuery
     }
     
     /**
+     * Get only actual entries
+     * 
+     * @return yii\db\ActiveQuery
+     */
+    public function onlyActual()
+    {
+        return $this->andWhere(['is_archived' => 0]);
+    }
+    
+    /**
      * Get only actions
      * 
      * @param boolean $isActive flag indicating that news is active
@@ -29,6 +39,7 @@ class NewsQuery extends ActiveQuery
     public function onlyActions($isActive = false)
     {
         $query= $this->andWhere(['category' => News::CATEGORY_ACTION]);
+        //    ->andWhere(['is_archived' => 0]);
         if ($isActive) {
             // $query->join('INNER JOIN', 'action_data', 'news.id = action_data.news_id')
             $query->join('INNER JOIN', 'action_data', 'news.id = action_data.news_id')

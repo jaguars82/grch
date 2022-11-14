@@ -53,6 +53,7 @@ use app\components\flat\SvgDom;
  * @property Entrance $entrance
  * @property NewbuildingComplex $newbuildingComplex
  * @property News[] $news
+ * @property Commercial[] $commercials
  */
 class Flat extends ActiveRecord
 {
@@ -498,6 +499,17 @@ class Flat extends ActiveRecord
     }
 
     /**
+     * Gets query for [[Commercials]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCommercials()
+    {
+        return $this->hasMany(Commercial::className(), ['id' => 'commercial_id'])
+                ->viaTable('commercial_flat', ['flat_id' => 'id']);
+    }
+
+    /**
      * Gets query for [[CompositeFlat]].
      *
      * @return \yii\db\ActiveQuery
@@ -693,6 +705,30 @@ class Flat extends ActiveRecord
             }
         }
 
+        return $floorLayoutImage;
+    }
+
+    /**
+     * Return floor layout with selected flat
+     *
+     * @return string svg
+     */
+    public function getFloorLayoutWithSelectedFlatSvg()
+    {
+        $floorLayoutImage = null;
+        if(!is_null($this->layout_coords) && !is_null($this->floorLayout) && !is_null($this->floorLayout->image)) {
+            $floorLayoutPath = \Yii::getAlias("@webroot/uploads/{$this->floorLayout->image}");
+            
+            if(file_exists($floorLayoutPath) && SvgDom::isNameSvg($this->floorLayout->image)) {
+                $floorLayoutDom = new SvgDom($floorLayoutPath);
+                $floorLayoutDom->appendNode('polygon', [
+                    'class' => 'flat-polygon-main',
+                    'points' => $this->layout_coords
+                ]);
+               
+                $floorLayoutImage = $floorLayoutDom->getFileContent();
+            }
+        }
         return $floorLayoutImage;
     }
 

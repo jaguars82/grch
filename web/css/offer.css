@@ -48,7 +48,8 @@
 }
 
 .commercial-offer-layout .layout-img img {
-  max-height: 100%;
+  height: 200px;
+  max-height: 200px;
 }
 
 .commercial-offer {
@@ -67,23 +68,28 @@
 
 .gray-bg {
   background: #f8f9fa;
-  padding: 15px 20px;
+  padding: 5px 20px;
 }
 
 .white-bg {
   background: #fff;
-  padding: 15px 20px;
+  padding: 5px 20px;
+}
+
+.no-public-offert {
+  text-align: right;
+  font-size: 11px;
 }
 
 .commercial-offer-title {
-  font-weight: 500;
-  font-size: 24px;
-  line-height: 36px;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 22px;
   color: #212121;
   margin-bottom: 0;
 }
 
-.commercial-offer-address {
+.commercial-offer-subtitle {
   font-size: 16px;
   line-height: 24px;
   color: #212121;
@@ -92,20 +98,20 @@
 }
 
 .person {
-  width: 400px;
-  float: left;
+  width: 350px;
+  /*float: right;*/
 }
 
 .person .image {
   width: 85px;
-  height: 100px;
+  height: 85px;
   text-align: center;
-  float: left;
+  float: right;
 }
 
 .person .image img {
   max-width: 100%;
-  max-height: 100px;
+  max-height: 85px;
 }
 
 .person .content {
@@ -115,7 +121,7 @@
 .person .content b {
   font-weight: bold;
   font-size: 14px;
-  line-height: 24px;
+  line-height: 20px;
   color: #000000;
   padding-right: 15px;
   margin-bottom: 3px;
@@ -123,7 +129,7 @@
 
 .person .content .name {
   font-size: 14px;
-  line-height: 24px;
+  line-height: 20px;
   color: #000000;
   margin-bottom: 3px;
 }
@@ -157,9 +163,10 @@
 }
 
 .agency-image {
-  margin-right: 39px;
-  margin-left: auto;
+  /*margin-left: 39px;
+  margin-right: auto;*/
   width: 100px;
+  max-width: 100px;
 }
 
 @media screen and (max-width: 450px) {
@@ -180,7 +187,9 @@
 }
 
 .agency-image img {
-  max-width: 100%;
+  width: 100px;
+  max-width: 100px;
+  /*max-width: 100%;*/
 }
 .info-item {
   margin-bottom: 15px;
@@ -266,6 +275,7 @@
   line-height: 28px;
   color: #212121;
   margin-bottom: 10px;
+  text-align: center;
 }
 
 .center {
@@ -287,12 +297,29 @@
   margin-bottom: 0;
 }
 
+.image-holder {
+  height: 300px;
+  max-height: 300px;
+  margin: 0 5px;
+  padding: 10px 15px;
+  border: solid 1px #777;
+  border-radius: 3px;
+}
+
 .layout-img {
   width: 70%;
   margin-right: auto;
   margin-left: auto;
   text-align: center;
   height: 150px;
+}
+
+.flat-image,
+.floor-image {
+  width: 100%;
+  height: auto;
+  max-height: 250px;
+  max-height: 250px;
 }
 
 .layout-img svg {
@@ -414,6 +441,12 @@
 .advantages-row .flex-row {
   margin-bottom: -15px;
 } */
+
+
+.contact-block {
+  display: flex;
+  flex-wrap: nowrap;
+}
 
 .advantages-row {
   padding-bottom: 5px;
@@ -544,4 +577,45 @@ table td {
   line-height: 1.42857143;
   vertical-align: top;
   border: 1px solid #dae2e8;
+}
+
+.compare-table {
+  width: 100%;
+  margin: 10px 35px;
+  border-collapse: collapse;
+  border: thin solid grey;
+}
+
+.compare-table-layout
+{
+  width: 150px;
+  max-width: 150px;
+  max-height: 250px;
+}
+
+.compare-table-rowtitle,
+.compare-table-cell {
+  padding: 5px 20px;
+  text-align: center;
+  vertical-align: middle;
+  border: thin solid grey;
+}
+
+.compare-table-rowtitle {
+  font-weight: 600;
+}
+
+.compare-table-rowtitle {
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.compare-table-cell.layout {
+  width: 150px;
+  max-width: 150px;
+  overflow: hidden;
+}
+
+.contact-table {
+  border: none;
 }

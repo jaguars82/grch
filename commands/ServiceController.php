@@ -57,6 +57,8 @@ class ServiceController extends Controller
                         $flat->unlink('assignedNews', $action, true);
                     }
 
+					$action->is_archived = 1;
+					$action->save();
                     $action->actionData->is_actual = 0;
                     $action->actionData->save();
                 } 

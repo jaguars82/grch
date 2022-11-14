@@ -49,6 +49,21 @@
           </q-item>
         </inertia-link>
 
+        <inertia-link
+          v-if="user.role === 'admin'
+              || user.role === 'manager'
+              || user.role === 'agent'"
+          href="/user/commercial/index"
+        >
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon color="primary" name="share" />
+            </q-item-section>
+
+            <q-item-section>КП</q-item-section>
+          </q-item>
+        </inertia-link>
+
         <inertia-link href="/user/support/index">
         <q-item clickable v-ripple>
           <q-item-section avatar>
