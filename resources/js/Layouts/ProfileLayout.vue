@@ -15,9 +15,9 @@
 </template>
 
 <script>
-import MainMenu from '../Components/Layout/MainMenu.vue'
-import ProfileMenu from '../Components/Layout/ProfileMenu.vue'
-import Footer from '../Components/Layout/Footer.vue'
+import MainMenu from '@/Components/Layout/MainMenu.vue'
+import ProfileMenu from '@/Components/Layout/ProfileMenu.vue'
+import Footer from '@/Components/Layout/Footer.vue'
 
 export default ({
   name: 'MainLayout',

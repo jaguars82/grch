@@ -22,7 +22,7 @@
         </inertia-link>
 
          <inertia-link
-          v-if="user.role === 'manager' || user.role === 'admin'"
+          v-if="user.role === 'manager'"
          :href="`/user/agency-agent/index?agencyId=${user.agency_id}`"
         >
           <q-item clickable v-ripple>

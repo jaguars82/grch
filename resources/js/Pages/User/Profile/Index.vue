@@ -38,9 +38,9 @@
 
 <script>
 import { ref } from 'vue'
-import ProfileLayout from '../../../Layouts/ProfileLayout.vue'
-import Breadcrumbs from '../../../Components/Layout/Breadcrumbs.vue'
-import { userInfo } from '../../../composables/shared-data'
+import ProfileLayout from '@/Layouts/ProfileLayout.vue'
+import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
+import { userInfo } from '@/composables/shared-data'
 
 export default ({
   components: {

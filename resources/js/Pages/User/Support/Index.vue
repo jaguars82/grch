@@ -16,6 +16,7 @@
           <GridTableToggle :defaultMode="ticketsGridView" />
 
           <q-table
+            class="q-mt-md"
             :grid="ticketsGridView"
             :columns="columns"
             :rows="rows"
@@ -49,7 +50,7 @@
                     <inertia-link :href="`/user/support-ticket/view?id=${props.row.id}`">
                       <div>
                         <p class="q-mb-xs text-h4 text-center">{{ props.row.ticket_number }}</p>
-                        <p class="text-subtitle1 text-center">от {{ asDateTime(props.row.created_at) }}</p>
+                        <p class="text-subtitle1 text-center">от {{ props.row.created_at }}</p>
                         <p class="text-h5 text-center">{{ props.row.title }}</p>
                       </div>
                     </inertia-link>

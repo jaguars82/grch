@@ -14,9 +14,8 @@
               v-for="message of messages"
               :key="message.id"
               :text="[message.text]"
-              sent
-              text-color="white"
-              bg-color="primary"
+              :sent="message.author.id === user.id"
+              :bg-color="message.author.id === user.id ? 'white' : 'light-green-3'"
             >
               <template v-slot:name>
                 <span>{{ message.author.first_name }} {{ message.author.last_name }}</span>
@@ -29,19 +28,21 @@
               <template v-slot:avatar>
                 <img
                   class="q-message-avatar q-message-avatar--sent"
+                  :class="{'q-mr-sm': message.author.id !== user.id }"
                   :src="message.author.photo ? `/uploads/${message.author.photo}` : '/img/user-nofoto.jpg'"
                 >
               </template>
             </q-chat-message>
           </div>
-            <q-form  @submit="onSubmit">
+            <Loading v-if="loading" />
+            <q-form v-else @submit="onSubmit">
               <div class="row q-py-sm">
                 <div class="col q-mx-md">
                   <q-input outlined autogrow v-model="formfields.text" label="Написать сообщение" />
                 </div>
               </div>
               <div class="q-mt-lg text-center">
-                <q-btn label="Отправить сообщение" type="submit" color="primary"/>
+                <q-btn label="Отправить сообщение" type="submit" color="primary" :disabled="!formfields.text"/>
               </div>
             </q-form>
 
@@ -54,22 +55,27 @@
 <script>
 import { ref, computed } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
-import ProfileLayout from '../../../Layouts/ProfileLayout.vue'
-import Breadcrumbs from '../../../Components/Layout/Breadcrumbs.vue'
-import RegularContentContainer from '../../../Components/Layout/RegularContentContainer.vue'
-import { asDateTime } from '../../../helpers/formatter'
+import ProfileLayout from '@/Layouts/ProfileLayout.vue'
+import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
+import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
+import Loading from '@/Components/Elements/Loading.vue'
+import { userInfo } from '@/composables/shared-data'
+import { asDateTime } from '@/helpers/formatter'
 
 export default ({
   components: {
     ProfileLayout,
     Breadcrumbs,
-    RegularContentContainer
+    RegularContentContainer,
+    Loading
   },
   props: {
     ticket: Array,
     messages: Array
   },
   setup(props) {
+    const { user } = userInfo()
+
     const breadcrumbs = [
       {
         id: 1,
@@ -105,9 +111,7 @@ export default ({
       },
     ]
 
-        const loading = ref(false)
-
-    //const { user } = userInfo()
+    const loading = ref(false)
 
     const formfields = ref(
       {
@@ -116,16 +120,15 @@ export default ({
     )
 
     function onSubmit() {
-      
       loading.value = true
       Inertia.post(`/user/support-ticket/view?id=${props.ticket.id}`, formfields.value)
       Inertia.on('finish', (event) => {
-        console.log('rwrer1111')
+        formfields.value.text = '';
         loading.value = false
       })
     }
 
-    return { breadcrumbs, asDateTime, formfields, onSubmit }
+    return { user, breadcrumbs, loading, asDateTime, formfields, onSubmit }
   },
 })
 </script>

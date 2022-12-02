@@ -221,7 +221,7 @@ if(count($flats) > 1) {
                             <span>нет данных</span>
                         <?php endif; ?>
                     </td>
-                    <td class="compare-table-cell"><?php $flat->developer->name ?></td>
+                    <td class="compare-table-cell"><?= $flat->developer->name ?></td>
                     <td class="compare-table-cell"><?= $flat->newbuildingComplex->name ?></td>
                 </tr>
             <?php endforeach; ?>
