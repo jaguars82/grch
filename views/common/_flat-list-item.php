@@ -32,8 +32,18 @@ $format = \Yii::$app->formatter;
             <span class="deadline">
                 Сдача: <?= (is_null($model->newbuilding->deadline) ? 'Нет данных' : strtotime(date("Y-m-d")) > strtotime($model->newbuilding->deadline)) ? 'позиция сдана' : $format->asQuarterAndYearDate($model->newbuilding->deadline, false) ?>
             </span>
+
         </div>
         <p class="area"><?= $format->asPricePerArea($model->pricePerArea) ?></p>
+
+        <?php if ($model->status == 0): ?>
+            <div>
+                <?= Html::a('КП',
+                ['user/commercial/make', 'flatId' => $model->id],
+                ['class' => 'btn btn-red-fill', 'style' => 'margin-left: auto; margin-right: 0;']) ?>
+            </div>
+        <?php endif; ?>
+
         <p class="title">
             <?= Html::a($model->newbuildingComplex->name, ['newbuilding-complex/view', 'id' => $model->newbuildingComplex->id]) ?>
         </p>
@@ -58,7 +68,7 @@ $format = \Yii::$app->formatter;
         <p class="updated pull-right"><?= $format->asUpdateDate($model->updated_at) ?></p>
 
         <?= Html::a('Подробнее', ['flat/view', 'id' => $model->id], [
-            'class' => 'btn btn-primary'
+            'class' => 'btn btn-primary',
         ]) ?>
 
         <?php if($model->hasDiscount()): ?>
