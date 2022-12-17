@@ -13,7 +13,9 @@ use yii\base\Model;
  */
 class LoginForm extends Model
 {
+    public $loginway;
     public $email;
+    public $password;
     public $otp;
 
     private $_user = false;
@@ -25,9 +27,32 @@ class LoginForm extends Model
     public function rules()
     {
         return [
-            [['email', 'otp'], 'required'],
+            [['email', 'password', 'otp'], 'required'],
+            [['loginway'], 'string'],
             ['otp', 'validateOtp'],
+            ['password', 'validatePassword'],
         ];
+    }
+
+    /**
+     * Validates the otp.
+     * This method serves as the inline validation for otp.
+     *
+     * @param string $attribute the attribute currently being validated
+     * @param array $params the additional name-value pairs given in the rule
+     */
+    public function validateOtp($attribute, $param)
+    {
+        if ($this->loginway === 'pass') return true; // do not validate otp when login via password
+
+        if (!$this->hasErrors()) {
+            $user = $this->getUser();
+
+            if (!$user || !$user->validateOtp($this->otp)) {
+                \Yii::$app->session->setFlash('error', 'Неправильный код. Попробуйте отправить новый код на e-mail через некоторое время');
+                $this->addError($attribute, 'Incorrect code.');
+            }
+        }
     }
 
     /**
@@ -37,24 +62,46 @@ class LoginForm extends Model
      * @param string $attribute the attribute currently being validated
      * @param array $params the additional name-value pairs given in the rule
      */
-    public function validateOtp($attribute, $params)
+    public function validatePassword($attribute, $param)
     {
+        if ($this->loginway === 'otp') return true; // do not validate password when login via otp
+
         if (!$this->hasErrors()) {
             $user = $this->getUser();
 
-            if (!$user || !$user->validateOtp($this->otp)) {
-                \Yii::$app->session->setFlash('error', 'Неправильный код. Попробуйте отправить новый код на e-mail через некоторое время');
-                $this->addError($attribute, 'Incorrect username or password.');
+            if (!$user->passauth_enabled) {
+                \Yii::$app->session->setFlash('error', 'Вход по паролю не настроен. Пожалуйста, авторизуйтесь по коду на email и создайте пароль в Личном Кабинете');
+                $this->addError($attribute, 'Password not set.');
+                return;
+            }
+
+            if (!$user || !$user->validatePassword($this->password)) {
+                \Yii::$app->session->setFlash('error', 'Неверный пароль или адрес электронной почты');
+                $this->addError($attribute, 'Incorrect email or password.');
             }
         }
     }
 
     /**
-     * Logs in a user using the provided username and password.
+     * Logs in a user using the provided email and password.
+     * @return bool whether the user is logged in successfully
+     */
+    public function passlogin()
+    {
+        //if ($this->validatePassword()) {
+        if ($this->validate()) {
+            return Yii::$app->user->login($this->getUser(),  3600 * 8);
+        }
+        return false;
+    }
+
+    /**
+     * Logs in a user using the provided email and otp.
      * @return bool whether the user is logged in successfully
      */
     public function login()
     {
+        //if ($this->validateOtp()) {
         if ($this->validate()) {
             return Yii::$app->user->login($this->getUser(),  3600 * 8);
         }

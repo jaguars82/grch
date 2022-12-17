@@ -1,0 +1,28 @@
+.site-login-container {
+    width: 100%;
+}
+
+.site-login {
+    width: 350px;
+    margin: 0 auto;
+}
+
+#login-form-code.hidden {
+   display: none;
+}
+
+#login-form-pass.hidden {
+   display: none;
+}
+
+.login-toggle-btn {
+    border: none;
+    background-color: transparent;
+    color: #7d92a1;
+    margin: 0 10px;
+}
+
+.login-toggle-btn.active {
+    color: #005a9b;
+    text-decoration: underline;
+}

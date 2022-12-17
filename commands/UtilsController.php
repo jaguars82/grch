@@ -52,5 +52,13 @@ class UtilsController extends Controller
                 }
             }
         }
-    } 
+    }
+
+    /**
+     * command to generate password hash from given password
+     */
+    public function actionMakePassHash ($pass) {
+        $hash = \Yii::$app->security->generatePasswordHash($pass);
+        echo $hash;
+    }
 }
