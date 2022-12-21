@@ -30,14 +30,47 @@
           <a :href="`/user/profile/update?id=${user.id}`">
           <q-btn padding="xs md" unelevated rounded color="primary" icon="edit" label="Редактировать"></q-btn>
           </a>
+          <q-btn v-if="user.passauth_enabled" class="q-ml-sm" padding="xs md" unelevated rounded color="primary" icon="vpn_key" label="Изменить пароль" @click="openPassDialog"></q-btn>
         </q-card-actions>
       </q-card>
+
+      <q-card v-if="!user.passauth_enabled" class="q-mt-md q-ml-md">
+        <q-card-section>
+          <p class="text-h3">Активируйте авторизацию по паролю</p>
+          <p>Вход в систему по временному коду скоро будет отключен. Пожалуйста, нажмите кнопку "Создать пароль", чтобы активировать возможность авторизации в системе по логину и паролю.</p>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn padding="xs md" unelevated rounded color="primary" icon="vpn_key" label="Создать пароль" @click="openPassDialog"></q-btn>
+        </q-card-actions>
+      </q-card>
+
+      <q-dialog v-model="createPassDialog" persistent>
+        <q-card>
+          <q-card-section class="row items-center q-pb-none">
+            <div class="text-h4">Задайте пароль для входа в систему</div>
+            <q-space />
+            <q-btn icon="close" flat round dense v-close-popup />
+          </q-card-section>
+
+          <q-card-section>
+            <q-input type="password" outlined v-model="formfields.password" label="Введите пароль" />
+            <q-input type="password" outlined v-model="formfields.passwordConfirm" label="Подтвердите пароль" />
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn padding="xs md" unelevated rounded color="primary" icon="done" label="Сохранить" @click="onSubmitPassword" :disable="!canSubmitPassword"></q-btn>
+            <q-btn padding="xs md" unelevated rounded icon="close" label="Отмена" v-close-popup></q-btn>
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
     </template>
   </ProfileLayout>
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
+import { useQuasar } from 'quasar'
 import ProfileLayout from '@/Layouts/ProfileLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import { userInfo } from '@/composables/shared-data'
@@ -47,7 +80,13 @@ export default ({
     ProfileLayout,
     Breadcrumbs
   },
-  setup() {
+  props: {
+    passSaved: {
+      type: Boolean,
+      default: false
+    }
+  },
+  setup(props) {
     const { user } = userInfo()
 
     const breadcrumbs = ref([
@@ -77,7 +116,49 @@ export default ({
       },*/
     ])
 
-    return { user, breadcrumbs }
+    const $q = useQuasar()
+
+    const createPassDialog = ref(false)
+
+    const formfields = ref(
+      {
+        password: '',
+        passwordConfirm: '',
+      }
+    )
+
+    const canSubmitPassword = computed(() => {
+      if (formfields.value.password === '' || formfields.value.passwordConfirm === '') return false
+      if (formfields.value.password !== formfields.value.passwordConfirm) return false
+      return true
+    })
+
+    const openPassDialog = () => {
+      formfields.value.password = ''
+      formfields.value.passwordConfirm = ''
+      createPassDialog.value = true
+    }
+
+    const onSubmitPassword = () => {
+      createPassDialog.value = false
+      Inertia.post(`/user/profile/index`, formfields.value)
+      Inertia.on('success', (event) => {
+        if (!user.passauth_enabled) {
+          Inertia.reload({ only: ['user', 'passSaved'] })
+        }
+        if (props.passSaved) {
+          $q.notify({
+            position: 'top',
+            message: 'Пароль успешно сохранен',
+            color: 'green',
+            icon: 'done',
+            multiLine: false,
+          })
+        }
+      })
+    }
+
+    return { user, breadcrumbs, formfields, openPassDialog, createPassDialog, canSubmitPassword, onSubmitPassword }
   },
 })
 </script>

@@ -11,6 +11,8 @@
 
           <div class="q-pt-md">
             <q-table
+              class="no-shadow"
+              bordered
               :grid="appsGridView"
               :rows="rows"
               :columns="columns"

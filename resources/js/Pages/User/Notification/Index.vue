@@ -9,6 +9,8 @@
 
           <div class="q-pt-md">
             <q-table
+              class="no-shadow"
+              bordered
               :rows="rows"
               :columns="columns"
               :pagination="{ rowsPerPage: 25 }"

@@ -95,7 +95,6 @@ export default ({
       loading.value = true
       Inertia.post(`/user/support-ticket/create`, formfields.value)
       Inertia.on('finish', (event) => {
-        console.log('rwrer1111')
         loading.value = false
       })
     }

@@ -61,6 +61,7 @@ class SharedDataFilter extends ActionFilter
             'photo' => $user->photo,
             'role' => $user->role,
             'roleLabel' => $user->roleLabel,
+            'passauth_enabled' => $user->passauth_enabled,
         ];
 
         return $return;
