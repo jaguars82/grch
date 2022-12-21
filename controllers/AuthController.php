@@ -16,11 +16,34 @@ class AuthController extends Controller
         }
 
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {            
-            if (parse_url(Yii::$app->getUser()->getReturnUrl(), PHP_URL_PATH) === '/') {
-                return $this->redirect('/' . ((\Yii::$app->request->cookies->has('site-index-query-string-' . \Yii::$app->user->id)) ? '?' . \Yii::$app->request->cookies->get('site-index-query-string-' . \Yii::$app->user->id) : ''));
-            } else {
-                return $this->goBack();
+        if ($model->load(Yii::$app->request->post())) {
+
+            //echo '<pre>'; var_dump($model); echo '</pre>'; die;
+            $postData = Yii::$app->request->post();
+            
+            switch($postData['LoginForm']['loginway']) {
+                case 'otp':
+                    $login = $model->login();
+                    $defaultLogin = 'otp';
+                    break;
+                case 'pass':
+                    $login = $model->passlogin();
+                    $defaultLogin = 'pass';
+                    break;
+                default:
+                    $login = false;
+            }
+
+            if ($login) {
+                if (parse_url(Yii::$app->getUser()->getReturnUrl(), PHP_URL_PATH) === '/') {
+                    return $this->redirect('/' . ((\Yii::$app->request->cookies->has('site-index-query-string-' . \Yii::$app->user->id)) ? '?' . \Yii::$app->request->cookies->get('site-index-query-string-' . \Yii::$app->user->id) : ''));
+                } else {
+                    //return $this->goBack();
+                    return $this->redirect(['login',
+                        'model' => $model,
+                        'defaultLogin' => isset($defaultLogin) ? $defaultLogin : 'otp',
+                    ]);
+                }
             }
         }
 
@@ -28,6 +51,7 @@ class AuthController extends Controller
         
         return $this->render('login', [
             'model' => $model,
+            'defaultLogin' => isset($defaultLogin) ? $defaultLogin : 'otp',
         ]);
     }
 

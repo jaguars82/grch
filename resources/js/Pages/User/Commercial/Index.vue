@@ -7,8 +7,8 @@
       <RegularContentContainer title="Коммерческие предложения">
         <template v-slot:content>
 
-          <div class="text-right">
-            <q-btn icon="event" label="Выбрать дату" color="primary">
+          <div class="q-mb-md text-right">
+            <q-btn unelevated icon="event" label="Выбрать дату" color="primary">
               <q-popup-proxy
                 cover
                 transition-show="scale"
@@ -30,12 +30,14 @@
 
           <loading v-if="loading" size="md" text="Загрузка данных" />
           <q-table
+            class="no-shadow"
             v-else
             :rows="rows"
             :columns="columns"
             :pagination="{ rowsPerPage: 25 }"
             row-key="id"
             hide-bottom
+            bordered
           >
             <template v-slot:body="props">
               <q-tr :props="props">
@@ -56,7 +58,7 @@
                   </inertia-link>
                 </q-td>
                 <q-td key="archive" :props="props">
-                  <q-btn flat icon="folder_copy" @click="moveToArchive(props.row.id)">
+                  <q-btn round flat color="primary" icon="archive" @click="moveToArchive(props.row.id)">
                     <q-tooltip :delay="1000" :offset="[0, 5]">Поместить в архив</q-tooltip>
                   </q-btn>
                 </q-td>

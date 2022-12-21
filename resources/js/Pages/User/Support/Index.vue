@@ -16,7 +16,8 @@
           <GridTableToggle :defaultMode="ticketsGridView" />
 
           <q-table
-            class="q-mt-md"
+            class="q-mt-md no-shadow"
+            bordered
             :grid="ticketsGridView"
             :columns="columns"
             :rows="rows"

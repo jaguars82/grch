@@ -21,7 +21,7 @@ class ProfileController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'index' => ['GET'],
+                    'index' => ['GET', 'POST'],
                     'update' => ['GET', 'POST']
                 ],
             ],
@@ -50,8 +50,24 @@ class ProfileController extends Controller
 
     public function actionIndex()
     {
+        if (\Yii::$app->request->isPost) {
+            try {
+                $userModel = User::findOne(\Yii::$app->user->identity->id);
+                $userModel->passauth_enabled = 1;
+                $userModel->password_hash = \Yii::$app->security->generatePasswordHash(\Yii::$app->request->post('password'));
+                $userModel->save();
+                $passSaved = true;
+
+            } catch (\Exception $e) {
+                return $this->redirectBackWhenException($e);
+            }
+        }
+
+        $user = \Yii::$app->user->identity;
+
         return $this->inertia('User/Profile/Index', [
-            'user' => \Yii::$app->user->identity,
+            'user' => $user,
+            'passSaved' => isset($passSaved) ? $passSaved : false
         ]);
     }
 

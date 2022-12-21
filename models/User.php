@@ -8,6 +8,33 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 
+/**
+ * User model
+ *
+ * @property integer $id
+ * @property integer $agency_id
+ * @property integer $developer_id
+ * @property integer $status
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $middle_name
+ * @property string $phone
+ * @property string $email
+ * @property string $password_hash
+ * @property integer $passauth_enabled
+ * @property string $telegram_id
+ * @property string $otp
+ * @property integer $otp_created_at
+ * @property integer $otp_expired_at
+ * @property string $auth_key
+ * @property string $telegram_chat_id
+ * @property string $photo 
+ * @property string $password_reset_token 
+ * @property string $last_login 
+ * @property integer $created_at
+ * @property integer $updated_at
+ */
+
 class User extends ActiveRecord implements IdentityInterface
 {
     use FillAttributes;
@@ -37,6 +64,7 @@ class User extends ActiveRecord implements IdentityInterface
             [['first_name', 'last_name', 'email'], 'required'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            [['passauth_enabled'], 'integer'],
             [['email', 'photo'], 'string'],
             [['phone', 'telegram_id', 'telegram_chat_id', 'agency_id', 'developer_id'], 'safe'],
             [['agency_id', 'developer_id', 'middle_name', 'phone', 'telegram_id', 'telegram_chat_id'], 'default', 'value' => NULL],
@@ -110,6 +138,7 @@ class User extends ActiveRecord implements IdentityInterface
         $this->otp = null;
         $this->otp_created_at = null;
         $this->otp_expired_at = null;
+        $this->last_login = date('Y-m-d H:i:s');
         $this->save();
     }
 
@@ -186,20 +215,36 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * Validates password
+     * Validates otp
      *
-     * @param string $password password to validate
-     * @return bool if password provided is valid for current user
+     * @param string $otp password to validate
+     * @return bool if otp provided is valid for current user
      */
     public function validateOtp($otp)
     {
         return $otp == $this->otp;
     }
 
-    // public function setPassword($password)
-    // {
-    //     $this->password_hash = Yii::$app->security->generatePasswordHash($password);
-    // }
+    /**
+     * Validates password
+     *
+     * @param string $password password to validate
+     * @return bool if password provided is valid for current user
+     */
+    public function validatePassword($password)
+    {
+        return Yii::$app->security->validatePassword($password, $this->password_hash);
+    }
+
+    /**
+     * Generates password hash from password and sets it to the model
+     *
+     * @param string $password
+     */
+    public function setPassword($password)
+    {
+        $this->password_hash = Yii::$app->security->generatePasswordHash($password);
+    }
 
     public function generateAuthKey()
     {

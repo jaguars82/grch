@@ -42,7 +42,7 @@
                 </div>
               </div>
               <div class="q-mt-lg text-center">
-                <q-btn label="Отправить сообщение" type="submit" color="primary" :disabled="!formfields.text"/>
+                <q-btn padding="xs md" unelevated rounded label="Отправить сообщение" type="submit" color="primary" :disabled="!formfields.text" icon="chat"/>
               </div>
             </q-form>
 
@@ -121,7 +121,7 @@ export default ({
 
     function onSubmit() {
       loading.value = true
-      Inertia.post(`/user/support-ticket/view?id=${props.ticket.id}`, formfields.value)
+      (`/user/support-ticket/view?id=${props.ticket.id}`, formfields.value)
       Inertia.on('finish', (event) => {
         formfields.value.text = '';
         loading.value = false

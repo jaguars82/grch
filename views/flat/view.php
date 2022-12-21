@@ -281,7 +281,10 @@ $this->params['breadcrumbs'][] = $model->number;
                         <?= $model->newbuildingComplex->address ?>
                     </p>
                 <?php endif; ?>
-                <?php if ($model->is_reserved != 1 && $model->status == 0 && $model->developer->hasRepresentative()): ?>
+                <?php if ($model->is_reserved != 1
+                    && $model->status == 0
+                    && $model->developer->id != 14 // hide developer "Развитие"
+                    && $model->developer->hasRepresentative()): ?>
                     <?= Html::a('Забронировать',
                         ['reservation/make', 'flatId' => $model->id],
                         ['class' => 'btn btn-red-fill']
