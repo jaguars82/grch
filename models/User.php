@@ -7,6 +7,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
+use \yii\web\Cookie;
 
 /**
  * User model
@@ -27,10 +28,12 @@ use yii\web\IdentityInterface;
  * @property integer $otp_created_at
  * @property integer $otp_expired_at
  * @property string $auth_key
+ * @property string $current_auth_token
  * @property string $telegram_chat_id
  * @property string $photo 
  * @property string $password_reset_token 
  * @property string $last_login 
+ * @property string $last_ip 
  * @property integer $created_at
  * @property integer $updated_at
  */
@@ -135,11 +138,22 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function afterLogin($event)
     {
+        $current_auth_token = Yii::$app->security->generateRandomString();
+
         $this->otp = null;
         $this->otp_created_at = null;
         $this->otp_expired_at = null;
         $this->last_login = date('Y-m-d H:i:s');
+        $this->last_ip = Yii::$app->getRequest()->getUserIP();
+        $this->current_auth_token = $current_auth_token;
         $this->save();
+
+        $cookie = new Cookie([
+            'name' => 'current_auth_token',
+            'value' => $current_auth_token,
+            // 'expire' => time() + 86400 * 365,
+        ]);
+        Yii::$app->getResponse()->getCookies()->add($cookie);
     }
 
     /**

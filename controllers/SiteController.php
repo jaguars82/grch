@@ -8,17 +8,17 @@ use app\models\Bank;
 use app\models\Newbuilding;
 use app\models\NewbuildingComplex;
 use app\models\News;
+use app\models\City;
+use app\models\Region;
+use app\models\District;
 use app\models\search\AdvancedFlatSearch;
 use app\models\search\MapFlatSearch;
 use app\models\search\SimpleFlatSearch;
 use yii\data\ActiveDataProvider;
+use app\components\AuthAmountFilter;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-//use yii\web\Controller;
 use tebe\inertia\web\Controller;
-use app\models\City;
-use app\models\Region;
-use app\models\District;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -54,6 +54,9 @@ class SiteController extends Controller
                     'logout' => ['post'],
                 ],
             ],
+            [
+                'class' => AuthAmountFilter::className(),
+            ],
         ];
     }
 
@@ -81,7 +84,7 @@ class SiteController extends Controller
     public function actionIndex()
     {        
         $this->layout = 'fullWidth';
-        
+
         \Yii::$app->response->cookies->add(new \yii\web\Cookie([
             'name' => 'site-index-query-string-' . \Yii::$app->user->id,
             'value' => \Yii::$app->request->queryString,
