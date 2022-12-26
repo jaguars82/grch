@@ -4,8 +4,10 @@ namespace app\controllers;
 
 use app\models\User;
 use app\models\form\LoginForm;
+use app\models\form\UnlogForm;
 use Yii;
-use yii\web\Controller;
+//use yii\web\Controller;
+use tebe\inertia\web\Controller;
 
 class AuthController extends Controller
 {
@@ -18,8 +20,15 @@ class AuthController extends Controller
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post())) {
 
-            //echo '<pre>'; var_dump($model); echo '</pre>'; die;
             $postData = Yii::$app->request->post();
+
+            // check for previuos login
+            $user = $model->getUser();
+            if (($user->role === 'agent' || $user->role === 'manager') && !empty($user->current_auth_token) && $user->current_auth_token !== Yii::$app->request->cookies->getValue('current_auth_token', null)) {
+               return $this->redirect(['unlog', 
+                'email' => $model->email,
+               ]);
+            }
             
             switch($postData['LoginForm']['loginway']) {
                 case 'otp':
@@ -80,9 +89,32 @@ class AuthController extends Controller
 
     public function actionLogout()
     {
+        // remove current_auth_token from data base
+        $user = User::findOne(Yii::$app->user->id);
+        $user->current_auth_token = '';
+        $user->save();
+
         Yii::$app->user->logout();
 
         return $this->goHome();
+    }
+
+    public function actionUnlog($email)
+    {
+
+        $model = new UnlogForm();
+
+        if (Yii::$app->request->isPost && $model->load(Yii::$app->request->post())) {
+            $user = User::findByEmail($email);
+            $user->current_auth_token = '';
+            $user->save();
+            return $this->goHome();
+        }
+
+        return $this->render('unlog', [
+            'model' => $model,
+            'email' => $email
+        ]);
     }
 
 }
