@@ -16,7 +16,6 @@ class m230115_121521_create_tariff_table extends Migration
             'id' => $this->primaryKey(),
             'tariff_table' => $this->json(),
             'changes' => $this->text()->append('CHARACTER SET utf8 COLLATE utf8_general_ci NULL'),
-            'payterms' => $this->text()->append('CHARACTER SET utf8 COLLATE utf8_general_ci NULL'),
             'created_at' => $this->timestamp()->defaultValue(null),
             'updated_at' => $this->timestamp()->defaultValue(null),
         ]);

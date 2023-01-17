@@ -14,7 +14,6 @@ use yii\db\ActiveRecord;
  * @property int $id
  * @property json $tariff_table
  * @property string $changes
- * @property string $payterms
  * @property string|null $created_at
  * @property string|null $updated_at
  *
@@ -55,7 +54,7 @@ class Tariff extends ActiveRecord
     public function rules()
     {
         return [
-            [['changes', 'payterms'], 'string'],
+            [['changes'], 'string'],
             [['tariff_table', 'created_at', 'updated_at'], 'safe'],
         ];
     }
@@ -69,7 +68,6 @@ class Tariff extends ActiveRecord
             'id' => 'ID',
             'tariff_table' => 'Тарифная таблица',
             'changes' => 'Изменения',
-            'payterms' => 'Сроки выплаты вознаграждения ',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
