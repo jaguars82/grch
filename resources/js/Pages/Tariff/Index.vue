@@ -8,7 +8,7 @@
         <q-card-section>
           <div v-for="developer of developers" :key="developer.id">
             <template v-if="developer.complexes.length">
-              <p class="text-h4">{{ developer.name }}</p>
+              <p class="text-h4 q-mt-md q-mb-xs">{{ developer.name }}</p>
               <table class="tarifftable full-width">
                 <tr>
                   <th class="text-center">Жилой комплекс</th>
