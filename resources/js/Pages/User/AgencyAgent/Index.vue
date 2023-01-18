@@ -18,7 +18,7 @@
               :grid="agentsGridView"
               :rows="rows"
               :columns="columns"
-              :pagination="{ rowsPerPage: 25 }"
+              :pagination="{ rowsPerPage: 255 }"
               row-key="id"
               hide-bottom
             >
@@ -138,7 +138,7 @@ export default ({
           email: row.email,
           email: row.phone,
           edit: `/user/agency-agent/update?id=${row.id}&agencyId=${props.agency.id}`,
-          delete: `/user/agency-agent/delete?id=${row.id}`
+          delete: `/user/agency-agent/delete?id=${row.id}&agencyId=${props.agency.id}`
         }
         processedRows.push(processedItem)
       });

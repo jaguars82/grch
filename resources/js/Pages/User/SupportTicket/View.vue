@@ -121,7 +121,7 @@ export default ({
 
     function onSubmit() {
       loading.value = true
-      (`/user/support-ticket/view?id=${props.ticket.id}`, formfields.value)
+      Inertia.post(`/user/support-ticket/view?id=${props.ticket.id}`, formfields.value)
       Inertia.on('finish', (event) => {
         formfields.value.text = '';
         loading.value = false
