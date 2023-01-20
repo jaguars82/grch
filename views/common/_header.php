@@ -18,6 +18,7 @@ $mainMenuItems = [
     // ['label' => 'Банки', 'url' => ['/bank']],
     // ['label' => 'Агентства', 'url' => ['/agency']],
     ['label' => 'Контакты', 'url' => ['/agency']],
+    ['label' => 'Тарифы', 'url' => ['/tariff']],
 ];
 
 $user = Yii::$app->user->identity;
