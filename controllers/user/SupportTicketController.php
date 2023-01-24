@@ -131,6 +131,33 @@ class SupportTicketController extends Controller
 
         $messages = $ticket->messages;
 
+        /**
+         * mark tticket && messages read
+         */
+        if(\Yii::$app->user->can('admin')) {
+            if($ticket->has_unread_messages_from_author === 1) {
+                foreach ($messages as $message) {
+                    if($message->author_role !== 'admin' && $message->seen_by_interlocutor === 0) {
+                        $message->seen_by_interlocutor = 1;
+                        $message->save();
+                    }
+                }
+                $ticket->has_unread_messages_from_author = 0;
+                $ticket->save();
+            }
+        } else {
+            if($ticket->has_unread_messages_from_support === 1) {
+                foreach ($messages as $message) {
+                    if($message->author_role === 'admin' && $message->seen_by_interlocutor === 0) {
+                        $message->seen_by_interlocutor = 1;
+                        $message->save();
+                    }
+                }
+                $ticket->has_unread_messages_from_support = 0;
+                $ticket->save();
+            }
+        }
+
         /** 
          * Prepare messages array for Vue component
         */

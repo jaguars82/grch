@@ -14,7 +14,7 @@ $format = \Yii::$app->formatter;
         <?php endif ?>
     </div>
     <div class="flat-list--item__content">
-        <?php if (!$model->isSold() && (\Yii::$app->user->can('admin') || \Yii::$app->user->can('agent'))): ?>
+        <?php if (!$model->isSold() && (\Yii::$app->user->can('admin') || \Yii::$app->user->can('manager') || \Yii::$app->user->can('agent'))): ?>
             <span class="favorite btn-favorite 
                 <?php if($model->isFavorite()): ?>
                     in

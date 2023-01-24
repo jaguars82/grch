@@ -26,7 +26,7 @@ class AgencyAgentController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'delete' => ['GET', 'POST'],
                 ],
             ],
             'access' => [
@@ -42,11 +42,6 @@ class AgencyAgentController extends Controller
                             return $_GET['agencyId'] == \Yii::$app->user->identity->agency_id;
                         },
                     ],
-                    /* [
-                        'allow' => true,
-                        'actions' => ['view'],
-                        'roles' => ['@'],
-                    ], */
                 ]
             ],
             [
@@ -61,36 +56,26 @@ class AgencyAgentController extends Controller
     public function actions()
     {
         return [
-            /* 'view' => [
-                'class' => 'app\components\actions\user\ViewAgencyUser',
-                'view' => '/user/agency-agent/view',
-            ], */
             'create' => [
                 'class' => 'app\components\actions\user\CreateAgencyUser',
                 'message' => 'Добавлен агент',
                 'isCheckCurrentUser' => true,
                 'role' => 'agent',
-                // 'redirectUrl' => 'agency/view',
                 'redirectUrl' => 'user/agency-agent/index',
-                // 'redirectParameter' => 'id',
                 'redirectParameter' => 'agencyId',
             ],
             'update' => [
                 'class' => 'app\components\actions\user\UpdateAgencyUser',
                 'message' => 'Профиль агента обновлён',
                 'isCheckCurrentUser' => true,
-                // 'redirectUrl' => 'user/agency-agent/view',
                 'redirectUrl' => 'user/agency-agent/index',
-                // 'redirectParameter' => 'id',
                 'redirectParameter' => 'agencyId',
             ],
             'delete' => [
                 'class' => 'app\components\actions\user\DeleteAgencyUser',
                 'message' => 'Агент удален',
                 'isCheckCurrentUser' => true,
-                // 'redirectUrl' => 'agency/view',
                 'redirectUrl' => 'user/agency-agent/index',
-                // 'redirectParameter' => 'id',
                 'redirectParameter' => 'agencyId',
             ],
         ];
@@ -102,21 +87,9 @@ class AgencyAgentController extends Controller
             throw new NotFoundHttpException('Данные отсутсвуют');
         }
 
-        /*$dataProvider = new ActiveDataProvider([
-            'query' => $agency->getAgents(),
-            'pagination' => false,
-            'sort' => ['attributes' => ['id'], 'defaultOrder' => ['id' => SORT_DESC]],
-        ]);*/
-
-        /*return $this->render('index', [
-            'agency' => $agency,
-            'dataProvider' => $dataProvider,
-        ]);*/
-        
         return $this->inertia('User/AgencyAgent/Index', [
             'agency' => ArrayHelper::toArray($agency),
             'agents' => ArrayHelper::toArray($agency->agents),
         ]);
-
-    }    
+    }
 }

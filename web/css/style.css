@@ -1242,6 +1242,7 @@ section {
 }
 
 .favorite {
+  display: inline-block;
   cursor: pointer;
   width: 24px;
   height: 31px;

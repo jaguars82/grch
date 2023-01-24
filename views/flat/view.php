@@ -274,7 +274,14 @@ $this->params['breadcrumbs'][] = $model->number;
             <div class="sidebar white-block scrollbar">
                 <p class="title">
                     <?= $model->roomsTitle . ' №' . $model->number ?>
+                    <?php if (!$model->isSold() && (\Yii::$app->user->can('admin') || \Yii::$app->user->can('manager') || \Yii::$app->user->can('agent'))): ?>
+                        <span class="favorite btn-favorite 
+                        <?php if($model->isFavorite()): ?>
+                            in
+                        <?php endif; ?>" data-flat-id="<?= $model->id ?>" style="margin-left: 15px;"></span>
+                    <?php endif; ?>                    
                 </p>
+
                 <p class="updated-at">Обновлено <?= $format->asUpdateDate($model->updated_at) ?></p>
                 <?php if(!is_null($model->newbuildingComplex->address)): ?>
                     <p class="address">
