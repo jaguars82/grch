@@ -109,7 +109,7 @@ $user = Yii::$app->user->identity;
             </a>
         </li>
         <?php endif; ?>
-        <?php if(Yii::$app->user->can('admin') || Yii::$app->user->can('agent')): ?>
+        <?php if(Yii::$app->user->can('admin') || Yii::$app->user->can('agent') || Yii::$app->user->can('manager')): ?>
         <li class="profile-menu-item">
             <a href="/favorite">
                 <span class="material-icons">bookmark_border</span><span class="item-text">Избранное</span>

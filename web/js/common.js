@@ -163,12 +163,12 @@ $(function () {
     });
 
     
-    $('.document-list').each(function () {
+    /* $('.document-list').each(function () {
         var items = $(this).find('.document-list--item');
         if(items.length <= 2) {
             $(this).addClass('disabled');
         }
-    });
+    }); */
 
     $(window).on('resize', function () {
         $('.document-list:not(.disabled)').each(function () {

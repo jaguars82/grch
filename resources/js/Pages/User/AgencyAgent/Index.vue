@@ -10,11 +10,16 @@
             <a :href="`/user/agency-agent/create?agencyId=${agency.id}`">
               <q-btn color="primary" unelevated label="Добавить агента" />
             </a>
+            <span class="q-px-md">Кличество агентов: {{ agentAmount }}</span>
           </div>
-          <GridTableToggle :defaultMode="agentsGridView" />
+
+          <!-- TODO Uncomment below switch when agent's card is ready -->
+          <!--<GridTableToggle :defaultMode="agentsGridView" />-->
 
           <div class="q-pt-md">
             <q-table
+              class="q-mt-md no-shadow"
+              bordered
               :grid="agentsGridView"
               :rows="rows"
               :columns="columns"
@@ -30,7 +35,7 @@
                   <q-td key="fio" :props="props">
                     {{ props.row.fio }}
                   </q-td>
-                  <q-td key="emil" :props="props">
+                  <q-td key="email" :props="props">
                     {{ props.row.email }}
                   </q-td>
                   <q-td key="phone" :props="props">
@@ -53,13 +58,15 @@
               <template v-slot:item="props">
                 <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
                   <q-card>
-                    <inertia-link :href="`/user/application/view?id=${props.row.id}`">
-                      <q-card-section class="text-center">
-                        <p>Заявка</p>
-                        <p class="q-mb-xs text-h4">{{ props.row.application_number }}</p>
-                      </q-card-section>
-                    </inertia-link>
-                    <q-separator />
+                    <q-card-section>
+                      <inertia-link :href="`/user/support-ticket/view?id=${props.row.id}`">
+                        <div>
+                          <p class="q-mb-xs text-h4 text-center">{{ props.row.ticket_number }}</p>
+                          <p class="text-subtitle1 text-center">от {{ props.row.created_at }}</p>
+                          <p class="text-h5 text-center">{{ props.row.title }}</p>
+                        </div>
+                      </inertia-link>
+                    </q-card-section>
                   </q-card>
                 </div>
               </template>
@@ -120,11 +127,15 @@ export default ({
       },
     ])
 
+    const agentAmount = computed(() => {
+      return props.agents.length
+    })
+
     const columns = [
       { name: 'id', required: true, align: 'left', label: 'ID', field: 'id', sortable: true },
       { name: 'fio', required: true, align: 'center', label: 'ФИО', field: 'fio', sortable: true },
-      { name: 'email', align: 'center', label: 'Email', field: 'emial', sortable: true },
-      { name: 'phone', align: 'center', label: 'Телефон', field: 'pkone', sortable: true },
+      { name: 'email', align: 'center', label: 'Email', field: 'email', sortable: true },
+      { name: 'phone', align: 'center', label: 'Телефон', field: 'phone', sortable: true },
       { name: 'edit', align: 'center', label: '', field: 'edit', sortable: false },
       { name: 'delete', align: 'center', label: '', field: 'delete', sortable: false },
     ]
@@ -136,7 +147,7 @@ export default ({
           id: row.id,
           fio: `${row.last_name} ${row.first_name} ${row.middle_name ? row.middle_name : ''}`,
           email: row.email,
-          email: row.phone,
+          phone: row.phone,
           edit: `/user/agency-agent/update?id=${row.id}&agencyId=${props.agency.id}`,
           delete: `/user/agency-agent/delete?id=${row.id}&agencyId=${props.agency.id}`
         }
@@ -145,12 +156,12 @@ export default ({
       return processedRows
     })
 
-    const appsGridView = ref(false)
+    const agentsGridView = ref(false)
 
     const emitter = useEmitter()
-    emitter.on('toggle-grid-table', (e) => appsGridView.value = e)
+    emitter.on('toggle-grid-table', (e) => agentsGridView.value = e)
 
-    return { breadcrumbs, appsGridView, columns, rows }
+    return { breadcrumbs, agentAmount, agentsGridView, columns, rows }
   },
 })
 </script>

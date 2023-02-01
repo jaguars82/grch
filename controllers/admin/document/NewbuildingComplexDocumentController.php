@@ -47,7 +47,8 @@ class NewbuildingComplexDocumentController extends Controller
         }
 
         $dataProvider = new ActiveDataProvider([
-            'query' => Document::find(),
+            'query' => $newbuildingComplex->hasMany(Document::className(), ['id' => 'document_id'])
+            ->viaTable('newbuilding_complex_document', ['newbuilding_complex_id' => 'id']),
         ]);
 
         return $this->render('index', [

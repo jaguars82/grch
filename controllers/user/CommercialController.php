@@ -262,7 +262,7 @@ class CommercialController extends Controller
     {
         error_reporting(0);
         try {
-            \Yii::$app->getModule('debug')->instance->allowedIPs = [];
+            //\Yii::$app->getModule('debug')->instance->allowedIPs = [];
 
             if (($commercial = Commercial::findOne($commercialId)) === null) {
                 throw new NotFoundHttpException('Данные отсутсвуют');
@@ -270,7 +270,6 @@ class CommercialController extends Controller
 
             $pdf = $this->getPdfFile($commercial, true);
         } catch (\Exception $e) {
-            echo '<pre>'; var_dump($e); echo '</pre>';
             return $this->redirectBackWhenException($e);
         }
     }

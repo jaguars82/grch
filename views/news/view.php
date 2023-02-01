@@ -138,7 +138,7 @@ if ($model->isAction()) {
                     </p>
                     <div class="document-list--content">
                         <?php foreach ($model->newsFiles as $newsFile) : ?>
-                            <a class="document-list--item" href="<?= Url::to(['news/download', 'id' => $newsFile->news_id, 'file' => $newsFile->name]) ?>">
+                            <a download class="document-list--item" href="<?= Url::to(['news/download', 'id' => $newsFile->news_id, 'file' => $newsFile->name]) ?>">
                                 <span class="title">
                                     <?= $newsFile->name ?>
                                 </span>
@@ -148,7 +148,7 @@ if ($model->isAction()) {
                             </a>
                         <?php endforeach ?>
                     </div>
-                    <span class="document-list--trigger"></span>
+                    <!--<span class="document-list--trigger"></span>-->
                 </div>
             <?php endif; ?>
         </div>

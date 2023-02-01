@@ -5,7 +5,7 @@ use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
 
-$this->title = 'Администраторы';
+$this->title = 'Агенты';
 $this->params['breadcrumbs'][] = ['label' => 'Администрированние', 'url' => ['admin/index']];
 $this->params['breadcrumbs'][] = ['label' => 'Агентства недвижимости', 'url' => ['admin/agency/index']];
 $this->params['breadcrumbs'][] = ['label' => $agency->name, 'url' => ['admin/agency/update', 'id' => $agency->id]];
@@ -15,7 +15,10 @@ $this->params['breadcrumbs'][] = $this->title;
     <h2 class="bordered"><?= Html::encode($this->title) ?></h2>
     
     <div style="margin: 20px 0;" class="btn-group">
-        <p><?= Html::a('Добавить агента', ['create', 'agencyId' => $agency->id], ['class' => 'btn btn-success', 'style' => 'margin-bottom: 10px']) ?></p>
+        <p>
+            <?= Html::a('Добавить агента', ['create', 'agencyId' => $agency->id], ['class' => 'btn btn-success', 'style' => 'margin-bottom: 10px']) ?>
+            <span style="padding-left: 15px;">Количество агентов: <?= count($agency->agents) ?></span>
+        </p>
     </div>
 
     <?php Pjax::begin([
