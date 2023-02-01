@@ -21,7 +21,7 @@
             :grid="ticketsGridView"
             :columns="columns"
             :rows="rows"
-            :pagination="{ rowsPerPage: 25 }"
+            :pagination="{ rowsPerPage: 255 }"
             row-key="ticket_number"
             hide-bottom
           >
