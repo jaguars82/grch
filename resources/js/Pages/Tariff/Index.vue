@@ -7,13 +7,18 @@
         </q-card-section>
         <q-card-section>
           <div v-for="developer of developers" :key="developer.id">
-            <template v-if="developer.complexes.length">
-              <p class="text-h4 q-mt-md q-mb-xs">{{ developer.name }}</p>
+            <q-expansion-item
+              v-if="developer.complexes.length"
+              class="q-mb-md"
+              default-opened
+              header-class="text-h4 q-mt-md"
+              :label="developer.name"
+            >
               <table class="tarifftable full-width">
                 <tr>
-                  <th class="text-center">Жилой комплекс</th>
-                  <th class="text-center">Размер вознаграждения</th>
-                  <th class="text-center">Сроки выплаты вознаграждения</th>
+                  <th class="text-center zk-col">Жилой комплекс</th>
+                  <th class="text-center amount-col">Размер вознаграждения</th>
+                  <th class="text-center terms-col">Сроки выплаты вознаграждения</th>
                 </tr>
                 <tr v-for="complex of developer.complexes" :key="complex.id">
                   <td>{{ complex.name }}</td>
@@ -28,7 +33,7 @@
                   <td>{{ complex.termsOfPayment }}</td>
                 </tr>
               </table>
-            </template>
+            </q-expansion-item>
           </div>
         </q-card-section>
       </q-card>
@@ -65,6 +70,18 @@ export default {
 <style scoped>
 .tarifftable {
   border-collapse: collapse;
+}
+
+.tarifftable .zk-col {
+  width: 30%;
+}
+
+.tarifftable .amount-col {
+  width: 40%;
+}
+
+.tarifftable .terms-col {
+  width: 30%;
 }
 
 table td, table th {
