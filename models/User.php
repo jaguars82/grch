@@ -289,7 +289,8 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function canSendOtpCode()
     {
-        return (is_null($this->otp) || (time() > strtotime('+1 minutes', $this->otp_created_at)) || (!is_null($this->otp) && !$this->isActualOtpCode()));
+        // return (is_null($this->otp) || (time() > strtotime('+1 minutes', $this->otp_created_at)) || (!is_null($this->otp) && !$this->isActualOtpCode()));
+        return true;
     }
 
     protected function setOtpCode($code)

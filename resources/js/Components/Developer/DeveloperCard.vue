@@ -1,17 +1,17 @@
 <template>
-  <q-card flat bordered>
+  <q-card flat bordered class="q-my-sm">
     <q-card-section>
       <div class="card-header-content">
         <img class="developer-complex-logo q-pr-md" v-if="developer.logo" :src="`/uploads/${developer.logo}`" />
         <q-avatar class="q-pr-md" v-else icon="engineering" />
         <div class="header-text">
-          <div>
+          <div class="text-right">
             <span class="text-h4">{{ developer.name }}</span>
           </div>
-          <div v-if="developer.address">
+          <div class="text-right" v-if="developer.address">
             <span>{{ developer.address }}</span>
           </div>
-          <div v-if="developer.url">
+          <div class="text-right" v-if="developer.url">
             <a target="_blank" :href="developer.url">
                 <q-icon class="q-mr-xs" name="language" />
                 {{ developer.url }}
@@ -26,8 +26,7 @@
         </div>
       </div>
     </q-card-section>
-    <q-card-section>
-      {{ developer.detail }}
+    <q-card-section v-html="developer.detail">
     </q-card-section>
   </q-card>
 </template>
@@ -42,15 +41,23 @@ export default {
 </script>
 
 <style scoped>
-.newbuilding-complex-logo {
-  height: 80px;
-}
 .card-header-content {
   display: flex;
   align-items: center;
 }
+.card-header-content :first-child {
+  max-width: 50%;
+}
+.card-header-content :last-child {
+  flex-grow: 1;
+}
+.developer-complex-logo {
+  height: 80px;
+}
 .header-text {
   display: flex;
   flex-direction: column;
+  justify-items: center;
+  align-items: flex-end;
 }
 </style>

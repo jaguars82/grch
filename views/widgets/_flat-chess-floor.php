@@ -26,7 +26,11 @@ $format = \Yii::$app->formatter;
                     акция
                 </span>
                 <?php else: ?>
-                <?= $format->asCurrency($flatItem->price_cash); ?>
+                    <?php if ($flatItem->status != 0 && $flatItem->developer->id == 20): ?>
+                    -
+                    <?php else: ?>
+                    <?= $format->asCurrency($flatItem->price_cash); ?>
+                    <?php endif; ?>
                 <?php endif; ?>
             </p>
             <div class="flex-row">

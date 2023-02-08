@@ -21,22 +21,22 @@
         <span v-if="flat.rooms > 0 && flat.rooms < 2">-но</span>
         <span v-else-if="flat.rooms >= 2 && flat.rooms < 5">-х</span>
         <span v-else>-и</span>
-        <span> комнатная</span>
+        <span>&nbsp;комнатная</span>
         <span v-if="flat.is_studio"> студия</span>
         <span v-else> квартира</span>
       </div>
       <div class="compare-table-cell floor">{{ flat.floor }}</div>
-      <div class="compare-table-cell deadline">
+      <div class="compare-table-cell deadline text-center">
         <span v-if="flat.newbuilding.deadline">
           <span v-if="new Date() > new Date(flat.newbuilding.deadline)">позиция сдана</span>
           <span v-else>{{ asQuarterAndYearDate(flat.newbuilding.deadline) }}</span>
         </span>
         <span v-else>нет данных</span>
       </div>
-      <div class="compare-table-cell developer">
+      <div class="compare-table-cell developer text-center">
         {{ flat.developer.name }}
       </div>
-      <div class="compare-table-cell nbc">{{ flat.newbuildingComplex.name }}</div>
+      <div class="compare-table-cell nbc text-center">{{ flat.newbuildingComplex.name }}</div>
     </div>
   </div>
 </template>
@@ -106,6 +106,8 @@ export default {
 
 .compare-table-rowname.deadline,
 .compare-table-cell.deadline,
+.compare-table-rowname.developer,
+.compare-table-cell.developer,
 .compare-table-rowname.nbc,
 .compare-table-cell.nbc {
   height: 54px;

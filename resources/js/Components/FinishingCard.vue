@@ -1,5 +1,5 @@
 <template>
-  <q-card flat bordered>
+  <q-card flat bordered class="q-my-sm">
     <q-card-section>
       <div class="card-header-content">
         <div class="header-text">

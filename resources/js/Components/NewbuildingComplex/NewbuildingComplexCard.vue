@@ -5,13 +5,13 @@
         <img class="newbuilding-complex-logo q-pr-md" v-if="newbuildingComplex.logo" :src="`/uploads/${newbuildingComplex.logo}`" />
         <q-avatar class="q-pr-md" v-else icon="location_city" />
         <div class="header-text">
-          <div>
+          <div class="text-right">
             <span class="text-h4">{{ newbuildingComplex.name }}</span>
           </div>
-          <div v-if="developer.name">
+          <div class="text-right" v-if="developer.name">
             <span>{{ developer.name }}</span>
           </div>
-          <div v-if="newbuildingComplex.address">
+          <div class="text-right" v-if="newbuildingComplex.address">
             <span>{{ newbuildingComplex.address }}</span>
           </div>
         </div>
@@ -37,15 +37,23 @@ export default {
 </script>
 
 <style scoped>
-.newbuilding-complex-logo {
-  height: 80px;
-}
 .card-header-content {
   display: flex;
   align-items: center;
 }
+.card-header-content :first-child {
+  max-width: 50%;
+}
+.card-header-content :last-child {
+  flex-grow: 1;
+}
+.newbuilding-complex-logo {
+  height: 80px;
+}
 .header-text {
   display: flex;
   flex-direction: column;
+  justify-items: center;
+  align-items: flex-end;
 }
 </style>

@@ -31,7 +31,7 @@
                     v-ripple
                     @click="addTo(commercial.id)"
                   >
-                    № <strong>{{ commercial.number }}</strong> от {{ asDateTime(commercial.created_at) }}
+                    №&nbsp;<strong>{{ commercial.number }}</strong>&nbsp;от {{ asDateTime(commercial.created_at) }}
                   </q-item>
                 </q-list>
               </q-menu>
