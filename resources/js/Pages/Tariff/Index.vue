@@ -18,19 +18,25 @@
                 <tr>
                   <th class="text-center zk-col">Жилой комплекс</th>
                   <th class="text-center amount-col">Размер вознаграждения</th>
+                  <th class="text-center info-col">Условия</th>
                   <th class="text-center terms-col">Сроки выплаты вознаграждения</th>
                 </tr>
                 <tr v-for="complex of developer.complexes" :key="complex.id">
-                  <td>{{ complex.name }}</td>
-                  <td>
+                  <td class="zk-col">{{ complex.name }}</td>
+                  <td class="amount-col text-center">
                     <div v-for="(tariff, i) of complex.tariffs" :key="i">
                       <span v-if="tariff.tariffType === 'percent'">{{ tariff.amountPercent }}%</span>
                       <span v-else-if="tariff.tariffType === 'currency'">{{ tariff.amountCurrency }} ₽</span>
                       <span v-else-if="tariff.tariffType === 'custom'">{{ tariff.amountCustom }}</span>
-                      <span v-if="tariff.annotation"> - {{ tariff.annotation }}</span>
                     </div>
                   </td>
-                  <td>{{ complex.termsOfPayment }}</td>
+                  <td class="info-col">
+                    <div class="ellipsis" v-for="(tariff, i) of complex.tariffs" :key="i">
+                      <span v-if="tariff.annotation">{{ tariff.annotation }}</span>
+                      <span v-else>&nbsp;</span>
+                    </div>
+                  </td>
+                  <td class="terms-col">{{ complex.termsOfPayment }}</td>
                 </tr>
               </table>
             </q-expansion-item>
@@ -73,19 +79,33 @@ export default {
 }
 
 .tarifftable .zk-col {
-  width: 30%;
+  width: 20%;
+  max-width: 20%;
 }
 
 .tarifftable .amount-col {
+  width: 10%;
+  max-width: 10%;
+}
+
+.tarifftable .info-col {
   width: 40%;
+  max-width: 300px;
 }
 
 .tarifftable .terms-col {
   width: 30%;
+  max-width: 30%;
 }
 
 table td, table th {
   border: 1px solid #888;
   padding: 5px 10px;
+}
+
+.ellipsis {
+  width: 100%;
+  max-width: 100%;
+  text-overflow: ellipsis;
 }
 </style>

@@ -90,7 +90,7 @@ class ReservationController extends Controller
                 $transaction->commit();
 
                 /** Send email-notifications for admins */
-                /*$admins = (new AuthAssignment())->admins;
+                $admins = (new AuthAssignment())->admins;
 
                 foreach ($admins as $admin) {
                     if (!empty ($admin)) {
@@ -101,7 +101,7 @@ class ReservationController extends Controller
                         ->setTextBody("Ссылка для просмотра заявки: https://grch.ru/user/application/view?id=$applicationModel->id")
                         ->send(); 
                     }
-                }*/
+                }
 
             } catch (\Exception $e) {
                 $transaction->rollBack();
