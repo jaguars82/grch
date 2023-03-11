@@ -46,7 +46,7 @@ class FavoriteController extends Controller
                         'allow' => true,
                         'actions' => ['index', 'create', 'delete', 'delete-flat', 'delete-all-archived', 'archive', 'activate',
                                       'update-comment', 'delete-comment'],
-                        'roles' => ['admin', 'agent'],
+                        'roles' => ['@'],
                     ],
                 ]
             ],

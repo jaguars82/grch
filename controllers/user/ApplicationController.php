@@ -86,6 +86,7 @@ class ApplicationController extends Controller
     {
         $application = (new Application())->findOne($id);
         $flat = ArrayHelper::toArray($application->flat);
+        $flat['developer'] = ArrayHelper::toArray($application->flat->developer);
         $flat['newbuilding'] = ArrayHelper::toArray($application->flat->newbuilding);
         $flat['newbuildingComplex'] = ArrayHelper::toArray($application->flat->newbuildingComplex);
 
