@@ -62,7 +62,9 @@ class ImportController extends Controller
         foreach ($endpoints as $endpoint) {
             $endpointParams = explode('|algo:', $endpoint);
             if(count($endpointParams) > 1 && !empty($endpointParams[1])) {
-                var_dump($endpointParams);
+                $algorithm = $import->getAlgorithmAsObject($endpointParams[1]);
+                $data = $algorithm->getAndParse($endpointParams[0]);
+                $developer->import($data);
             } else {
                 $data = $algorithm->getAndParse($endpoint);
                 $developer->import($data);

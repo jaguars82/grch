@@ -24,10 +24,15 @@ class XmlImportService implements ImportServiceInterface
      *
      * @var integer
      */
-    protected $status = [
+    /* protected $status = [
         'Свободна.' => Flat::STATUS_SALE,
 		'Резерв.' => Flat::STATUS_RESERVED,
 		'Продана.' => Flat::STATUS_SOLD,
+    ]; */
+    protected $status = [
+        0 => Flat::STATUS_SOLD,
+        1 => Flat::STATUS_SALE,
+		2 => Flat::STATUS_RESERVED,
     ];
 
     /**
@@ -224,6 +229,10 @@ class XmlImportService implements ImportServiceInterface
 				$houseName = (string)$building->name;
 				$deadline = $this->getDeadline($building);
 
+                /** пропускаем дубли ЖК Черемушки, поз. 4, ЖК Еверопейский */
+                if ($houseName === 'ЖК Черемушки поз. 4' && (int)$building->id === 154412) { continue; }
+                if ($houseName === 'ЖК "Европейский"' && (int)$building->id === 129922) { continue; }
+
 				$houses[$houseId] = [
 					'objectId' => $currentObjectId,
 					'name' => $houseName,
@@ -263,7 +272,8 @@ class XmlImportService implements ImportServiceInterface
 		                'rooms' => (int)$flat->room,
 		                'unit_price_cash' => $unitPrice,
 		                'price_cash' => (float)$flat->price,
-		                'status' => $this->getStatus((string)$flat->window_view),
+		                //'status' => $this->getStatus((string)$flat->window_view),
+		                'status' => $this->getStatus((int)$flat->state),
 						'layout' => $layout,
 		            ];
 
