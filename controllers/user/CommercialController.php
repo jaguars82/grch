@@ -61,6 +61,7 @@ class CommercialController extends Controller
         $selectionLayout = (new Layout())->createFloorLayoutWithSelectedFlat($model);
 
         $flat = ArrayHelper::toArray($model);
+        $flat['developer'] = ArrayHelper::toArray($model->developer);
         $flat['newbuilding'] = ArrayHelper::toArray($model->newbuilding);
         $flat['newbuildingComplex'] = ArrayHelper::toArray($model->newbuildingComplex);
 

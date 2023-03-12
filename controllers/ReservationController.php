@@ -50,6 +50,7 @@ class ReservationController extends Controller
             ->one();
         
         $flat = ArrayHelper::toArray($model);
+        $flat['developer'] = ArrayHelper::toArray($model->developer);
         $flat['newbuilding'] = ArrayHelper::toArray($model->newbuilding);
         $flat['newbuildingComplex'] = ArrayHelper::toArray($model->newbuildingComplex);
 
