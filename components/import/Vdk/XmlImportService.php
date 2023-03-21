@@ -24,11 +24,6 @@ class XmlImportService implements ImportServiceInterface
      *
      * @var integer
      */
-    /* protected $status = [
-        'Свободна.' => Flat::STATUS_SALE,
-		'Резерв.' => Flat::STATUS_RESERVED,
-		'Продана.' => Flat::STATUS_SOLD,
-    ]; */
 
     /**
      * {@inheritdoc}
@@ -73,18 +68,6 @@ class XmlImportService implements ImportServiceInterface
     {
         throw new \Exception('Not suppored yet');
     }
-
-    /**
-     * Get flat status from string
-     *
-     * @param int $flatCol Column of cell
-     * @param int $flatRow Row of cell
-     * @return boolean
-     */
-    /* protected function getStatus($value)
-    {
-        return (isset($this->status[$value])) ? $this->status[$value] : Flat::STATUS_SOLD;
-    } */
 
     /**
      * Check that object data is valid
@@ -198,10 +181,6 @@ class XmlImportService implements ImportServiceInterface
             $this->checkObjectData($complex);
             $objectName = (string)$complex->name;
 
-			/* if (strpos($objectName, "Ласточкино") !== false) {
-				$objectName = "ЖК Ласточкино";
-			} */
-
 			if (!isset($complex->buildings->building)) {
 				continue;
 			}
@@ -263,7 +242,6 @@ class XmlImportService implements ImportServiceInterface
 		                'rooms' => (int)$flat->room,
 		                'unit_price_cash' => $unitPrice,
 		                'price_cash' => (float)$flat->price,
-		                // 'status' => $this->getStatus((string)$flat->window_view),
 		                'status' => Flat::STATUS_SALE,
 						'layout' => $layout,
 		            ];
