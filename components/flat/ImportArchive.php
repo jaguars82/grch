@@ -269,7 +269,7 @@ class ImportArchive extends Component
         $layoutInfo['position'] = intval($positionAndRooms[0]);
         $rooms = trim($positionAndRooms[1]);
 
-        $roomType = strToLower(preg_replace('/[^a-zа-я]/i', '', $rooms));
+        $roomType = strtolower(preg_replace('/[^a-zа-я]/i', '', $rooms));
         $layoutInfo['roomsCount'] = intval(preg_replace('/[^0-9]/', '', $rooms));
 
         $layoutInfo['is_studio'] = false;

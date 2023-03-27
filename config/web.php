@@ -65,10 +65,10 @@ $config = [
                 'offer/<id>' => 'offer/view',
             ],
         ],
-	'authManager' => [
+	    'authManager' => [
             'class' => 'yii\rbac\DbManager',
         ],
-	'db' => $db,
+	    'db' => $db,
         'formatter' => [
             'class' => 'app\components\Formatter',
             'numberFormatterSymbols' => [

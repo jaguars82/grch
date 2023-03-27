@@ -165,4 +165,15 @@ class Agency extends \yii\db\ActiveRecord
         return $this->hasOne(SecondaryImport::className(), ['id' => 'import_id']);
     }
 
+    /**
+     * Gets query for [[SecondaryAdvertisment]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSecondaryAdvertisements()
+    {
+        return $this->hasMany(SecondaryAdvertisement::className(), ['agency_id' => 'id'])
+                ->inverseOf('agency');
+    }
+
 }

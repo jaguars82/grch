@@ -50,6 +50,7 @@ use yii\helpers\ArrayHelper;
  * @property int $built_year
  * @property int $renovation_id
  * @property string $renovation_string
+ * @property int|null $quality_index
  * @property string $quality_string
  * @property int $floor
  * @property int $section
@@ -64,12 +65,14 @@ use yii\helpers\ArrayHelper;
  * @property boolean $gas_pipe
  * @property boolean $phone_line
  * @property boolean $internet
+ * @property int|null $bathroom_index
  * @property string $bathroom_unit
  * @property boolean $concierge
  * @property boolean $closed_territory
  * @property boolean $playground
  * @property boolean $underground_parking
  * @property boolean $ground_parking
+ * @property boolean $multilevel_parking
  * @property boolean $open_parking
  * @property string $parking_info
  * @property boolean $barrier
@@ -106,6 +109,32 @@ use yii\helpers\ArrayHelper;
 class SecondaryRoom extends ActiveRecord
 {
     use FillAttributes;
+
+    const BATHROOM_SEPARATE = 1;
+    const BATHROOM_COMBINED = 2;
+    const BATHROOM_TOILET = 3;
+    const BATHROOM_MULTIPLE = 4;
+
+    const QUALITY_EXCELLENT = 1;
+    const QUALITY_GOOD = 2;
+    const QUALITY_NORMAL = 3;
+    const QUALITY_SATISFACTORY = 4;
+    const QUALITY_BAD = 5;
+
+    public static $bathroom = [
+        self::BATHROOM_SEPARATE => 'раздельный',
+        self::BATHROOM_COMBINED => 'совмещенный',
+        self::BATHROOM_TOILET => 'туалет',
+        self::BATHROOM_MULTIPLE => 'несколько',
+    ];
+
+    public static $quality = [
+        self::QUALITY_EXCELLENT => 'отличное',
+        self::QUALITY_GOOD => 'хорошее',
+        self::QUALITY_NORMAL => 'нормальное',
+        self::QUALITY_SATISFACTORY => 'удовлетворительное',
+        self::QUALITY_BAD => 'плохое',
+    ];
     
     /**
      * {@inheritdoc}
@@ -141,14 +170,14 @@ class SecondaryRoom extends ActiveRecord
             [['advertisement_id'], 'required'],
             [['building_number'], 'string', 'max' => 20],
             [['built_year'], 'string', 'max' => 4],
-            [['advertisement_id', 'category_id', 'property_type_id', 'building_series_id', 'newbuilding_complex_id', 'newbuilding_id', 'entrance_id', 'flat_id', 'city_id', 'region_id', 'district_id', 'region_district_id', 'developer_id', 'street_type_id', 'rooms', 'balcony_amount', 'loggia_amount', 'renovation_id', 'floor', 'section', 'total_floors', 'elevator_passenger_amount', 'elevator_freight_amount'], 'integer'],
+            [['advertisement_id', 'category_id', 'property_type_id', 'building_series_id', 'newbuilding_complex_id', 'newbuilding_id', 'entrance_id', 'flat_id', 'city_id', 'region_id', 'district_id', 'region_district_id', 'street_type_id', 'rooms', 'balcony_amount', 'loggia_amount', 'renovation_id', 'floor', 'section', 'total_floors', 'elevator_passenger_amount', 'elevator_freight_amount', 'bathroom_index', 'quality_index'], 'integer'],
             [['number', 'azimuth'], 'number'],
             [['price', 'unit_price', 'area', 'kitchen_area', 'living_area', 'ceiling_height', 'longitude', 'latitude'], 'double'],
             [['category_string', 'property_type_string', 'building_series_string', 'newbuilding_complex_string', 'number_suffix', 'detail', 'special_conditions', 'balcony_info', 'windowview_info', 'renovation_string', 'quality_string', 'address', 'material', 'elevator_info', 'bathroom_unit', 'parking_info', 'street_name'], 'string'],
-            [['mortgage', 'windowview_street', 'windowview_yard', 'dressing_room', 'panoramic_windows', 'is_studio', 'is_euro', 'elevator', 'rubbish_chute', 'gas_pipe', 'phone_line', 'internet', 'concierge', 'closed_territory', 'playground', 'underground_parking', 'ground_parking', 'open_parking', 'barrier'], 'boolean'],
+            [['mortgage', 'windowview_street', 'windowview_yard', 'dressing_room', 'panoramic_windows', 'is_studio', 'is_euro', 'elevator', 'rubbish_chute', 'gas_pipe', 'phone_line', 'internet', 'concierge', 'closed_territory', 'playground', 'underground_parking', 'ground_parking', 'open_parking', 'multilevel_parking', 'barrier'], 'boolean'],
             [['location_info', 'created_at', 'updated_at'], 'safe'],
             [['layout'], 'string', 'max' => 200],
-            [['category_id', 'property_type_id', 'building_series_id', 'newbuilding_complex_id', 'newbuilding_id', 'entrance_id', 'flat_id', 'renovation_id', 'region_id', 'region_district_id', 'city_id', 'district_id', 'street_type_id', 'created_at', 'updated_at'], 'default', 'value' => NULL],
+            [['category_id', 'property_type_id', 'building_series_id', 'newbuilding_complex_id', 'newbuilding_id', 'entrance_id', 'flat_id', 'renovation_id', 'region_id', 'region_district_id', 'city_id', 'district_id', 'street_type_id', 'bathroom_index', 'quality_index', 'created_at', 'updated_at'], 'default', 'value' => NULL],
             [['mortgage', 'is_studio', 'is_euro'], 'default', 'value' => false],
             [['advertisement_id'], 'exist', 'skipOnError' => true, 'targetClass' => SecondaryAdvertisement::className(), 'targetAttribute' => ['advertisement_id' => 'id']],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => SecondaryCategory::className(), 'targetAttribute' => ['category_id' => 'id']],
@@ -233,6 +262,7 @@ class SecondaryRoom extends ActiveRecord
             'underground_parking' => 'Подземная парковка',
             'ground_parking' => 'Наземная парковка',
             'open_parking' => 'Открытая парковка',
+            'multilevel_parking' => 'Многоуровневая парковка',
             'parking_info' => 'Информация о парковке',
             'barrier' => 'Шлагбаум',
             'longitude' => 'Долгота',

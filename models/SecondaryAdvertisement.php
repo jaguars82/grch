@@ -33,7 +33,7 @@ use yii\helpers\ArrayHelper;
  * 
  */
 
-class SecondaryRoom extends ActiveRecord
+class SecondaryAdvertisement extends ActiveRecord
 {
     use FillAttributes;
 

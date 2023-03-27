@@ -15,65 +15,83 @@ class m230320_182559_insert_initial_secondary_room_data extends Migration
         $this->insert('{{%secondary_category}}', [
             'id' => 1,
             'level' => 1,
-            'name' => iconv('ASCII', 'UTF-8//IGNORE', 'Жилая недвижимость'),
+            'name' => 'Жилая недвижимость',
         ]);
         $this->insert('{{%secondary_category}}', [
             'id' => 2,
             'level' => 1,
-            'name' => iconv('ASCII', 'UTF-8//IGNORE', 'Дома, дачи, коттеджи'),
+            'name' => 'Дома, дачи, коттеджи',
         ]);
         $this->insert('{{%secondary_category}}', [
             'id' => 3,
             'level' => 1,
-            'name' => iconv('ASCII', 'UTF-8//IGNORE', 'Земельные участки'),
+            'name' => 'Земельные участки',
         ]);
         $this->insert('{{%secondary_category}}', [
             'id' => 4,
             'level' => 1,
-            'name' => iconv('ASCII', 'UTF-8//IGNORE', 'Коммерческая недвижимость'),
+            'name' => 'Коммерческая недвижимость',
         ]);
 
         $this->batchInsert('{{%secondary_category}}', ['id', 'level', 'parent_id', 'name', 'alias'], [
-            [5, 2, 1, iconv('ASCII', 'UTF-8//IGNORE', 'Квартира в новостройке'), ''],
-            [6, 2, 1, iconv('ASCII', 'UTF-8//IGNORE', 'Квартира'), ''],
-            [7, 2, 1, iconv('ASCII', 'UTF-8//IGNORE', 'Комната'), ''],
-            [8, 2, 2, iconv('ASCII', 'UTF-8//IGNORE', 'Дом'), ''],
-            [9, 2, 2, iconv('ASCII', 'UTF-8//IGNORE', 'Дача'), ''],
-            [10, 2, 2, iconv('ASCII', 'UTF-8//IGNORE', 'Коттедж'), ''],
-            [11, 2, 2, iconv('ASCII', 'UTF-8//IGNORE', 'Таунхаус'), ''],
-            [12, 2, 3, iconv('ASCII', 'UTF-8//IGNORE', 'Поселений (ИЖС)'), ''],
-            [13, 2, 3, iconv('ASCII', 'UTF-8//IGNORE', 'Сельхозназначения (СНТ, ДНП)'), ''],
-            [14, 2, 3, iconv('ASCII', 'UTF-8//IGNORE', 'Офисное помещение'), ''],
-            [15, 2, 4, iconv('ASCII', 'UTF-8//IGNORE', 'Помещение общественного питания'), ''],
-            [16, 2, 4, iconv('ASCII', 'UTF-8//IGNORE', 'Помещение свободного назначения'), ''],
-            [17, 2, 4, iconv('ASCII', 'UTF-8//IGNORE', 'Производственное помещение'), ''],
-            [18, 2, 4, iconv('ASCII', 'UTF-8//IGNORE', 'Складское помещение'), ''],
-            [19, 2, 4, iconv('ASCII', 'UTF-8//IGNORE', 'Торговое помещение'), ''],
+            [5, 2, 1, 'Квартира в новостройке', ''],
+            [6, 2, 1, 'Квартира', ''],
+            [7, 2, 1, 'Комната', ''],
+            [8, 2, 2, 'Дом', ''],
+            [9, 2, 2, 'Часть дома', ''],
+            [10, 2, 2, 'Дача', ''],
+            [11, 2, 2, 'Коттедж', ''],
+            [12, 2, 2, 'Таунхаус', ''],
+            [13, 2, 3, 'Поселений (ИЖС)', 'участок'],
+            [14, 2, 3, 'Сельхозназначения (СНТ, ДНП)', ''],
+            [15, 2, 3, 'Офисное помещение', ''],
+            [16, 2, 4, 'Помещение общественного питания', ''],
+            [17, 2, 4, 'Помещение свободного назначения', ''],
+            [18, 2, 4, 'Производственное помещение', ''],
+            [19, 2, 4, 'Складское помещение', ''],
+            [20, 2, 4, 'Торговое помещение', ''],
         ]);
 
         $this->batchInsert('{{%secondary_property_type}}', ['id', 'name', 'alias'], [
-            ['1', iconv('ASCII', 'UTF-8//IGNORE', 'жилая'), ''],
+            ['1', 'жилая', ''],
         ]);
 
         $this->batchInsert('{{%secondary_renovation}}', ['id', 'name', 'alias', 'detail'], [
-            ['1', iconv('ASCII', 'UTF-8//IGNORE', 'евроремонт'), '', ''],
-            ['2', iconv('ASCII', 'UTF-8//IGNORE', 'дизайнерский'), '', ''],
-            ['3', iconv('ASCII', 'UTF-8//IGNORE', 'косметический'), '', ''],
-            ['4', iconv('ASCII', 'UTF-8//IGNORE', 'требует ремонта'), '', ''],
+            ['1', 'евроремонт', '', ''],
+            ['2', 'дизайнерский', '', ''],
+            ['3', 'косметический', '', ''],
+            ['4', 'требует ремонта', '', ''],
         ]);
 
         $this->batchInsert('{{%secondary_building_series}}', ['id', 'name', 'alias', 'detail'], [
-            ['1', iconv('ASCII', 'UTF-8//IGNORE', 'Современной планировки'), iconv('ASCII', 'UTF-8//IGNORE', 'Современной пл.'), ''],
-            ['2', iconv('ASCII', 'UTF-8//IGNORE', 'Улучшенной планировки'), iconv('ASCII', 'UTF-8//IGNORE', 'Улучшенной пл.'), ''],
-            ['3', iconv('ASCII', 'UTF-8//IGNORE', 'Сталинка'), '', ''],
-            ['4', iconv('ASCII', 'UTF-8//IGNORE', 'Брежневка'), '', ''],
-            ['5', iconv('ASCII', 'UTF-8//IGNORE', 'Чешка'), '', ''],
-            ['6', iconv('ASCII', 'UTF-8//IGNORE', 'Хрущевка'), '', ''],
-            ['7', iconv('ASCII', 'UTF-8//IGNORE', 'Общежитие'), '', ''],
-            ['8', iconv('ASCII', 'UTF-8//IGNORE', 'Коммуналка'), '', ''],
-            ['9', iconv('ASCII', 'UTF-8//IGNORE', 'ЗГТ'), '', ''],
-            ['10', iconv('ASCII', 'UTF-8//IGNORE', 'Малосемейка'), '', ''],
-            ['11', iconv('ASCII', 'UTF-8//IGNORE', 'Старый фонд'), '', ''],
+            ['1', 'Современной планировки', 'Современной пл.', ''],
+            ['2', 'Улучшенной планировки', 'Улучшенной пл.', ''],
+            ['3', 'Сталинка', '', ''],
+            ['4', 'Брежневка', '', ''],
+            ['5', 'Чешка', '', ''],
+            ['6', 'Хрущевка', '', ''],
+            ['7', 'Общежитие', '', ''],
+            ['8', 'Коммуналка', '', ''],
+            ['9', 'ЗГТ', '', ''],
+            ['10', 'Малосемейка', '', ''],
+            ['11', 'Старый фонд', '', ''],
+        ]);
+
+        $this->batchInsert('{{%building_material}}', ['id', 'name', 'alias', 'detail'], [
+            ['1', 'блочный', '', ''],
+            ['2', 'бревно', '', ''],
+            ['3', 'брус', '', ''],
+            ['4', 'деревянный', '', ''],
+            ['5', 'каркасно-засыпной', 'Карк. засып.', ''],
+            ['6', 'кирпично-монолитный', '', ''],
+            ['7', 'кирпичный', '', ''],
+            ['8', 'комбинированный', '', ''],
+            ['9', 'металл', '', ''],
+            ['10', 'монолит', '', ''],
+            ['11', 'монолитно-блочный', '', ''],
+            ['12', 'панельный', '', ''],
+            ['13', 'пеноблок', '', ''],
+            ['14', 'шлакоблочный', '', ''],
         ]);
     }
 
@@ -101,6 +119,7 @@ class m230320_182559_insert_initial_secondary_room_data extends Migration
         $this->delete('{{%secondary_category}}', ['id' => 17]);
         $this->delete('{{%secondary_category}}', ['id' => 18]);
         $this->delete('{{%secondary_category}}', ['id' => 19]);
+        $this->delete('{{%secondary_category}}', ['id' => 20]);
 
         $this->delete('{{%secondary_property_type}}', ['id' => 1]);
        
@@ -120,6 +139,21 @@ class m230320_182559_insert_initial_secondary_room_data extends Migration
         $this->delete('{{%secondary_building_series}}', ['id' => 9]);
         $this->delete('{{%secondary_building_series}}', ['id' => 10]);
         $this->delete('{{%secondary_building_series}}', ['id' => 11]);
+
+        $this->delete('{{%building_material}}', ['id' => 1]);
+        $this->delete('{{%building_material}}', ['id' => 2]);
+        $this->delete('{{%building_material}}', ['id' => 3]);
+        $this->delete('{{%building_material}}', ['id' => 4]);
+        $this->delete('{{%building_material}}', ['id' => 5]);
+        $this->delete('{{%building_material}}', ['id' => 6]);
+        $this->delete('{{%building_material}}', ['id' => 7]);
+        $this->delete('{{%building_material}}', ['id' => 8]);
+        $this->delete('{{%building_material}}', ['id' => 9]);
+        $this->delete('{{%building_material}}', ['id' => 10]);
+        $this->delete('{{%building_material}}', ['id' => 11]);
+        $this->delete('{{%building_material}}', ['id' => 12]);
+        $this->delete('{{%building_material}}', ['id' => 13]);
+        $this->delete('{{%building_material}}', ['id' => 14]);
     }
 
     /*

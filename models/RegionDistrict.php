@@ -122,4 +122,15 @@ class RegionDistrict extends \yii\db\ActiveRecord
     {
         return City::findOne(['region_district_id' => $this->id, 'is_district_center' => 1]);
     }
+
+    /**
+     * Gets Secondary renovation by given name
+     */
+    public static function getRegionDistrictByRegionAndName($regionId, $name)
+    {
+        return static::find()
+            ->where(['region_id' => $regionId])
+            ->andWhere(['like', 'name', $name.'%', false])
+            ->one();
+    }
 }

@@ -3,7 +3,19 @@
 namespace app\models\service;
 
 use app\components\exceptions\AppException;
+use app\models\SecondaryAdvertisement;
+use app\models\SecondaryRoom;
+use app\models\SecondaryCategory;
+use app\models\SecondaryPropertyType;
+use app\models\SecondaryBuildingSeries;
+use app\models\SecondaryRenovation;
 use app\models\SecondaryImport;
+use app\models\BuildingMaterial;
+use app\models\Region;
+use app\models\RegionDistrict;
+use app\models\City;
+use app\models\District;
+use app\models\User;
 use yii\httpclient\Client;
 use yii\helpers\ArrayHelper;
 
@@ -46,17 +58,17 @@ class Agency extends \app\models\Agency
         }
 
         // var_dump($data);
-        $values = [];
+        /*$values = [];
         foreach($data['advertisements'] as $adv) {
-            if (!in_array($adv['building_type'], $values)) {
-                array_push($values, $adv['building_type']);
+            if (!in_array($adv['parking_type'], $values)) {
+                array_push($values, $adv['parking_type']);
             }
         }
+
         foreach ($values as $value) {
             echo $value; echo PHP_EOL;
-        }
+        }*/
 
-        /*
         $transaction = \Yii::$app->db->beginTransaction();
 
         try {
@@ -68,50 +80,245 @@ class Agency extends \app\models\Agency
                 $this->import->touch('imported_at');
             }
 
-            $newbuildingComplexes = $this->insertOrUpdateNewbuildingComplexes($data['newbuildingComplexes']);
-            $newbuildings = $this->insertOrUpdateNewbuilding($newbuildingComplexes, $data['newbuildings']);
-
-            if (isset($data['floorLayouts'])) {
-                $this->insertFloorLayouts($newbuildings, $data['floorLayouts']);
-            }
-
-            $this->insertOrUpdateFlats($newbuildings, $data['flats']);
+            $advertisements = $this->insertOrUpdateAdvertisements($data['advertisements']);
 
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollBack();
             throw $e;
         }
-        */
+        
     }
 
     /**
-     * Insert new newbuilding complexes and update changed newbuilding complexes
+     * Insert new advertisements and update changed ones
      *
      * @param array $newbuildingComplexesData newbuilding complex data
-     * @return NewbuildingComplex
+     * @return SecondaryAdvertisement
      */
-    private function insertOrUpdateNewbuildingComplexes($newbuildingComplexesData)
+    private function insertOrUpdateAdvertisements($advertisementsData)
     {
-        $newbuildingComplexes = [];
-        $savedNewbuildingComplex = $this->getNewbuildingComplexes()->indexBy('feed_name')->all();
+        $advertisements = [];
+        $savedAdvertisements = $this->getSecondaryAdvertisements()->indexBy('external_id')->all();
 
-        foreach($newbuildingComplexesData as $key => $newbuildingComplexData) {
-            if (array_key_exists($newbuildingComplexData['name'], $savedNewbuildingComplex)) {
-                $newbuildingComplex = $savedNewbuildingComplex[$newbuildingComplexData['name']];
+        foreach($advertisementsData as $key => $advertisementData) {
+            
+            if (array_key_exists($key, $savedAdvertisements)) {
+                $advertisement = $savedAdvertisements[$advertisementData['external_id']];
+                echo $key; echo PHP_EOL;
             } else {
-                $newbuildingComplexData['feed_name'] = $newbuildingComplexData['name'];
+                $newAdvertisementRow = array();
 
-                $newbuildingComplex = new NewbuildingComplex($newbuildingComplexData);
-                $newbuildingComplex->developer_id = $this->id;
-                $newbuildingComplex->save();
-                $this->insertedNewbuildingComplexesCount++;
+                // try to find author
+                $authorId = 0;
+                // by email
+                if (!empty($advertisementData['agent']['email'])) {
+                    $authorByMailTry = User::findByEmailAndAgency($advertisementData['agent']['email'], $this->id);
+                    if (!empty($authorByMailTry)) {
+                        $authorId = $authorByMailTry->id;
+                    }
+                }
+                // by phone
+                if ($authorId === 0 && count($advertisementData['agent']['phones']) > 0) {
+                    foreach ($advertisementData['agent']['phones'] as $phone) {
+                        $authorByPhoneTry = User::findByPhoneAndAgency($phone, $this->id);
+                        if (!empty($authorByPhoneTry)) {
+                            $authorId = $authorByPhoneTry->id;
+                        }
+                    }
+                }
+
+                $newAdvertisementRow['external_id'] = $advertisementData['external_id'];
+                $newAdvertisementRow['deal_type'] = $advertisementData['deal_type'];
+                $newAdvertisementRow['deal_status_string'] = $advertisementData['deal_status'];
+                $newAdvertisementRow['agency_id'] = $this->id;
+                $newAdvertisementRow['creation_type'] = 1;
+                $newAdvertisementRow['author_id'] = $authorId !== 0 ? $authorId : null;
+                $newAdvertisementRow['author_info'] = json_encode($advertisementData['agent']) ;
+                $newAdvertisementRow['is_active'] = 1;
+                $newAdvertisementRow['creation_date'] = $advertisementData['creation_date'];
+                $newAdvertisementRow['last_update_date'] = $advertisementData['last_update_date'];
+
+                // $encoding = mb_detect_encoding($newAdvertisementRow['deal_status_string']);
+                // var_dump($newAdvertisementRow); die;
+
+                $advertisement = new SecondaryAdvertisement($newAdvertisementRow);
+                $advertisement->agency_id = $this->id;
+                $advertisement->save();
+
+                // try to figure out category ID
+                $categoryId = 0;
+                if (!empty($advertisementData['category'])) {
+                    $categoryByNameTry = SecondaryCategory::getCategoryByName($advertisementData['category']);
+                    if (!empty($categoryByNameTry)) {
+                        $categoryId = $categoryByNameTry->id;
+                    }
+                }
+
+                // try to figure out property type ID
+                $propertyID = 0;
+                if (!empty($advertisementData['property_type_string'])) {
+                    $propertyByNameTry = SecondaryPropertyType::getPropertyTypeByName($advertisementData['property_type_string']);
+                    if (!empty($propertyByNameTry)) {
+                        $propertyID = $propertyByNameTry->id;
+                    }
+                }
+
+                // try to figure out building series ID
+                $seriesID = 0;
+                if (!empty($advertisementData['building_series'])) {
+                    $seriesByNameTry = SecondaryBuildingSeries::getBuildingSeriesByName($advertisementData['building_series']);
+                    if (!empty($seriesByNameTry)) {
+                        $seriesID = $seriesByNameTry->id;
+                    }
+                }
+
+                // try to figure out renovation ID
+                $renovationID = 0;
+                if (!empty($advertisementData['building_series'])) {
+                    $renovationByNameTry = SecondaryRenovation::getRenovationByName($advertisementData['renovation']);
+                    if (!empty($renovationByNameTry)) {
+                        $renovationID = $renovationByNameTry->id;
+                    }
+                }
+
+                // try to figure out material ID
+                $materialID = 0;
+                if (!empty($advertisementData['material'])) {
+                    $materialByNameTry = BuildingMaterial::getMaterialByName($advertisementData['material']);
+                    if (!empty($materialByNameTry)) {
+                        $materialID = $materialByNameTry->id;
+                    }
+                }
+
+                // try to figure out region ID
+                $regionID = 0;
+                if (!empty($advertisementData['location']['region'])) {
+                    $regionByNameTry = Region::getRegionByName($advertisementData['location']['region']);
+                    if (!empty($regionByNameTry)) {
+                        $regionID = $regionByNameTry->id;
+                    }
+                }
+
+                // try to figure out region district ID
+                $regionDistrictID = 0;
+                if (!empty($advertisementData['location']['district'])) {
+                    $regionNameParts = explode(' ', $advertisementData['location']['district']);
+                }
+                if (isset($regionNameParts) && !empty($regionNameParts[0]) && !empty($regionID)) {
+                    $districtTry = RegionDistrict::getRegionDistrictByRegionAndName($regionID, $regionNameParts[0]);
+                    if (!empty($districtTry)) {
+                        $regionDistrictID = $districtTry->id;
+                    }
+                }
+
+                // try to figure out city ID
+                $cityId = 0;
+                if (!empty($advertisementData['location']['locality_name'])) {
+                    $cityTypes = ['город', 'деревня', 'посёлок', 'поселок', 'село', 'хутор'];
+                    $cityName = $advertisementData['location']['locality_name'];
+                    foreach ($cityTypes as $cityType) {
+                        $cityName = str_replace(' '.$cityType, '', $cityName);
+                    }
+                }
+                if (!empty($cityName) && !empty($regionID)) {
+                    $cityTry = City::getCityByRegionAndName($regionID, $cityName);
+                    if (!empty($cityTry)) {
+                        $cityId = $cityTry->id;
+                    }
+                }
+
+                // try to figure out district of a city ID
+                $districtId = 0;
+                if (!empty($advertisementData['location']['sub_locality_name'])) {
+                    $districtName = !empty($advertisementData['location']['non_admin_sub_locality_name']) ? $advertisementData['location']['non_admin_sub_locality_name'] : $advertisementData['location']['sub_locality_name'];
+                    $districtTypes = ['микрорайон'];
+                    foreach ($districtTypes as $districtType) {
+                        $districtName = str_replace(' '.$districtType, '', $districtName);
+                    }
+                }
+                if (!empty($districtName) && !empty($cityId)) {
+                    $cityDistrictTry = District::getDistrictByCityAndName($cityId, $districtName);
+                    if (!empty($cityDistrictTry)) {
+                        $districtId = $cityDistrictTry->id;
+                    }
+                }
+
+                // try to figure out bathroom unit index
+                $bathroomIndex = array_search($advertisementData['bathroom_unit'], SecondaryRoom::$bathroom);
+
+                // try to figure out quality index
+                $qualityIndex = array_search($advertisementData['quality'], SecondaryRoom::$quality);
+
+                $newSecondaryRoomRow = array();
+
+                $newSecondaryRoomRow['advertisement_id'] = $advertisement->id;
+                $newSecondaryRoomRow['category_id'] = $categoryId !== 0 ? $categoryId : null;
+                $newSecondaryRoomRow['category_string'] = $categoryId === 0 && !empty($advertisementData['category']) ? $advertisementData['category'] : '';
+                $newSecondaryRoomRow['property_type_id'] = $propertyID !== 0 ? $propertyID : null;
+                $newSecondaryRoomRow['property_type_string'] = $propertyID === 0 && !empty($advertisementData['category']) ? $advertisementData['category'] : '';
+                $newSecondaryRoomRow['building_series_id'] = $seriesID !== 0 ? $seriesID : null;
+                $newSecondaryRoomRow['building_series_string'] = $seriesID === 0 && !empty($advertisementData['building_series']) ? $advertisementData['building_series'] : '';
+                $newSecondaryRoomRow['price'] = $advertisementData['price'];
+                $newSecondaryRoomRow['unit_price'] = $advertisementData['price_unit'];
+                $newSecondaryRoomRow['mortgage'] = $advertisementData['mortgage'];
+                $newSecondaryRoomRow['detail'] = $advertisementData['description'];
+                $newSecondaryRoomRow['area'] = $advertisementData['area'];
+                $newSecondaryRoomRow['kitchen_area'] = $advertisementData['kitchen_area'];
+                $newSecondaryRoomRow['living_area'] = $advertisementData['living_area'];
+                $newSecondaryRoomRow['ceiling_height'] = $advertisementData['ceiling_height'];
+                $newSecondaryRoomRow['rooms'] = $advertisementData['rooms'];
+                $newSecondaryRoomRow['balcony_info'] = empty($balcony_amount) && empty($loggia_amount) ? $advertisementData['balcony'] : '';
+                $newSecondaryRoomRow['balcony_amount'] = $advertisementData['balcony_amount'];
+                $newSecondaryRoomRow['loggia_amount'] = $advertisementData['loggia_amount'];
+                $newSecondaryRoomRow['windowview_info'] = $advertisementData['windowview_info'];
+                $newSecondaryRoomRow['windowview_street'] = $advertisementData['windowview_street'];
+                $newSecondaryRoomRow['windowview_yard'] = $advertisementData['windowview_yard'];
+                $newSecondaryRoomRow['is_studio'] = $advertisementData['is_studio'];
+                $newSecondaryRoomRow['renovation_id'] = $renovationID !== 0 ? $renovationID : null;
+                $newSecondaryRoomRow['renovation_string'] = $renovationID === 0 && !empty($advertisementData['renovation']) ? $advertisementData['renovation'] : '';
+                $newSecondaryRoomRow['quality_index'] = $qualityIndex === false ? null : $qualityIndex;
+                $newSecondaryRoomRow['quality_string'] = $qualityIndex === false ? $advertisementData['quality'] : '';
+                $newSecondaryRoomRow['floor'] = $advertisementData['floor'];
+                $newSecondaryRoomRow['total_floors'] = $advertisementData['total_floors'];
+                $newSecondaryRoomRow['material_id'] = $materialID !== 0 ? $materialID : null;
+                $newSecondaryRoomRow['material'] = $materialID === 0 && !empty($advertisementData['material']) ? $advertisementData['material'] : '';
+                $newSecondaryRoomRow['elevator'] = $advertisementData['lift'];
+                $newSecondaryRoomRow['rubbish_chute'] = $advertisementData['rubbish_chute'];
+                $newSecondaryRoomRow['phone_line'] = $advertisementData['phone'];
+                $newSecondaryRoomRow['internet'] = $advertisementData['internet'];
+                $newSecondaryRoomRow['bathroom_index'] = $bathroomIndex === false ? null : $bathroomIndex;
+                $newSecondaryRoomRow['bathroom_unit'] = $bathroomIndex === false ? $advertisementData['bathroom_unit'] : '';
+                $newSecondaryRoomRow['underground_parking'] = $advertisementData['underground_parking'];
+                $newSecondaryRoomRow['ground_parking'] = $advertisementData['ground_parking'];
+                $newSecondaryRoomRow['open_parking'] = $advertisementData['open_parking'];
+                $newSecondaryRoomRow['multilevel_parking'] = $advertisementData['multilevel_parking'];
+                $newSecondaryRoomRow['parking_info'] = $advertisementData['parking_info'];
+                $newSecondaryRoomRow['longitude'] = $advertisementData['location']['longitude'];
+                $newSecondaryRoomRow['latitude'] = $advertisementData['location']['latitude'];
+                $newSecondaryRoomRow['region_id'] = $regionID !== 0 ? $regionID : null;
+                $newSecondaryRoomRow['region_district_id'] = $regionDistrictID !== 0 ? $regionDistrictID : null;
+                $newSecondaryRoomRow['city_id'] = $cityId !== 0 ? $cityId : null;
+                $newSecondaryRoomRow['district_id'] = $districtId !== 0 ? $districtId : null;
+                $newSecondaryRoomRow['street_type_id'] = $advertisementData['street_type_id'];
+                $newSecondaryRoomRow['street_name'] = $advertisementData['street_name'];
+                $newSecondaryRoomRow['building_number'] = $advertisementData['building_number'];
+                $newSecondaryRoomRow['address'] = $advertisementData['location']['address'];
+                $newSecondaryRoomRow['location_info'] = json_encode($advertisementData['location']);
+
+                // var_dump($newSecondaryRoomRow); die;
+
+                $secondaryRoom = new SecondaryRoom($newSecondaryRoomRow);
+                $secondaryRoom->save();
+
+                //$newAdvertisementRow['']
+                $this->insertedAdvertisementsCount++;
             }
 
-            $newbuildingComplexes[$key] = $newbuildingComplex;
+            $advertisements[$key] = $advertisement;
         }
 
-        return $newbuildingComplexes;
+        return $advertisements;
     }
 
     /**
