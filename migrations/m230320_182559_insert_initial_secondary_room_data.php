@@ -54,6 +54,7 @@ class m230320_182559_insert_initial_secondary_room_data extends Migration
 
         $this->batchInsert('{{%secondary_property_type}}', ['id', 'name', 'alias'], [
             ['1', 'жилая', ''],
+            ['2', 'коммерческая', ''],
         ]);
 
         $this->batchInsert('{{%secondary_renovation}}', ['id', 'name', 'alias', 'detail'], [
@@ -122,6 +123,7 @@ class m230320_182559_insert_initial_secondary_room_data extends Migration
         $this->delete('{{%secondary_category}}', ['id' => 20]);
 
         $this->delete('{{%secondary_property_type}}', ['id' => 1]);
+        $this->delete('{{%secondary_property_type}}', ['id' => 2]);
        
         $this->delete('{{%secondary_renovation}}', ['id' => 1]);
         $this->delete('{{%secondary_renovation}}', ['id' => 2]);

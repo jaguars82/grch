@@ -30,6 +30,7 @@ use yii\helpers\ArrayHelper;
  * 
  * @property Agency $agency
  * @property User $author
+ * @property SecondaryRoom[] $secondaryRooms
  * 
  */
 
@@ -127,5 +128,13 @@ class SecondaryAdvertisement extends ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'author_id']);
     }
 
-
+    /**
+     * Gets query for [[SecondaryRoom]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSecondaryRooms()
+    {
+        return $this->hasMany(SecondaryRoom::className(), ['advertisement_id' => 'id']);
+    }
 }

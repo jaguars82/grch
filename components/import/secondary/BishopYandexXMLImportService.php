@@ -185,7 +185,11 @@ class BishopYandexXMLImportService implements SecondaryImportServiceInterface
 
             $images = array();
             foreach($advertisement->image as $image) {
-                array_push($images, (string)$image);
+                $imageRow = [
+                    'location_type' => 'remote',
+                    'url' => (string)$image,
+                ];
+                array_push($images, $imageRow);
             }
 
             $advertisements[$advertisementId] = [

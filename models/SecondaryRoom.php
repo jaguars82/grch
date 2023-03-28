@@ -322,6 +322,26 @@ class SecondaryRoom extends ActiveRecord
     }
         
     /**
+     * Gets query for [[SecondaryRenovation]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSecondaryRenovation()
+    {
+        return $this->hasOne(SecondaryRenovation::className(), ['id' => 'renovation_id']);
+    }
+        
+    /**
+     * Gets query for [[BuildingMaterial]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getBuildingMaterial()
+    {
+        return $this->hasOne(BuildingMaterial::className(), ['id' => 'material_id']);
+    }
+        
+    /**
      * Gets query for [[NewbuildingComplex]].
      *
      * @return \yii\db\ActiveQuery

@@ -9,6 +9,7 @@ use app\models\SecondaryCategory;
 use app\models\SecondaryPropertyType;
 use app\models\SecondaryBuildingSeries;
 use app\models\SecondaryRenovation;
+use app\models\SecondaryRoomImage;
 use app\models\SecondaryImport;
 use app\models\BuildingMaterial;
 use app\models\Region;
@@ -310,6 +311,15 @@ class Agency extends \app\models\Agency
 
                 $secondaryRoom = new SecondaryRoom($newSecondaryRoomRow);
                 $secondaryRoom->save();
+
+                // room images
+                if (count($advertisementData['images']) > 0) {
+                    foreach ($advertisementData['images'] as $image) {
+                        $image['secondary_room_id'] = $secondaryRoom->id;
+                        $secondaryRoomImage = new SecondaryRoomImage($image);     
+                        $secondaryRoomImage->save();                     
+                    }
+                }
 
                 //$newAdvertisementRow['']
                 $this->insertedAdvertisementsCount++;
