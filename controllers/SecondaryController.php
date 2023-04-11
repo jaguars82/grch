@@ -86,8 +86,6 @@ class SecondaryController extends Controller
                     'street_type' => 'streetType',
                 ];
 
-                // $this->addParamsFromDataBase($params, $room, $advRow['secondary_room']);
-
                 foreach ($params as $param => $className) {
                     if (!empty($room[$param.'_id'])) {
                         $advRow['secondary_room'][$key][$param.'_DB'] = ArrayHelper::toArray($room[$className]);
@@ -100,8 +98,6 @@ class SecondaryController extends Controller
             array_push($advertisementsArr, $advRow);
         }
 
-       // echo '<pre>>'; var_dump($advertisementsArr); echo '</pre>>'; die;
-
         return $this->inertia('Secondary/Index', [
             'user' => \Yii::$app->user->identity,
             'advertisements' => $advertisementsArr,
@@ -113,6 +109,52 @@ class SecondaryController extends Controller
         ]);
     }
 
+    public function actionView($id)
+    {
+        $advertisement = SecondaryAdvertisement::findOne($id);
+
+        $advertisementArr = ArrayHelper::toArray($advertisement);
+
+        $advertisementArr['secondary_room'] = ArrayHelper::toArray($advertisement->secondaryRooms);
+            
+        /**
+         * Add information about room params from data base
+         */
+        foreach($advertisement->secondaryRooms as $key => $room) {
+            $params = [
+                'category' => 'secondaryCategory', // category (e.g. 'flat', 'house' etc.)
+                'property_type' => 'secondaryPropertyType',
+                'building_series' => 'secondaryBuildingSeries',
+                'newbuilding_complex' => 'newbuildingComplex',
+                'newbuilding' => 'newbuilding',
+                'entrance' => 'entrance',
+                'flat' => 'flat',
+                'renovation' => 'secondaryRenovation',
+                'material' => 'buildingMaterial',
+                'region' => 'region',
+                'region_district' => 'regionDistrict',
+                'city' => 'city',
+                'district' => 'district',
+                'street_type' => 'streetType',
+            ];
+
+            foreach ($params as $param => $className) {
+                if (!empty($room[$param.'_id'])) {
+                    $advertisementArr['secondary_room'][$key][$param.'_DB'] = ArrayHelper::toArray($room[$className]);
+                }
+            }
+
+            $advertisementArr['secondary_room'][$key]['images'] = ArrayHelper::toArray($room->images);
+
+        }
+
+        //echo '<pre>'; var_dump($advertisementArr); echo '</pre>'; die;
+
+        return $this->inertia('Secondary/View', [
+            'user' => \Yii::$app->user->identity,
+            'advertisement' => $advertisementArr,
+        ]);
+    }
 
     /*private function addParamsFromDataBase($params, $sourceObject, $targetArray)
     {

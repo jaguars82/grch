@@ -19,13 +19,15 @@
           :img-src="image.url"
         />
       </q-carousel>
-      <q-card-section class="col-7">
+      <q-card-section :class="room.images.length ? 'col-7' : 'col-12'">
+        <inertia-link :href="`/secondary/view?id=${advId}`">
         <p class="text-h4">
           <span v-if="isFlat" class="text-capitalize">{{ roomTitle }}&nbsp;</span>
           <span>{{ category }}</span>
           <span v-if="roomArea">, {{ roomArea }}</span>
           <span v-if="roomFloor">, {{ roomFloor }}</span>
         </p>
+        </inertia-link>
         <p>{{ creationDate }}</p>
         <p>
           <!--<span v-if="address.regionDistrict">{{ address.regionDistrict }},&nbsp;</span>-->
@@ -64,10 +66,13 @@ export default {
     },
     author: {
       type: Object
+    },
+    advId: {
+      type: Number
     }
   },
   setup (props) {
-    const slide = ref(props.room.images[0].id)
+    const slide = props.room.images.length ? ref(props.room.images[0].id) : ref(false)
     const category = computed(() => {
       if (props.room.category_DB) return props.room.category_DB.name
       if (props.room.category_string) return props.room.category_string

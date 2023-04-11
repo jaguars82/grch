@@ -14,6 +14,7 @@
             :author="{
               info: advertisement.author_info
             }"
+            :advId="advertisement.id"
           />          
         </div>
 
