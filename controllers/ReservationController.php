@@ -67,7 +67,7 @@ class ReservationController extends Controller
                 $applicationModel = (new Application())->fill($applicationForm->attributes);
                 $applicationModel->save();
 
-                $flat = (new Flat())->findOne($applicationModel->flat_id);
+                $flat = Flat::findOne($applicationModel->flat_id);
                 $flat->is_applicated = 1;
                 $flat->save();
 

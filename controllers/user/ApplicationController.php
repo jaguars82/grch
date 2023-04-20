@@ -134,7 +134,6 @@ class ApplicationController extends Controller
                         $transaction->commit();
 
                         /** Send email-notifications to developer */
-                        /*
                         if(!empty($developerRepresentative)) {
                             \Yii::$app->mailer->compose()
                             ->setTo($developerRepresentative->email)
@@ -143,7 +142,6 @@ class ApplicationController extends Controller
                             ->setTextBody("Ссылка для просмотра заявки: https://grch.ru/user/application/view?id=$application->id")
                             ->send(); 
                         }
-                        */
 
                     } catch (\Exception $e) {
                         $transaction->rollBack();
@@ -193,7 +191,7 @@ class ApplicationController extends Controller
                         $transaction->commit();
 
                         /** Send email-notifications for admins */
-                        /*$admins = (new AuthAssignment())->admins;
+                        $admins = (new AuthAssignment())->admins;
 
                         foreach ($admins as $admin) {
                             if (!empty ($admin)) {
@@ -201,10 +199,10 @@ class ApplicationController extends Controller
                                 ->setTo($admin->email)
                                 ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
                                 ->setSubject("Подтверждение бронирования по заявке $application->application_number от застройщика")
-                                ->setTextBody("Для просмотра подробностей и подтверждения перейдите на страницу заявки: https://grch.ru/user/application/view?id=$application->id")
+                                ->setTextBody("Представитель застройщика подтвердил бронь через свой личный кабинет. Для просмотра подробностей и подтверждения перейдите на страницу заявки: https://grch.ru/user/application/view?id=$application->id")
                                 ->send(); 
                             }
-                        }*/
+                        }
 
                     } catch (\Exception $e) {
                         $transaction->rollBack();
@@ -225,7 +223,7 @@ class ApplicationController extends Controller
                     $transaction = \Yii::$app->db->beginTransaction();
 
                     try {
-                        $flat = (new Flat())->findOne($application->flat_id);
+                        $flat = Flat::findOne($application->flat_id);
                         $flat->status = 1;
                         $flat->is_reserved = 1;
                         $flat->save();
@@ -265,13 +263,13 @@ class ApplicationController extends Controller
         
                         $transaction->commit();
 
-                        /** Send email-notifications to agent or admin */
-                        /*\Yii::$app->mailer->compose()
+                        /** Send email-notifications to agent or manager */
+                        \Yii::$app->mailer->compose()
                         ->setTo($application->applicant->email)
                         ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
                         ->setSubject('Бронь одобрена. Пожалуйста, подтвердите.')
                         ->setTextBody("Броно по заявке $application->application_number одобрена. Подтвердите получение информации и возьмите заявку в работу: https://grch.ru/user/application/view?id=$application->id")
-                        ->send();*/
+                        ->send();
 
                     } catch (\Exception $e) {
                         $transaction->rollBack();
