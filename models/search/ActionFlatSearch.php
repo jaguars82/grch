@@ -443,13 +443,15 @@ class ActionFlatSearch extends Flat
         if ($renewFlatsList === true) {
             $previousFlatsList = $news->assignedFlats;
 
-            foreach ($previousFlatsList as $flat) {
-                $flat->discount_type = 0;
-                $flat->discount = 0;
-                $flat->discount_amount = NULL;
-                $flat->discount_price = NULL;
-                $flat->save();
-                $flat->unlink('assignedNews', $news, true);
+            if (count($previousFlatsList) > 0) {
+                foreach ($previousFlatsList as $flat) {
+                    $flat->discount_type = 0;
+                    $flat->discount = 0;
+                    $flat->discount_amount = NULL;
+                    $flat->discount_price = NULL;
+                    $flat->save();
+                    $flat->unlink('assignedNews', $news, true);
+                }
             }
         }
 
@@ -470,35 +472,36 @@ class ActionFlatSearch extends Flat
 
         $this->applyFilters($query);
 
-
         $flatList = $query->all();
-        
-        foreach ($flatList as $flat) {
 
-            /** calculate discount in percent according to discount type */
-            switch ($discountType) {
-                case 0:
-                    // if we have discount in percent
-                    $flatDiscount = $discount / 100;
-                    break;
-                case 1:
-                    // if we have discount in cash
-                    $flat->discount_amount = $discount;
-                    $flatDiscount = $discount / $flat->price_cash;
-                    break;
-                    // if we have discount as a price
-                case 2:
-                    $flat->discount_price = $discount;
-                    $priceDelta = $flat->price_cash - $discount;
-                    $flatDiscount = $priceDelta / $flat->price_cash;
-                    break;
+        if (count($flatList) > 0) {
+            foreach ($flatList as $flat) {
+
+                /** calculate discount in percent according to discount type */
+                switch ($discountType) {
+                    case 0:
+                        // if we have discount in percent
+                        $flatDiscount = $discount / 100;
+                        break;
+                    case 1:
+                        // if we have discount in cash
+                        $flat->discount_amount = $discount;
+                        $flatDiscount = $discount / $flat->price_cash;
+                        break;
+                        // if we have discount as a price
+                    case 2:
+                        $flat->discount_price = $discount;
+                        $priceDelta = $flat->price_cash - $discount;
+                        $flatDiscount = $priceDelta / $flat->price_cash;
+                        break;
+                }
+
+                $flat->discount_type = $discountType;
+                $flat->discount = $flatDiscount;
+                $flat->save();
+                
+                $flat->link('assignedNews', $news);
             }
-
-            $flat->discount_type = $discountType;
-            $flat->discount = $flatDiscount;
-            $flat->save();
-            
-            $flat->link('assignedNews', $news);
         }
     }
 }
