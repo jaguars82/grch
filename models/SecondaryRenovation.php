@@ -68,4 +68,15 @@ class SecondaryRenovation extends \yii\db\ActiveRecord
             ->orWhere(['alias' => $name])
             ->one();
     }
+
+    /**
+     * Gets array of renovations
+     */
+    public static function getRenovationList()
+    {
+        return static::find()
+            ->orderBy(['name' => SORT_ASC])
+            ->asArray()
+            ->all();
+    }
 }

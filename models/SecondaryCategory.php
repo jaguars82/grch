@@ -70,4 +70,30 @@ class SecondaryCategory extends \yii\db\ActiveRecord
             ->orWhere(['alias' => $name])
             ->one();
     }
+
+    /**
+     * Gets array represented category tree
+     */
+    public static function getCategoryTree()
+    {
+        $categories = self::find()->all();
+
+        $tree = [];
+
+        foreach ($categories as $category) {
+            if ($category->level === 1) {
+                $parentItem = array('id' => $category->id, 'name' => $category->name, 'subcats' => array());
+                $tree[$category->id] = $parentItem;
+            }
+        }
+
+        foreach ($categories as $subcat) {
+            if ($subcat->parent_id !== NULL) {
+                $childItem = array('id' => $subcat->id, 'name' => $subcat->name);
+                array_push($tree[$subcat->parent_id]['subcats'], $childItem);
+            }
+        }
+        return $tree;
+    }
+
 }

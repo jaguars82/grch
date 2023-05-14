@@ -5,7 +5,10 @@ namespace app\controllers\user;
 use app\components\traits\CustomRedirects;
 use app\components\SharedDataFilter;
 use app\models\SecondaryAdvertisement;
+use app\models\SecondaryCategory;
 use app\models\SecondaryRoom;
+use app\models\SecondaryRenovation;
+use app\models\BuildingMaterial;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use tebe\inertia\web\Controller;
@@ -44,8 +47,17 @@ class SecondaryController extends Controller
         ];
     }
 
-    public function actionCreate() {
 
+    public function actionCreate()
+    {
+        return $this->inertia('User/Secondary/Create', [
+            'user' => \Yii::$app->user->identity,
+            'secondaryCategories' => SecondaryCategory::getCategoryTree(),
+            'buildingMaterials' => BuildingMaterial::getMaterialList(),
+            'renovations' => SecondaryRenovation::getRenovationList(),
+            'bathroomUnit' => SecondaryRoom::$bathroom,
+            'quality' => SecondaryRoom::$quality,
+        ]);
     }
 
     public function actionIndex()

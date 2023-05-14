@@ -22,7 +22,7 @@
 
 <script>
 import { ref, watch } from 'vue'
-import useEmitter from '../../composables/use-emitter'
+import useEmitter from '@/composables/use-emitter'
 
 export default {
   props: ['defaultMode'],

@@ -44,12 +44,13 @@ class m230320_182559_insert_initial_secondary_room_data extends Migration
             [12, 2, 2, 'Таунхаус', ''],
             [13, 2, 3, 'Поселений (ИЖС)', 'участок'],
             [14, 2, 3, 'Сельхозназначения (СНТ, ДНП)', ''],
-            [15, 2, 3, 'Офисное помещение', ''],
+            [15, 2, 4, 'Офисное помещение', ''],
             [16, 2, 4, 'Помещение общественного питания', ''],
             [17, 2, 4, 'Помещение свободного назначения', ''],
             [18, 2, 4, 'Производственное помещение', ''],
             [19, 2, 4, 'Складское помещение', ''],
             [20, 2, 4, 'Торговое помещение', ''],
+            [21, 2, 4, 'Коммерческая (без уточнения)', 'коммерческая'],
         ]);
 
         $this->batchInsert('{{%secondary_property_type}}', ['id', 'name', 'alias'], [
@@ -62,6 +63,9 @@ class m230320_182559_insert_initial_secondary_room_data extends Migration
             ['2', 'дизайнерский', '', ''],
             ['3', 'косметический', '', ''],
             ['4', 'требует ремонта', '', ''],
+            ['5', 'черновая отделка', '', ''],
+            ['6', 'чистовая отделка', '', ''],
+            ['7', 'без отделки', '', ''],
         ]);
 
         $this->batchInsert('{{%secondary_building_series}}', ['id', 'name', 'alias', 'detail'], [
@@ -93,6 +97,8 @@ class m230320_182559_insert_initial_secondary_room_data extends Migration
             ['12', 'панельный', '', ''],
             ['13', 'пеноблок', '', ''],
             ['14', 'шлакоблочный', '', ''],
+            ['15', 'щитовой', '', ''],
+            ['16', 'газосиликатный блок', '', ''],
         ]);
     }
 
@@ -121,6 +127,7 @@ class m230320_182559_insert_initial_secondary_room_data extends Migration
         $this->delete('{{%secondary_category}}', ['id' => 18]);
         $this->delete('{{%secondary_category}}', ['id' => 19]);
         $this->delete('{{%secondary_category}}', ['id' => 20]);
+        $this->delete('{{%secondary_category}}', ['id' => 21]);
 
         $this->delete('{{%secondary_property_type}}', ['id' => 1]);
         $this->delete('{{%secondary_property_type}}', ['id' => 2]);
@@ -129,6 +136,9 @@ class m230320_182559_insert_initial_secondary_room_data extends Migration
         $this->delete('{{%secondary_renovation}}', ['id' => 2]);
         $this->delete('{{%secondary_renovation}}', ['id' => 3]);
         $this->delete('{{%secondary_renovation}}', ['id' => 4]);
+        $this->delete('{{%secondary_renovation}}', ['id' => 5]);
+        $this->delete('{{%secondary_renovation}}', ['id' => 6]);
+        $this->delete('{{%secondary_renovation}}', ['id' => 7]);
 
         $this->delete('{{%secondary_building_series}}', ['id' => 1]);
         $this->delete('{{%secondary_building_series}}', ['id' => 2]);
@@ -156,6 +166,8 @@ class m230320_182559_insert_initial_secondary_room_data extends Migration
         $this->delete('{{%building_material}}', ['id' => 12]);
         $this->delete('{{%building_material}}', ['id' => 13]);
         $this->delete('{{%building_material}}', ['id' => 14]);
+        $this->delete('{{%building_material}}', ['id' => 15]);
+        $this->delete('{{%building_material}}', ['id' => 16]);
     }
 
     /*

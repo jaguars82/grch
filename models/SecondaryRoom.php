@@ -442,6 +442,19 @@ class SecondaryRoom extends ActiveRecord
     }
 
     /**
+     * Gets the list of streets
+     */
+    public static function getStreetList()
+    {
+        $streets = [];
+        $data = self::find()->select(['street_type_id', 'street_name'])->distinct()->orderBy(['street_name' => SORT_ASC])->all();
+        foreach ($data as $item) {
+            array_push($streets, array('street_type_id' => $item->street_type_id, 'street_name' => $item->street_name, 'fullname' => $item->street_name. ' '.mb_strtolower($item->streetType->name)));
+        }
+        return $streets;
+    }
+
+    /**
      * Get address from references
      *
      * @return string

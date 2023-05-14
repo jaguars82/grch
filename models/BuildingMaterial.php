@@ -68,4 +68,15 @@ class BuildingMaterial extends \yii\db\ActiveRecord
             ->orWhere(['alias' => $name])
             ->one();
     }
+    
+    /**
+     * Gets array of materials
+     */
+    public static function getMaterialList()
+    {
+        return static::find()
+            ->orderBy(['name' => SORT_ASC])
+            ->asArray()
+            ->all();
+    }
 }

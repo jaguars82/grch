@@ -6,6 +6,9 @@
       <template v-slot:main>
         <RegularContentContainer title="Вторичная недвижимость">
           <template v-slot:content>
+            <div v-if="user.role !== 'admin'">
+              <q-btn color="primary" unelevated label="Создать объявление" icon="post_add" @click="createAdd" />
+            </div>
             <pre>{{ advertisements[0] }}</pre>
           </template>
       </RegularContentContainer>
@@ -15,6 +18,7 @@
 
 <script>
 import { ref, computed } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
 import ProfileLayout from '@/Layouts/ProfileLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
@@ -91,7 +95,11 @@ export default ({
     const emitter = useEmitter()
     emitter.on('toggle-grid-table', (e) => appsGridView.value = e)*/
 
-    return { breadcrumbs, columns/*appsGridView, rows*/ }
+    const createAdd = () => {
+      Inertia.get('/user/secondary/create')
+    }
+
+    return { breadcrumbs, columns, createAdd/*appsGridView, rows*/ }
   },
 })
 </script>

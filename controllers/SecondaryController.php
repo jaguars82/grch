@@ -2,8 +2,10 @@
 
 namespace app\controllers;
 
+use app\models\District;
 use app\models\SecondaryAdvertisement;
 use app\models\SecondaryRoom;
+use app\models\SecondaryCategory;
 use app\components\traits\CustomRedirects;
 use app\components\SharedDataFilter;
 use yii\filters\AccessControl;
@@ -23,7 +25,7 @@ class SecondaryController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'index' => ['GET', 'POST'],
-                    'view' => ['GET', 'POST']
+                    'view' => ['GET', 'POST'],
                 ],
             ],
             'access' => [
@@ -44,7 +46,48 @@ class SecondaryController extends Controller
 
     public function actionIndex()
     {
-        $query = SecondaryAdvertisement::find()->where(['is_active' => 1]);
+        $query = SecondaryAdvertisement::find()->where(['is_active' => 1])->join('INNER JOIN', 'secondary_room as room', 'secondary_advertisement.id = room.advertisement_id');
+
+        // filter data (if we get filter fields' params) before getting ranges' edge points (min, max) from database
+        if ($filter = \Yii::$app->request->get('filter')) {
+            // echo '<pre>'; var_dump(\Yii::$app->request->get('filter')); echo '</pre>'; die;
+            if (!empty($filter['deal_type'])) $query->andWhere(['deal_type' => (int)$filter['deal_type']]);
+            if (!empty($filter['category'])) $query->andWhere(['room.category_id' => (int)$filter['category']]);
+            if (isset($filter['rooms']) && count($filter['rooms']) > 0) {
+                $roomAmounts = $filter['rooms'];
+                if (in_array('5+', $filter['rooms'])) {
+                    unset($roomAmounts[array_search('5+', $roomAmounts)]);
+                    $query->andWhere(['room.rooms' => $roomAmounts])
+                    ->orWhere(['>', 'room.rooms', 5]);
+                } else {
+                    $query->andWhere(['room.rooms' => $roomAmounts]);
+                }
+            }
+            if (!empty($filter['district']) && count($filter['district']) > 0) {
+                $query->andWhere(['room.district_id' => $filter['district']]);
+            }
+            if (is_array($filter['street']) && array_key_exists('value', $filter['street']) && !empty($filter['street']['value']['street_name'])) {
+                $query->andWhere(['room.street_name' => $filter['street']['value']['street_name']]);
+                if (!empty($filter['street']['value']['street_type_id'])) {
+                    $query->andWhere(['room.street_type_id' => $filter['street']['value']['street_type_id']]);
+                }
+            }
+        }
+        
+        // get max and min values from database
+        $maxPrice = $query->max('price');
+        $minPrice = $query->min('price');
+        
+        $maxArea = $query->max('area');
+        $minArea = $query->min('area');
+        
+        // filter data by ranges after getting ranges' edge points (min, max)
+        if ($filter = \Yii::$app->request->get('filter')) {
+            if (!empty($filter['priceFrom'])) $query->andWhere(['>=', 'room.price', (float)$filter['priceFrom']]);
+            if (!empty($filter['priceTo'])) $query->andWhere(['<=', 'room.price', (float)$filter['priceTo']]);
+            if (!empty($filter['areaFrom'])) $query->andWhere(['>=', 'room.area', (float)$filter['areaFrom']]);
+            if (!empty($filter['areaTo'])) $query->andWhere(['<=', 'room.area', (float)$filter['areaTo']]);
+        }
 
         // get the total number of advertisements
         $count = $query->count();
@@ -101,11 +144,25 @@ class SecondaryController extends Controller
         return $this->inertia('Secondary/Index', [
             'user' => \Yii::$app->user->identity,
             'advertisements' => $advertisementsArr,
+            'ranges' => [
+                'price' => [
+                    'min' => $minPrice,
+                    'max' => $maxPrice
+                ],
+                'area' => [
+                    'min' => $minArea,
+                    'max' => $maxArea
+                ],
+            ],
             'pagination' => [
                 'count' => $pagination->totalCount,
                 'totalPages' => floor($pagination->totalCount / $pagination->pageSize),
                 'currPage' => isset($pagination->page) ? $pagination->page + 1 : 1,
             ],
+            'secondaryCategories' => SecondaryCategory::getCategoryTree(),
+            'districts' => District::find()->orderBy(['id' => SORT_ASC])->asArray()->all(),
+            'streetList' => SecondaryRoom::getStreetList(),
+            'filterParams' => isset($filter) ? $filter : []
         ]);
     }
 

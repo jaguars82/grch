@@ -162,17 +162,19 @@ class XmlImportService implements ImportServiceInterface
                 }
 
 
-                if ($building_is_in_map === true && ($currentObjectId = $this->getCurrentEntityId($objects, $objectName)) == -1) {
-                    $address = (string)$building['Имя'];
+                if ($building_is_in_map === true) {
+                    
+					if (($currentObjectId = $this->getCurrentEntityId($objects, $objectName)) === -1) {
+						$address = (string)$building['Имя'];
 
-                    $objects[$objectId] = [
-                        'name' => $objectName,
-                        'address' => $address,
-                        'district' => NULL,
-                    ];
+						$objects[$objectId] = [
+							'name' => $objectName,
+							'address' => $address,
+							'district' => NULL,
+						];
 
-                    $currentObjectId = $objectId++;
-                
+						$currentObjectId = $objectId++;
+					}
 
                     // Парсим позиции
                     $houseName = (string)$building['Имя'];
