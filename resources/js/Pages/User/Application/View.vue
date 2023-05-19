@@ -9,6 +9,26 @@
           <p>
             Автор: {{ application.author.last_name }} {{ application.author.first_name }}, <span class="text-lowercase">{{ application.author.roleLabel }}</span> {{ application.author.agency_name }}
           </p>
+          <template v-if="application.client_firstname || application.client_lastname || application.client_middlename || application.client_phone || application.client_email">
+            <h5>Информация о клиенте:</h5>
+            <p>
+              <template v-if="application.client_firstname|| application.client_lastname || application.client_middlename">
+                <span v-if="application.client_firstname">{{ application.client_firstname }}&nbsp;</span>
+                <span v-if="application.client_middlename">{{ application.client_middlename }}&nbsp;</span>
+                <span v-if="application.client_lastname">{{ application.client_lastname }}&</span>
+                <br />
+              </template>
+              <template v-if="application.client_phone">
+                <span>Телефон: {{ application.client_phone }}</span>
+                <br />
+              </template>
+              <span v-if="application.client_email">Email: {{ application.client_email }}</span>
+            </p>
+          </template>
+          <temolate v-if="application.applicant_comment">
+            <h5>Комментарий к заявке:</h5>
+            <p>{{ application.applicant_comment }}</p>
+          </temolate>
           <p>
             Статус: <span class="text-lowercase">{{ statusMap[application.status] }}</span>
             <!--<span> (последнее обновление {{ asDateTime(application.updated_at) }})</span>-->

@@ -6,9 +6,7 @@
     <template v-slot:main>
       <RegularContentContainer :title="notification.topic" :subtitle="`от ${createDate}`">
         <template v-slot:content>
-          <p>
-            {{ notification.body }}
-          </p>
+          <p v-html="notification.body"></p>
           <div v-if="notification.action_url" class="q-mt-sm text-right">
             <inertia-link :href="notification.action_url">
               <q-btn color="primary" unelevated :label="notification.action_text ? notification.action_text : 'Подробнее'" />

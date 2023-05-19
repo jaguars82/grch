@@ -69,4 +69,15 @@ class SecondaryBuildingSeries extends \yii\db\ActiveRecord
             ->orWhere(['alias' => $name])
             ->one();
     }
+
+    /**
+     * Gets array of buildings' series
+     */
+    public static function getBuildingSeriesList()
+    {
+        return static::find()
+            ->orderBy(['name' => SORT_ASC])
+            ->asArray()
+            ->all();
+    }
 }

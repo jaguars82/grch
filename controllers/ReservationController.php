@@ -78,11 +78,29 @@ class ReservationController extends Controller
                 $applicationHistoryModel = (new ApplicationHistory())->fill($applicationHistoryForm->attributes);
                 $applicationHistoryModel->save();
 
+                // message body text
+                $messageText = '';
+                $clientFirstName = !empty($applicationModel->client_firstname) ? $applicationModel->client_firstname : '';
+                $clientLastName = !empty($applicationModel->client_lastname) ? $applicationModel->client_lastname : '';
+                $clientMiddleName = !empty($applicationModel->client_middlename) ? $applicationModel->client_middlename : '';
+                if (!empty($clientFirstName) || !empty($clientLastName) || !empty($clientMiddleName)) {
+                    $messageText .= 'Клиент: '.$clientFirstName.' '.$clientMiddleName.' '.$clientLastName.'<br />';
+                }
+                if (!empty($applicationModel->client_phone)) {
+                    $messageText .= 'Телефон клиента: '.$applicationModel->client_phone.'<br />';
+                }
+                if (!empty($applicationModel->client_email)) {
+                    $messageText .= 'Email клиента: '.$applicationModel->client_email.'<br />';
+                }
+                if (!empty($applicationModel->applicant_comment)) {
+                    $messageText .= 'Комментарий к заявке: '.$applicationModel->applicant_comment.'<br />';
+                }
+
                 $notificationForm->initiator_id = $applicationModel->applicant_id;
                 $notificationForm->type = 2;
                 $notificationForm->recipient_group = 'admin';
                 $notificationForm->topic = 'Новая заявка на бронирование '.$applicationModel->application_number;
-                $notificationForm->body = 'Для просмотра подробностей перейдите на страницу заявки';
+                $notificationForm->body = $messageText.'Для просмотра подробностей перейдите на страницу заявки';
                 $notificationForm->action_text = 'Перейти';
                 $notificationForm->action_url = '/user/application/view?id='.$applicationModel->id;
                 $notificationModel = (new Notification())->fill($notificationForm->attributes);              
@@ -99,7 +117,7 @@ class ReservationController extends Controller
                         ->setTo($admin->email)
                         ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
                         ->setSubject('Поступила новая заявка на бронирование')
-                        ->setTextBody("Ссылка для просмотра заявки: https://grch.ru/user/application/view?id=$applicationModel->id")
+                        ->setHtmlBody($messageText."Ссылка для просмотра заявки: https://grch.ru/user/application/view?id=$applicationModel->id")
                         ->send(); 
                     }
                 }

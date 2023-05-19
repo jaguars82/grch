@@ -7,7 +7,9 @@
       />
       <q-img v-else class="col-4" src="/img/flat.png" />
       <q-card-section>
-        <p class="text-h4 q-mb-xs"><span class="text-capitalize">{{ flatRoomTitle }}</span> квартира № {{ flat.number }}</p>
+        <a :href="`/flat/view?id=${flat.id}`">
+          <p class="text-h4 q-mb-xs"><span class="text-capitalize">{{ flatRoomTitle }}</span> квартира № {{ flat.number }}</p>
+        </a>
         <p class="q-mb-xs">{{ flatArea }}, {{ flatFloor }}, сдача: {{ flatDeadline }}</p>
         <p class="text-bold">{{ flat.developer.name }} > {{ flat.newbuildingComplex.name }} > {{ flat.newbuilding.name }}</p>
         <p class="text-h2 text-bold text-blue-8 q-mb-xs">{{ flatPriceCash }}</p>

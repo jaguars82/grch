@@ -32,7 +32,7 @@
             <q-item-section>Агенты</q-item-section>
           </q-item>
          </inertia-link>
-
+<!--
         <inertia-link
           v-if="user.role === 'admin'
               || user.role === 'manager'
@@ -47,7 +47,7 @@
             <q-item-section>Вторичка</q-item-section>
           </q-item>
         </inertia-link>
-
+-->
         <inertia-link
           v-if="user.role === 'admin'
               || user.role === 'manager'

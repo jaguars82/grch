@@ -13,7 +13,7 @@
 
             <div class="row q-col-gutter-none">
 
-              <div class="col-md-6 col-sm-12 q-py-xs">
+              <div class="col-md-6 col-sm-12 col-xs-12 q-py-xs">
                 <q-select
                   outlined
                   v-model="formfields.deal_type"
@@ -24,7 +24,7 @@
                 </q-select>
               </div>
 
-              <div class="col-md-6 col-sm-12 q-py-xs">
+              <div class="col-md-6 col-sm-12 col-xs-12 q-py-xs">
                 <q-select
                   outlined
                   v-model="formfields.category"
@@ -42,17 +42,21 @@
                 <q-input outlined type="number" v-model.number="formfields.price" label="Цена (руб.)*" />
               </div>
 
-              <div class="col-md-4 col-sm-6 col-xs-12 q-py-xs">
+              <div :class="[formfields.rooms !== null && formfields.rooms.value == '5+' ? 'col-md-3' : 'col-md-5', 'col-sm-6', 'col-xs-12', 'q-py-xs']">
                 <q-select
                   outlined
-                  v-model="formfields.roooms"
+                  v-model="formfields.rooms"
                   :options="roomsOptions"
                   label="Количество комнат*"
                   options-dense
                 />
               </div>
 
-              <div class="col-md-4 col-sm-6 col-xs-12 q-py-xs">
+              <div v-if="formfields.rooms !== null && formfields.rooms.value == '5+'" class="col-md-2 col-sm-6 col-xs-12 q-py-xs">
+                <q-input outlined type="number" step="1" min="6" v-model.number="formfields.rooms_input" label="Комнат" />
+              </div>
+
+              <div class="col-md-3 col-sm-6 col-xs-12 q-py-xs">
                 <q-input outlined type="number" step="0.1" v-model.number="formfields.area" label="Общая площадь (м2)*" />
               </div>
 
@@ -74,15 +78,25 @@
                 />
               </div>
 
-              <div class="col-md-4 col-sm-6 col-xs-12 q-py-xs">
+              <div class="col-md-3 col-sm-6 col-xs-12 q-py-xs">
                 <q-input outlined type="number" v-model.number="formfields.floor" label="Этаж*" />
               </div>
 
-              <div class="col-md-4 col-sm-6 col-xs-12 q-py-xs">
+              <div class="col-md-3 col-sm-6 col-xs-12 q-py-xs">
                 <q-input outlined type="number" min="1" v-model.number="formfields.total_floors" label="Этажность*" />
               </div>
 
-              <div class="col-md-4 col-sm-6 col-xs-12 q-py-xs">
+              <div class="col-md-3 col-sm-6 col-xs-12 q-py-xs">
+                <q-select
+                  outlined
+                  v-model="formfields.building_series"
+                  :options="buildingSeriesOptions"
+                  label="Тип дома"
+                  options-dense
+                />
+              </div>
+
+              <div class="col-md-3 col-sm-6 col-xs-12 q-py-xs">
                 <q-select
                   outlined
                   v-model="formfields.material"
@@ -172,14 +186,208 @@
                 ]"
                 class="col-md-4 col-sm-6 col-xs-12 q-py-xs"
               >
-                <q-toggle
-                  toggle-indeterminate
-                  v-model="formfields[field.name]"
-                  :label="field.label"
-                  checked-icon="check"
-                  unchecked-icon="clear"
+                <div class="bg-grey-1 rounded-borders q-pb-sm">
+                  <q-toggle
+                    toggle-indeterminate
+                    v-model="formfields[field.name]"
+                    :label="field.label"
+                    checked-icon="check"
+                    unchecked-icon="clear"
+                  />
+                  <TrippleStateLabel :condition="formfields[field.name]" labelTrue="Есть" />
+                </div>
+              </div>
+
+            </div>
+
+            <div class="row q-col-gutter-none">
+              
+              <div class="col-12">
+                <h4>Жилой комплекс</h4>
+              </div>
+
+              <div class="col-md-2 col-sm-6 col-xs-12 q-py-xs">
+                <q-input
+                  v-if="manualInputFlags.developer"
+                  outlined
+                  v-model="formfields.developer_input"
+                  label="Застройщик"
                 />
-                <TrippleStateLabel :condition="formfields[field.name]" labelTrue="Есть" />
+                <q-select
+                  v-else
+                  outlined
+                  v-model="formfields.developer_select"
+                  :options="developerOptions"
+                  label="Застройщик"
+                  options-dense
+                  @update:model-value="onDeveloperSelect"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      v-if="formfields.developer_select !== null"
+                      class="cursor-pointer"
+                      name="clear"
+                      @click.stop.prevent="() => { 
+                        formfields.developer_select = null
+                        formfields.buildingComplex_select = null
+                        formfields.building_select = null
+                        formfields.entrance_select = null
+                        formfields.flat_select = null
+                      }"
+                    />
+                  </template>
+                </q-select>
+                <q-checkbox size="xs" v-model="manualInputFlags.developer" label="Вручную" @update:model-value="inputFlagsChange('developer', ['newbuildingComplex', 'newbuilding', 'entrance', 'flat'])">
+                  <q-tooltip>
+                    включить/отключить ручной ввод застройщика
+                  </q-tooltip>
+                </q-checkbox>
+              </div>
+
+              <div class="col-md-3 col-sm-6 col-xs-12 q-py-xs">
+                <q-input
+                  v-if="manualInputFlags.newbuildingComplex"
+                  outlined
+                  v-model="formfields.buildingComplex_input"
+                  label="Жилой комплекс"
+                />
+                <q-select
+                  v-else
+                  outlined
+                  v-model="formfields.buildingComplex_select"
+                  :options="buildingComplexOptions"
+                  label="Жилой комплекс"
+                  options-dense
+                  :disable="!buildingComplexOptions.length"
+                  @update:model-value="onBuildingComplexSelect"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      v-if="formfields.buildingComplex_select !== null"
+                      class="cursor-pointer"
+                      name="clear"
+                      @click.stop.prevent="() => { 
+                        formfields.buildingComplex_select = null
+                        formfields.building_select = null
+                        formfields.entrance_select = null
+                        formfields.flat_select = null
+                      }"
+                    />
+                  </template>
+                </q-select>
+                <q-checkbox size="xs" v-model="manualInputFlags.newbuildingComplex" label="Вручную" :disable="manualInputFlags.developer === true" @update:model-value="inputFlagsChange('newbuildingComplex', ['newbuilding', 'entrance', 'flat'])">
+                  <q-tooltip>
+                    включить/отключить ручной ввод ЖК
+                  </q-tooltip>
+                </q-checkbox>
+              </div>
+
+              <div class="col-md-3 col-sm-6 col-xs-12 q-py-xs">
+                <q-input
+                  v-if="manualInputFlags.newbuilding"
+                  outlined
+                  v-model="formfields.building_input"
+                  label="Позиция"
+                  :disable="!formfields.buildingComplex_input && !formfields.buildingComplex_select"
+                />
+                <q-select
+                  v-else
+                  outlined
+                  v-model="formfields.building_select"
+                  :options="buildingOptions"
+                  label="Позиция"
+                  options-dense
+                  :disable="!buildingOptions.length"
+                  @update:model-value="onBuildingSelect"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      v-if="formfields.building_select !== null"
+                      class="cursor-pointer"
+                      name="clear"
+                      @click.stop.prevent="() => { 
+                        formfields.building_select = null
+                        formfields.entrance_select = null
+                        formfields.flat_select = null
+                      }"
+                    />
+                  </template>
+                </q-select>
+                <q-checkbox size="xs" v-model="manualInputFlags.newbuilding" label="Вручную" :disable="manualInputFlags.newbuildingComplex === true" @update:model-value="inputFlagsChange('newbuilding', ['entrance', 'flat'])">
+                  <q-tooltip>
+                    включить/отключить ручной ввод позиции
+                  </q-tooltip>
+                </q-checkbox>
+              </div>
+
+              <div class="col-md-2 col-sm-6 col-xs-12 q-py-xs">
+                <q-input
+                  v-if="manualInputFlags.entrance"
+                  outlined
+                  v-model="formfields.entrance_input"
+                  label="Подъезд"
+                  :disable="!formfields.buildingComplex_input && !formfields.buildingComplex_select"
+                />
+                <q-select
+                  v-else
+                  outlined
+                  v-model="formfields.entrance_select"
+                  :options="entranceOptions"
+                  label="Подъезд"
+                  options-dense
+                  :disable="!entranceOptions.length"
+                  @update:model-value="onEntranceSelect"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      v-if="formfields.entrance_select !== null"
+                      class="cursor-pointer"
+                      name="clear"
+                      @click.stop.prevent="() => { 
+                        formfields.entrance_select = null
+                        formfields.flat_select = null
+                      }"
+                    />
+                  </template>
+                </q-select>
+                <q-checkbox size="xs" v-model="manualInputFlags.entrance" label="Вручную" :disable="manualInputFlags.newbuilding === true" @update:model-value="inputFlagsChange('entrance', ['flat'])">
+                  <q-tooltip>
+                    включить/отключить ручной ввод подъезда
+                  </q-tooltip>
+                </q-checkbox>
+              </div>
+
+              <div class="col-md-2 col-sm-6 col-xs-12 q-py-xs">
+                <q-input
+                  v-if="manualInputFlags.flat"
+                  outlined
+                  v-model="formfields.flat_input"
+                  label="Квартира"
+                  :disable="!formfields.buildingComplex_input && !formfields.buildingComplex_select"
+                />
+                <q-select
+                  v-else
+                  outlined
+                  v-model="formfields.flat_select"
+                  :options="flatOptions"
+                  label="Квартира"
+                  options-dense
+                  :disable="!flatOptions.length"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      v-if="formfields.flat_select !== null"
+                      class="cursor-pointer"
+                      name="clear"
+                      @click.stop.prevent="formfields.flat_select = null"
+                    />
+                  </template>
+                </q-select>
+                <q-checkbox size="xs" v-model="manualInputFlags.flat" label="Вручную" :disable="manualInputFlags.entrance === true" >
+                  <q-tooltip>
+                    включить/отключить ручной ввод квартиры
+                  </q-tooltip>
+                </q-checkbox>
               </div>
 
             </div>
@@ -248,9 +456,169 @@
 
         <q-card class="q-mt-md">
           <q-card-section>
+
+            <h4>Адрес</h4>
+            <div class="row q-col-gutter-none">
+
+              <div class="col-md-3 col-sm-6 col-xs-12 q-py-xs">
+                <q-select
+                  outlined
+                  v-model="formfields.region_select"
+                  :options="regionOptions"
+                  label="Регион"
+                  options-dense
+                  :disable="!regionOptions.length"
+                  @update:model-value="onRegionSelect"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      v-if="formfields.region_select !== null"
+                      class="cursor-pointer"
+                      name="clear"
+                      @click.stop.prevent="() => {
+                        formfields.region_select = null
+                        formfields.region_district_select = null
+                        formfields.city_select = null
+                        formfields.city_district_select = null
+                      }"
+                    />
+                  </template>
+                </q-select>
+              </div>
+
+              <div class="col-md-3 col-sm-6 col-xs-12 q-py-xs">
+                <q-select
+                  outlined
+                  v-model="formfields.region_district_select"
+                  :options="regionDistrictOptions"
+                  label="Район региона"
+                  options-dense
+                  :disable="!regionDistrictOptions.length"
+                  @update:model-value="onRegionDistrictSelect"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      v-if="formfields.region_district_select !== null"
+                      class="cursor-pointer"
+                      name="clear"
+                      @click.stop.prevent="() => {
+                        formfields.region_district_select = null
+                      }"
+                    />
+                  </template>
+                </q-select>
+              </div>
+
+              <div class="col-md-3 col-sm-6 col-xs-12 q-py-xs">
+                <q-select
+                  outlined
+                  v-model="formfields.city_select"
+                  :options="cityOptions"
+                  label="Населенный пункт"
+                  options-dense
+                  :disable="!cityOptions.length"
+                  @update:model-value="onCitySelect"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      v-if="formfields.city_select !== null"
+                      class="cursor-pointer"
+                      name="clear"
+                      @click.stop.prevent="() => {
+                        formfields.city_select = null
+                        formfields.city_district = null
+                      }"
+                    />
+                  </template>
+                </q-select>
+              </div>
+
+              <div class="col-md-3 col-sm-6 col-xs-12 q-py-xs">
+                <q-select
+                  outlined
+                  v-model="formfields.city_district_select"
+                  :options="cityDistrictOptions"
+                  label="Район города"
+                  options-dense
+                  :disable="!cityDistrictOptions.length"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      v-if="formfields.city_district_select !== null"
+                      class="cursor-pointer"
+                      name="clear"
+                      @click.stop.prevent="formfields.city_district_select = null"
+                    />
+                  </template>
+                </q-select>
+              </div>
+
+              <div class="col-md-3 col-sm-12 col-xs-12 q-py-xs">
+                <q-select
+                  outlined
+                  v-model="formfields.street_type"
+                  :options="streetTypeOptions"
+                  label="Тип улицы"
+                  options-dense
+                  :disable="!streetTypeOptions.length"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      v-if="formfields.street_type !== null"
+                      class="cursor-pointer"
+                      name="clear"
+                      @click.stop.prevent="formfields.street_type = null"
+                    />
+                  </template>
+                </q-select>
+              </div>
+
+              <div class="col-sm-6 col-xs-12 q-py-xs">
+                <q-select
+                  outlined
+                  v-model="formfields.street_name"
+                  :options="streetOptions"
+                  label="Улица"
+                  use-input
+                  hide-selected
+                  fill-input
+                  options-dense
+                  new-value-mode="add-unique"
+                  @filter="filterStreetList"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      v-if="formfields.street_name !== null"
+                      class="cursor-pointer"
+                      name="clear"
+                      @click.stop.prevent="formfields.street_name = null"
+                    />
+                  </template>
+                </q-select>
+              </div>
+
+              <div class="col-md-3 col-sm-6 col-xs-12 q-py-xs">
+                <q-input
+                  outlined
+                  v-model="formfields.building_number"
+                  label="№ дома"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      v-if="formfields.building_number !== null"
+                      class="cursor-pointer"
+                      name="clear"
+                      @click.stop.prevent="formfields.building_number = null"
+                    />
+                  </template>
+                </q-input>
+              </div>
+
+            </div>
+
             <h4>Местоположение</h4>
             <div class="row q-col-gutter-none">
-              <div class="col-sm-6 q-py-xs">
+              <div class="col-sm-6 col-xs-12 q-py-xs">
                 <q-input
                   outlined
                   v-model="formfields.latitude"
@@ -258,7 +626,7 @@
                   @update:model-value="onCoordChange('latitude')"
                 />
               </div>
-              <div class="col-sm-6 q-py-xs">
+              <div class="col-sm-6 col-xs-12 q-py-xs">
                 <q-input
                   outlined
                   v-model="formfields.longitude"
@@ -266,6 +634,16 @@
                   @update:model-value="onCoordChange('longitude')"
                 />
               </div>
+            </div>
+            <div class="row">
+              <template v-if="adressByCoords">
+                <q-icon name="location_on" color="primary" />
+                <p class="q-pl-xs">{{ adressByCoords }}</p>
+              </template>
+              <template v-else>
+                <q-icon name="not_listed_location" color="grey" />
+                <p class="q-pl-xs">Координаты не указаны</p>
+              </template>
             </div>
             <yandex-map
               :settings="yaMapsSettings"
@@ -299,6 +677,7 @@
     </template>
     <template v-slot:secondary>
       <pre>{{ formfields }}</pre>
+      <pre>{{ manualInputFlags }}</pre>
     </template>
   </MainLayout>
 </template>
@@ -312,7 +691,7 @@ import Loading from "@/Components/Elements/Loading.vue"
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
 import TrippleStateLabel from '@/Components/Elements/TrippleStateLabel.vue'
 import { yaMapsSettings } from '@/configurations/custom-configs'
-import { yandexMap, ymapMarker } from 'vue-yandex-maps'
+import { loadYmap, yandexMap, ymapMarker } from 'vue-yandex-maps'
 import { userInfo } from '@/composables/shared-data'
 
 export default {
@@ -322,6 +701,10 @@ export default {
   props: {
     secondaryCategories: {
       type: Object,
+    },
+    buildingSeries: {
+      type: Array,
+      default:[]
     },
     buildingMaterials: {
       type: Array,
@@ -339,8 +722,119 @@ export default {
       type: Object,
       default: {}
     },
+    developers: {
+      type: Object,
+      default: {}
+    },
+    buildingComplexes: {
+      type: Array,
+      default: []
+    },
+    buildings: {
+      type: Array,
+      default: []
+    },
+    entrances: {
+      type: Array,
+      default: []
+    },
+    flats: {
+      type: Array,
+      default: []
+    },
+    regions: {
+      type: Object,
+      default: {}
+    },
+    regionDistricts: {
+      type: Array,
+      default: []
+    },
+    cities: {
+      type: Array,
+      default: []
+    },
+    cityDistricts: {
+      type: Array,
+      default: []
+    },
+    streetTypes: {
+      type: Object,
+      default: {}
+    },
+      streetList: {
+      type: Array,
+      default: []
+    }
   },
   setup (props) {
+
+    const formfields = ref({
+      deal_type: null,
+      category: null,
+      price: null,
+      rooms: null,
+      rooms_input: null,
+      area: null,
+      kitchen_area: null,
+      living_area: null,
+      bathroom: null,
+      floor: null,
+      total_floors: null,
+      material: null,
+      building_series: null,
+      quality: null,
+      renovation: null,
+      built_year: null,
+      balcony_amount: 0,
+      loggia_amount: 0,
+      elevator_passenger_amount: null,
+      elevator_freight_amount: null,
+      windowview_street: null,
+      windowview_yard: null,
+      panoramic_windows: null,
+      rubbish_chute: null,
+      gas_pipe: null,
+      phone_line: null,
+      internet: null,
+      concierge: null,
+      closed_territory: null,
+      playground: null,
+      underground_parking: null,
+      ground_parking: null,
+      open_parking: null,
+      multilevel_parking: null,
+      barrier: null,
+      dressing_room: null,
+      developer_select: null,
+      developer_input: null,
+      buildingComplex_select: null,
+      buildingComplex_input: null,
+      building_select: null,
+      building_input: null,
+      entrance_select: null,
+      entrance_input: null,
+      flat_select: null,
+      flat_input: null,
+      region_select: null,
+      region_district_select: null,
+      city_select: null,
+      city_district_select: null,
+      street_type: null,
+      street_name: null,
+      building_number: null,
+      longitude: null,
+      latitude: null
+    })
+
+    const manualInputFlags = ref({
+      developer: false,
+      newbuildingComplex: false,
+      newbuilding: false,
+      entrance: false,
+      flat: false,
+    })
+
     const breadcrumbs = ref([
       {
         id: 1,
@@ -391,7 +885,7 @@ export default {
       { label: '3 комнаты', value: 3 },
       { label: '4 комнаты', value: 4 },
       { label: '5 комнат', value: 5 },
-      { label: 'Больше 5 комнат', value: '5+' },
+      { label: '> 5 комнат', value: '5+' },
     ])
 
     const categoryOptions = computed(() => {
@@ -427,6 +921,14 @@ export default {
       return options
     })
 
+    const buildingSeriesOptions = computed(() => {
+      const options = []
+      props.buildingSeries.forEach(series => {
+        options.push({ label: series.name, value: series.id })
+      })
+      return options
+    })
+
     const qualityOptions = computed(() => {
       const options = []
       Object.keys(props.quality).forEach(index => {
@@ -445,59 +947,295 @@ export default {
 
     const yearOptions = computed(() => {
       const options = []
-      for (let i = 1900; i <= new Date().getFullYear(); i++)
+      for (let i = new Date().getFullYear(); i >= 1900; i--)
       options.push(i)
       return options
     })
 
+    const developerOptions = computed(() => {
+      const options = []
+      Object.keys(props.developers).forEach(index => {
+        options.push({ label: props.developers[index], value: index })
+      })
+      return options
+    })
+
+    const onDeveloperSelect = () => {
+      formfields.value.buildingComplex_select = null
+      formfields.value.building_select = null
+      formfields.value.entrance_select = null
+      formfields.value.flat_select = null
+      Inertia.visit('/user/secondary/create', {
+        method: 'post',
+        data: {
+          regionId: formfields.value.region_select !== null ? formfields.value.region_select.value : null,
+          regionDistrictId: formfields.value.region_select !== null ? formfields.value.region_select.value : null,
+          cityId: formfields.value.city_select !== null ? formfields.value.city_select.value : null,
+
+          developerId: formfields.value.developer_select.value
+        },
+        preserveState: true,
+        preserveScroll: true,
+        only: ['buildingComplexes']
+      })
+    }
+
+    const buildingComplexOptions = computed(() => {
+      const options = []
+        if (formfields.value.developer_select !== null) {
+        props.buildingComplexes.forEach(complex => {
+          options.push({ label: complex.name, value: complex.id })
+        })
+      }
+      return options
+    })
+
+    const onBuildingComplexSelect = () => {
+      formfields.value.building_select = null
+      formfields.value.entrance_select = null
+      formfields.value.flat_select = null
+      Inertia.visit('/user/secondary/create', {
+        method: 'post',
+        data: {
+          regionId: formfields.value.region_select !== null ? formfields.value.region_select.value : null,
+          regionDistrictId: formfields.value.region_select !== null ? formfields.value.region_select.value : null,
+          cityId: formfields.value.city_select !== null ? formfields.value.city_select.value : null,
+
+          developerId: formfields.value.developer_select.value,
+          complexId: formfields.value.buildingComplex_select.value
+        },
+        preserveState: true,
+        preserveScroll: true,
+        only: ['buildings']
+      })
+    }
+
+    const buildingOptions = computed(() => {
+      const options = []
+        if (formfields.value.buildingComplex_select !== null) {
+        props.buildings.forEach(building => {
+          options.push({ label: building.name, value: building.id })
+        })
+      }
+      return options
+    })
+
+    const onBuildingSelect = () => {
+      formfields.value.entrance_select = null
+      formfields.value.flat_select = null
+      Inertia.visit('/user/secondary/create', {
+        method: 'post',
+        data: {
+          regionId: formfields.value.region_select !== null ? formfields.value.region_select.value : null,
+          regionDistrictId: formfields.value.region_select !== null ? formfields.value.region_select.value : null,
+          cityId: formfields.value.city_select !== null ? formfields.value.city_select.value : null,
+
+          developerId: formfields.value.developer_select.value,
+          complexId: formfields.value.buildingComplex_select.value,
+          buildingId: formfields.value.building_select.value
+        },
+        preserveState: true,
+        preserveScroll: true,
+        only: ['entrances']
+      })
+    }
+
+    const entranceOptions = computed(() => {
+      const options = []
+        if (formfields.value.building_select !== null) {
+        props.entrances.forEach(entrance => {
+          options.push({ label: entrance.name, value: entrance.id })
+        })
+      }
+      return options
+    })
+
+    const onEntranceSelect = () => {
+      formfields.value.flat_select = null
+      Inertia.visit('/user/secondary/create', {
+        method: 'post',
+        data: {
+          regionId: formfields.value.region_select !== null ? formfields.value.region_select.value : null,
+          regionDistrictId: formfields.value.region_select !== null ? formfields.value.region_select.value : null,
+          cityId: formfields.value.city_select !== null ? formfields.value.city_select.value : null,
+
+          developerId: formfields.value.developer_select.value,
+          complexId: formfields.value.buildingComplex_select.value,
+          buildingId: formfields.value.building_select.value,
+          entranceId: formfields.value.entrance_select.value
+        },
+        preserveState: true,
+        preserveScroll: true,
+        only: ['flats']
+      })
+    }
+
+    const flatOptions = computed(() => {
+      const options = []
+        if (formfields.value.entrance_select !== null) {
+        props.flats.forEach(flat => {
+          options.push({ label: `№ ${flat.number} (${flat.floor} этаж)`, value: flat.id })
+        })
+      }
+      return options
+    })
+
+    const inputFlagsChange = (currentField, dependedFields) => {
+      if (manualInputFlags.value[currentField]) {
+        dependedFields.forEach(field => {
+          manualInputFlags.value[field] = true
+        })
+      }
+    }
+
+    const regionOptions = computed(() => {
+      const options = []
+      Object.keys(props.regions).forEach(index => {
+        options.push({ label: props.regions[index], value: index })
+      })
+      return options
+    })
+
+    const onRegionSelect = () => {
+      formfields.value.region_district_select = null
+      formfields.value.city_select = null
+      formfields.value.city_district = null
+      Inertia.visit('/user/secondary/create', {
+        method: 'post',
+        data: {
+          developerId: formfields.value.developer_select !== null ? formfields.value.developer_select.value : null,
+          complexId: formfields.value.buildingComplex_select !== null ? formfields.value.buildingComplex_select.value : null,
+          buildingId: formfields.value.building_select !== null ? formfields.value.building_select.value  : null,
+          entranceId: formfields.value.entrance_select !== null ? formfields.value.entrance_select.value : null,
+          regionId: formfields.value.region_select !== null ? formfields.value.region_select.value : null,
+        },
+        preserveState: true,
+        preserveScroll: true,
+        only: ['region_districts', 'cities']
+      })
+    }
+
+    const regionDistrictOptions = computed(() => {
+      const options = []
+        if (formfields.value.region_select !== null) {
+        props.regionDistricts.forEach(regionDistrict => {
+          options.push({ label: regionDistrict.name, value: regionDistrict.id })
+        })
+      }
+      return options
+    })
+
+    const onRegionDistrictSelect = () => {
+      // formfields.value.city_select = null
+      // formfields.value.city_district = null
+      Inertia.visit('/user/secondary/create', {
+        method: 'post',
+        data: {
+          developerId: formfields.value.developer_select !== null ? formfields.value.developer_select.value : null,
+          complexId: formfields.value.buildingComplex_select !== null ? formfields.value.buildingComplex_select.value : null,
+          buildingId: formfields.value.building_select !== null ? formfields.value.building_select.value  : null,
+          entranceId: formfields.value.entrance_select !== null ? formfields.value.entrance_select.value : null,
+
+          regionId: formfields.value.region_select !== null ? formfields.value.region_select.value : null,
+          regionDistrictId: formfields.value.region_select !== null ? formfields.value.region_select.value : null
+        },
+        preserveState: true,
+        preserveScroll: true,
+        only: ['cities']
+      })
+    }
+
+    const cityOptions = computed(() => {
+      const options = []
+        if (formfields.value.region_select !== null) {
+        props.cities.forEach(city => {
+          options.push({ label: city.name, value: city.id })
+        })
+      }
+      return options
+    })
+
+    const onCitySelect = () => {
+      formfields.value.city_district = null
+      Inertia.visit('/user/secondary/create', {
+        method: 'post',
+        data: {
+          developerId: formfields.value.developer_select !== null ? formfields.value.developer_select.value : null,
+          complexId: formfields.value.buildingComplex_select !== null ? formfields.value.buildingComplex_select.value : null,
+          buildingId: formfields.value.building_select !== null ? formfields.value.building_select.value  : null,
+          entranceId: formfields.value.entrance_select !== null ? formfields.value.entrance_select.value : null,
+
+          regionId: formfields.value.region_select !== null ? formfields.value.region_select.value : null,
+          regionDistrictId: formfields.value.region_select !== null ? formfields.value.region_select.value : null,
+          cityId: formfields.value.city_select !== null ? formfields.value.city_select.value : null
+        },
+        preserveState: true,
+        preserveScroll: true,
+        only: ['cityDistricts']
+      })
+    }
+
+    const cityDistrictOptions = computed(() => {
+      const options = []
+        if (formfields.value.city_select !== null) {
+        props.cityDistricts.forEach(cityDistrict => {
+          options.push({ label: cityDistrict.name, value: cityDistrict.id })
+        })
+      }
+      return options
+    })
+
+    const streetTypeOptions = computed(() => {
+      const options = []
+      Object.keys(props.streetTypes).forEach(index => {
+        options.push({ label: props.streetTypes[index], value: index })
+      })
+      return options
+    })
+
+    const streetListRef = ref(props.streetList)
+
+    const streetOptions = computed(() => {
+      const streets = []
+      streetListRef.value.forEach(street => {
+        streets.push(street.street_name)
+      })
+      return streets
+    })
+
+    const filterStreetList = (val, update, abort) => {
+      update(() => {
+        const needle = val.toLowerCase()
+        streetListRef.value = props.streetList.filter(elem => elem.street_name.toLowerCase().indexOf(needle) > -1)
+      })
+    }
+
     const coords = ref([51.66109664713779, 39.20007322181243])
     
     const onMarkerMove = event => {
-      console.log(event.originalEvent.target.geometry._coordinates)
+      //console.log(event.originalEvent.target.geometry._coordinates)
       formfields.value.latitude = event.originalEvent.target.geometry._coordinates[0]
       formfields.value.longitude = event.originalEvent.target.geometry._coordinates[1]
       coords.value[0] = event.originalEvent.target.geometry._coordinates[0]
       coords.value[1] = event.originalEvent.target.geometry._coordinates[1]
+      setAdressByCoords()
     }
 
-    const formfields = ref({
-      deal_type: null,
-      category: null,
-      price: null,
-      rooms: null,
-      area: null,
-      kitchen_area: null,
-      living_area: null,
-      bathroom: null,
-      floor: null,
-      total_floors: null,
-      material: null,
-      quality: null,
-      renovation: null,
-      built_year: null,
-      balcony_amount: 0,
-      loggia_amount: 0,
-      elevator_passenger_amount: null,
-      elevator_freight_amount: null,
-      windowview_street: null,
-      windowview_yard: null,
-      panoramic_windows: null,
-      rubbish_chute: null,
-      gas_pipe: null,
-      phone_line: null,
-      internet: null,
-      concierge: null,
-      closed_territory: null,
-      playground: null,
-      underground_parking: null,
-      ground_parking: null,
-      open_parking: null,
-      multilevel_parking: null,
-      barrier: null,
-      dressing_room: null,
-      longitude: null,
-      latitude: null
-    })
+    const adressByCoords = ref('')
+
+    const setAdressByCoords = async() => {
+      await loadYmap({ ...yaMapsSettings, debug: true })
+      let geoCoder = ymaps.geocode([[formfields.value.latitude, formfields.value.longitude]])
+      geoCoder.then(
+        res => {
+          
+          let objs = res.geoObjects.toArray();
+          adressByCoords.value = objs[0].properties.getAll().text
+          /* for(let i=0; i < objs.length; i++) 
+            console.log(objs[i].properties.getAll()) */
+        }
+      )
+    }
 
     const uploadedImages = ref([])
 
@@ -536,14 +1274,6 @@ export default {
       return result
     })
 
-    function onSubmit() {
-      loading.value = true
-      Inertia.post(`/user/secondary/create`, formfields.value)
-      Inertia.on('finish', (event) => {
-        loading.value = false
-      })
-    }
-
     const onCoordChange = (coordinate) => {
       switch (coordinate) {
         case 'latitude':
@@ -552,6 +1282,15 @@ export default {
         case 'longitude':
           coords.value[1] = formfields.value.longitude
       }
+      setAdressByCoords()
+    }
+
+    function onSubmit() {
+      loading.value = true
+      Inertia.post(`/user/secondary/create`, formfields.value)
+      Inertia.on('finish', (event) => {
+        loading.value = false
+      })
     }
 
     /* watch(formfields.value, (val) => {
@@ -571,10 +1310,31 @@ export default {
       roomsOptions,
       categoryOptions,
       materialOptions,
+      buildingSeriesOptions,
       renovationOptions,
       bathroomOptions,
       qualityOptions,
       yearOptions,
+      developerOptions,
+      onDeveloperSelect,
+      buildingComplexOptions,
+      onBuildingComplexSelect,
+      buildingOptions,
+      onBuildingSelect,
+      entranceOptions,
+      onEntranceSelect,
+      flatOptions,
+      inputFlagsChange,
+      regionOptions,
+      onRegionSelect,
+      regionDistrictOptions,
+      onRegionDistrictSelect,
+      cityOptions,
+      onCitySelect,
+      cityDistrictOptions,
+      streetTypeOptions,
+      streetOptions,
+      filterStreetList,
       imagesLoading,
       uploadedImages,
       onDeleteImage,
@@ -582,7 +1342,9 @@ export default {
       yaMapsSettings,
       coords,
       onMarkerMove,
+      adressByCoords,
       formfields,
+      manualInputFlags,
       canSendForm,
       onSubmit,
       onCoordChange

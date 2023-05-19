@@ -50,7 +50,7 @@ class SecondaryController extends Controller
 
         // filter data (if we get filter fields' params) before getting ranges' edge points (min, max) from database
         if ($filter = \Yii::$app->request->get('filter')) {
-            // echo '<pre>'; var_dump(\Yii::$app->request->get('filter')); echo '</pre>'; die;
+            //echo '<pre>'; var_dump(\Yii::$app->request->get('filter')); echo '</pre>'; die;
             if (!empty($filter['deal_type'])) $query->andWhere(['deal_type' => (int)$filter['deal_type']]);
             if (!empty($filter['category'])) $query->andWhere(['room.category_id' => (int)$filter['category']]);
             if (isset($filter['rooms']) && count($filter['rooms']) > 0) {
@@ -72,8 +72,21 @@ class SecondaryController extends Controller
                     $query->andWhere(['room.street_type_id' => $filter['street']['value']['street_type_id']]);
                 }
             }
+            if (!empty($filter['windowviewStreet'])) $query->andWhere(['room.windowview_street' => 1]);
+            if (!empty($filter['windowviewYard'])) $query->andWhere(['room.windowview_yard' => 1]);
+            if (!empty($filter['panoramicWindows'])) $query->andWhere(['room.panoramic_windows' => 1]);
+            if (!empty($filter['concierge'])) $query->andWhere(['room.concierge' => 1]);
+            if (!empty($filter['rubbishChute'])) $query->andWhere(['room.rubbish_chute' => 1]);
+            if (!empty($filter['gasPipe'])) $query->andWhere(['room.gas_pipe' => 1]);
+            if (!empty($filter['closedTerritory'])) $query->andWhere(['room.closed_territory' => 1]);
+            if (!empty($filter['playground'])) $query->andWhere(['room.playground' => 1]);
+            if (!empty($filter['undergroundParking'])) $query->andWhere(['room.underground_parking' => 1]);
+            if (!empty($filter['groundParking'])) $query->andWhere(['room.ground_parking' => 1]);
+            if (!empty($filter['openParking'])) $query->andWhere(['room.open_parking' => 1]);
+            if (!empty($filter['multilevelParking'])) $query->andWhere(['room.multilevel_parking' => 1]);
+            if (!empty($filter['barrier'])) $query->andWhere(['room.barrier' => 1]);
         }
-        
+
         // get max and min values from database
         $maxPrice = $query->max('price');
         $minPrice = $query->min('price');
@@ -81,12 +94,47 @@ class SecondaryController extends Controller
         $maxArea = $query->max('area');
         $minArea = $query->min('area');
         
+        $maxFloor = $query->max('floor');
+        $minFloor = $query->min('floor');
+        
+        $maxTotalFloors = $query->max('total_floors');
+        $minTotalFloors = $query->min('total_floors');
+        
+        $maxKitchenArea = $query->max('kitchen_area');
+        $minKitchenArea = $query->min('kitchen_area');
+        
+        $maxLivingArea = $query->max('living_area');
+        $minLivingArea = $query->min('living_area');
+        
+        $maxBalconyAmount = $query->max('balcony_amount');
+        $minBalconyAmount = $query->min('balcony_amount');
+        
+        $maxLoggiaAmount = $query->max('loggia_amount');
+        $minLoggiaAmount = $query->min('loggia_amount');
+        
+        $maxBuiltYear = $query->max('built_year');
+        $minBuiltYear = $query->min('built_year');
+        
         // filter data by ranges after getting ranges' edge points (min, max)
         if ($filter = \Yii::$app->request->get('filter')) {
             if (!empty($filter['priceFrom'])) $query->andWhere(['>=', 'room.price', (float)$filter['priceFrom']]);
             if (!empty($filter['priceTo'])) $query->andWhere(['<=', 'room.price', (float)$filter['priceTo']]);
             if (!empty($filter['areaFrom'])) $query->andWhere(['>=', 'room.area', (float)$filter['areaFrom']]);
             if (!empty($filter['areaTo'])) $query->andWhere(['<=', 'room.area', (float)$filter['areaTo']]);
+            if (!empty($filter['floorFrom'])) $query->andWhere(['>=', 'room.floor', (int)$filter['floorFrom']]);
+            if (!empty($filter['floorTo'])) $query->andWhere(['<=', 'room.floor', (int)$filter['floorTo']]);
+            if (!empty($filter['totalFloorsFrom'])) $query->andWhere(['>=', 'room.total_floors', (int)$filter['totalFloorsFrom']]);
+            if (!empty($filter['totalFloorsTo'])) $query->andWhere(['<=', 'room.total_floors', (int)$filter['totalFloorsTo']]);
+            if (!empty($filter['kitchenAreaFrom'])) $query->andWhere(['>=', 'room.kitchen_area', (float)$filter['kitchenAreaFrom']]);
+            if (!empty($filter['kitchenAreaTo'])) $query->andWhere(['<=', 'room.kitchen_area', (float)$filter['kitchenAreaTo']]);
+            if (!empty($filter['livingAreaFrom'])) $query->andWhere(['>=', 'room.living_area', (float)$filter['livingAreaFrom']]);
+            if (!empty($filter['livingAreaTo'])) $query->andWhere(['<=', 'room.living_area', (float)$filter['livingAreaTo']]);
+            if (!empty($filter['balconyFrom'])) $query->andWhere(['>=', 'room.balcony_amount', (int)$filter['balconyFrom']]);
+            if (!empty($filter['balconyTo'])) $query->andWhere(['<=', 'room.balcony_amount', (int)$filter['balconyTo']]);
+            if (!empty($filter['loggiaFrom'])) $query->andWhere(['>=', 'room.loggia_amount', (int)$filter['loggiaFrom']]);
+            if (!empty($filter['loggiaTo'])) $query->andWhere(['<=', 'room.loggia_amount', (int)$filter['loggiaTo']]);
+            if (!empty($filter['builtYearFrom'])) $query->andWhere(['>=', 'room.built_year', (int)$filter['builtYearFrom']]);
+            if (!empty($filter['builtYearTo'])) $query->andWhere(['<=', 'room.built_year', (int)$filter['builtYearTo']]);
         }
 
         // get the total number of advertisements
@@ -152,6 +200,34 @@ class SecondaryController extends Controller
                 'area' => [
                     'min' => $minArea,
                     'max' => $maxArea
+                ],
+                'floor' => [
+                    'min' => $minFloor,
+                    'max' => $maxFloor
+                ],
+                'total_floors' => [
+                    'min' => $minTotalFloors,
+                    'max' => $maxTotalFloors
+                ],
+                'kitchen_area' => [
+                    'min' => $minKitchenArea,
+                    'max' => $maxKitchenArea
+                ],
+                'living_area' => [
+                    'min' => $minLivingArea,
+                    'max' => $maxLivingArea
+                ],
+                'balcony_amount' => [
+                    'min' => $minBalconyAmount,
+                    'max' => $maxBalconyAmount
+                ],
+                'loggia_amount' => [
+                    'min' => $minLoggiaAmount,
+                    'max' => $maxLoggiaAmount
+                ],
+                'built_year' => [
+                    'min' => $minBuiltYear,
+                    'max' => $maxBuiltYear
                 ],
             ],
             'pagination' => [

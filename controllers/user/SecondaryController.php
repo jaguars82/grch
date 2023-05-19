@@ -8,7 +8,18 @@ use app\models\SecondaryAdvertisement;
 use app\models\SecondaryCategory;
 use app\models\SecondaryRoom;
 use app\models\SecondaryRenovation;
+use app\models\SecondaryBuildingSeries;
 use app\models\BuildingMaterial;
+use app\models\Developer;
+use app\models\NewbuildingComplex;
+use app\models\Newbuilding;
+use app\models\Entrance;
+use app\models\Flat;
+use app\models\Region;
+use app\models\RegionDistrict;
+use app\models\City;
+use app\models\District;
+use app\models\StreetType;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use tebe\inertia\web\Controller;
@@ -55,8 +66,20 @@ class SecondaryController extends Controller
             'secondaryCategories' => SecondaryCategory::getCategoryTree(),
             'buildingMaterials' => BuildingMaterial::getMaterialList(),
             'renovations' => SecondaryRenovation::getRenovationList(),
+            'buildingSeries' => SecondaryBuildingSeries::getBuildingSeriesList(),
             'bathroomUnit' => SecondaryRoom::$bathroom,
             'quality' => SecondaryRoom::$quality,
+            'developers' => Developer::getAllAsList(),
+            'buildingComplexes' => \Yii::$app->request->post('developerId') ? NewbuildingComplex::find()->where(['developer_id' => \Yii::$app->request->post('developerId')])->select(['id', 'name'])->asArray()->all() : [],
+            'buildings' => \Yii::$app->request->post('complexId') ? Newbuilding::find()->where(['newbuilding_complex_id' => \Yii::$app->request->post('complexId')])->select(['id', 'name'])->asArray()->all() : [],
+            'entrances' => \Yii::$app->request->post('buildingId') ? Entrance::find()->where(['newbuilding_id' => \Yii::$app->request->post('buildingId')])->select(['id', 'name'])->asArray()->all() : [],
+            'flats' => \Yii::$app->request->post('entranceId') ? Flat::find()->where(['entrance_id' => \Yii::$app->request->post('entranceId')])->select(['id', 'number', 'floor'])->orderBy(['number' => SORT_ASC])->asArray()->all() : [],
+            'regions' => Region::getAllAsList(),
+            'regionDistricts' => \Yii::$app->request->post('regionId') ? RegionDistrict::find()->where(['region_id' => \Yii::$app->request->post('regionId')])->orderBy(['name' => SORT_ASC])->asArray()->all() : [],
+            'cities' => (\Yii::$app->request->post('regionDistrictId') ? City::find()->where(['region_district_id' => \Yii::$app->request->post('regionDistrictId')])->orderBy(['name' => SORT_ASC])->asArray()->all() : \Yii::$app->request->post('regionId')) ? City::find()->where(['region_id' => \Yii::$app->request->post('regionId')])->orderBy(['name' => SORT_ASC])->asArray()->all() : [],
+            'cityDistricts' => \Yii::$app->request->post('cityId') ? District::find()->where(['city_id' => \Yii::$app->request->post('cityId')])->orderBy(['name' => SORT_ASC])->asArray()->all() : [],
+            'streetTypes' => StreetType::getAllAsList(),
+            'streetList' => SecondaryRoom::getStreetList(),
         ]);
     }
 
