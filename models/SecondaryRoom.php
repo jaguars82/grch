@@ -21,8 +21,9 @@ use yii\helpers\ArrayHelper;
  * @property int|null $newbuilding_complex_id
  * @property string $newbuilding_complex_string
  * @property int|null $newbuilding_id
+ * @property string $newbuilding_string
  * @property int|null $entrance_id
- * @property int|null $entrance_id
+ * @property string $entrance_string
  * @property int|null $flat_id
  * @property int $number
  * @property string $number_suffix
@@ -49,6 +50,7 @@ use yii\helpers\ArrayHelper;
  * @property boolean $is_euro
  * @property int $built_year
  * @property int $renovation_id
+ * @property int $material_id
  * @property string $renovation_string
  * @property int|null $quality_index
  * @property string $quality_string
@@ -170,10 +172,10 @@ class SecondaryRoom extends ActiveRecord
             [['advertisement_id'], 'required'],
             [['building_number'], 'string', 'max' => 20],
             [['built_year'], 'string', 'max' => 4],
-            [['advertisement_id', 'category_id', 'property_type_id', 'building_series_id', 'newbuilding_complex_id', 'newbuilding_id', 'entrance_id', 'flat_id', 'city_id', 'region_id', 'district_id', 'region_district_id', 'street_type_id', 'rooms', 'balcony_amount', 'loggia_amount', 'renovation_id', 'floor', 'section', 'total_floors', 'elevator_passenger_amount', 'elevator_freight_amount', 'bathroom_index', 'quality_index'], 'integer'],
+            [['advertisement_id', 'category_id', 'property_type_id', 'building_series_id', 'newbuilding_complex_id', 'newbuilding_id', 'entrance_id', 'flat_id', 'city_id', 'region_id', 'district_id', 'region_district_id', 'street_type_id', 'rooms', 'balcony_amount', 'loggia_amount', 'material_id', 'renovation_id', 'floor', 'section', 'total_floors', 'elevator_passenger_amount', 'elevator_freight_amount', 'bathroom_index', 'quality_index'], 'integer'],
             [['number', 'azimuth'], 'number'],
             [['price', 'unit_price', 'area', 'kitchen_area', 'living_area', 'ceiling_height', 'longitude', 'latitude'], 'double'],
-            [['category_string', 'property_type_string', 'building_series_string', 'newbuilding_complex_string', 'number_suffix', 'detail', 'special_conditions', 'balcony_info', 'windowview_info', 'renovation_string', 'quality_string', 'address', 'material', 'elevator_info', 'bathroom_unit', 'parking_info', 'street_name'], 'string'],
+            [['category_string', 'property_type_string', 'building_series_string', 'newbuilding_complex_string', 'newbuilding_string', 'entrance_string', 'number_suffix', 'detail', 'special_conditions', 'balcony_info', 'windowview_info', 'renovation_string', 'quality_string', 'address', 'material', 'elevator_info', 'bathroom_unit', 'parking_info', 'street_name'], 'string'],
             [['mortgage', 'windowview_street', 'windowview_yard', 'dressing_room', 'panoramic_windows', 'is_studio', 'is_euro', 'elevator', 'rubbish_chute', 'gas_pipe', 'phone_line', 'internet', 'concierge', 'closed_territory', 'playground', 'underground_parking', 'ground_parking', 'open_parking', 'multilevel_parking', 'barrier'], 'boolean'],
             [['location_info', 'created_at', 'updated_at'], 'safe'],
             [['layout'], 'string', 'max' => 200],
@@ -448,8 +450,9 @@ class SecondaryRoom extends ActiveRecord
     {
         $streets = [];
         $data = self::find()->select(['street_type_id', 'street_name'])->distinct()->orderBy(['street_name' => SORT_ASC])->all();
-        foreach ($data as $item) {
-            array_push($streets, array('street_type_id' => $item->street_type_id, 'street_name' => $item->street_name, 'fullname' => $item->street_name. ' '.mb_strtolower($item->streetType->name)));
+        foreach ($data as $item) { 
+            $streetType = $item->streetType !== null ? mb_strtolower($item->streetType->name) : '';
+            array_push($streets, array('street_type_id' => $item->street_type_id, 'street_name' => $item->street_name, 'fullname' => $item->street_name. ' '.$streetType));
         }
         return $streets;
     }

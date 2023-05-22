@@ -7,6 +7,9 @@ use app\components\SharedDataFilter;
 use app\models\SecondaryAdvertisement;
 use app\models\SecondaryCategory;
 use app\models\SecondaryRoom;
+use app\models\SecondaryRoomImage;
+use app\models\form\SecondaryAdvertisementForm;
+use app\models\form\SecondaryRoomForm;
 use app\models\SecondaryRenovation;
 use app\models\SecondaryBuildingSeries;
 use app\models\BuildingMaterial;
@@ -26,6 +29,7 @@ use tebe\inertia\web\Controller;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\data\Pagination;
+use \Datetime;
 
 class SecondaryController extends Controller
 {
@@ -61,6 +65,53 @@ class SecondaryController extends Controller
 
     public function actionCreate()
     {
+        // create new advertisement
+        if (\Yii::$app->request->isPost && \Yii::$app->request->post('operation') === 'create_add') {
+
+            $advertisementForm = new SecondaryAdvertisementForm();
+            $roomForm = new SecondaryRoomForm();
+
+            $transaction = \Yii::$app->db->beginTransaction();
+
+            try {
+                $advertisementForm->load(\Yii::$app->request->post(), '');
+                $now = (new DateTime())->format('Y-m-d H:i:s');
+                $advertisementForm->creation_date = $now;
+                $advertisementForm->last_update_date = $now;
+                $advertisementModel = (new SecondaryAdvertisement())->fill($advertisementForm->attributes);
+                $advertisementModel->save();
+
+                $roomForm->load(\Yii::$app->request->post(), '');
+                $roomForm->advertisement_id = $advertisementModel->id;
+                $roomForm->process();
+                $roomModel = (new SecondaryRoom())->fill($roomForm->attributes);
+                //echo '<pre>'; var_dump($roomModel); echo '</pre>'; die;
+                if(!$roomModel->validate()){
+                    echo '<pre>'; var_dump($roomModel->errors); echo '</pre>'; die;
+                }
+                $roomModel->save();
+                
+                if (count($roomForm->images)) {
+                    foreach ($roomForm->images as $image) {
+                        $newImage = new SecondaryRoomImage();
+                        $newImage->secondary_room_id = $roomModel->id;
+                        $newImage->location_type = 'local';
+                        $newImage->filename = $image;
+                        $newImage->save();
+                    }
+                }
+                
+                $transaction->commit();
+
+                return $this->redirect('/secondary/index');
+                //echo '<pre>'; var_dump($roomForm); echo '</pre>'; die; 
+
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                return $this->redirectBackWhenException($e);
+            }
+        }
+        
         return $this->inertia('User/Secondary/Create', [
             'user' => \Yii::$app->user->identity,
             'secondaryCategories' => SecondaryCategory::getCategoryTree(),

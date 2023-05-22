@@ -12,6 +12,7 @@
           :room="room"
           :created="advertisement.creation_date"
           :author="{
+            db: advertisement.author_DB ? advertisement.author_DB : null,
             info: advertisement.author_info
           }"
           :advId="advertisement.id"
@@ -29,7 +30,7 @@
     </template>
     <template v-slot:secondary>
       <div class="row justify-center q-my-sm q-px-sm">
-        <q-btn color="primary" unelevated label="Добавить объявление" icon="post_add" @click="goToCreateAdd" disable />
+        <q-btn color="primary" unelevated label="Добавить объявление" icon="post_add" @click="goToCreateAdd" />
       </div>
       <SecondaryFilter
         :filterParams="filterFields"

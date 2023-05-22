@@ -16,7 +16,7 @@
           v-for="image of room.images"
           :key="image.id"
           :name="image.id"
-          :img-src="image.url"
+          :img-src="image.location_type === 'local' ? `/uploads/${image.filename}` : image.url"
         />
       </q-carousel>
       <q-card-section :class="room.images.length ? 'col-7' : 'col-12'">
@@ -94,17 +94,26 @@ export default {
     const creationDate = computed(() => asDateTime(props.created))
     const address = computed(() => {
       const locationInfo = JSON.parse(props.room.location_info)
-      const regionDistrict = props.room.region_district_DB ? props.room.region_district_DB.name : locationInfo.district ? locationInfo.district : ''
-      const city = props.room.city_DB ? props.room.city_DB.name : locationInfo.locality_name ? locationInfo.locality_name : ''
-      const cityDistrict = props.room.district_DB ? props.room.district_DB.name : locationInfo.non_admin_sub_locality_name ? locationInfo.non_admin_sub_locality_name : locationInfo.sub_locality_name ? locationInfo.sub_locality_name : ''
-      const streetHouse = props.room.address ? props.room.address : locationInfo.address ? locationInfo.address : ''
+      const regionDistrict = props.room.region_district_DB ? props.room.region_district_DB.name : locationInfo && locationInfo.district ? locationInfo.district : ''
+      const city = props.room.city_DB ? props.room.city_DB.name : locationInfo && locationInfo.locality_name ? locationInfo.locality_name : ''
+      const cityDistrict = props.room.district_DB ? props.room.district_DB.name : locationInfo && locationInfo.non_admin_sub_locality_name ? locationInfo.non_admin_sub_locality_name : locationInfo && locationInfo.sub_locality_name ? locationInfo.sub_locality_name : ''
+      const streetHouse = props.room.address ? props.room.address : locationInfo && locationInfo.address ? locationInfo.address : ''
       return { regionDistrict, city, cityDistrict, streetHouse }
     })
     const advAuthor = computed(() => {
-      const authorParsed = JSON.parse(props.author.info)
-      const fullName = authorParsed.name
-      const photo = authorParsed.photo
-
+      let fullName = ''
+      let photo = ''
+      if (props.author.db) {
+        const lastName = props.author.db.last_name ? `${props.author.db.last_name} ` : ''
+        const firstName = props.author.db.first_name ? props.author.db.first_name : ''
+        const middleName = props.author.db.middle_name ? ` ${props.author.db.middle_name}` : ''
+        fullName = `${lastName}${firstName}${middleName}`
+        photo = props.author.db.photo ? `/uploads/${props.author.db.photo}` : ''
+      } else {
+        const authorParsed = JSON.parse(props.author.info)
+        fullName = authorParsed.name
+        photo = authorParsed.photo
+      }
       return { fullName, photo }
     })
 

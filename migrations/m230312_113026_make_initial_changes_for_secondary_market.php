@@ -12,18 +12,23 @@ class m230312_113026_make_initial_changes_for_secondary_market extends Migration
      */
     public function safeUp()
     {
+        $tableOptions = null;
+        if ($this->db->driverName === 'mysql') {
+            $tableOptions = 'CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE=InnoDB';
+        }
+
         $this->createTable('{{%secondary_import}}', [
             'id' => $this->primaryKey(),
             'algorithm' => $this->text()->notNull(),
             'endpoint' => $this->text(),
             'imported_at' => $this->timestamp()->defaultValue(null),
-        ]);
+        ], $tableOptions);
 
         $this->createTable('{{%secondary_advertisement}}', [
             'id' => $this->primaryKey(),
-            'external_id' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci')->comment('advertisement ID in external source (e.g. in feed)'),
+            'external_id' => $this->string()->comment('advertisement ID in external source (e.g. in feed)'),
             'deal_type' => $this->integer(1)->comment('1 - sell, 2 - rent'),
-            'deal_status_string' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci')->comment('information about deal from external sources (e.g. from feed) or manually added'),
+            'deal_status_string' => $this->string()->comment('information about deal from external sources (e.g. from feed) or manually added'),
             'agency_id' => $this->integer(),
             'creation_type' => $this->integer(1)->comment('1 - created from feed, 2 - created manually via a webform'),
             'author_id' => $this->integer()->defaultValue(null),
@@ -37,39 +42,41 @@ class m230312_113026_make_initial_changes_for_secondary_market extends Migration
             'last_update_date' => $this->timestamp()->defaultValue(null)->comment('actual update date (e.g. from outer source)'),
             'created_at' => $this->timestamp()->defaultValue(null),
             'updated_at' => $this->timestamp()->defaultValue(null),
-        ]);
+        ], $tableOptions);
 
         $this->createTable('{{%secondary_room}}', [
             'id' => $this->primaryKey(),
             'advertisement_id' => $this->integer()->defaultValue(null)->comment('foreign key for linking with "secondary_advertisement" table'),
             'category_id' => $this->integer()->defaultValue(null)->comment('foreign key for linking with "secondary_category" table'),
-            'category_string' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci')->comment('information about room category from external sources (e.g. from feed) or manually added'),
+            'category_string' => $this->string()->comment('information about room category from external sources (e.g. from feed) or manually added'),
             'property_type_id' => $this->integer()->defaultValue(null)->comment('foreign key for linking with "secondary_property_type" table'),
-            'property_type_string' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci')->comment('information about property type from external sources (e.g. from feed) or manually added'),
+            'property_type_string' => $this->string()->comment('information about property type from external sources (e.g. from feed) or manually added'),
             'building_series_id' => $this->integer()->defaultValue(null)->comment('foreign key for linking with "secondary_building_series" table'),
-            'building_series_string' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci')->comment('information about building series from external sources (e.g. from feed) or manually added'),
+            'building_series_string' => $this->string()->comment('information about building series from external sources (e.g. from feed) or manually added'),
             'newbuilding_complex_id' => $this->integer()->defaultValue(null)->comment('foreign key for linking with "newbuilding_complex" table'),
-            'newbuilding_complex_string' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci')->comment('information about newbuilding complex (e.g. from feed) or manually added'),
+            'newbuilding_complex_string' => $this->string()->comment('information about newbuilding complex (e.g. from feed) or manually added'),
             'newbuilding_id' => $this->integer()->defaultValue(null)->comment('foreign key for linking with "newbuilding" table'),
+            'newbuilding_string' => $this->string()->comment('information about newbuilding (e.g. from feed) or manually added'),
             'entrance_id' => $this->integer()->defaultValue(null)->comment('foreign key for linking with "entrance" table'),
+            'entrance_string' => $this->string()->comment('information about entrance (e.g. from feed) or manually added'),
             'flat_id' => $this->integer()->defaultValue(null)->comment('foreign key for linking with "flat" table'),
             'number' => $this->integer()->comment('digital part of flat number'),
-            'number_suffix' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci')->comment('additional part of flat number (if exists)'),
+            'number_suffix' => $this->string()->comment('additional part of flat number (if exists)'),
             'price' => $this->decimal(12, 2),
             'unit_price' => $this->decimal(12, 2),
             'mortgage' => $this->boolean(),
-            'layout' => $this->string(200)->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'),
-            'detail' => $this->text()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL'),
-            'special_conditions' => $this->text()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL'),
+            'layout' => $this->string(200),
+            'detail' => $this->text()->defaultValue(null),
+            'special_conditions' => $this->text()->defaultValue(null),
             'area' => $this->float(),
             'kitchen_area' => $this->float(),
             'living_area' => $this->float(),
             'ceiling_height' => $this->float(),
             'rooms' => $this->integer(),
-            'balcony_info' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'),
+            'balcony_info' => $this->string(),
             'balcony_amount' => $this->integer(2),
             'loggia_amount' => $this->integer(2),
-            'windowview_info' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'),
+            'windowview_info' => $this->string(),
             'windowview_street' => $this->boolean(),
             'windowview_yard' => $this->boolean(),
             'dressing_room' => $this->boolean(),
@@ -78,16 +85,16 @@ class m230312_113026_make_initial_changes_for_secondary_market extends Migration
             'is_euro' => $this->boolean(),
             'built_year' => $this->integer(4),
             'renovation_id' => $this->integer()->defaultValue(null)->comment('foreign key for linking with "secondary_renovation" table'),
-            'renovation_string' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci')->comment('information about renovation from external sources (e.g. from feed) or manually added'),
+            'renovation_string' => $this->string()->comment('information about renovation from external sources (e.g. from feed) or manually added'),
             'quality_index' => $this->integer(2)->defaultValue(null),
-            'quality_string' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci')->comment('information about quality from external sources (e.g. from feed) or manually added'),
+            'quality_string' => $this->string()->comment('information about quality from external sources (e.g. from feed) or manually added'),
             'floor' => $this->integer(),
             'section' => $this->integer(),
             'total_floors' => $this->integer(),
             'material_id' => $this->integer()->defaultValue(null)->comment('foreign key for linking with "building_material" table'),
-            'material' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'),
+            'material' => $this->string(),
             'elevator' => $this->boolean(),
-            'elevator_info' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'),
+            'elevator_info' => $this->string(),
             'elevator_passenger_amount' => $this->integer(2),
             'elevator_freight_amount' => $this->integer(2),
             'rubbish_chute' => $this->boolean(),
@@ -95,7 +102,7 @@ class m230312_113026_make_initial_changes_for_secondary_market extends Migration
             'phone_line' => $this->boolean(),
             'internet' => $this->boolean(),
             'bathroom_index' => $this->integer(2)->defaultValue(null),
-            'bathroom_unit' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'),
+            'bathroom_unit' => $this->string(),
             'concierge' => $this->boolean(),
             'closed_territory' => $this->boolean(),
             'playground' => $this->boolean(),
@@ -103,7 +110,7 @@ class m230312_113026_make_initial_changes_for_secondary_market extends Migration
             'ground_parking' => $this->boolean(),
             'open_parking' => $this->boolean(),
             'multilevel_parking' => $this->boolean(),
-            'parking_info' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci')->comment('information about parking from external sources (e.g. from feed)'),
+            'parking_info' => $this->string()->comment('information about parking from external sources (e.g. from feed)'),
             'barrier' => $this->boolean(),
             'longitude' => $this->decimal(8, 6),
             'latitude' => $this->decimal(8, 6),
@@ -113,48 +120,48 @@ class m230312_113026_make_initial_changes_for_secondary_market extends Migration
             'city_id' => $this->integer()->defaultValue(null),
             'district_id' => $this->integer()->defaultValue(null),
             'street_type_id' => $this->integer()->defaultValue(null),
-            'street_name' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'),
-            'building_number' => $this->string(20)->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'),
-            'address' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'),
+            'street_name' => $this->string(),
+            'building_number' => $this->string(20),
+            'address' => $this->string(),
             'location_info' => $this->json()->comment('information about room location from external sources (e.g. from feed)'),
             'created_at' => $this->timestamp()->defaultValue(null),
             'updated_at' => $this->timestamp()->defaultValue(null),
-        ]);
+        ], $tableOptions);
 
         $this->createTable('{{%secondary_category}}', [
             'id' => $this->primaryKey(),
             'level' => $this->integer(2)->comment('1 - root level of category tree, 2 - second level'),
             'parent_id' => $this->integer()->comment('id of a parent (level 1) category for level 2 items'),
-            'name' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'),
-            'alias' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci')->comment('alternative name (e.g. in latin or from outer source (feed))'),
-        ]);
+            'name' => $this->string(),
+            'alias' => $this->string()->comment('alternative name (e.g. in latin or from outer source (feed))'),
+        ], $tableOptions);
 
         $this->createTable('{{%secondary_property_type}}', [
             'id' => $this->primaryKey(),
-            'name' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'),
-            'alias' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci')->comment('alternative name (e.g. in latin or from outer source (feed))'),
-        ]);
+            'name' => $this->string(),
+            'alias' => $this->string()->comment('alternative name (e.g. in latin or from outer source (feed))'),
+        ], $tableOptions);
 
         $this->createTable('{{%secondary_renovation}}', [
             'id' => $this->primaryKey(),
-            'name' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'),
-            'alias' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci')->comment('alternative name (e.g. in latin or from outer source (feed))'),
-            'detail' => $this->text()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL'),
-        ]);
+            'name' => $this->string(),
+            'alias' => $this->string()->comment('alternative name (e.g. in latin or from outer source (feed))'),
+            'detail' => $this->text()->defaultValue(null),
+        ], $tableOptions);
 
         $this->createTable('{{%secondary_building_series}}', [
             'id' => $this->primaryKey(),
-            'name' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'),
-            'alias' => $this->string()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci')->comment('alternative name (e.g. in latin or from outer source (feed))'),
-            'detail' => $this->text()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL'),
-        ]);
+            'name' => $this->string(),
+            'alias' => $this->string()->comment('alternative name (e.g. in latin or from outer source (feed))'),
+            'detail' => $this->text()->defaultValue(null),
+        ], $tableOptions);
 
         $this->createTable('{{%building_material}}', [
             'id' => $this->primaryKey(),
             'name' => $this->string(),
             'alias' => $this->string()->comment('alternative name (e.g. in latin or from outer source (feed))'),
-            'detail' => $this->text()->append('CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'),
-        ]);
+            'detail' => $this->text(),
+        ], $tableOptions);
 
         $this->createTable('{{%secondary_room_image}}', [
             'id' => $this->primaryKey(),
@@ -162,7 +169,7 @@ class m230312_113026_make_initial_changes_for_secondary_market extends Migration
             'location_type' => $this->string(10)->comment('"local" - if the image is on local server, "remote" - if the image is on remote server'),
             'url' => $this->string(2000)->comment('image url for remote files'),
             'filename' => $this->string()->comment('image filename for local files')
-        ]);
+        ], $tableOptions);
 
         $this->addColumn('{{%agency}}', 'import_id', $this->integer()->after('contact_id')->defaultValue(null));
 

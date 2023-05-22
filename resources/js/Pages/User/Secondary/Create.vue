@@ -1,5 +1,5 @@
 <template>
-  <MainLayout :secondaryColumns="3">
+  <MainLayout>
     <template v-slot:breadcrumbs>
       <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
     </template>
@@ -9,14 +9,19 @@
       <q-form v-else @submit="onSubmit">
         <q-card>
           <q-card-section>
+            <h4>Текст объявления</h4>
+            <div class="row q-col-gutter-none">
+              <div class="col-12">
+                <q-input outlined v-model="formfields.detail" label="Введите текст объявления*" />
+              </div>
+            </div>
             <h4>Информация об объекте</h4>
-
             <div class="row q-col-gutter-none">
 
               <div class="col-md-6 col-sm-12 col-xs-12 q-py-xs">
                 <q-select
                   outlined
-                  v-model="formfields.deal_type"
+                  v-model="formfields.dealType"
                   :options="dealTypeOptions"
                   label="Тип сделки*"
                   options-dense
@@ -42,17 +47,17 @@
                 <q-input outlined type="number" v-model.number="formfields.price" label="Цена (руб.)*" />
               </div>
 
-              <div :class="[formfields.rooms !== null && formfields.rooms.value == '5+' ? 'col-md-3' : 'col-md-5', 'col-sm-6', 'col-xs-12', 'q-py-xs']">
+              <div :class="[formfields.rooms_select !== null && formfields.rooms_select.value == '5+' ? 'col-md-3' : 'col-md-5', 'col-sm-6', 'col-xs-12', 'q-py-xs']">
                 <q-select
                   outlined
-                  v-model="formfields.rooms"
+                  v-model="formfields.rooms_select"
                   :options="roomsOptions"
                   label="Количество комнат*"
                   options-dense
                 />
               </div>
 
-              <div v-if="formfields.rooms !== null && formfields.rooms.value == '5+'" class="col-md-2 col-sm-6 col-xs-12 q-py-xs">
+              <div v-if="formfields.rooms_select !== null && formfields.rooms_select.value == '5+'" class="col-md-2 col-sm-6 col-xs-12 q-py-xs">
                 <q-input outlined type="number" step="1" min="6" v-model.number="formfields.rooms_input" label="Комнат" />
               </div>
 
@@ -99,7 +104,7 @@
               <div class="col-md-3 col-sm-6 col-xs-12 q-py-xs">
                 <q-select
                   outlined
-                  v-model="formfields.material"
+                  v-model="formfields.material_select"
                   :options="materialOptions"
                   label="Материал дома"
                   options-dense
@@ -675,10 +680,10 @@
 
       </q-form>
     </template>
-    <template v-slot:secondary>
+    <!--<template v-slot:secondary>
       <pre>{{ formfields }}</pre>
       <pre>{{ manualInputFlags }}</pre>
-    </template>
+    </template>-->
   </MainLayout>
 </template>
 
@@ -769,25 +774,42 @@ export default {
   },
   setup (props) {
 
+    const { user } = userInfo()
+
     const formfields = ref({
+      operation: 'create_add',
+      author_id: user.value.id,
+      agency_id: user.value.agency_id,
+      creation_type: 2,
+      detail: null,
+      dealType: null,
       deal_type: null,
       category: null,
+      category_id: null,
       price: null,
-      rooms: null,
+      unit_price: null,
+      rooms_select: null,
       rooms_input: null,
+      rooms: null,
       area: null,
       kitchen_area: null,
       living_area: null,
       bathroom: null,
+      bathroom_index: null,
       floor: null,
       total_floors: null,
-      material: null,
+      material_select: null,
+      material_id: null,
       building_series: null,
+      building_series_id: null,
       quality: null,
+      quality_index: null,
       renovation: null,
+      renovation_id: null,
       built_year: null,
       balcony_amount: 0,
       loggia_amount: 0,
+      elevator: false,
       elevator_passenger_amount: null,
       elevator_freight_amount: null,
       windowview_street: null,
@@ -807,24 +829,40 @@ export default {
       barrier: null,
       dressing_room: null,
       developer_select: null,
+      developer_id: null,
+      developer_string: null,
       developer_input: null,
       buildingComplex_select: null,
+      newbuilding_complex_id: null,
+      newbuilding_complex_string: null,
       buildingComplex_input: null,
       building_select: null,
+      newbuilding_id: null,
+      newbuilding_string: null,
       building_input: null,
       entrance_select: null,
+      entrance_id: null,
+      entrance_string: null,
       entrance_input: null,
       flat_select: null,
+      flat_id: null,
       flat_input: null,
+      number: null,
       region_select: null,
+      region_id: null,
       region_district_select: null,
+      region_district_id: null,
       city_select: null,
+      city_id: null,
       city_district_select: null,
+      district_id: null,
       street_type: null,
+      street_type_id: null,
       street_name: null,
       building_number: null,
       longitude: null,
-      latitude: null
+      latitude: null,
+      images: []
     })
 
     const manualInputFlags = ref({
@@ -869,8 +907,6 @@ export default {
         options: false
       },
     ])
-
-    const { user } = userInfo()
 
     const loading = ref(false)
 
@@ -1267,7 +1303,7 @@ export default {
 
     const canSendForm = computed(() => {
       let result = true
-      const requiredFields = ['deal_type', 'category', 'price', 'rooms', 'area', 'floor', 'total_floors', 'balcony_amount', 'loggia_amount']
+      const requiredFields = ['dealType', 'category', 'detail', 'price', 'rooms_select', 'area', 'floor', 'total_floors', 'balcony_amount', 'loggia_amount']
       requiredFields.forEach(field => {
         if (formfields.value[field] === null) result = false
       })
@@ -1287,6 +1323,32 @@ export default {
 
     function onSubmit() {
       loading.value = true
+      formfields.value.deal_type = formfields.value.dealType.value
+      formfields.value.category_id = formfields.value.category.value
+      formfields.value.rooms = formfields.value.rooms_select.value !== '5+' ? formfields.value.rooms_select.value : formfields.value.rooms_input
+      formfields.value.unit_price = Math.round(formfields.value.price / formfields.value.area * 100) / 100
+      formfields.value.bathroom_index = formfields.value.bathroom !== null ? formfields.value.bathroom.value : null
+      formfields.value.quality_index = formfields.value.quality !== null ? formfields.value.quality.value : null
+      formfields.value.material_id = formfields.value.material_select !== null ? formfields.value.material_select.value : null
+      formfields.value.renovation_id = formfields.value.renovation !== null ? formfields.value.renovation.value : null
+      formfields.value.building_series_id = formfields.value.building_series !== null ? formfields.value.building_series.value : null
+      formfields.value.elevator = formfields.value.elevator_passenger_amount || formfields.value.elevator_freight_amount ? true : false
+      formfields.value.developer_id = formfields.value.developer_select !== null ? formfields.value.developer_select.value : null
+      formfields.value.newbuilding_complex_id = formfields.value.buildingComplex_select !== null ? formfields.value.buildingComplex_select.value : null
+      formfields.value.newbuilding_id = formfields.value.building_select !== null ? formfields.value.building_select.value : null
+      formfields.value.entrance_id = formfields.value.entrance_select !== null ? formfields.value.entrance_select.value : null
+      formfields.value.flat_id = formfields.value.flat_select !== null ? formfields.value.flat_select.value : null
+      formfields.value.developer_string = manualInputFlags.value.developer === true && formfields.value.developer_input ? formfields.value.developer_input : null
+      formfields.value.newbuilding_complex_string = manualInputFlags.value.newbuildingComplex === true && formfields.value.buildingComplex_input ? formfields.value.buildingComplex_input : null
+      formfields.value.newbuilding_string = manualInputFlags.value.newbuilding === true && formfields.value.building_input ? formfields.value.building_input : null
+      formfields.value.entrance_string = manualInputFlags.value.entrance === true && formfields.value.entrance_input ? formfields.value.entrance_input : null
+      formfields.value.number = manualInputFlags.value.flat === true && formfields.value.flat_input ? formfields.value.flat_input : null
+      formfields.value.region_id = formfields.value.region_select !== null ? formfields.value.region_select.value : null
+      formfields.value.region_district_id = formfields.value.region_district_select !== null ? formfields.value.region_district_select.value : null
+      formfields.value.city_id = formfields.value.city_select !== null ? formfields.value.city_select.value : null
+      formfields.value.district_id = formfields.value.city_district_select !== null ? formfields.value.city_district_select.value : null
+      formfields.value.images = uploadedImages.value
+      console.log(formfields.value)
       Inertia.post(`/user/secondary/create`, formfields.value)
       Inertia.on('finish', (event) => {
         loading.value = false

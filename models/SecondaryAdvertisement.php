@@ -19,6 +19,10 @@ use yii\helpers\ArrayHelper;
  * @property int|null $author_id
  * @property string $author_info
  * @property boolean $is_active
+ * @property boolean $is_moderated
+ * @property boolean $is_moderation_ok
+ * @property int $moderator_id
+ * @property string|null $moderated_at
  * @property string|null $expiration_date
  * @property boolean $is_expired
  * @property boolean $is_prolongated
@@ -70,19 +74,20 @@ class SecondaryAdvertisement extends ActiveRecord
     {
         return [
             [['agency_id'], 'required'],
-            [['external_id', 'deal_status_string', 'expiration_date', 'last_prolongation_date', 'creation_date', 'last_update_date'], 'string'],
-            [['deal_type', 'agency_id', 'creation_type', 'author_id'], 'integer'],
-            [['is_active', 'is_expired', 'is_prolongated'], 'boolean'],
+            [['external_id', 'deal_status_string', 'expiration_date', 'last_prolongation_date', 'creation_date', 'last_update_date', 'moderated_at', 'moderator_comment'], 'string'],
+            [['deal_type', 'agency_id', 'creation_type', 'author_id', 'moderator_id'], 'integer'],
+            [['is_active', 'is_expired', 'is_prolongated', 'is_moderated', 'is_moderation_ok'], 'boolean'],
             [['author_info', 'created_at', 'updated_at'], 'safe'],
-            [['author_id', 'expiration_date', 'last_prolongation_date', 'creation_date', 'last_update_date'], 'default', 'value' => NULL],
+            [['author_id', 'moderator_id', 'expiration_date', 'last_prolongation_date', 'creation_date', 'last_update_date', 'moderated_at', 'moderator_comment'], 'default', 'value' => NULL],
             [['is_active'], 'default', 'value' => true],
-            [['is_expired', 'is_prolongated'], 'default', 'value' => false],
+            [['is_expired', 'is_prolongated', 'is_moderated', 'is_moderation_ok'], 'default', 'value' => false],
             [['agency_id'], 'exist', 'skipOnError' => true, 'targetClass' => Agency::className(), 'targetAttribute' => ['agency_id' => 'id']],
             [['author_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['author_id' => 'id']],
+            [['moderator_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['moderator_id' => 'id']],
         ];
     }
 
-        /**
+    /**
      * {@inheritdoc}
      */
     public function attributeLabels()
@@ -97,6 +102,11 @@ class SecondaryAdvertisement extends ActiveRecord
             'author_id' => 'Автор',
             'author_info' => 'Информация об авторе',
             'is_active' => 'Активно',
+            'is_moderated' => 'Модерировалось',
+            'is_moderation_ok' => 'Модерация пройдена',
+            'moderator_id' => 'Модератор',
+            'moderated_at' => 'Дата модерации',
+            'moderator_comment' => 'Комментарий модератора',
             'expiration_date' => 'Дата истечения',
             'is_expired' => 'Истекло',
             'is_prolongated' => 'Продлено',
@@ -126,6 +136,16 @@ class SecondaryAdvertisement extends ActiveRecord
     public function getAuthor()
     {
         return $this->hasOne(User::className(), ['id' => 'author_id']);
+    }
+
+    /**
+     * Gets query for [[User]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getModerator()
+    {
+        return $this->hasOne(User::className(), ['id' => 'moderator_id']);
     }
 
     /**

@@ -155,6 +155,7 @@ class SecondaryController extends Controller
         foreach ($advertisements as $advertisement) {
             $advRow = ArrayHelper::toArray($advertisement);
             $advRow['secondary_room'] = ArrayHelper::toArray($advertisement->secondaryRooms);
+            $advRow['author_DB'] = !empty($advertisement->author_id) ? ArrayHelper::toArray($advertisement->author) : '';
             
             /**
              * Add information about room params from data base
@@ -248,7 +249,9 @@ class SecondaryController extends Controller
 
         $advertisementArr = ArrayHelper::toArray($advertisement);
 
+        $advertisementArr['agency'] = ArrayHelper::toArray($advertisement->agency);
         $advertisementArr['secondary_room'] = ArrayHelper::toArray($advertisement->secondaryRooms);
+        $advertisementArr['author_DB'] = !empty($advertisement->author_id) ? ArrayHelper::toArray($advertisement->author) : '';
             
         /**
          * Add information about room params from data base
