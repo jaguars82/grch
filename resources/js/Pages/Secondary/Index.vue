@@ -6,6 +6,9 @@
     <template v-slot:main>
       <h3 class="text-center">Вторичная продажа</h3>
       <div v-for="advertisement of advertisements" :key="advertisement.id">
+        <div v-if="advertisement.statusLabels.length" style="margin-bottom: -25px;">
+          <q-chip square color="primary" class="text-white" v-for="status of advertisement.statusLabels">{{ status.type.name }}</q-chip>
+        </div>
         <SecondaryRoomListItem
           v-for="room of advertisement.secondary_room"
           :key="room.id"

@@ -7,7 +7,7 @@
 export default {
   props: {
     amount: {
-      type: Number,
+      type: String,
       default: 0
     }
   },

@@ -23,6 +23,8 @@ use app\models\RegionDistrict;
 use app\models\City;
 use app\models\District;
 use app\models\StreetType;
+use app\models\StatusLabel;
+use app\models\StatusLabelType;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use tebe\inertia\web\Controller;
@@ -136,15 +138,58 @@ class SecondaryController extends Controller
 
     public function actionIndex()
     {
+        if (\Yii::$app->request->isPost) {
+            switch (\Yii::$app->request->post('operation')) {
+                case 'setStatus':
+                    try {
+                        $transaction = \Yii::$app->db->beginTransaction();
+                        $advertisement = SecondaryAdvertisement::findOne(\Yii::$app->request->post('secondary_advertisement_id'));
+                        $statusLabel = new StatusLabel;
+                        $statusLabel->attributes = \Yii::$app->request->post();
+                        $statusLabel->creator_id = \Yii::$app->user->identity->id;
+                        $statusLabel->save();
+                        $advertisement->link('statusLabels', $statusLabel);
+                        $transaction->commit();
+                    } catch (Exception $e) {
+                        //return $this->redirectBackWhenException($e);
+                    }
+                    break;
+                case 'deleteAdd':
+                    $transaction = \Yii::$app->db->beginTransaction();
+                    $advertisement = SecondaryAdvertisement::findOne(\Yii::$app->request->post('id'));
+                    foreach ($advertisement->statusLabels as $statusLabel) {
+                        $advertisement->unlink('statusLabels', $statusLabel, true);
+                    }
+                    foreach ($advertisement->secondaryRooms as $secondaryRoom) {
+                        $secondaryRoom->delete();
+                    }
+                    $advertisement->delete();
+                    $transaction->commit();
+                    break;
+            }
+        }
+
         $query = SecondaryAdvertisement::find()
         //->where(['initiator_id' => \Yii::$app->user->id])
         ->where(['is_active' => 1]);
+
+        if (\Yii::$app->user->identity->role === 'agent') {
+            $query->andWhere(['author_id' => \Yii::$app->user->identity->id]);
+        }
+
+        if (\Yii::$app->user->identity->role === 'manager') {
+            $query->andWhere(['agency_id' => \Yii::$app->user->agency->id]);
+        }
 
         // get the total number of advertisements
         $count = $query->count();
 
         // create a pagination object with the total count
         $pagination = new Pagination(['totalCount' => $count]);
+
+        if (!empty(\Yii::$app->request->get('psize'))) {
+            $pagination->setPageSize(\Yii::$app->request->get('psize'));
+        }
 
         // limit the query using the pagination and retrieve the advertisements
         $advertisements = $query
@@ -156,11 +201,44 @@ class SecondaryController extends Controller
         $advertisementsArray = array();
         foreach ($advertisements as $advertisement) {
             $advertisementItem = ArrayHelper::toArray($advertisement);
+            $itemStatusLabels = array();
+            foreach ($advertisement->statusLabels as $statusLabel) {
+                $labelItem = ArrayHelper::toArray($statusLabel);
+                $labelItem['type'] = ArrayHelper::toArray($statusLabel->labelType);
+                array_push($itemStatusLabels, $labelItem);
+            }
+            $advertisementItem['statusLabels'] = $itemStatusLabels;
             $roomsArray = array();
             foreach ($advertisement->secondaryRooms as $room) {
                 $roomItem = ArrayHelper::toArray($room);
                 //$flatItem['newbuildingComplex'] = ArrayHelper::toArray($flat->newbuilding->newbuildingComplex);
                 //$flatItem['newbuilding'] = ArrayHelper::toArray($flat->newbuilding);
+
+                /**
+                 * Add information about room params from data base
+                 */
+                $params = [
+                    'category' => 'secondaryCategory', // category (e.g. 'flat', 'house' etc.)
+                    'property_type' => 'secondaryPropertyType',
+                    'building_series' => 'secondaryBuildingSeries',
+                    'newbuilding_complex' => 'newbuildingComplex',
+                    'newbuilding' => 'newbuilding',
+                    'entrance' => 'entrance',
+                    'flat' => 'flat',
+                    'renovation' => 'secondaryRenovation',
+                    'material' => 'buildingMaterial',
+                    'region' => 'region',
+                    'region_district' => 'regionDistrict',
+                    'city' => 'city',
+                    'district' => 'district',
+                    'street_type' => 'streetType',
+                ];
+
+                foreach ($params as $param => $className) {
+                    if (!empty($room[$param.'_id'])) {
+                        $roomItem[$param.'_DB'] = ArrayHelper::toArray($room[$className]);
+                    }
+                }
                 array_push($roomsArray, $roomItem);
             }
             $advertisementItem['rooms'] = $roomsArray;
@@ -170,6 +248,10 @@ class SecondaryController extends Controller
         return $this->inertia('User/Secondary/Index', [
             'user' => \Yii::$app->user->identity,
             'advertisements' => $advertisementsArray,
+            'totalRows' => $count,
+            'page' => $pagination->page,
+            'psize' => $pagination->pageSize,
+            'labelTypes' => StatusLabelType::find()->asArray()->all(),
         ]);
     }
 

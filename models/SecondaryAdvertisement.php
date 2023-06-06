@@ -157,4 +157,10 @@ class SecondaryAdvertisement extends ActiveRecord
     {
         return $this->hasMany(SecondaryRoom::className(), ['advertisement_id' => 'id']);
     }
+
+    public function getStatusLabels()
+    {
+        return $this->hasMany(StatusLabel::className(), ['id' => 'status_label_id'])
+                ->viaTable('secondary_advertisement_status_label', ['secondary_advertisement_id' => 'id']);
+    }
 }

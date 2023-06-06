@@ -154,6 +154,13 @@ class SecondaryController extends Controller
 
         foreach ($advertisements as $advertisement) {
             $advRow = ArrayHelper::toArray($advertisement);
+            $itemStatusLabels = array();
+            foreach ($advertisement->statusLabels as $statusLabel) {
+                $labelItem = ArrayHelper::toArray($statusLabel);
+                $labelItem['type'] = ArrayHelper::toArray($statusLabel->labelType);
+                array_push($itemStatusLabels, $labelItem);
+            }
+            $advRow['statusLabels'] = $itemStatusLabels;
             $advRow['secondary_room'] = ArrayHelper::toArray($advertisement->secondaryRooms);
             $advRow['author_DB'] = !empty($advertisement->author_id) ? ArrayHelper::toArray($advertisement->author) : '';
             
