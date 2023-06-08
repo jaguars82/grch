@@ -178,7 +178,7 @@ class SecondaryController extends Controller
         }
 
         if (\Yii::$app->user->identity->role === 'manager') {
-            $query->andWhere(['agency_id' => \Yii::$app->user->agency->id]);
+            $query->andWhere(['agency_id' => \Yii::$app->user->identity->agency_id]);
         }
 
         // get the total number of advertisements

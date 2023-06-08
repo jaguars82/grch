@@ -34,7 +34,7 @@
             v-else
             :rows="rows"
             :columns="columns"
-            :pagination="{ rowsPerPage: 25 }"
+            :pagination="{ rowsPerPage: 255 }"
             row-key="id"
             hide-bottom
             bordered
