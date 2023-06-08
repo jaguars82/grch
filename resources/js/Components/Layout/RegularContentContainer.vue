@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import TitleSubtitle from '../Elements/TitleSubtitle.vue'
+import TitleSubtitle from '@/Components/Elements/TitleSubtitle.vue'
 
 export default {
   components: {

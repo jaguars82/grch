@@ -68,13 +68,13 @@
 
 <script>
 import { ref, computed } from 'vue'
-import ProfileLayout from '../../../Layouts/ProfileLayout.vue'
-import Breadcrumbs from '../../../Components/Layout/Breadcrumbs.vue'
-import RegularContentContainer from '../../../Components/Layout/RegularContentContainer.vue'
-import GridTableToggle from '../../../Components/Elements/GridTableToggle.vue'
-import useEmitter from '../../../composables/use-emitter'
-import { asDateTime } from '../../../helpers/formatter' 
-import { userInfo } from '../../../composables/shared-data'
+import ProfileLayout from '@/Layouts/ProfileLayout.vue'
+import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
+import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
+import GridTableToggle from '@/Components/Elements/GridTableToggle.vue'
+import useEmitter from '@/composables/use-emitter'
+import { asDateTime } from '@/helpers/formatter' 
+import { userInfo } from '@/composables/shared-data'
 
 export default ({
   components: {

@@ -16,7 +16,7 @@
               :grid="appsGridView"
               :rows="rows"
               :columns="columns"
-              :pagination="{ rowsPerPage: 15 }"
+              :pagination="{ rowsPerPage: 255 }"
               row-key="application_number"
               hide-bottom
             >

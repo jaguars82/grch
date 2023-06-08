@@ -115,4 +115,15 @@ class City extends \yii\db\ActiveRecord
     {
         return $this->hasMany(District::className(), ['city_id' => 'id']);
     }
+
+    /**
+     * Gets city by given name
+     */
+    public static function getCityByRegionAndName($regionId, $name)
+    {
+        return static::find()
+            ->where(['region_id' => $regionId])
+            ->andWhere(['like', 'name', '%'.$name.'%', false])
+            ->one();
+    }
 }

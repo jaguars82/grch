@@ -36,6 +36,21 @@
         <inertia-link
           v-if="user.role === 'admin'
               || user.role === 'manager'
+              || user.role === 'agent'"
+          href="/user/secondary/index"
+        >
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon color="primary" name="home_work" />
+            </q-item-section>
+
+            <q-item-section>Вторичка</q-item-section>
+          </q-item>
+        </inertia-link>
+
+        <inertia-link
+          v-if="user.role === 'admin'
+              || user.role === 'manager'
               || user.role === 'agent'
               || user.role ==='developer_repres'"
           href="/user/application/index"

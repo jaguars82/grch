@@ -173,14 +173,42 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * Finds user by username
+     * Finds user by email
      *
-     * @param string $username
+     * @param string $email
      * @return static|null
      */
     public static function findByEmail($email)
     {
         return static::findOne(['email' => $email, 'status' => self::STATUS_ACTIVE]);
+    }
+
+    /**
+     * Finds user (any) by email and agency
+     *
+     * @param string $email
+     * @param integer $agencyId
+     * @return static|null
+     */
+    public static function findByEmailAndAgency($email, $agencyId)
+    {
+        return static::findOne(['email' => trim($email), 'agency_id' => $agencyId]);
+    }
+
+    /**
+     * Finds user (any) by phone and agency
+     *
+     * @param string $phone
+     * @param integer $agencyId
+     * @return static|null
+     */
+    public static function findByPhoneAndAgency($phone, $agencyId)
+    {
+        $phoneDigits = substr(preg_replace("/[^0-9]/", '', $phone), 1);
+        return static::find()
+            ->where(['like', 'phone', '%'.$phoneDigits.'%', false])
+            ->andWhere(['=', 'agency_id', $agencyId])
+            ->one();
     }
 
     /**

@@ -93,4 +93,14 @@ class Region extends \yii\db\ActiveRecord
     {
         return $this->hasMany(RegionDistrict::className(), ['region_id' => 'id'])->orderBy(['name' => SORT_ASC]);
     }
+
+    /**
+     * Gets Secondary renovation by given name
+     */
+    public static function getRegionByName($name)
+    {
+        return static::find()
+            ->where(['name' => $name])
+            ->one();
+    }
 }

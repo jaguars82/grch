@@ -58,7 +58,6 @@ class News extends \app\models\News
                     
                     $discount = self::setDiscountField($actionData);
                     $actionFlatData->setDiscount($discount, $news, false, $actionData['discount_type']);
-                    // $actionFlatData->setDiscount($discount, $news, false, $actionData->discount_type);
                 }
                 $news->link('actionData', $actionDataObject);
             }
@@ -134,7 +133,6 @@ class News extends \app\models\News
                     if ($actionFlatData != null) {
                         $discount = self::setDiscountField($actionData);
                         $actionFlatData->setDiscount($discount, $this, true, $actionData['discount_type']);
-                        //$actionFlatData->setDiscount($discount, $this, true, $actionData->discount_type);
                     }
                     $this->link('actionData', $actionDataObject);
                 } else {
@@ -154,18 +152,12 @@ class News extends \app\models\News
                                 break;
                         }
 
-                        /*if ($actionData['discount_type'] == 1) {
-                            $discount = $actionData['discount_amount'];
-                        } elseif ($actionData['discount_type'] == 2) {
-                            $discount = $actionData['discount_price'];
-                        } else {
-                            $discount = $actionData['discount'];
-                        }*/
-
-                        // echo '<pre>'; var_dump($discount); echo '<pre>'; die();
-                        
                         $actionFlatData->setDiscount($discount, $this, true, $actionData['discount_type']);
-                    } 
+                    }
+                    /** field 'discount' can not be NULL */
+                    if (empty($this->actionData->discount)) {
+						$this->actionData->discount = 0;
+					}
                     $this->actionData->save();
                 }
                 

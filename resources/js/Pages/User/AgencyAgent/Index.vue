@@ -23,7 +23,7 @@
               :grid="agentsGridView"
               :rows="rows"
               :columns="columns"
-              :pagination="{ rowsPerPage: 255 }"
+              :pagination="{ rowsPerPage: 500 }"
               row-key="id"
               hide-bottom
             >

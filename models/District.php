@@ -86,4 +86,15 @@ class District extends \yii\db\ActiveRecord
     {
         return $this->hasOne(City::className(), ['id' => 'city_id']);
     }
+
+    /**
+     * Gets district by given name and city
+     */
+    public static function getDistrictByCityAndName($cityId, $name)
+    {
+        return static::find()
+            ->where(['city_id' => $cityId])
+            ->andWhere(['like', 'name', '%'.$name.'%', false])
+            ->one();
+    }
 }

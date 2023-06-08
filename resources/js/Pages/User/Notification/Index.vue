@@ -13,7 +13,7 @@
               bordered
               :rows="rows"
               :columns="columns"
-              :pagination="{ rowsPerPage: 25 }"
+              :pagination="{ rowsPerPage: 255 }"
               row-key="id"
               hide-header
               hide-bottom

@@ -23,7 +23,7 @@ export default ({
   },
   setup() {
 
-    const goLink = (link, data, options) => options === 'native' ? () => {} : Inertia.get(link, data, options)
+    const goLink = (link, data, options) => options === 'native' ? () => { window.location.replace(link); } : Inertia.get(link, data, options)
 
     return { goLink }
   },

@@ -149,9 +149,10 @@ class Import extends \yii\db\ActiveRecord
      * 
      * @return mixin
      */
-    public function getAlgorithmAsObject()
+    public function getAlgorithmAsObject($algo = false)
     {
-        $classname = "\app\components\import\\{$this->algorithm}";
+        $algorithm = !empty($algo) ? $algo : $this->algorithm;
+        $classname = "\app\components\import\\{$algorithm}";
         
         return new $classname();
     }

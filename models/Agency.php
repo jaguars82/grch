@@ -9,20 +9,22 @@ use app\components\traits\FillAttributes;
  * This is the model class for table "agency".
  *
  * @property int $id
+ * @property int $import_id
  * @property string $name
  * @property string $address
- * @property floot|null $longitude
- * @property floot|null $latitude
+ * @property float|null $longitude
+ * @property float|null $latitude
  * @property int $logo
  * @property string $detail
  * @property int $user_limit
  * @property int $created_at
  * @property int $updated_at
  *
- * @property User[] $aegnts
+ * @property User[] $agents
  * @property Contact[] $contacts
  * @property User[] $managers
  * @property User[] $users
+ * @property Import $import
  */
 class Agency extends \yii\db\ActiveRecord
 {
@@ -48,6 +50,7 @@ class Agency extends \yii\db\ActiveRecord
             [['detail', 'offer_info', 'email', 'phone', 'url'], 'string'],
             [['email'], 'email'],
             [['logo', 'name', 'address'], 'string', 'max' => 200],
+            [['import_id'], 'safe'],
         ];
     }
 
@@ -141,4 +144,36 @@ class Agency extends \yii\db\ActiveRecord
         return $this->hasMany(User::className(), ['agency_id' => 'id'])
                 ->where(['=', 'status', User::STATUS_ACTIVE]);
     }
+        
+    /**
+     * Check if agency has import
+     * 
+     * @return boolean
+     */
+    public function hasImport()
+    {
+        return !is_null($this->import);
+    }
+
+    /**
+     * Gets query for [[SecondaryImport]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getImport()
+    {
+        return $this->hasOne(SecondaryImport::className(), ['id' => 'import_id']);
+    }
+
+    /**
+     * Gets query for [[SecondaryAdvertisment]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSecondaryAdvertisements()
+    {
+        return $this->hasMany(SecondaryAdvertisement::className(), ['agency_id' => 'id'])
+                ->inverseOf('agency');
+    }
+
 }

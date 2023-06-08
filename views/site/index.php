@@ -155,7 +155,7 @@ SiteIndexAsset::register($this);
     </div> 
 </section>
 
-<section class="agency-block">
+<!--<section class="agency-block">
     <div class="container">
         <p class="h2">
             Агентства
@@ -178,7 +178,7 @@ SiteIndexAsset::register($this);
             'emptyText' => '',
         ]); ?>
     </div>
-</section>
+</section>-->
 
 <!--<section class="bank-block">
     <div class="container">

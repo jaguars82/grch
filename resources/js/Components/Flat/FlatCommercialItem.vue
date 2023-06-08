@@ -65,7 +65,6 @@
           marker-id="1"
           marker-type="placemark"
           :coords="[flat.newbuildingComplex.longitude, flat.newbuildingComplex.latitude]"
-          hint-content="Hint content 1"
           :balloon="{header: 'header', body: 'body', footer: 'footer'}"
           :icon="{color: 'green'}"
           cluster-name="1"

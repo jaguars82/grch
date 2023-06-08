@@ -65,10 +65,10 @@ $config = [
                 'offer/<id>' => 'offer/view',
             ],
         ],
-	'authManager' => [
+	    'authManager' => [
             'class' => 'yii\rbac\DbManager',
         ],
-	'db' => $db,
+	    'db' => $db,
         'formatter' => [
             'class' => 'app\components\Formatter',
             'numberFormatterSymbols' => [
@@ -106,7 +106,7 @@ if (YII_ENV_DEV) {
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
         // uncomment the following to add your IP if you are not connecting from localhost.
-        //'allowedIPs' => ['127.0.0.1', '::1'],
+        'allowedIPs' => ['127.0.0.1', '::1', '95.32.*.*'],
     ];
 }
 
