@@ -54,14 +54,16 @@ class ApplicationController extends Controller
     {
         $query = Application::find()->where(['is_active' => 1]);
         
-        if (\Yii::$app->user->can('developer_repres')) {
+        //if (\Yii::$app->user->can('developer_repres')) {
+        if (\Yii::$app->user->identity->role === 'developer_repres') {
             $query->andWhere(['developer_id' => \Yii::$app->user->identity->developer_id]);
         } 
 
-        if (\Yii::$app->user->can('agent') || \Yii::$app->user->can('manager')) {
+        //if (\Yii::$app->user->can('agent') || \Yii::$app->user->can('manager')) {
+        if (\Yii::$app->user->identity->role === 'agent' || \Yii::$app->user->identity->role === 'manager') {
             $query->andWhere(['applicant_id' => \Yii::$app->user->id]);
         }
-        
+            
         // get the total number of applications
         $count = $query->count();
 
