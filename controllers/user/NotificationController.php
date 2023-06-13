@@ -9,6 +9,7 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use tebe\inertia\web\Controller;
 use yii\helpers\ArrayHelper;
+use yii\data\Pagination;
 
 class NotificationController extends Controller
 {
@@ -42,17 +43,35 @@ class NotificationController extends Controller
 
     public function actionIndex()
     {
-        $model = new Notification();
-
+        $query = Notification::find();
         if (\Yii::$app->user->can('admin')) {
-            $notifications = $model->notificationsForAdmin;    
+            $query->andWhere(['recipient_group' => 'admin']);    
         } else {
-            $notifications = $model->getNotificationsForUser(\Yii::$app->user->id)->all();
+            $query->andWhere(['recipient_id' => \Yii::$app->user->id]);
         }
+
+        // get the total number of notifications
+        $count = $query->count();
+
+        // create a pagination object with the total count
+        $pagination = new Pagination(['totalCount' => $count]);
+
+        if (!empty(\Yii::$app->request->get('psize'))) {
+            $pagination->setPageSize(\Yii::$app->request->get('psize'));
+        }
+
+        $notifications = $query
+            ->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->orderBy(['created_at' => SORT_DESC])
+            ->all();
 
         return $this->inertia('User/Notification/Index', [
             'user' => \Yii::$app->user->identity,
             'notifications' => ArrayHelper::toArray($notifications),
+            'totalRows' => $count,
+            'page' => $pagination->page,
+            'psize' => $pagination->pageSize,
         ]);
     }
 

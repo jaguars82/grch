@@ -30,13 +30,13 @@
 
           <loading v-if="loading" size="md" text="Загрузка данных" />
           <q-table
-            class="no-shadow"
+            class="no-shadow datatable"
             v-else
             :rows="rows"
             :columns="columns"
-            :pagination="{ rowsPerPage: 255 }"
+            v-model:pagination="pagination"
+            @request="onRequest"
             row-key="id"
-            hide-bottom
             bordered
           >
             <template v-slot:body="props">
@@ -91,6 +91,9 @@ export default {
   props: {
     commercials: Array,
     events: Array,
+    totalRows: String,
+    page: Number,
+    psize: Number,
   },
   setup(props) {
       const breadcrumbs = ref([
@@ -120,6 +123,12 @@ export default {
       },
     ])
 
+    const pagination = ref({
+      page: props.page + 1,
+      rowsPerPage: props.psize,
+      rowsNumber: props.totalRows
+    })
+
     const loading = ref(false)
 
     const date = ref(null)
@@ -147,9 +156,17 @@ export default {
       return processedRows
     })
 
+    const onRequest = (e) => {
+      loading.value = true
+      Inertia.get(`/user/commercial/index`, { page: e.pagination.page, psize: e.pagination.rowsPerPage }, { preserveScroll: true })
+      Inertia.on('finish', (event) => {
+        loading.value = false
+      })
+    }
+
     const onDateSelect = function() {
       loading.value = true
-      Inertia.post(`/user/commercial/index`, { operation: 'selectByDate', ondate: date.value })
+      Inertia.get(`/user/commercial/index`, { operation: 'selectByDate', ondate: date.value, page: pagination.value.page, psize: pagination.value.rowsPerPage }, { preserveState: true, preserveScroll: true })
       Inertia.on('finish', (event) => {
         loading.value = false
       })
@@ -188,7 +205,28 @@ export default {
       setToday()
     })
 
-    return { breadcrumbs, loading, date, columns, rows, onDateSelect, onDateReset, moveToArchive }
+    return { breadcrumbs, loading, date, columns, rows, pagination, onRequest, onDateSelect, onDateReset, moveToArchive }
   },
 }
 </script>
+
+<style scoped>
+.datatable {
+  max-width: 100% !important;
+}
+	
+.datatable .q-table {
+  max-width: 100% !important;
+}
+	
+.datatable td {
+	white-space: normal !important;
+	word-wrap: normal !important;
+	hyphens: manual;
+}
+
+.datatable th {
+  text-align: center !important;
+}
+
+</style>

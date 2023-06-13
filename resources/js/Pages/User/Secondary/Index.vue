@@ -172,11 +172,7 @@ export default ({
     const loading = ref(false)
 
     const pagination = ref({
-      //sortBy: 'desc',
-      //descending: false,
       page: props.page + 1,
-      //page: 1,
-      // rowsPerPage: 20,
       rowsPerPage: props.psize,
       rowsNumber: props.totalRows
     })
@@ -232,7 +228,6 @@ export default ({
     emitter.on('toggle-grid-table', (e) => appsGridView.value = e)*/
 
     const onRequest = (e) => {
-      // console.log(e.pagination.page)
       Inertia.get(`/user/secondary/index`, { page: e.pagination.page, psize: e.pagination.rowsPerPage }, { preserveScroll: true })
     }
 

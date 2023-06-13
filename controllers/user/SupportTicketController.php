@@ -117,6 +117,7 @@ class SupportTicketController extends Controller
                         $ticket->has_unread_messages_from_author = 1;
                     }
                     $ticket->save();
+                    $ticket->touch('updated_at');
         
                     $transaction->commit();
                 } catch(\Exception $e) {

@@ -8,8 +8,8 @@ use app\models\SupportTicket;
 use app\models\User;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-// use yii\web\Controller;
 use tebe\inertia\web\Controller;
+use yii\data\Pagination;
 use yii\helpers\ArrayHelper;
 
 class SupportController extends Controller
@@ -43,10 +43,32 @@ class SupportController extends Controller
 
     public function actionIndex()
     {
-        $model = new SupportTicket();
+        $query = SupportTicket::find(['<>', 'is_archived', 1]);
+
+        if (\Yii::$app->user->identity->role === 'agent' || \Yii::$app->user->identity->role === 'manager' || \Yii::$app->user->identity->role === 'developer_repres') {
+            $query->andWhere(['author_id' => \Yii::$app->user->id]);
+        }
+
+        // get the total number of support tickets
+        $count = $query->count();
+
+        // create a pagination object with the total count
+        $pagination = new Pagination(['totalCount' => $count]);
+
+        if (!empty(\Yii::$app->request->get('psize'))) {
+            $pagination->setPageSize(\Yii::$app->request->get('psize'));
+        }
+
+        $tickets = $query
+            ->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->orderBy(['updated_at' => SORT_DESC])
+            ->all();
+        
+        //$model = new SupportTicket();
 
         if(\Yii::$app->user->can('admin')) {
-            $tickets = $model->getAllTickets();
+            //$tickets = $model->getAllTickets();
 
             foreach($tickets as $key => $ticket) {
                 $ticket->setUnreadFromAuthor();
@@ -57,23 +79,21 @@ class SupportController extends Controller
                 $ticket->setAuthorAgency();
             }            
         } else {
-            $tickets = $model->getTicketsByAuthor(\Yii::$app->user->id);
+            //$tickets = $model->getTicketsByAuthor(\Yii::$app->user->id);
 
             foreach($tickets as $key => $ticket) {
                 $ticket->setUnreadFromAdmin();
             }
         }
         
-        /*return $this->render('index', [
-            'user' => \Yii::$app->user->identity,
-            'tickets' => $tickets
-        ]);*/
-
         //echo '<pre>'; var_dump($tickets); echo '</pre>'; die();
 
         return $this->inertia('User/Support/Index', [
             'user' => \Yii::$app->user->identity,
-            'tickets' => ArrayHelper::toArray($tickets)
+            'tickets' => ArrayHelper::toArray($tickets),
+            'totalRows' => $count,
+            'page' => $pagination->page,
+            'psize' => $pagination->pageSize,
         ]);
     }
 }
