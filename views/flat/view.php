@@ -289,7 +289,6 @@ $this->params['breadcrumbs'][] = $model->number;
                     </p>
                 <?php endif; ?>
                 <?php if ($model->is_reserved != 1
-                    && $model->newbuilding->newbuildingComplex->id != 356 // kostyl fo "Galileo", Krays
                     && $model->status == 0
                     && $model->developer->hasRepresentative()): ?>
                     <?= Html::a('Забронировать',
