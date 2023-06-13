@@ -16,6 +16,7 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use tebe\inertia\web\Controller;
 use yii\helpers\ArrayHelper;
+use yii\data\Pagination;
 use kartik\mpdf\Pdf;
 use yii\web\NotFoundHttpException;
 
@@ -116,16 +117,6 @@ class CommercialController extends Controller
         if(\Yii::$app->request->isPost) {
 
             switch(\Yii::$app->request->post('operation')) {
-                case 'selectByDate':
-                    $targetDate = str_ireplace("/", "-", \Yii::$app->request->post('ondate'));
-                    $commercialsOnDate = (new Commercial())->find()
-                        ->where(['initiator_id' => \Yii::$app->user->id])
-                        ->andWhere(['active' => 1])
-                        ->andWhere(['>=', 'created_at', $targetDate.'  00:00:00'])
-                        ->andWhere(['<=', 'created_at', $targetDate.'  23:59:59'])
-                        ->orderBy(['created_at' => SORT_DESC])
-                        ->all();
-                    break;
                 case 'moveToArchive':
                     $commercialToArchive = (new Commercial())->findOne(\Yii::$app->request->post('id'));
                     $commercialToArchive->active = 0;
@@ -136,21 +127,32 @@ class CommercialController extends Controller
             }
         }
 
-        $commercials = (new Commercial())->find()
+        $query = Commercial::find()
             ->where(['initiator_id' => \Yii::$app->user->id])
-            ->andWhere(['active' => 1])
+            ->andWhere(['active' => 1]);
+
+        // filter by date
+        if (\Yii::$app->request->get('operation') === 'selectByDate') {
+            $targetDate = str_ireplace("/", "-", \Yii::$app->request->get('ondate'));
+            $query->andWhere(['>=', 'created_at', $targetDate.'  00:00:00'])->andWhere(['<=', 'created_at', $targetDate.'  23:59:59']);
+        }
+
+        // get the total number of advertisements
+        $count = $query->count();
+
+        // create a pagination object with the total count
+        $pagination = new Pagination(['totalCount' => $count]);
+
+        if (!empty(\Yii::$app->request->get('psize'))) {
+            $pagination->setPageSize(\Yii::$app->request->get('psize'));
+        }
+
+        // limit the query using the pagination and retrieve the commercials
+        $commercials = $query
+            ->offset($pagination->offset)
+            ->limit($pagination->limit)
             ->orderBy(['created_at' => SORT_DESC])
             ->all();
-
-        // create array with all commercial dates (for calendar)
-        $calendarEvents = array();
-        foreach ($commercials as $commercial) {
-            array_push($calendarEvents, date("Y/m/d", strtotime($commercial->created_at)));
-        }
-
-        if(isset($commercialsOnDate)) {
-            $commercials = $commercialsOnDate;
-        }
 
         $commercialsArray = array();
         foreach ($commercials as $commercial) {
@@ -166,10 +168,24 @@ class CommercialController extends Controller
             array_push($commercialsArray, $commercialItem);
         }
 
+        // all the dates with active commercials
+        $calendarEvents = array();
+        $queryEvents = Commercial::find()
+            ->select('created_at')
+            ->where(['initiator_id' => \Yii::$app->user->id])
+            ->andWhere(['active' => 1])
+            ->all();
+        foreach ($queryEvents as $event) {
+            array_push($calendarEvents, date("Y/m/d", strtotime($event->created_at)));
+        }
+
         return $this->inertia('User/Commercial/Index', [
             'user' => \Yii::$app->user->identity,
             'commercials' => $commercialsArray,
             'events' => $calendarEvents,
+            'totalRows' => $count,
+            'page' => $pagination->page,
+            'psize' => $pagination->pageSize,
         ]);
     }
 

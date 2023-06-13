@@ -17,6 +17,7 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use tebe\inertia\web\Controller;
 use yii\helpers\ArrayHelper;
+use yii\data\Pagination;
 
 class ApplicationController extends Controller
 {
@@ -51,15 +52,32 @@ class ApplicationController extends Controller
 
     public function actionIndex()
     {
-        $model = new Application();
+        $query = Application::find()->where(['is_active' => 1]);
+        
+        if (\Yii::$app->user->can('developer_repres')) {
+            $query->andWhere(['developer_id' => \Yii::$app->user->identity->developer_id]);
+        } 
 
-        if (\Yii::$app->user->can('admin')) {
-            $applications = $model->activeApplications;    
-        } elseif (\Yii::$app->user->can('developer_repres')) {
-            $applications = $model->getApplicationsForDeveloper(\Yii::$app->user->identity->developer_id)->all();
-        } elseif (\Yii::$app->user->can('agent') || \Yii::$app->user->can('manager')) {
-            $applications = $model->getApplicationsByAuthor(\Yii::$app->user->id)->all();
+        if (\Yii::$app->user->can('agent') || \Yii::$app->user->can('manager')) {
+            $query->andWhere(['applicant_id' => \Yii::$app->user->id]);
         }
+        
+        // get the total number of applications
+        $count = $query->count();
+
+        // create a pagination object with the total count
+        $pagination = new Pagination(['totalCount' => $count]);
+
+        if (!empty(\Yii::$app->request->get('psize'))) {
+            $pagination->setPageSize(\Yii::$app->request->get('psize'));
+        }
+
+        // limit the query using the pagination and retrieve the applications
+        $applications = $query
+            ->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->orderBy(['created_at' => SORT_DESC])
+            ->all();
 
         /**
          * Prepare applications array for Vue component
@@ -78,7 +96,10 @@ class ApplicationController extends Controller
         return $this->inertia('User/Application/Index', [
             'user' => \Yii::$app->user->identity,
             'applications' => $applications_array,
-            'statusMap' => Application::$status
+            'statusMap' => Application::$status,
+            'totalRows' => $count,
+            'page' => $pagination->page,
+            'psize' => $pagination->pageSize,
         ]);
     }
 

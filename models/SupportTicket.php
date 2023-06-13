@@ -222,11 +222,6 @@ class SupportTicket extends ActiveRecord
      */
     public function getMessages()
     {
-        /*$messages = $this->hasMany(SupportMessage::className(), ['ticket_id' => 'id']);
-        foreach($messages as $key => $message) {
-            $messages[$key]['author_name'] = 'jkdkdk';
-        }
-        return $messages; */
         return $this->hasMany(SupportMessage::className(), ['ticket_id' => 'id']);
     }
 

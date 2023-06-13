@@ -14,16 +14,15 @@
           </div>
 
           <GridTableToggle :defaultMode="ticketsGridView" />
-
           <q-table
-            class="q-mt-md no-shadow"
+            class="q-mt-md no-shadow datatable"
             bordered
             :grid="ticketsGridView"
             :columns="columns"
             :rows="rows"
-            :pagination="{ rowsPerPage: 255 }"
+            v-model:pagination="pagination"
+            @request="onRequest"
             row-key="ticket_number"
-            hide-bottom
           >
             <template v-slot:body="props">
               <q-tr :props="props">
@@ -31,7 +30,8 @@
                   {{ props.row.ticket_number }}
                 </q-td>
                 <q-td key="title" :props="props">
-                  {{ props.row.title }}
+                  <q-icon color="orange" class="q-pr-xs" v-if="props.row.has_unread_mess" name="mark_chat_unread"></q-icon>
+                  <span :class="{'text-strong': props.row.has_unread_mess}">{{ props.row.title }}</span>
                 </q-td>
                 <q-td key="created_at" :props="props">
                   {{ props.row.created_at }}
@@ -68,6 +68,7 @@
 
 <script>
 import { ref, computed } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
 import ProfileLayout from '@/Layouts/ProfileLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
@@ -84,7 +85,10 @@ export default ({
     GridTableToggle
   },
   props: {
-    tickets: Array
+    tickets: Array,
+    totalRows: String,
+    page: Number,
+    psize: Number,
   },
   setup(props) {
 
@@ -117,14 +121,20 @@ export default ({
       },
     ])
 
+    const pagination = ref({
+      page: props.page + 1,
+      rowsPerPage: props.psize,
+      rowsNumber: props.totalRows
+    })
+
+    const loading = ref(false)
+
     const columns = [
       { name: 'ticket_number', required: true, align: 'left', label: 'Номер', field: 'ticket_number', sortable: true },
       { name: 'title', align: 'left', label: 'Тема', field: 'title', sortable: false },
       { name: 'created_at', align: 'center', label: 'Создан', field: 'created_at', sortable: true },
       { name: 'link', align: 'center', label: '', field: 'link', sortable: false },
     ]
-
-    //const rows = props.tickets
 
     const rows = computed(() => {
       const processedRows = []
@@ -134,7 +144,8 @@ export default ({
           ticket_number: row.ticket_number,
           title: row.title,
           created_at: asDateTime(row.created_at),
-          link: `/user/support-ticket/view?id=${row.id}`
+          link: `/user/support-ticket/view?id=${row.id}`,
+          has_unread_mess: (user.value.role === 'admin' && row.has_unread_messages_from_author) || (user.value.role !== 'admin' && row.has_unread_messages_from_support) ? true : false
         }
         processedRows.push(processedItem)
       });
@@ -146,7 +157,36 @@ export default ({
     const emitter = useEmitter()
     emitter.on('toggle-grid-table', (e) => ticketsGridView.value = e)
 
-    return { user, breadcrumbs, columns, rows, asDateTime, ticketsGridView }
+    const onRequest = (e) => {
+      loading.value = true
+      Inertia.get(`/user/support/index`, { page: e.pagination.page, psize: e.pagination.rowsPerPage }, { preserveScroll: true })
+      Inertia.on('finish', (event) => {
+        loading.value = false
+      })
+    }
+
+    return { user, breadcrumbs, columns, rows, asDateTime, ticketsGridView, loading, pagination, onRequest }
   },
 })
 </script>
+
+<style scoped>
+.datatable {
+  max-width: 100% !important;
+}
+	
+.datatable .q-table {
+  max-width: 100% !important;
+}
+	
+.datatable td {
+	white-space: normal !important;
+	word-wrap: normal !important;
+	hyphens: manual;
+}
+
+.datatable th {
+  text-align: center !important;
+}
+
+</style>

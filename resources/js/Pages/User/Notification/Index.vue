@@ -9,14 +9,14 @@
 
           <div class="q-pt-md">
             <q-table
-              class="no-shadow"
+              class="no-shadow datatable"
               bordered
               :rows="rows"
               :columns="columns"
-              :pagination="{ rowsPerPage: 255 }"
+              v-model:pagination="pagination"
+              @request="onRequest"
               row-key="id"
               hide-header
-              hide-bottom
             >
               <template v-slot:body="props">
                 <q-tr :props="props">
@@ -48,6 +48,7 @@
 
 <script>
 import { ref, computed } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
 import ProfileLayout from '@/Layouts/ProfileLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
@@ -61,6 +62,9 @@ export default ({
   },
   props: {
     notifications: Array,
+    totalRows: String,
+    page: Number,
+    psize: Number,
   },
   setup(props) {
     const breadcrumbs = ref([
@@ -90,6 +94,14 @@ export default ({
       },
     ])
 
+    const pagination = ref({
+      page: props.page + 1,
+      rowsPerPage: props.psize,
+      rowsNumber: props.totalRows
+    })
+
+    const loading = ref(false)
+
     const columns = [
       { name: 'topic', align: 'left', label: 'Тема', field: 'topic', sortable: true },
       { name: 'created_at', required: true, align: 'center', label: 'Дата', field: 'created_at', sortable: true },
@@ -112,7 +124,36 @@ export default ({
       return processedRows
     })
 
-    return { breadcrumbs, columns, rows }
+    const onRequest = (e) => {
+      loading.value = true
+      Inertia.get(`/user/notification/index`, { page: e.pagination.page, psize: e.pagination.rowsPerPage }, { preserveScroll: true })
+      Inertia.on('finish', (event) => {
+        loading.value = false
+      })
+    }
+
+    return { breadcrumbs, columns, rows, loading, pagination, onRequest }
   },
 })
 </script>
+
+<style scoped>
+.datatable {
+  max-width: 100% !important;
+}
+	
+.datatable .q-table {
+  max-width: 100% !important;
+}
+	
+.datatable td {
+	white-space: normal !important;
+	word-wrap: normal !important;
+	hyphens: manual;
+}
+
+.datatable th {
+  text-align: center !important;
+}
+
+</style>

@@ -70,7 +70,7 @@ export default ({
     Loading
   },
   props: {
-    ticket: Array,
+    ticket: Object,
     messages: Array
   },
   setup(props) {
