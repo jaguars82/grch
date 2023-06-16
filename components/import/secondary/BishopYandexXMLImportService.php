@@ -41,6 +41,8 @@ class BishopYandexXMLImportService implements SecondaryImportServiceInterface
     private function parseData($data)
     {
         $streetTypesDB = StreetType::getAllAsList();
+        $streetTypesAliasesDB = StreetType::getAliasesAsList();
+        $streetComplexTypesDB = StreetType::getComplexTypesAsList();
         $advertisements = [];
 
         if (!isset($data->offer)) {
@@ -53,6 +55,10 @@ class BishopYandexXMLImportService implements SecondaryImportServiceInterface
             $advertisementId = (string)$advertisement['internal-id'];
 
             // try to figure out street_type_id, street name, building number
+            $addressParts = null;
+            $buildingNumber = null;
+            $streetName = null;
+            $streetTypeId = null;
             if (!empty($advertisement->location->address)) {
                 $addressParts = explode(', ', $advertisement->location->address);
                 $addressPartsLength = count($addressParts);
@@ -63,18 +69,66 @@ class BishopYandexXMLImportService implements SecondaryImportServiceInterface
                     $streetParts = explode(' ', $addressParts[0]);
                     $streetPartsLength = count($streetParts);
                     if ($streetPartsLength > 1) {
+                        // try to figure out street name & type by full street type name (from StreetType table) and
                         foreach ($streetTypesDB as $typeId => $streetType) {
-                            $streetPrefixCorrection = 'no_street_prefix';
+                            // - last array member (it works in case when street-type goes at the end of the address string)
                             if (mb_strtolower($streetType) == mb_strtolower($streetParts[array_key_last($streetParts)])) {
+                                $streetPrefixCorrection = 'no_street_prefix';
                                 $streetTypeId = $typeId;
                                 $streetPrefixCorrection = mb_strtolower($streetParts[array_key_last($streetParts)]);
                                 array_pop($streetParts);
                                 $streetName = str_replace($streetPrefixCorrection.' ', '', implode(' ', $streetParts));
+                                unset($streetPrefixCorrection);
                             }
-                            
+                            // - first array member (it works in case when street-type goes at the beginning of the address string)
+                            if ($streetTypeId === null && mb_strtolower($streetType) == mb_strtolower($streetParts[array_key_first($streetParts)])) {
+                                $streetPostfixCorrection = 'no_street_postfix';
+                                $streetTypeId = $typeId;
+                                $streetPostfixCorrection = mb_strtolower($streetParts[array_key_first($streetParts)]);
+                                array_shift($streetParts);
+                                $streetName = str_replace(' '.$streetPostfixCorrection, '', implode(' ', $streetParts));
+                                unset($streetPostfixCorrection);
+                            }
+                        }
+                        // if we still don't have street type id
+                        if ($streetTypeId === null) {
+                            // try to figure out street name & type by street type aliases (from StreetType table) and
+                            foreach ($streetTypesAliasesDB as $typeId => $streetAliases) {
+                                $aliasesArr = explode(', ', $streetAliases);
+                                // - last array member (it works in case when street-type goes at the end of the address string)
+                                if (in_array($streetParts[array_key_last($streetParts)], $aliasesArr)) {
+                                    $streetPrefixCorrection = 'no_street_prefix';
+                                    $streetTypeId = $typeId;
+                                    $streetPrefixCorrection = mb_strtolower($streetParts[array_key_last($streetParts)]);
+                                    array_pop($streetParts);
+                                    $streetName = str_replace($streetPrefixCorrection.' ', '', implode(' ', $streetParts));
+                                    unset($streetPrefixCorrection);
+                                }
+                                // - first array member (it works in case when street-type goes at the beginning of the address string)
+                                if ($streetTypeId === null && in_array($streetParts[array_key_first($streetParts)], $aliasesArr)) {
+                                    $streetPostfixCorrection = 'no_street_postfix';
+                                    $streetTypeId = $typeId;
+                                    $streetPostfixCorrection = mb_strtolower($streetParts[array_key_first($streetParts)]);
+                                    array_shift($streetParts);
+                                    $streetName = str_replace(' '.$streetPostfixCorrection, '', implode(' ', $streetParts));
+                                    unset($streetPostfixCorrection);
+                                }
+                                // reset aliases array
+                                $aliasesArr = [];
+                            }
                         }
                     } elseif ($streetPartsLength === 1) {
                         $streetName = $streetParts[0];
+                        $streetTypeId = array_search('улица', array_map('mb_strtolower', $streetTypesDB));
+                    }
+                }
+                // if we still dont't have street type id - try to check for complex street type (contains more then 1 word)
+                if ($streetTypeId === null) {
+                    foreach ($streetComplexTypesDB as $typeId => $streetType) {
+                        if (strpos(mb_strtolower($addressParts[0]), mb_strtolower($streetType))) {
+                            $streetTypeId = $typeId;
+                            $streetName = trim(str_ireplace($streetType, '', $addressParts[0]));
+                        }
                     }
                 }
             }
@@ -102,30 +156,27 @@ class BishopYandexXMLImportService implements SecondaryImportServiceInterface
                     case 'лоджия':
                         $loggia_amount = 1;
                         break;
-                    case '2 лоджии':
-                        $loggia_amount = 2;
-                        break;
-                    case '2 балкона':
-                        $balcony_amount = 2;
-                        break;
-                    /*default:
-                        $balconyParts = explode(' ', $advertisement->balcony);
-                        if (count($balconyParts) === 2) {
-                            if ($amount = preg_match('/^-?\d+$/', $balconyParts[0])) {
-                                switch ($balconyParts[1]) {
-                                    case 'лоджии':
-                                    case 'лоджий':
-                                    case 'лоджия':
-                                        $loggia_amount = (int)$amount;
-                                        break;
-                                    case 'балкона':
-                                    case 'балконов':
-                                    case 'балкон':
-                                        $balcony_amount = (int)$amount;
-                                        break;
+                    default:
+                        if (!empty($advertisement->balcony)) {
+                            $balconyParts = explode(' ', $advertisement->balcony);
+                            if (count($balconyParts) === 2) {
+                                $amount = $balconyParts[0];
+                                if (preg_match('/^-?\d+$/', $amount)) {
+                                    switch ($balconyParts[1]) {
+                                        case 'лоджии':
+                                        case 'лоджий':
+                                        case 'лоджия':
+                                            $loggia_amount = (int)$amount;
+                                            break;
+                                        case 'балкона':
+                                        case 'балконов':
+                                        case 'балкон':
+                                            $balcony_amount = (int)$amount;
+                                            break;
+                                    }
                                 }
                             }
-                        }*/
+                        }
                 }
             }
 
@@ -141,6 +192,7 @@ class BishopYandexXMLImportService implements SecondaryImportServiceInterface
                 'photo' => !empty($advertisement->{'sales-agent'}->photo) ? (string)$advertisement->{'sales-agent'}->photo : '',
             ];
 
+            // window view params
             $windowviews = array();
             $viewYard = false;
             $viewStreet = false;
@@ -158,6 +210,7 @@ class BishopYandexXMLImportService implements SecondaryImportServiceInterface
                 }
             }
 
+            // parking params
             $parkings = array();
             $parkingGroumd = false;
             $parkingUndgr = false;
@@ -192,6 +245,7 @@ class BishopYandexXMLImportService implements SecondaryImportServiceInterface
                 array_push($images, $imageRow);
             }
 
+            // add the advertisement to export array
             $advertisements[$advertisementId] = [
                 'external_id' => $advertisementId,
                 'deal_type_string' => !empty($advertisement->type) ? (string)$advertisement->type : '',
@@ -269,8 +323,6 @@ class BishopYandexXMLImportService implements SecondaryImportServiceInterface
     private function findDealTypeCode($dealName)
     {
         if (empty($dealName)) return 0;
-        //if (strpos(mb_strtolower($dealName), 'продажа')) return 1;
-        //if (strpos(mb_strtolower($dealName), 'аренда')) return 2;
         if ((mb_strtolower($dealName)) === 'продажа') return 1;
         if ((mb_strtolower($dealName)) === 'аренда') return 2;
     }

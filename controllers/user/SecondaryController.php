@@ -154,6 +154,12 @@ class SecondaryController extends Controller
                         //return $this->redirectBackWhenException($e);
                     }
                     break;
+                case 'unsetStatus':
+                    $advertisement = SecondaryAdvertisement::findOne(\Yii::$app->request->post('secondary_advertisement_id'));
+                    $statusLabel = StatusLabel::findOne(\Yii::$app->request->post('status_label_id'));
+                    $advertisement->unlink('statusLabels', $statusLabel, true);
+                    $statusLabel->delete();
+                    break;
                 case 'deleteAdd':
                     $transaction = \Yii::$app->db->beginTransaction();
                     $advertisement = SecondaryAdvertisement::findOne(\Yii::$app->request->post('id'));

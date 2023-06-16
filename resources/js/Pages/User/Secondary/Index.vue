@@ -55,7 +55,14 @@
                     </q-td>
                     <q-td key="status" :props="props">
                       <template v-if="props.row.status">
-                        <q-chip color="primary" class="text-white" v-for="status of props.row.status">{{ status.type.name }}</q-chip>
+                        <q-chip color="primary" class="text-white" v-for="status of props.row.status">
+                          {{ status.type.name }}
+                          <q-icon class="q-pl-xs cursor-pointer" name="close" @click="unsetStatus(props.row.id, status.id)">
+                            <q-tooltip>
+                              Удалить статус
+                            </q-tooltip>
+                          </q-icon>
+                        </q-chip>
                       </template>
                       <template v-else>
                         <q-btn unelevated size="xs" label="Установить статус">
@@ -76,9 +83,10 @@
                                   bordered
                                   mask="YYYY-MM-DD"
                                   v-model="statusLabelForm.date"
+                                  :options="dateOptions"
                                   minimal
                                 />
-                                <q-btn unelevated color="primary" size="md" label="Сохранить статус" @click="saveAddStatus(props.row.id)" v-close-popup />
+                                <q-btn unelevated color="primary" size="md" label="Сохранить статус" :disable="canSaveAddStatus" @click="saveAddStatus(props.row.id)" v-close-popup />
                               </div>
                           </q-menu>
                         </q-btn>
@@ -119,6 +127,7 @@
 <script>
 import { ref, computed } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
+import { date } from 'quasar'
 import { asDateTime, asNumberString, asFloor, asArea, asCurrency, asPricePerArea } from '@/helpers/formatter'
 import ProfileLayout from '@/Layouts/ProfileLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
@@ -239,11 +248,53 @@ export default ({
       return options
     })
 
+    function dateOptions(d) {
+      return d >= date.formatDate(Date.now(), 'YYYY/MM/DD')
+    }
+
     const statusLabelForm = ref({
       status: '',
       statusTermFlag: false,
       date: null
     })
+
+    const clearStatusLabelForm = () => {
+      statusLabelForm.value = {
+        status: '',
+        statusTermFlag: false,
+        date: null
+      }
+    }
+    
+    const canSaveAddStatus = computed(() => {
+      let result = false
+      if (!statusLabelForm.value.status) result = true
+      if (statusLabelForm.value.statusTermFlag && !statusLabelForm.value.date) result = true
+      return result
+    })
+
+    const saveAddStatus = (addId) => {
+      const fields = {
+        operation: 'setStatus',
+        secondary_advertisement_id: addId,
+        label_type_id: statusLabelForm.value.status.value,
+        has_expiration_date: statusLabelForm.value.statusTermFlag,
+        expires_at: statusLabelForm.value.date
+      }
+      Inertia.post('/user/secondary/index', fields, { preserveScroll: true })
+      Inertia.on('finish', (e) => {
+        clearStatusLabelForm()
+      })
+    }
+
+    const unsetStatus = (addId, statusId) => {
+      const fields = {
+        operation: 'unsetStatus',
+        secondary_advertisement_id: addId,
+        status_label_id: statusId
+      }
+      Inertia.post('/user/secondary/index', fields, { preserveScroll: true })
+    }
 
     const deleteFormDialog = ref(false)
     const addToDeleteId = ref(null)
@@ -268,24 +319,11 @@ export default ({
       Inertia.post('/user/secondary/index', fields)
     }
 
-    const saveAddStatus = (addId) => {
-      // console.log(addId)
-      const fields = {
-        operation: 'setStatus',
-        secondary_advertisement_id: addId,
-        label_type_id: statusLabelForm.value.status.value,
-        has_expiration_date: statusLabelForm.value.statusTermFlag,
-        expires_at: statusLabelForm.value.date
-      }
-      // console.log(fields)
-      Inertia.post('/user/secondary/index', fields)
-    }
-
     const createAdd = () => {
       Inertia.get('/user/secondary/create')
     }
 
-    return { breadcrumbs, pagination, columns, statusOptions, statusLabelForm, createAdd/*appsGridView*/, rows, saveAddStatus,openDeleteForm, deleteAdd, closeDeleteDialog, deleteFormDialog, addToDeleteId, onRequest }
+    return { breadcrumbs, pagination, columns, statusOptions, dateOptions, statusLabelForm, canSaveAddStatus, createAdd/*appsGridView*/, rows, saveAddStatus, unsetStatus, openDeleteForm, deleteAdd, closeDeleteDialog, deleteFormDialog, addToDeleteId, onRequest }
   },
 })
 </script>

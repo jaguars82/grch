@@ -28,7 +28,8 @@ class StreetType extends \yii\db\ActiveRecord
         return [
             [['name', 'short_name'], 'required'],
             [['name'], 'unique'],
-            [['name', 'short_name'], 'string', 'max' => 200]
+            [['name', 'short_name'], 'string', 'max' => 200],
+            [['aliases'], 'string', 'max' => 255],
         ];
     }
 
@@ -39,7 +40,8 @@ class StreetType extends \yii\db\ActiveRecord
     {
         return [
             'name' => 'Тип улицы',
-            'short_name' => 'Короткая запись'
+            'short_name' => 'Короткая запись',
+            'aliases' => 'Варианты',
         ];
     }
 
@@ -64,5 +66,52 @@ class StreetType extends \yii\db\ActiveRecord
         }
 
         return $streetTypes;
+    }
+    
+    /**
+     * Get all street type aliases in array form
+     * 
+     * @return array
+     */
+    public static function getAliasesAsList()
+    {
+        $result = self::find()
+            ->orderBy(['id' => SORT_DESC])
+            ->indexBy('id')
+            ->asArray()
+            ->all();
+        
+        $streetAliases = [];
+        
+        foreach ($result as $key => $streetType) {
+            $streetAliases[$key] = $streetType['aliases'];
+        }
+
+        return $streetAliases;
+    }
+
+    /**
+     * Get street complex types (containing more then 1 word) in array form
+     * 
+     * @return array
+     */
+    public static function getComplexTypesAsList()
+    {
+        $result = self::find()
+            ->orderBy(['id' => SORT_DESC])
+            ->indexBy('id')
+            ->asArray()
+            ->all();
+        
+        $streetComplexTypes = [];
+        
+        foreach ($result as $key => $streetType) {
+            $parts = explode(' ', $streetType['name']);
+            if (count($parts) > 1) {
+               $streetComplexTypes[$key] = $streetType['name']; 
+            }
+        }
+
+        return $streetComplexTypes;
     }
 }
