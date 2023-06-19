@@ -186,6 +186,7 @@ class Agency extends \app\models\Agency
 
                 // try to figure out category ID
                 $categoryId = 0;
+                $categoryByNameTry = '';
                 if (!empty($advertisementData['category'])) {
                     $categoryByNameTry = SecondaryCategory::getCategoryByName($advertisementData['category']);
                     if (!empty($categoryByNameTry)) {
@@ -195,6 +196,7 @@ class Agency extends \app\models\Agency
 
                 // try to figure out property type ID
                 $propertyID = 0;
+                $propertyByNameTry = '';
                 if (!empty($advertisementData['property_type_string'])) {
                     $propertyByNameTry = SecondaryPropertyType::getPropertyTypeByName($advertisementData['property_type_string']);
                     if (!empty($propertyByNameTry)) {
@@ -204,6 +206,7 @@ class Agency extends \app\models\Agency
 
                 // try to figure out building series ID
                 $seriesID = 0;
+                $seriesByNameTry = '';
                 if (!empty($advertisementData['building_series'])) {
                     $seriesByNameTry = SecondaryBuildingSeries::getBuildingSeriesByName($advertisementData['building_series']);
                     if (!empty($seriesByNameTry)) {
@@ -213,6 +216,7 @@ class Agency extends \app\models\Agency
 
                 // try to figure out renovation ID
                 $renovationID = 0;
+                $renovationByNameTry = '';
                 if (!empty($advertisementData['renovation'])) {
                     $renovationByNameTry = SecondaryRenovation::getRenovationByName($advertisementData['renovation']);
                     if (!empty($renovationByNameTry)) {
@@ -222,6 +226,7 @@ class Agency extends \app\models\Agency
 
                 // try to figure out material ID
                 $materialID = 0;
+                $materialByNameTry = '';
                 if (!empty($advertisementData['material'])) {
                     $materialByNameTry = BuildingMaterial::getMaterialByName($advertisementData['material']);
                     if (!empty($materialByNameTry)) {
@@ -231,6 +236,7 @@ class Agency extends \app\models\Agency
 
                 // try to figure out region ID
                 $regionID = 0;
+                $regionByNameTry = '';
                 if (!empty($advertisementData['location']['region'])) {
                     $regionByNameTry = Region::getRegionByName($advertisementData['location']['region']);
                     if (!empty($regionByNameTry)) {
@@ -240,10 +246,12 @@ class Agency extends \app\models\Agency
 
                 // try to figure out region district ID
                 $regionDistrictID = 0;
+                $regionNameParts = [];
+                $districtTry = '';
                 if (!empty($advertisementData['location']['district'])) {
                     $regionNameParts = explode(' ', $advertisementData['location']['district']);
                 }
-                if (isset($regionNameParts) && !empty($regionNameParts[0]) && !empty($regionID)) {
+                if (!empty($regionNameParts[0]) && !empty($regionID)) {
                     $districtTry = RegionDistrict::getRegionDistrictByRegionAndName($regionID, $regionNameParts[0]);
                     if (!empty($districtTry)) {
                         $regionDistrictID = $districtTry->id;
@@ -252,8 +260,9 @@ class Agency extends \app\models\Agency
 
                 // try to figure out city ID
                 $cityId = 0;
+                $cityName = '';
                 if (!empty($advertisementData['location']['locality_name'])) {
-                    $cityTypes = ['город', 'деревня', 'посёлок', 'поселок', 'село', 'хутор'];
+                    $cityTypes = ['город', 'городской округ', 'деревня', 'посёлок', 'коттеджный посёлок', 'рабочий посёлок', 'поселок', 'село', 'хутор'];
                     $cityName = $advertisementData['location']['locality_name'];
                     foreach ($cityTypes as $cityType) {
                         $cityName = str_replace(' '.$cityType, '', $cityName);
@@ -268,6 +277,8 @@ class Agency extends \app\models\Agency
 
                 // try to figure out district of a city ID
                 $districtId = 0;
+                $districtName = '';
+                $cityDistrictTry = '';
                 if (!empty($advertisementData['location']['sub_locality_name'])) {
                     $districtName = !empty($advertisementData['location']['non_admin_sub_locality_name']) ? $advertisementData['location']['non_admin_sub_locality_name'] : $advertisementData['location']['sub_locality_name'];
                     $districtTypes = ['микрорайон'];

@@ -52,7 +52,7 @@
         <q-card-section>
           <h4>Описание объекта</h4>
           <div>
-            {{ room.detail }}
+            {{ roomDetail }}
           </div>
         </q-card-section>
       </q-card>
@@ -79,14 +79,18 @@
                 <br />
               </template>
               <template v-if="advAuthor.phone">
+                <q-icon class="q-pr-xs" name="phone_enabled" />
                 <span>
                   {{ advAuthor.phone }}
                 </span>
                 <br />
               </template>
-              <span v-if="advAuthor.email">
-                {{ advAuthor.email }}
-              </span>
+              <template v-if="advAuthor.email">
+                <q-icon class="q-pr-xs" name="mail" />
+                <span>
+                  {{ advAuthor.email }}
+                </span>
+              </template>
             </div>
           </div>
         </q-card-section>
@@ -165,53 +169,6 @@
       </q-card-section>
     </q-card>
   </q-dialog>
-
-  <!--<q-card>
-    <q-card-section horizontal>
-      <q-carousel
-        v-if="room.images.length"
-        class="col-5"
-        animated
-        v-model="slide"
-        arrows
-        :navigation="false"
-        infinite
-      >
-        <q-carousel-slide
-          v-for="image of room.images"
-          :key="image.id"
-          :name="image.id"
-          :img-src="image.url"
-        />
-      </q-carousel>
-      <q-card-section class="col-7">
-        <p class="text-h4">
-          <span v-if="isFlat" class="text-capitalize">{{ roomTitle }}&nbsp;</span>
-          <span>{{ category }}</span>
-          <span v-if="roomArea">, {{ roomArea }}</span>
-          <span v-if="roomFloor">, {{ roomFloor }}</span>
-        </p>
-        <p>{{ creationDate }}</p>
-        <p>
-          <span v-if="address.city">{{ address.city }},&nbsp;</span>
-          <span v-if="address.cityDistrict">{{ address.cityDistrict }},&nbsp;</span>
-          <span v-if="address.streetHouse">{{ address.streetHouse }}</span>
-        </p>
-        <p class="text-h2 text-bold text-blue-8 q-mb-xs">{{ roomPrice }}</p>
-        <p v-if="roomPricePerMeter" class="text-grey-7">
-          {{ roomPricePerMeter }}
-        </p>
-        <div class="row justify-end items-center">
-          <div>
-            {{ advAuthor.fullName }}
-          </div>
-          <q-avatar v-if="advAuthor.photo" class="q-ml-sm">
-            <img :src="advAuthor.photo">
-          </q-avatar>
-        </div>
-      </q-card-section>
-    </q-card-section>
-  </q-card>-->
 </template>
   
 <script>
@@ -288,10 +245,13 @@ export default {
         const authorParsed = JSON.parse(props.author.info)
         fullName = authorParsed.name ? authorParsed.name : 'Имя не указано'
         photo = authorParsed.photo ? authorParsed.photo : null
-        phone = authorParsed.phone ? authorParsed.phone : null
+        phone = authorParsed.phones ? authorParsed.phones.join(', ') : null
         email = authorParsed.email ? authorParsed.email : null
       }
       return { fullName, photo, phone, email }
+    })
+    const roomDetail = computed(() => {
+      return props.room.detail.replace(/<\/?[^>]+>/gi, "")
     })
 
     const paramPairs = ref([
@@ -311,10 +271,9 @@ export default {
 
     const onImageClick = (image) => {
       imageViewer.value = true
-      console.log(image)
     }
 
-    return { slide, category, isFlat, roomTitle, roomFloor, roomArea, roomPrice, roomPricePerMeter, creationDate, address, advAuthor, yaMapsSettings, paramPairs, imageViewer, onImageClick }
+    return { slide, category, isFlat, roomTitle, roomFloor, roomArea, roomPrice, roomPricePerMeter, creationDate, address, advAuthor, roomDetail, yaMapsSettings, paramPairs, imageViewer, onImageClick }
   }
 }
 </script>
