@@ -213,7 +213,7 @@ class Agency extends \app\models\Agency
 
                 // try to figure out renovation ID
                 $renovationID = 0;
-                if (!empty($advertisementData['building_series'])) {
+                if (!empty($advertisementData['renovation'])) {
                     $renovationByNameTry = SecondaryRenovation::getRenovationByName($advertisementData['renovation']);
                     if (!empty($renovationByNameTry)) {
                         $renovationID = $renovationByNameTry->id;

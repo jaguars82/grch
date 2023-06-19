@@ -59,13 +59,16 @@ class m230320_182559_insert_initial_secondary_room_data extends Migration
         ]);
 
         $this->batchInsert('{{%secondary_renovation}}', ['id', 'name', 'alias', 'detail'], [
-            ['1', 'евроремонт', '', ''],
+            ['1', 'евроремонт', 'евро', ''],
             ['2', 'дизайнерский', '', ''],
             ['3', 'косметический', '', ''],
             ['4', 'требует ремонта', '', ''],
             ['5', 'черновая отделка', '', ''],
-            ['6', 'чистовая отделка', '', ''],
+            ['6', 'чистовая отделка', 'чистовая в новостройке', ''],
             ['7', 'без отделки', '', ''],
+            ['8', 'старый ремонт', '', ''],
+            ['9', 'стяжка-штукатурка', '', ''],
+            ['10', 'white box', '', ''],
         ]);
 
         $this->batchInsert('{{%secondary_building_series}}', ['id', 'name', 'alias', 'detail'], [
@@ -139,6 +142,9 @@ class m230320_182559_insert_initial_secondary_room_data extends Migration
         $this->delete('{{%secondary_renovation}}', ['id' => 5]);
         $this->delete('{{%secondary_renovation}}', ['id' => 6]);
         $this->delete('{{%secondary_renovation}}', ['id' => 7]);
+        $this->delete('{{%secondary_renovation}}', ['id' => 8]);
+        $this->delete('{{%secondary_renovation}}', ['id' => 9]);
+        $this->delete('{{%secondary_renovation}}', ['id' => 10]);
 
         $this->delete('{{%secondary_building_series}}', ['id' => 1]);
         $this->delete('{{%secondary_building_series}}', ['id' => 2]);
