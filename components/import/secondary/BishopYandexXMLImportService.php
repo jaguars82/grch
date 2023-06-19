@@ -146,6 +146,7 @@ class BishopYandexXMLImportService implements SecondaryImportServiceInterface
             ];
 
             // balcony params
+            $amount = null;
             $balcony_amount = '';
             $loggia_amount = '';
             if (!empty($advertisement->balcony)) {
