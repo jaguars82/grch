@@ -7,9 +7,9 @@ use app\components\import\secondary\SecondaryImportServiceInterface;
 use app\models\StreetType;
 
 /**
- * Service for importing data from xml-feed for agencies using Bishop-CMS
+ * Service for importing data from xml-feed for agency "Сити-Центр" (Владис)
  */
-class BishopYandexXMLImportService implements SecondaryImportServiceInterface
+class VladisYandexXMLImportService implements SecondaryImportServiceInterface
 {
     /**
      * {@inheritdoc}

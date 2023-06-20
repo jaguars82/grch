@@ -7,9 +7,9 @@ use app\components\import\secondary\SecondaryImportServiceInterface;
 use app\models\StreetType;
 
 /**
- * Service for importing data from xml-feed for agencies using Bishop-CMS
+ * Service for importing data from xml-feed for agency "Трансферт"
  */
-class BishopYandexXMLImportService implements SecondaryImportServiceInterface
+class TransfertYandexXMLImportService implements SecondaryImportServiceInterface
 {
     /**
      * {@inheritdoc}
@@ -133,11 +133,17 @@ class BishopYandexXMLImportService implements SecondaryImportServiceInterface
                 }
             }
 
+            $locality_name = '';
+            if (!empty($advertisement->location->{'locality-name'})) {
+                $localityParts = explode(' ', $advertisement->location->{'locality-name'});
+                array_pop($localityParts);
+                $locality_name = implode(' ', $localityParts);
+            }
             $location = [
                 'country' => !empty($advertisement->location->country) ? (string)$advertisement->location->country : '',
                 'region' => !empty($advertisement->location->region) ? (string)$advertisement->location->region : '',
                 'district' => !empty($advertisement->location->district) ? (string)$advertisement->location->district : '',
-                'locality_name' => !empty($advertisement->location->{'locality-name'}) ? (string)$advertisement->location->{'locality-name'} : '',
+                'locality_name' => $locality_name,
                 'sub_locality_name' => !empty($advertisement->location->{'sub-locality-name'}) ? (string)$advertisement->location->{'sub-locality-name'} : '',
                 'non_admin_sub_locality_name' => !empty($advertisement->location->{'non-admin-sub-locality'}) ? (string)$advertisement->location->{'non-admin-sub-locality'} : '',
                 'address' => !empty($advertisement->location->address) ? (string)$advertisement->location->address : '',

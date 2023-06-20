@@ -7,9 +7,9 @@ use app\components\import\secondary\SecondaryImportServiceInterface;
 use app\models\StreetType;
 
 /**
- * Service for importing data from xml-feed for agencies using Bishop-CMS
+ * Service for importing data from xml-feed for agencies using quick-deal.ru
  */
-class BishopYandexXMLImportService implements SecondaryImportServiceInterface
+class QuickDealYandexXMLImportService implements SecondaryImportServiceInterface
 {
     /**
      * {@inheritdoc}
@@ -63,7 +63,7 @@ class BishopYandexXMLImportService implements SecondaryImportServiceInterface
                 $addressParts = explode(', ', $advertisement->location->address);
                 $addressPartsLength = count($addressParts);
                 if ($addressPartsLength === 2) {
-                    $buildingNumber = (string)$addressParts[1];
+                    $buildingNumber = str_ireplace('дом ', '', (string)$addressParts[1]);
                 }
                 if ($addressPartsLength > 0) {
                     $streetParts = explode(' ', $addressParts[0]);

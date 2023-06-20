@@ -62,8 +62,8 @@ class SecondaryPropertyType extends \yii\db\ActiveRecord
     public static function getPropertyTypeByName($name)
     {
         return static::find()
-            ->where(['name' => $name])
-            ->orWhere(['alias' => $name])
+            ->where(['like', 'name', '%'.$name.'%', false])
+            ->orWhere(['like', 'name', '%'.$name.'%', false])
             ->one();
     }    
 }
