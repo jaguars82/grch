@@ -93,8 +93,9 @@
                   {{ statusChangesForm.operationLabel }}
                 </q-card-section>
                 <q-card-actions align="right">
+                  <q-btn v-if="application.status < 3 && user.role === 'admin'" class="q-mr-xs" unelevated label="Сменить объект" @click="objectChange"></q-btn>
                   <inertia-link :href="`update?id=${application.id}`">
-                    <q-btn color="primary" class="float-right" unelevated :label="statusChangesForm.submitLabel" />
+                    <q-btn color="primary" unelevated :label="statusChangesForm.submitLabel" />
                   </inertia-link>
                 </q-card-actions>
               </q-card>
@@ -119,6 +120,7 @@
 
 <script>
 import { ref, computed } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
 import ProfileLayout from '@/Layouts/ProfileLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
@@ -198,7 +200,21 @@ components: {
 
     const statusChangesForm = getApplicationFormParamsByStatus(props.application.status, user.value.role)
 
-    return { user, breadcrumbs, asDateTime, columns, rows, statusChangesForm }
+    const objectChange = () => {
+      Inertia.visit(`/user/application/update?id=${props.application.id}`, {
+        method: 'post',
+        data: {
+          id: props.application.id,
+          eOperation: 'change_object',
+          developerId: props.flat.developer.id,
+          complexId: props.flat.newbuildingComplex.id,
+          buildingId: props.flat.newbuilding.id,
+          entranceId: props.flat.entrance.id
+        },
+      })
+    }
+
+    return { user, breadcrumbs, asDateTime, columns, rows, statusChangesForm, objectChange }
   },
 })
 </script>
