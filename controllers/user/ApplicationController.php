@@ -6,6 +6,10 @@ use app\components\traits\CustomRedirects;
 use app\components\SharedDataFilter;
 use app\models\User;
 use app\models\AuthAssignment;
+use app\models\Developer;
+use app\models\NewbuildingComplex;
+use app\models\Newbuilding;
+use app\models\Entrance;
 use app\models\Flat;
 use app\models\Application;
 use app\models\form\ApplicationForm;
@@ -110,6 +114,7 @@ class ApplicationController extends Controller
         $application = (new Application())->findOne($id);
         $flat = ArrayHelper::toArray($application->flat);
         $flat['developer'] = ArrayHelper::toArray($application->flat->developer);
+        $flat['entrance'] = ArrayHelper::toArray($application->flat->entrance);
         $flat['newbuilding'] = ArrayHelper::toArray($application->flat->newbuilding);
         $flat['newbuildingComplex'] = ArrayHelper::toArray($application->flat->newbuildingComplex);
 
@@ -120,6 +125,20 @@ class ApplicationController extends Controller
             $notificationForm = new NotificationForm();
             
             switch(\Yii::$app->request->post('operation')) {
+                /**
+                 * Change object (flat)
+                 */
+                case 'change_object':
+                    //echo (\Yii::$app->request->post('new_object_id')); die();
+                    try {
+                        $application->flat_id = \Yii::$app->request->post('new_object_id');
+                        $application->save();
+                    } catch (\Exception $e) {
+                        $transaction->rollBack();
+                        return $this->redirectBackWhenException($e);
+                    }
+                    return $this->redirect(['view', 'id' => $application->id]);
+                    break;
                 /**
                  * Admin confirms he has recieved application
                  * and sends request for confirmation to developer
@@ -524,11 +543,29 @@ class ApplicationController extends Controller
 
     public function actionUpdate($id)
     {
-        $application = (new Application())->findOne($id);
+        $application = Application::findOne($id);
+        $applicationArr = ArrayHelper::toArray($application);
+        $applicationArr['flat'] = ArrayHelper::toArray($application->flat);
+        $applicationArr['flat']['entrance'] = ArrayHelper::toArray($application->flat->entrance);
+        $applicationArr['flat']['newbuilding'] = ArrayHelper::toArray($application->flat->newbuilding);
+        $applicationArr['flat']['newbuildingComplex'] = ArrayHelper::toArray($application->flat->newbuilding->newbuildingComplex);
+        $applicationArr['flat']['developer'] = ArrayHelper::toArray($application->flat->newbuilding->newbuildingComplex->developer);
 
         return $this->inertia('User/Application/Update', [
-            'application' => ArrayHelper::toArray($application),
+            'application' => $applicationArr,
             'statusMap' => Application::$status,
+            'eOperation' => \Yii::$app->request->post('eOperation') ? \Yii::$app->request->post('eOperation') : '',
+            'developers' => \Yii::$app->request->post('eOperation') === 'change_object' ? Developer::getAllAsList() : [],
+            'buildingComplexes' => \Yii::$app->request->post('developerId') ? NewbuildingComplex::find()->where(['developer_id' => \Yii::$app->request->post('developerId')])->select(['id', 'name'])->asArray()->all() : [],
+            'buildings' => \Yii::$app->request->post('complexId') ? Newbuilding::find()->where(['newbuilding_complex_id' => \Yii::$app->request->post('complexId')])->select(['id', 'name'])->asArray()->all() : [],
+            'entrances' => \Yii::$app->request->post('buildingId') ? Entrance::find()->where(['newbuilding_id' => \Yii::$app->request->post('buildingId')])->select(['id', 'name'])->asArray()->all() : [],
+            'flats' => \Yii::$app->request->post('entranceId') ? Flat::find()->where(['entrance_id' => \Yii::$app->request->post('entranceId')])->andWhere(['status' => 0])->select(['id', 'number', 'floor'])->orderBy(['number' => SORT_ASC])->asArray()->all() : [],
+            'selectedParams' => [
+                'developerId' => \Yii::$app->request->post('developerId') ? \Yii::$app->request->post('developerId') : '',
+                'complexId' => \Yii::$app->request->post('complexId') ? \Yii::$app->request->post('complexId') : '',
+                'buildingId' => \Yii::$app->request->post('buildingId') ? \Yii::$app->request->post('buildingId') : '',
+                'entranceId' => \Yii::$app->request->post('entranceId') ? \Yii::$app->request->post('entranceId') : '',
+            ],
         ]);   
     }
 }
