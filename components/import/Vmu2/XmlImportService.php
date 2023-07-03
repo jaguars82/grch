@@ -118,14 +118,33 @@ class XmlImportService implements ImportServiceInterface
      */
     private function parseData($data)
     {
+        /**
+         * A map of building complexes with buildings
+         * Place here (manually) all the buildings we want parse from feed
+         * Each key of the array - is the name of a Newbuilding Complex (the feed-file doesn't contain this information)
+         * Each value - is an array of buildings of the Newbuilding Complex (each building is a 'Позиция' node in the feed-file)
+         */
         $complexBuildingMap = [
             'ЖД на Сакко и Ванцетти' => ['ул.Сакко и Ванцетти,82'],
             'Микрорайон Боровое' => [
                 'ул.Сельская, 2з, поз.19, 1 этап',
+                'ул.Сельская, 2з, поз.19, 2 этап',
                 'ул.Сельская, 2В, поз.26',
                 'ул.Сельская, 2м, поз.14',
                 'ул.Сельская, 2В, поз.25',
+                'ул.Ф.Тютчева, поз.29, этап 1',
             ]
+        ];
+
+        /**
+         * A map of building aliases
+         * We use it in case we want to join several 'Позиция'-nodes from tthe feed into one building
+         * Each key of the array - is the real name of 'Позиция' as it mentioned in the feed file
+         * Its corresponding value - is the building name we should use (instead of real name)
+         * Both the key and the value must contain in $complexBuildingMap as members of array of buildings of the same Newbuilding Complex
+         */
+        $buildingAliasesMap = [
+            'ул.Сельская, 2з, поз.19, 2 этап' => 'ул.Сельская, 2з, поз.19, 1 этап',
         ];
 
         $flats = [];
@@ -176,9 +195,16 @@ class XmlImportService implements ImportServiceInterface
 						$currentObjectId = $objectId++;
 					}
 
-                    // Парсим позиции
-                    $houseName = (string)$building['Имя'];
-                    $deadline = $this->getDeadline($building);
+                    /**
+                     * Building name. If building is the alias, take a name from the alias map
+                     * Else - take name from feed
+                     */
+                    if (array_key_exists((string)$building['Имя'], $buildingAliasesMap)) {
+                        $houseName = $buildingAliasesMap[(string)$building['Имя']];
+                    } else {
+                        $houseName = (string)$building['Имя'];
+                        $deadline = $this->getDeadline($building);
+                    }
 
                     $houses[$houseId] = [
                         'objectId' => $currentObjectId,
