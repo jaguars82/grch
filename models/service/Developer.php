@@ -337,6 +337,7 @@ class Developer extends \app\models\Developer
                     || (float)$flatData['price_cash'] !== (float)$flat->price_cash
                     || (isset($flatData['unit_price_credit']) && (float)$flatData['unit_price_credit'] !== (float)$flat->unit_price_credit)
                     || (isset($flatData['price_credit']) && (float)$flatData['price_credit'] !== (float)$flat->price_credit)
+                    || (isset($flatData['area']) && (float)$flatData['area'] !== (float)$flat->area)
                     || $flatData['status'] != $flat->status
                 ) {
 

@@ -231,7 +231,7 @@ class XmlImportService implements ImportServiceInterface
                                     'number' => $flat['Номер'],
                                     'section' => $section,
                                     'floor' => $floor,
-                                    'area' => (float)$flat['ОбщаяПлощадь'],
+                                    'area' => (float)str_replace(',', '.', $flat['ВсегоПлощадь']),
                                     'rooms' => $flat['КоличествоКомнат'] == 'Свободная планировка' ? 1 : (int)$flat['КоличествоКомнат'],
                                     'unit_price_cash' => (float)$flat['ЦенаЗаМетр'],
                                     'price_cash' => (float)preg_replace("/[^,.0-9]/", '', $flat['СтоимостьПомещения']),
@@ -241,6 +241,7 @@ class XmlImportService implements ImportServiceInterface
 								
                                 $flats[$currentFlatId] = $_flat;
                                 $currentFlatId++;
+                                //echo $_flat['area']; echo PHP_EOL;
                             }
                         }
                     }
