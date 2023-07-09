@@ -241,7 +241,6 @@ class XmlImportService implements ImportServiceInterface
 								
                                 $flats[$currentFlatId] = $_flat;
                                 $currentFlatId++;
-                                //echo $_flat['area']; echo PHP_EOL;
                             }
                         }
                     }
