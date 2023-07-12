@@ -22,6 +22,7 @@ use app\components\flat\SvgDom;
  * @property float $area
  * @property int $rooms
  * @property int $floor
+ * @property int $index_on_floor
  * @property int|null $section
  * @property float|null $unit_price
  * @property float|null $price
@@ -129,7 +130,7 @@ class Flat extends ActiveRecord
     {
         return [
             [['newbuilding_id', 'number', 'area', 'rooms', 'floor', 'rooms'], 'required'],
-            [['newbuilding_id', 'number', 'floor', 'status', 'discount_type'], 'integer'],
+            [['newbuilding_id', 'number', 'floor', 'index_on_floor', 'status', 'discount_type'], 'integer'],
             [['detail', 'notification', 'extra_data', 'floor_layout', 'layout_coords'], 'string'],
             [['discount', 'unit_price_cash', 'price_cash', 'unit_price_credit', 'price_credit', 'discount_amount', 'discount_price'], 'double'],
             [['area', 'azimuth', 'section', 'floor_position'], 'number'],
@@ -154,6 +155,7 @@ class Flat extends ActiveRecord
             'area' => 'Площадь',
             'rooms' => 'Количество комнат',
             'floor' => 'Этаж',
+            'index_on_floor' => 'Стояк',
             'section'=> 'Подъезд',
             'unit_price_cash' => 'Цена(Нал.) за кв.м.',
             'price_cash' => 'Цена(Нал.)',
