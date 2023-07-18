@@ -60,6 +60,8 @@ NewsFormAsset::register($this);
                     'newbuildingComplexes' => $newbuildingComplexes,
                     'newbuildings' => $newbuildings,
                     'entrances' => $entrances,
+                    'index_on_floor' => $index_on_floor,
+                    'numbers' => $numbers,
                     'positionArray' => $positionArray,
                     'materials' => $materials,
                     'form' => $form,

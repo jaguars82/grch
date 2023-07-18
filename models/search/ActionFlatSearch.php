@@ -17,7 +17,7 @@ class ActionFlatSearch extends Flat
     const ERROR_COMMON = 20;
     const ERROR_HAVE_DISCOUNT = 21;
 
-    public $developer, $newbuilding_complex, $newbuilding, $entrance;
+    public $developer, $newbuilding_complex, $newbuilding, $entrance, $number;
     public $newbuilding_array = NULL;
     public $priceFrom = NULL, $priceTo = NULL;
     public $area = NULL, $areaFrom = NULL, $areaTo = NULL;
@@ -29,6 +29,8 @@ class ActionFlatSearch extends Flat
 
     public $newbuildings = [];
     public $entrances = [];
+    public $index_on_floor = [];
+    public $numbers = [];
 
     /**
      * {@inheritdoc}
@@ -44,6 +46,10 @@ class ActionFlatSearch extends Flat
             ['rooms', 'each', 'rule' => ['integer']],
             ['newbuilding_complex', 'each', 'rule' => ['integer']],
             ['newbuilding', 'each', 'rule' => ['integer']],
+            //['number', 'each', 'rule' => ['string']],
+            ['number', 'each', 'rule' => ['integer']],
+            ['index_on_floor', 'each', 'rule' => ['integer']],
+            //['numbers', 'each', 'rule' => ['integer']],
             ['entrance', 'each', 'rule' => ['integer']]
         ];
     }
@@ -94,6 +100,7 @@ class ActionFlatSearch extends Flat
                 'minCostWithDiscount' => new Expression('IF(price_credit is not null, LEAST(price_cash * (1 + discount), price_credit * (1 + discount)), price_cash * (1 + discount))'),
                 'maxCostWithDiscount' => new Expression('IF(price_credit is not null, GREATEST(price_cash * (1 + discount), price_credit * (1 + discount)), price_cash * (1 + discount))')
             ])
+            //->addSelect(['number as flat_number'])
             //->onlyActive()
             ->joinWith(['developer d1', 'newbuildingComplex nc1'])
             ->where(['nc1.active' => true]) // only in active newbuilding complexes
@@ -160,6 +167,16 @@ class ActionFlatSearch extends Flat
 
         if (isset($this->priceTo) && !empty($this->priceTo)) {
             $query->andWhere("price_cash <= :price_to", [':price_to' => $this->priceTo]);
+        }
+
+        // index on floor
+        if (isset($this->index_on_floor) && !empty($this->index_on_floor)) {
+            $query->andWhere(['index_on_floor' => $this->index_on_floor]);
+        }
+
+        // flat numbers ШО ТО ЗДЕСЬ...
+        if (isset($this->number) && !empty($this->number)) {
+            $query->andWhere(['flat.number' => $this->number]);
         }
 
         if (isset($this->update_date) && !empty($this->update_date)) {
@@ -297,6 +314,8 @@ class ActionFlatSearch extends Flat
             && (isset($params[$form]['newbuilding_complex']) && empty($params[$form]['newbuilding_complex']))
             && (isset($params[$form]['newbuilding']) && empty($params[$form]['newbuilding']))
             && (isset($params[$form]['entrance']) && empty($params[$form]['entrance']))
+            && (isset($params[$form]['index_on_floor']) && empty($params[$form]['index_on_floor']))
+            && (isset($params[$form]['number']) && empty($params[$form]['number']))
             && (isset($params[$form]['rooms']) && empty($params[$form]['rooms']))
             && (isset($params[$form]['priceFrom']) && empty($params[$form]['priceFrom']))
             && (isset($params[$form]['priceTo']) && empty($params[$form]['priceTo']))
@@ -329,6 +348,14 @@ class ActionFlatSearch extends Flat
 
         if (isset($params[$form]['entrance'])) {
             $this->entrance = $params[$form]['entrance'];
+        }
+
+        if (isset($params[$form]['index_on_floor'])) {
+            $this->index_on_floor = $params[$form]['index_on_floor'];
+        }
+
+        if (isset($params[$form]['number'])) {
+            $this->number = $params[$form]['number'];
         }
 
         if (isset($params[$form]['newbuilding_array'])
@@ -414,6 +441,8 @@ class ActionFlatSearch extends Flat
             'newbuilding_complex' => $this->newbuilding_complex,
             'newbuilding' => $this->newbuilding,
             'entrance' => $this->entrance,
+            'index_on_floor' => $this->index_on_floor,
+            'number' => $this->number,
             'newbuilding_status' => $this->newbuilding_status,
             'newbuilding_array' => $this->newbuilding_array
         ];

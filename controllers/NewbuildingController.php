@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\components\exceptions\AppException;
 use app\components\traits\CustomRedirects;
 use app\models\Newbuilding;
+use app\models\Flat;
 use app\models\NewbuildingComplex;
 use app\models\search\NewbuildingFlatSearch;
 use yii\data\ActiveDataProvider;
@@ -35,7 +36,7 @@ class NewbuildingController extends Controller
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['get-for-newbuilding-complex'],
+                        'actions' => ['get-for-newbuilding-complex', 'get-flats-by-newbuilding'],
                         'roles' => ['@'],
                     ],
                 ]
@@ -110,6 +111,25 @@ class NewbuildingController extends Controller
         }
         
         \Yii::$app->response->data = $newbuildings;
+    }
+
+    /**
+     * Getting flats for given newbuilding.
+     * 
+     * @param integer $id mewbuilding's ID
+     * @return mixed
+     */
+    public function actionGetFlatsByNewbuilding($id)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;        
+        $flats = Flat::find()
+            ->select(['number'])
+            ->where(['newbuilding_id' => $id])
+            ->andWhere(['status' => 0])
+            ->orderBy(['number' => SORT_ASC])
+            ->all();
+        
+        \Yii::$app->response->data = $flats;
     }
 
     /**

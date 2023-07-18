@@ -168,6 +168,8 @@ class NewsController extends Controller
             'newbuildingComplexes' => $searchModel->newbuildingComplexes,
             'newbuildings' => $searchModel->newbuildings,
             'entrances' => $searchModel->entrances,
+            'index_on_floor' => $searchModel->index_on_floor,
+            'numbers' => $searchModel->numbers,
             'positionArray' => $searchModel->positionArray,
             'materials' => Newbuilding::getAllMaterialsAsList(),
         ]);
@@ -275,6 +277,8 @@ class NewsController extends Controller
             'newbuildings' => isset($newbuildings) ? $newbuildings : [],
             // 'entrances' => $searchModel->entrances,
             'entrances' => isset($entrances) ? $entrances : [],
+            'index_on_floor' => isset($searchModel->index_on_floor) && !empty($searchModel->index_on_floor) ? $searchModel->index_on_floor : [],
+            'numbers' => isset($searchModel->numbers) && !empty($searchModel->numbers) ? $searchModel->numbers : [],
             'positionArray' => $searchModel->positionArray,
             'materials' => Newbuilding::getAllMaterialsAsList(),
         ]);

@@ -66,6 +66,34 @@ use yii\widgets\ActiveForm;
             ])->label(false) ?>
         </div>
 
+        <!-- index_on_floor -->
+        <div class="col-md-6" >
+            <?= $form->field($model, 'index_on_floor', [
+                'options' => [
+                    'class' => 'form-group inline-select'
+                ]
+            ])->dropDownList($index_on_floor, [
+                'multiple' => true,
+                'id' => 'index-select2',
+                'data-placeholder' => 'Стояк',
+                'data-close-on-select' => 'false',
+            ])->label(false) ?>
+        </div>
+
+        <!-- flat number -->
+        <div class="col-md-6" >
+            <?= $form->field($model, 'number', [
+                'options' => [
+                    'class' => 'form-group inline-select'
+                ]
+            ])->dropDownList($numbers, [
+                'multiple' => true,
+                'id' => 'number-select2',
+                'data-placeholder' => 'Квартиры',
+                'data-close-on-select' => 'false',
+            ])->label(false) ?>
+        </div>
+
     </div>
 
     <h3>Информация о квартирах</h3>
