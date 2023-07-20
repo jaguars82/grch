@@ -14,8 +14,8 @@ class UtilsController extends Controller
      * according to the value of its 'section' field
      * It also adds a new record to 'entrance' table if needed
      */
-    public function actionFetchEntrances() {
-
+    public function actionFetchEntrances()
+    {
         $Newbuildings = (new Newbuilding())->find()->all();
 
         foreach($Newbuildings as $Newbuilding) {
@@ -49,6 +49,41 @@ class UtilsController extends Controller
                         $flat->entrance_id = $entrance->id;
                         $flat->save();
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * Action to fill 'index_on_floor' field in 'flat' table
+     * according to flat's position on the floor
+     */
+    public function actionFetchFlatIndexes($newbuildingId = 0)
+    {
+        if ($newbuildingId === 0) {
+            $entrances = Entrance::find()->all();
+        } else {
+            $building = Newbuilding::findOne($newbuildingId);
+            $entrances = $building->entrances;
+        }
+
+        foreach ($entrances as $entrance) {
+            $flats = Flat::find()
+                ->where(['entrance_id' => $entrance->id])
+                ->all();
+
+            $flatsGrouppedByFloor = array();
+
+            foreach ($flats as $flat) {
+                $flatsGrouppedByFloor[$flat->floor][] = $flat;
+            }
+
+            foreach ($flatsGrouppedByFloor as $floor => $floorFlats) {
+                $flatIndex = 1;
+                foreach ($floorFlats as $flat) {
+                    $flat->index_on_floor = $flatIndex;
+                    $flat->save();
+                    $flatIndex++;
                 }
             }
         }

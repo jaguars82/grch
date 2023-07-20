@@ -95,17 +95,50 @@ $(function () {
         });
     }
 
-    function fillEntrancesActions(MewbuildingId) {
+    function fillEntrancesActions(newbuildingId) {
         $.ajaxSetup({
             beforeSend: function(xhr, settings) {
                 xhr.setRequestHeader("X-CSRF-Token", $('meta[name="csrf-token"]').attr('content'));
             }
         });
 
-        $.post("/entrance/get-for-newbuilding?id=" + MewbuildingId, function(answear) {
-            // console.log(answear);
+        $.post("/entrance/get-for-newbuilding?id=" + newbuildingId, function(answear) {
             answear.forEach(function (currentValue, index, array) {
                 $('#entrance-select2').append(new Option(currentValue['name'], currentValue['id']));
+            });
+        });
+    }
+
+    function fillRisersActions(entranceId) {
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRF-Token", $('meta[name="csrf-token"]').attr('content'));
+            }
+        });
+
+        $.post("/entrance/get-risers-by-entrances?entranceId=" + entranceId, function(answear) {
+            const risers = [];
+            $("#index-select2 option").each(function() {
+                risers.push(Number($(this).val()));
+            });
+            answear.forEach(function (currentValue, index, array) {
+                if (!risers.includes(currentValue)) {
+                    $('#index-select2').append(new Option(currentValue));
+                }
+            });
+        });
+    }
+
+    function fillFlatsActions(id, handlerUrl) {
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRF-Token", $('meta[name="csrf-token"]').attr('content'));
+            }
+        });
+
+        $.post(handlerUrl + id, function(answear) {
+            answear.forEach(function (currentValue, index, array) {
+                $('#number-select2').append(new Option(currentValue['number']));
             });
         });
     }
@@ -192,13 +225,22 @@ $(function () {
     }*/
 
     $('.action-flat-search-form #newbuildings-select2').on('change', function() {
-        $('#entrance-select2').find('option').remove();
+        $('#entrance-select2, #index-select2, #number-select2').find('option').remove();
         $(this).val().forEach(function(newbuldingId) {
             fillEntrancesActions(newbuldingId);
+            fillFlatsActions(newbuldingId, '/newbuilding/get-flats-by-newbuilding?id=');
         });
     });
 
     /*if ($('.action-flat-search-form #newbuildings-select2').val()) {
         fillEntrancesActions($('.action-flat-search-form #newbuildings-select2').val());
     }*/
+
+    $('.action-flat-search-form #entrance-select2').on('change', function() {
+        $('#index-select2, #number-select2').find('option').remove();
+        $(this).val().forEach(function(entranceId) {
+            fillRisersActions(entranceId);
+            fillFlatsActions(entranceId, '/entrance/get-flats-by-entrance?id=');
+        });
+    });
 });
