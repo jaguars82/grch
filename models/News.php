@@ -30,12 +30,12 @@ class News extends ActiveRecord
 {
     use FillAttributes;
     
-    const CATEGORY_NEWS = 0;
     const CATEGORY_ACTION = 1;
+    const CATEGORY_NEWS = 2;
     
     public static $category = [
-        self::CATEGORY_NEWS => 'Новость',
         self::CATEGORY_ACTION => 'Акция',
+        self::CATEGORY_NEWS => 'Новость',
     ];
     
     /**

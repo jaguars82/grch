@@ -80,7 +80,7 @@ NewsFormAsset::register($this);
                         'displayField' => 'name',
                         'label' => 'Застройщик',
                         'size' => 10,
-                        'id' => 'developer-select',
+                        'id' => 'news-developer-select',
                         'isMultiple' => false,
                         'itemDataField' => 'newbuilding-complexes',
                         'itemDataValue' => $news->newbuildingComplexes,

@@ -66,7 +66,7 @@ if ($model->isAction()) {
                         <?= Html::a('Квартиры', $model->search_link, ['class' => 'btn btn-white']) ?>
                     </div>
                 <?php endif; ?>
-                <?php if ($model->isAction()): ?>
+                <?php if ($model->isAction() && !empty($flatfilter)): ?>
                 <!--
                 <div class="labels">
                     <a href="<?= Url::to([
@@ -87,7 +87,7 @@ if ($model->isAction()) {
                         <div class="toggle-desc-content">
                             <?= $model->actionData->resume ?>
                         </div>
-                        <button class="toggle-desc--trigger"></button>
+                        <!--<button class="toggle-desc--trigger"></button>-->
                     </div>
                 <?php endif; ?>
 

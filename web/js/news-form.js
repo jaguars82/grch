@@ -24,8 +24,7 @@ $(function () {
         });
     }
 
-    function updateActionDataVisibility()
-    {
+    function updateActionDataVisibility() {
         if($('#newsform-category option:selected').val() == 1) {
             $('#actions-data').css('display', 'block');
             $('.action-is-enabled').prop('checked', true);
@@ -172,7 +171,7 @@ $(function () {
     });
 
 
-    selectedDeveloper = $('#developer-select > option[selected]');
+    selectedDeveloper = $('#news-developer-select > option[selected]');
     // console.log(selectedDeveloper);
     
     if (selectedDeveloper.length) {
@@ -185,10 +184,11 @@ $(function () {
                 }
             });
         });
-
-        // fillFloorsForDeveloper(selectedDeveloper.val());
     }
 
+    $('#news-developer-select').change(function () {
+        fillNewbuildingComplexes($(this).val());
+    });
 
     $('#newsform-category').change(function () {
         updateActionDataVisibility()
