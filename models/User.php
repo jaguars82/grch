@@ -232,7 +232,7 @@ class User extends ActiveRecord implements IdentityInterface
         $roleList = Yii::$app->authManager->getRolesByUser($this->id);
         $role = array_shift($roleList);
 
-        return $role->name;
+        return $role === null ? null : $role->name;
     }
 
     public function getRoleLabel()
@@ -244,7 +244,7 @@ class User extends ActiveRecord implements IdentityInterface
             'developer_repres' => 'Представитель застройщика',
         ];
 
-        return $roleLabels[$this->role];
+        return isset($this->role) ? $roleLabels[$this->role] : null;
     }
 
 
