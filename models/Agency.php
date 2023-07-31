@@ -90,6 +90,28 @@ class Agency extends \yii\db\ActiveRecord
     }
 
     /**
+     * Get all agencies in array form
+     * 
+     * @return array
+     */
+    public static function getAllAsList()
+    {
+        $result = self::find()
+            ->orderBy(['name' => SORT_ASC])
+            ->indexBy('id')
+            ->asArray()
+            ->all();
+        
+        $agencies = [];
+        
+        foreach ($result as $key => $agency) {
+            $agencies[$key] = $agency['name'];
+        }
+        
+        return $agencies;
+    }
+
+    /**
      * Check that current user is agency's user
      * 
      * @return boolean
@@ -143,6 +165,18 @@ class Agency extends \yii\db\ActiveRecord
     {
         return $this->hasMany(User::className(), ['agency_id' => 'id'])
                 ->where(['=', 'status', User::STATUS_ACTIVE]);
+    }
+
+    /**
+     * Get users of a specified agency
+     */
+    public static function getUsersByAgency($agencyId)
+    {
+        return User::find()
+            ->where(['agency_id' => $agencyId])
+            ->andWhere(['=', 'status', User::STATUS_ACTIVE])
+            ->orderBy(['last_name' => SORT_ASC])
+            ->all();
     }
         
     /**
