@@ -9,6 +9,27 @@
             <div v-if="user.role !== 'admin'" class="q-mt-md">
               <q-btn color="primary" unelevated label="Создать объявление" icon="post_add" @click="createAdd" />
             </div>
+            <div class="row q-mt-md" v-if="user.role === 'admin' || user.role === 'manager'">
+              <div class="col-1">
+                <q-icon :color="filters.agency === null && filters.agent === null && filters.category === null ? 'grey-5' : 'orange'" size="md" name="filter_alt"></q-icon>
+              </div>
+              <div v-if="user.role === 'admin'" class="col-3">
+                <q-select class="q-gutter-sm" outlined clearable v-model="filters.agency" :options="agencyOptions" label="Агентство" @update:model-value="onAgencySelect" dense options-dense />
+              </div>
+              <div class="col-4">
+                <q-select class="q-gutter-sm" outlined clearable v-model="filters.agent" :options="agentOptions" label="Сотрудник" dense options-dense />
+              </div>
+              <div class="col-3">
+                <q-select class="q-gutter-sm" outlined clearable v-model="filters.category" :options="categoryOptions" label="Категория" dense options-dense />
+              </div>
+              <div class="col-1 q-pl-md">
+                <q-btn :color="filters.agency === null && filters.agent === null && filters.category === null ? 'grey-5' : 'primary'" unelevated round icon="filter_alt_off" @click="filterReset">
+                  <q-tooltip>
+                    Сбросить фильтр
+                  </q-tooltip>
+                </q-btn>
+              </div>
+            </div>
             <div class="q-pt-md">
               <q-table
                 class="no-shadow datatable"
@@ -125,10 +146,12 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { date } from 'quasar'
 import { asDateTime, asNumberString, asFloor, asArea, asCurrency, asPricePerArea } from '@/helpers/formatter'
+import { secondaryCategoryOptionList, agencyOptionList, userOptionList } from '@/composables/formatted-data'
+import { userInfo } from '@/composables/shared-data'
 import ProfileLayout from '@/Layouts/ProfileLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
@@ -148,9 +171,24 @@ export default ({
     totalRows: String,
     page: Number,
     psize: Number,
-    labelTypes: Array
+    labelTypes: Array,
+    agencies: {
+      type: Object,
+      default: {}
+    },
+    agents: {
+      type: Array,
+      default: []
+    },
+    secondaryCategories: {
+      type: Object,
+      default: {}
+    },
+    filter: Array
   },
   setup(props) {
+    const { user } = userInfo()
+
     const breadcrumbs = ref([
       {
         id: 1,
@@ -180,10 +218,18 @@ export default ({
 
     const loading = ref(false)
 
-    const pagination = ref({
+    /*const pagination = ref({
       page: props.page + 1,
       rowsPerPage: props.psize,
       rowsNumber: props.totalRows
+    })*/
+
+    const pagination = computed(() => {
+      return {
+        page: props.page + 1,
+        rowsPerPage: props.psize,
+        rowsNumber: props.totalRows
+      }
     })
 
     const columns = [
@@ -237,7 +283,7 @@ export default ({
     emitter.on('toggle-grid-table', (e) => appsGridView.value = e)*/
 
     const onRequest = (e) => {
-      Inertia.get(`/user/secondary/index`, { page: e.pagination.page, psize: e.pagination.rowsPerPage }, { preserveScroll: true })
+      Inertia.get(`/user/secondary/index`, { page: e.pagination.page, psize: e.pagination.rowsPerPage, agency: filters.value.agency !== null ? filters.value.agency.value : '', agent: filters.value.agent !== null ? filters.value.agent.value : '', category: filters.value.category !== null ? filters.value.category.value : '', }, { preserveScroll: true })
     }
 
     const statusOptions = computed(() => {
@@ -323,7 +369,102 @@ export default ({
       Inertia.get('/user/secondary/create')
     }
 
-    return { breadcrumbs, pagination, columns, statusOptions, dateOptions, statusLabelForm, canSaveAddStatus, createAdd/*appsGridView*/, rows, saveAddStatus, unsetStatus, openDeleteForm, deleteAdd, closeDeleteDialog, deleteFormDialog, addToDeleteId, onRequest }
+    const agencyOptions = computed(() => {
+      return agencyOptionList(props.agencies)
+    })
+    const agentOptions = computed(() => { 
+      return userOptionList(props.agents)
+    })
+    const categoryOptions = computed(() => {
+      return secondaryCategoryOptionList(props.secondaryCategories)
+    })
+
+    const selectedAgency = computed(() => {
+      let result = null
+      if (props.filter.agency) {
+        const filtered = agencyOptions.value.filter(item => {
+          return item.value == props.filter.agency
+        })
+        result = filtered[0]
+      }
+      return result
+    })
+
+    const selectedAgent = computed(() => {
+      let result = null
+      if (props.filter.agent) {
+        const filtered = agentOptions.value.filter(item => {
+          return item.value == props.filter.agent
+        })
+        result = filtered[0]
+      }
+      return result
+    })
+
+    const selectedCategory = computed(() => {
+      let result = null
+      if (props.filter.category) {
+        const filtered = categoryOptions.value.filter(item => {
+          return item.value == props.filter.category
+        })
+        result = filtered[0]
+      }
+      return result
+    })
+
+    const filters = ref({
+      agency: selectedAgency.value,
+      agent: selectedAgent.value,
+      category: selectedCategory.value,
+    })
+
+    const onAgencySelect = () => {
+      filters.value.agent = null
+    }
+
+    watch(filters.value, () => {
+      const fields = {
+        operation: 'filterAdds',
+        agency: filters.value.agency !== null ? filters.value.agency.value : null,
+        agent: filters.value.agent !== null ? filters.value.agent.value : null,
+        category: filters.value.category !== null ? filters.value.category.value : null,
+      }
+      Inertia.post('/user/secondary/index', fields, { preserveScroll: true, preserveState: true })
+    })
+
+    const filterReset = () => {
+      filters.value.agency = null
+      filters.value.agent = null
+      filters.value.category = null
+    }
+
+    return { 
+      user,
+      breadcrumbs,
+      pagination,
+      columns,
+      statusOptions,
+      dateOptions,
+      statusLabelForm,
+      canSaveAddStatus,
+      createAdd,
+      /*appsGridView,*/
+      rows,
+      saveAddStatus,
+      unsetStatus,
+      openDeleteForm,
+      deleteAdd,
+      closeDeleteDialog,
+      deleteFormDialog,
+      addToDeleteId,
+      onRequest,
+      agencyOptions,
+      agentOptions,
+      categoryOptions,
+      filters,
+      onAgencySelect,
+      filterReset
+    }
   },
 })
 </script>

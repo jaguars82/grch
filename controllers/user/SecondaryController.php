@@ -14,6 +14,7 @@ use app\models\SecondaryRenovation;
 use app\models\SecondaryBuildingSeries;
 use app\models\BuildingMaterial;
 use app\models\Developer;
+use app\models\Agency;
 use app\models\NewbuildingComplex;
 use app\models\Newbuilding;
 use app\models\Entrance;
@@ -138,9 +139,21 @@ class SecondaryController extends Controller
 
     public function actionIndex()
     {
+        if (\Yii::$app->user->identity->role === 'manager') {
+            $agents = Agency::getUsersByAgency(\Yii::$app->user->identity->agency_id);
+        }
+
         if (\Yii::$app->request->isPost) {
             switch (\Yii::$app->request->post('operation')) {
-                case 'setStatus':
+                case 'filterAdds':
+                    if (null !== \Yii::$app->request->post('agency') && !empty(\Yii::$app->request->post('agency'))) {
+                        $agents = Agency::getUsersByAgency(\Yii::$app->request->post('agency'));
+                    }
+                    $agencyFilter = \Yii::$app->request->post('agency') !== null && !empty(\Yii::$app->request->post('agency')) ? \Yii::$app->request->post('agency') : null;
+                    $agentFilter = \Yii::$app->request->post('agent') !== null && !empty(\Yii::$app->request->post('agent')) ? \Yii::$app->request->post('agent') : null;
+                    $categoryFilter = \Yii::$app->request->post('category') !== null && !empty(\Yii::$app->request->post('category')) ? \Yii::$app->request->post('category') : null;
+                    break;
+                case 'setStatus': 
                     try {
                         $transaction = \Yii::$app->db->beginTransaction();
                         $advertisement = SecondaryAdvertisement::findOne(\Yii::$app->request->post('secondary_advertisement_id'));
@@ -185,6 +198,28 @@ class SecondaryController extends Controller
 
         if (\Yii::$app->user->identity->role === 'manager') {
             $query->andWhere(['agency_id' => \Yii::$app->user->identity->agency_id]);
+        }
+
+        // define filters for paginated pages
+        if (null !== \Yii::$app->request->get('agency') && !empty(\Yii::$app->request->get('agency'))) {
+            $agencyFilter = \Yii::$app->request->get('agency');
+        }
+        if (null !== \Yii::$app->request->get('agent') && !empty(\Yii::$app->request->get('agent'))) {
+            $agentFilter = \Yii::$app->request->get('agent');
+        }
+        if (null !== \Yii::$app->request->get('category') && !empty(\Yii::$app->request->get('category'))) {
+            $categoryFilter = \Yii::$app->request->get('category');
+        }
+
+        // apply filters (if defined)
+        if (isset($agencyFilter) && $agencyFilter !== null) {
+            $query->andWhere(['agency_id' => $agencyFilter]);
+        }
+        if (isset($agentFilter) && $agentFilter !== null) {
+            $query->andWhere(['author_id' => $agentFilter]);
+        }
+        if (isset($categoryFilter) && $categoryFilter !== null) {
+            $query->join('INNER JOIN', 'secondary_room', 'secondary_room.advertisement_id = secondary_advertisement.id')->andWhere(['secondary_room.category_id' => $categoryFilter]);
         }
 
         // get the total number of advertisements
@@ -251,12 +286,22 @@ class SecondaryController extends Controller
             array_push($advertisementsArray, $advertisementItem);
         }
 
+        //echo '<pre>'; var_dump($count); echo '</pre>'; die;
+
         return $this->inertia('User/Secondary/Index', [
             'user' => \Yii::$app->user->identity,
+            'secondaryCategories' => SecondaryCategory::getCategoryTree(),
+            'agencies' => \Yii::$app->user->identity->role === 'admin' ? Agency::getAllAsList() : [],
+            'agents' => isset($agents) ? ArrayHelper::toArray($agents) : [],
             'advertisements' => $advertisementsArray,
             'totalRows' => $count,
             'page' => $pagination->page,
             'psize' => $pagination->pageSize,
+            'filter' => [
+                'agency' => isset($agencyFilter) ? $agencyFilter : null,
+                'agent' => isset($agentFilter) ? $agentFilter : null,
+                'category' => isset($categoryFilter) ? $categoryFilter : null,
+            ],
             'labelTypes' => StatusLabelType::find()->asArray()->all(),
         ]);
     }

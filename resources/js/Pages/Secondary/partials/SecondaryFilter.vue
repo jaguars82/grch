@@ -744,7 +744,6 @@ setup(props) {
 
   const emitter = useEmitter()
   watch(formfields.value, () => { 
-    // console.log(formfields.value)
     emitter.emit('secondary-filter-changed', formfields.value)
   })
 
