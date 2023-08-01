@@ -87,6 +87,12 @@
             Статус: <span class="text-lowercase">{{ statusMap[application.status] }}</span>
           </p>-->
             <template v-if="statusChangesForm">
+              <template v-if="
+                user.role === 'manager' && application.applicant_id == user.id
+                || user.role === 'agent' && application.applicant_id == user.id
+                || user.role === 'developer_repres' && application.developer_id == user.developer_id
+                || user.role === 'admin'
+              ">
               <h5 class="text-uppercase q-mb-xs q-mt-lg">Требуемое действие:</h5>
               <q-card class="no-shadow" bordered>
                 <q-card-section>
@@ -99,6 +105,7 @@
                   </inertia-link>
                 </q-card-actions>
               </q-card>
+              </template>
             </template>
             <h5 class="text-uppercase q-mb-xs q-mt-lg">История</h5>
             <q-table

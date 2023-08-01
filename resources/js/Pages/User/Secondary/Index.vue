@@ -218,12 +218,6 @@ export default ({
 
     const loading = ref(false)
 
-    /*const pagination = ref({
-      page: props.page + 1,
-      rowsPerPage: props.psize,
-      rowsNumber: props.totalRows
-    })*/
-
     const pagination = computed(() => {
       return {
         page: props.page + 1,
