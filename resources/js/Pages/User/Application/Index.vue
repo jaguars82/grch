@@ -9,6 +9,15 @@
           
           <GridTableToggle :defaultMode="appsGridView" />
 
+          <div v-if="user.role === 'manager'" class="row q-pt-md">
+            <div class="col-1 self-center">
+             <q-icon size="md" :name="showFilter.value === 'self' ? 'person' : 'group'" />
+            </div>
+            <div class="col-11">
+              <q-select class="q-gutter-sm" outlined v-model="showFilter" :options="showOptions" label="Показывать заявки" @update:model-value="onShowFilterChange" dense options-dense />
+            </div>
+          </div>
+
           <div class="q-pt-md">
             <q-table
               class="datatable no-shadow"
@@ -73,6 +82,7 @@ import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
 import GridTableToggle from '@/Components/Elements/GridTableToggle.vue'
 import useEmitter from '@/composables/use-emitter'
+import { userInfo } from '@/composables/shared-data'
 
 export default ({
   components: {
@@ -87,8 +97,14 @@ export default ({
     totalRows: String,
     page: Number,
     psize: Number,
+    show: {
+      type: String,
+      default: 'self'
+    }
   },
   setup(props) {
+    const { user } = userInfo()
+
     const breadcrumbs = ref([
       {
         id: 1,
@@ -116,10 +132,12 @@ export default ({
       },
     ])
 
-    const pagination = ref({
-      page: props.page + 1,
-      rowsPerPage: props.psize,
-      rowsNumber: props.totalRows
+    const pagination = computed(() => {
+      return {
+        page: props.page + 1,
+        rowsPerPage: props.psize,
+        rowsNumber: props.totalRows
+      }
     })
 
     const columns = [
@@ -152,10 +170,40 @@ export default ({
     emitter.on('toggle-grid-table', (e) => appsGridView.value = e)
 
     const onRequest = (e) => {
-      Inertia.get(`/user/application/index`, { page: e.pagination.page, psize: e.pagination.rowsPerPage }, { preserveScroll: true })
+      Inertia.get(`/user/application/index`, { page: e.pagination.page, psize: e.pagination.rowsPerPage, show:showFilter.value.value }, { preserveScroll: true })
     }
 
-    return { breadcrumbs, appsGridView, columns, rows, pagination, onRequest }
+    /** show filter */
+    const showOptions = [
+      { label: 'Только мои', value: 'self' },
+      { label: 'Всех сотрудников агентства', value: 'agency' },
+    ]
+
+    const selectedShowOption = computed(() => {
+      const filtered = showOptions.filter(item => {
+        return item.value === props.show
+      })
+      return filtered[0]
+    })
+
+    const showFilter = ref(selectedShowOption.value)
+
+    const onShowFilterChange = () => {
+      Inertia.post('/user/application/index', { show: showFilter.value.value }, { preserveScroll: true, preserveState: true })
+    }
+
+    return {
+      user,
+      breadcrumbs,
+      appsGridView,
+      columns,
+      rows,
+      pagination,
+      onRequest,
+      showOptions,
+      showFilter,
+      onShowFilterChange
+    }
   },
 })
 </script>

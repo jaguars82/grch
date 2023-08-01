@@ -58,14 +58,25 @@ class ApplicationController extends Controller
     {
         $query = Application::find()->where(['is_active' => 1]);
         
-        //if (\Yii::$app->user->can('developer_repres')) {
         if (\Yii::$app->user->identity->role === 'developer_repres') {
             $query->andWhere(['developer_id' => \Yii::$app->user->identity->developer_id]);
         } 
 
-        //if (\Yii::$app->user->can('agent') || \Yii::$app->user->can('manager')) {
-        if (\Yii::$app->user->identity->role === 'agent' || \Yii::$app->user->identity->role === 'manager') {
+        if (\Yii::$app->user->identity->role === 'agent') {
             $query->andWhere(['applicant_id' => \Yii::$app->user->id]);
+        }
+
+        if (\Yii::$app->user->identity->role === 'manager') {
+            if (
+                null !== \Yii::$app->request->post('show') && \Yii::$app->request->post('show') === 'agency'
+                || null !== \Yii::$app->request->get('show') && \Yii::$app->request->get('show') === 'agency'
+            ) {
+                $show = \Yii::$app->request->isPost ? \Yii::$app->request->post('show') : \Yii::$app->request->get('show');
+                $query->join('LEFT JOIN', 'user', 'user.id = applicant_id')
+                ->andWhere(['user.agency_id' => \Yii::$app->user->identity->agency_id]);
+            } else {
+               $query->andWhere(['applicant_id' => \Yii::$app->user->id]);
+            }
         }
             
         // get the total number of applications
@@ -106,6 +117,7 @@ class ApplicationController extends Controller
             'totalRows' => $count,
             'page' => $pagination->page,
             'psize' => $pagination->pageSize,
+            'show' => isset($show) ? $show : 'self',
         ]);
     }
 
@@ -129,7 +141,6 @@ class ApplicationController extends Controller
                  * Change object (flat)
                  */
                 case 'change_object':
-                    //echo (\Yii::$app->request->post('new_object_id')); die();
                     try {
                         $application->flat_id = \Yii::$app->request->post('new_object_id');
                         $application->save();

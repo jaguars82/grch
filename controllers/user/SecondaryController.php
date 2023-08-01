@@ -286,8 +286,6 @@ class SecondaryController extends Controller
             array_push($advertisementsArray, $advertisementItem);
         }
 
-        //echo '<pre>'; var_dump($count); echo '</pre>'; die;
-
         return $this->inertia('User/Secondary/Index', [
             'user' => \Yii::$app->user->identity,
             'secondaryCategories' => SecondaryCategory::getCategoryTree(),

@@ -1,7 +1,7 @@
 /**
  * returns object with params for
  * application status change form 
- * according tu application status and user role
+ * according to application status and user role
  * or false
  */
 function getApplicationFormParamsByStatus (applicationStatus, userRole) { 
