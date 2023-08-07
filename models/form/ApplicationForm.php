@@ -23,6 +23,7 @@ class ApplicationForm extends Model
     public $manager_email;
     public $reservation_conditions;
     public $admin_comment;
+    public $self_reservation;
     public $is_active;
     public $application_number;
     public $deal_success_docs;
@@ -36,7 +37,7 @@ class ApplicationForm extends Model
             [['flat_id', 'applicant_id', 'developer_id'/*, 'status'*/], 'required'],
             [['flat_id', 'developer_id', 'applicant_id', 'status'], 'integer'],
             [['client_firstname', 'client_lastname', 'client_middlename', 'client_phone', 'client_email',  'applicant_comment', 'manager_firstname', 'manager_lastname', 'manager_middlename', 'manager_phone', 'manager_email', 'reservation_conditions', 'admin_comment', 'application_number', 'deal_success_docs'], 'string'],
-            [['is_active'], 'boolean'],
+            [['is_active', 'self_reservation'], 'boolean'],
         ];
     }
 }

@@ -491,10 +491,10 @@ class ApplicationController extends Controller
                     $transaction = \Yii::$app->db->beginTransaction();
 
                     try {
-                        $flat = (new Flat())->findOne($application->flat_id);
+                        $flat = Flat::findOne($application->flat_id);
                         $flat->status = 2;
                         $flat->sold_by_application = 1;
-                        $flat->is_applicated = 0;
+                        $flat->is_applicated = Flat::APPLICATED_NONE;
                         $flat->is_reserved = 0;
                         $flat->save();
 

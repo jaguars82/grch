@@ -68,12 +68,13 @@ class ReservationController extends Controller
                 $applicationModel->save();
 
                 $flat = Flat::findOne($applicationModel->flat_id);
-                $flat->is_applicated = 1;
+                $flat->is_applicated = $applicationForm->attributes['self_reservation'] === true ? Flat::APPLICATED_USER : Flat::APPLICATED_AGREGATOR;
+                $flat->is_reserved = $applicationForm->attributes['self_reservation'] === true ? 1 : 0;
                 $flat->save();
 
                 $applicationHistoryForm->application_id = $applicationModel->id;
                 $applicationHistoryForm->user_id = $applicationModel->applicant_id;
-                $applicationHistoryForm->action = Application::STATUS_RESERV_APPLICATED;
+                $applicationHistoryForm->action = $applicationForm->attributes['self_reservation'] === true ? Application::STATUS_SELF_RESERVED : Application::STATUS_RESERV_APPLICATED;
                 $applicationHistoryForm->comment = $applicationModel->applicant_comment;
                 $applicationHistoryModel = (new ApplicationHistory())->fill($applicationHistoryForm->attributes);
                 $applicationHistoryModel->save();
@@ -83,6 +84,9 @@ class ReservationController extends Controller
                 $clientFirstName = !empty($applicationModel->client_firstname) ? $applicationModel->client_firstname : '';
                 $clientLastName = !empty($applicationModel->client_lastname) ? $applicationModel->client_lastname : '';
                 $clientMiddleName = !empty($applicationModel->client_middlename) ? $applicationModel->client_middlename : '';
+                if ($applicationForm->attributes['self_reservation'] === true) {
+                    $messageText .= '<span style="text-transform: uppercase;"><strong>Самостоятельная бронь</strong><span><br />';
+                }
                 if (!empty($clientFirstName) || !empty($clientLastName) || !empty($clientMiddleName)) {
                     $messageText .= 'Клиент: '.$clientFirstName.' '.$clientMiddleName.' '.$clientLastName.'<br />';
                 }
