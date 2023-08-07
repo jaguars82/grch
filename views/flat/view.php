@@ -296,7 +296,7 @@ $this->params['breadcrumbs'][] = $model->number;
                         ['class' => 'btn btn-red-fill']
                     ) ?>
                 <?php endif; ?>
-                <?php if ($model->status == 0): ?>
+                <?php if ($model->is_reserved != 1 && $model->status == 0): ?>
                     <?= Html::a('КП',
                     ['user/commercial/make', 'flatId' => $model->id],
                     ['class' => 'btn btn-red-fill']) ?>

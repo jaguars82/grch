@@ -181,6 +181,11 @@ class XmlImportService implements ImportServiceInterface
             $this->checkObjectData($complex);
             $objectName = (string)$complex->name;
 
+            // manual corrections for some newbuilding complexes
+			if (strpos($objectName, "Бунин 3 очередь") !== false) {
+				$objectName = "ЖК «Бунин»";
+			}
+
 			if (!isset($complex->buildings->building)) {
 				continue;
 			}

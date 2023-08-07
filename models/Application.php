@@ -52,6 +52,7 @@ class Application extends ActiveRecord
     const STATUS_APPLICATION_APPROVAL_REQUEST = 9;
     const STATUS_APPLICATION_APPROVAL_PROCESS = 10;
     const STATUS_APPLICATION_SUCCESS = 11;
+    const STATUS_SELF_RESERVED = 12;
 
     public static $status = [
         self::STATUS_UNDEFINED => 'Статус заявки неопределён',
@@ -66,6 +67,7 @@ class Application extends ActiveRecord
         self::STATUS_APPLICATION_APPROVAL_REQUEST => 'Подтверждающие документы отправлены',
         self::STATUS_APPLICATION_APPROVAL_PROCESS => 'Документы получены, ожидается подтверждение и оплата',
         self::STATUS_APPLICATION_SUCCESS => 'Сделка успешно завершена',
+        self::STATUS_SELF_RESERVED => 'Самостоятельное бронирование',
     ];
 
     /**

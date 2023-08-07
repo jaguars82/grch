@@ -129,7 +129,8 @@ function getApplicationFormParamsByStatus (applicationStatus, userRole) {
           submitLabel: 'Подтвердить'       
         }
       ],
-    11: []
+    11: [],
+    12: []
   }
 
   let formParams = []

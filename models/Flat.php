@@ -35,8 +35,8 @@ use app\components\flat\SvgDom;
  * @property string|null $notification
  * @property int $status
  * @property boolean $sold_by_application
- * @property boolean $is_reserved
- * @property boolean $is_applicated
+ * @property int $is_reserved
+ * @property int $is_applicated
  * @property string $created_at
  * @property string $updated_at
  * @property string $extra_data
@@ -64,10 +64,20 @@ class Flat extends ActiveRecord
     const STATUS_RESERVED = 1;
     const STATUS_SOLD = 2;
 
+    const APPLICATED_NONE = 0;
+    const APPLICATED_AGREGATOR = 1;
+    const APPLICATED_USER = 2;
+
     public static $status = [
         self::STATUS_SALE => 'Продаётся',
         self::STATUS_SOLD => 'Продана',
         self::STATUS_RESERVED => 'Бронь',
+    ];
+
+    public static $applicationStatus = [
+        self::APPLICATED_NONE => 'Нет брони',
+        self::APPLICATED_AGREGATOR => 'Бронь (агрегатор)',
+        self::APPLICATED_USER => 'Бронь (пользователь)',
     ];
 
     public $minPriceCash;
@@ -133,10 +143,10 @@ class Flat extends ActiveRecord
             [['newbuilding_id', 'number', 'floor', 'index_on_floor', 'status', 'discount_type'], 'integer'],
             [['detail', 'notification', 'extra_data', 'floor_layout', 'layout_coords'], 'string'],
             [['discount', 'unit_price_cash', 'price_cash', 'unit_price_credit', 'price_credit', 'discount_amount', 'discount_price'], 'double'],
-            [['area', 'azimuth', 'section', 'floor_position'], 'number'],
+            [['is_reserved', 'is_applicated', 'area', 'azimuth', 'section', 'floor_position'], 'number'],
             [['created_at', 'updated_at', 'entrance_id'], 'safe'],
             [['newbuilding_id'], 'exist', 'skipOnError' => true, 'targetClass' => Newbuilding::className(), 'targetAttribute' => ['newbuilding_id' => 'id']],
-            [['is_reserved', 'is_applicated', 'sold_by_application', 'is_euro', 'is_studio'], 'boolean'],
+            [['sold_by_application', 'is_euro', 'is_studio'], 'boolean'],
         ];
     }
 

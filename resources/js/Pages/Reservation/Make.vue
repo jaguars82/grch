@@ -100,6 +100,19 @@
               </div>
             </div>
 
+            <div class="row q-py-sm">
+              <div class="col">
+                <q-checkbox v-model="formfields.self_reservation" label="Самостоятельное бронирование"></q-checkbox>
+              </div>
+            </div>
+
+            <q-banner v-if="formfields.self_reservation" inline-actions rounded class="bg-orange text-white">
+              <template v-slot:avatar>
+                <q-icon name="report" color="white" />
+              </template>
+              Обратите внимание: при выборе этой опции Вы осуществляете действия по бронированию объекта самостоятельно, без помощи агрегатора
+            </q-banner>
+
             <div class="q-mt-lg text-center">
               <q-btn label="Отправить заявку" type="submit" color="primary"/>
               <q-btn label="Сбросить" type="reset" color="primary" flat class="q-ml-sm" />
@@ -160,6 +173,7 @@ export default ({
         client_phone: '',
         client_email: '',
         applicant_comment: '',
+        self_reservation: false,
         is_active: true,
         application_number: numberString
       }
@@ -167,6 +181,9 @@ export default ({
 
     function onSubmit() {
       loading.value = true
+      if (formfields.value.self_reservation) {
+        formfields.value.status = 12
+      }
       Inertia.post(`/reservation/make?flatId=${props.flat.id}`, formfields.value)
       Inertia.on('finish', (event) => {
         loading.value = false
@@ -180,6 +197,7 @@ export default ({
       formfields.value.client_phone = ''
       formfields.value.client_email = ''
       formfields.value.applicant_comment = ''
+      formfields.value.self_reservation = false
     }
 
     const closeApplication = () => window.location.href = `/flat/view?id=${ props.flat.id }`
