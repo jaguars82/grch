@@ -186,7 +186,11 @@ class News extends \app\models\News
     private static function checkDeveloperForNewbuildingComplexes($newbuildingComplexes)
     {
         $newbuildingComplexesArray = is_array($newbuildingComplexes) ? $newbuildingComplexes : [$newbuildingComplexes];
-        $result = NewbuildingComplex::find()->where(['in', 'id', $newbuildingComplexesArray])->groupBy('developer_id')->all();
+        $result = NewbuildingComplex::find()
+            ->select(['developer_id'])
+            ->where(['in', 'id', $newbuildingComplexesArray])
+            ->groupBy('developer_id')
+            ->all();
         return count($result) <= 1;
     }
 
