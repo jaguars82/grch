@@ -85,7 +85,7 @@ class ReservationController extends Controller
                 $clientLastName = !empty($applicationModel->client_lastname) ? $applicationModel->client_lastname : '';
                 $clientMiddleName = !empty($applicationModel->client_middlename) ? $applicationModel->client_middlename : '';
                 if ($applicationForm->attributes['self_reservation'] === true) {
-                    $messageText .= '<span style="text-transform: uppercase;"><strong>Самостоятельная бронь</strong><span><br />';
+                    $messageText .= '<span style="text-transform: uppercase;"><strong>Самостоятельная бронь</strong></span><br />';
                 }
                 if (!empty($clientFirstName) || !empty($clientLastName) || !empty($clientMiddleName)) {
                     $messageText .= 'Клиент: '.$clientFirstName.' '.$clientMiddleName.' '.$clientLastName.'<br />';
