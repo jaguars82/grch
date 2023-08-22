@@ -643,7 +643,11 @@ setup(props) {
   const filterStreetList = (val, update, abort) => {
     update(() => {
       const needle = val.toLowerCase()
-      streetListRef.value = props.streetList.filter(elem => elem.street_name.toLowerCase().indexOf(needle) > -1)
+      streetListRef.value = props.streetList.filter(elem => {
+        if (elem.street_name) {
+          return elem.street_name.toLowerCase().indexOf(needle) > -1
+        }
+      })
     })
   }
 
