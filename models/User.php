@@ -239,7 +239,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $roleLabels = [
             'admin' => 'Администратор',
-            'manager' => 'Менеджер',
+            'manager' => 'Администратор агентства',
             'agent' => 'Агент',
             'developer_repres' => 'Представитель застройщика',
         ];
