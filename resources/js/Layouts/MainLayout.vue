@@ -6,9 +6,12 @@
       <div class="col">
         <slot name="main"></slot>
       </div>
-      <div v-if="secondaryColumns" :class="`col-${secondaryColumns}`">
+      <div v-if="secondaryColumns" :class="`gt-sm col-${secondaryColumns}`">
         <slot name="secondary"></slot>
       </div>
+    </div>
+    <div class="lt-md">
+      <slot name="secondary"></slot>
     </div>
     <Footer></Footer>
   </div>
