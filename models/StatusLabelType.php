@@ -45,4 +45,26 @@ class StatusLabelType extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * Get all status label types in array form
+     * 
+     * @return array
+     */
+    public static function getAllAsList()
+    {
+        $result = self::find()
+            ->orderBy(['id' => SORT_DESC])
+            ->indexBy('id')
+            ->asArray()
+            ->all();
+        
+        $labelTypes = [];
+        
+        foreach ($result as $key => $labelType) {
+            $labelTypes[$key] = $labelType['name'];
+        }
+
+        return $labelTypes;
+    }
+
 }

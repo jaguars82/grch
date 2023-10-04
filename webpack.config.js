@@ -46,7 +46,14 @@ module.exports = (env, argv) => {
             ]
         },
         plugins: [
-            new VueLoaderPlugin()
+            new VueLoaderPlugin(),
+            // Define Bundler Build Feature Flags
+            new webpack.DefinePlugin({
+                // Drop Options API from bundle
+                // __VUE_OPTIONS_API__: false,
+                // Enable Vue devtools on production
+                __VUE_PROD_DEVTOOLS__: true,
+            }),
         ]
     };
 };

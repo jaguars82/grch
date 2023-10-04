@@ -35,7 +35,7 @@ use yii\helpers\ArrayHelper;
  * @property Agency $agency
  * @property User $author
  * @property SecondaryRoom[] $secondaryRooms
- * 
+ * @property StatusLabel[] $statusLabels
  */
 
 class SecondaryAdvertisement extends ActiveRecord
@@ -162,5 +162,26 @@ class SecondaryAdvertisement extends ActiveRecord
     {
         return $this->hasMany(StatusLabel::className(), ['id' => 'status_label_id'])
                 ->viaTable('secondary_advertisement_status_label', ['secondary_advertisement_id' => 'id']);
+    }
+
+    /**
+     * Gets all agencies with advertisements
+     */
+    public static function getAgenciesWithAdvertisements()
+    {
+        $agencyIdies = self::find()->select('agency_id')->asArray()->distinct()->all();
+        
+        $idies = array();
+        foreach($agencyIdies as $id) {
+            array_push($idies, $id['agency_id']);
+        }
+
+        $agencies = Agency::find()
+            ->select(['id', 'name'])
+            ->where(['id' => $idies])
+            ->asArray()
+            ->all();
+        
+        return $agencies;
     }
 }

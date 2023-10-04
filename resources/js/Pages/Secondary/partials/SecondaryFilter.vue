@@ -1,7 +1,6 @@
 <template>
   <q-card class="q-ml-sm">
     <q-card-section>
-
       <q-select outlined v-model="formfields.deal_type" :options="filters.deal_type.options" label="Тип операции" options-dense>
         <template v-slot:append>
           <q-icon
@@ -20,6 +19,28 @@
             class="cursor-pointer"
             name="clear"
             @click.stop.prevent="formfields.category = null"
+          />
+        </template>
+      </q-select>
+
+      <q-select outlined v-model="formfields.agency" :options="filterAgencies" label="Агентство" multiple options-dense use-chips>
+        <template v-slot:append>
+          <q-icon
+            v-if="formfields.agency !== null"
+            class="cursor-pointer"
+            name="clear"
+            @click.stop.prevent="formfields.agency = null"
+          />
+        </template>
+      </q-select>
+
+      <q-select outlined v-model="formfields.statusLabel" :options="filterSatusLabels" label="Статус объявления" multiple options-dense use-chips>
+        <template v-slot:append>
+          <q-icon
+            v-if="formfields.statusLabel !== null"
+            class="cursor-pointer"
+            name="clear"
+            @click.stop.prevent="formfields.statusLabel = null"
           />
         </template>
       </q-select>
@@ -572,6 +593,7 @@
 
 <script>
 import { ref, computed, watch } from 'vue'
+import { useSecondaryFilter } from '@/stores/SecondaryFilterStore'
 import useEmitter from '@/composables/use-emitter'
 
 export default {
@@ -586,6 +608,12 @@ props: {
   secondaryCategories: {
     type: Object,
   },
+  agencies: {
+    type: Array
+  },
+  statusLabelTypes: {
+    type: Object
+  },
   districts: {
     type: Array
   },
@@ -594,6 +622,8 @@ props: {
   }
 },
 setup(props) {
+  const filterStore = useSecondaryFilter()
+
   const showMoreFilterParams = ref(false)
 
   const filters = ref({
@@ -630,6 +660,22 @@ setup(props) {
     return districts
   })
 
+  const filterAgencies = computed(() => {
+    const agencies = []
+    props.agencies.forEach(agency => {
+      agencies.push({ label: agency.name, value: agency.id })
+    })
+    return agencies
+  })
+
+  const filterSatusLabels = computed(() => {
+    const labels = []
+    for (const id in props.statusLabelTypes) {
+      labels.push({ value: id, label: props.statusLabelTypes[id] })
+    }
+    return labels
+  })
+
   const streetListRef = ref(props.streetList)
 
   const filterStreets = computed(() => {
@@ -652,7 +698,38 @@ setup(props) {
   }
 
   const formfields = ref({
-    deal_type: props.filterParams.deal_type ? filters.value.deal_type.options.find(elem => { return elem.value == props.filterParams.deal_type }) : null,
+    deal_type: props.filterParams.deal_type ? filters.value.deal_type.options.find(elem => { return elem.value == props.filterParams.deal_type }) : filterStore.deal_type,
+    category: props.filterParams.category ? filterCategory.value.find(elem => { return elem.value == props.filterParams.category }) : filterStore.category,
+    agency: props.filterParams.agency ? filterAgencies.value.filter(elem => { return props.filterParams.agency.includes(elem.value) }) : filterStore.agency,
+    statusLabel: props.filterParams.statusLabel ? filterSatusLabels.value.filter(elem => { return props.filterParams.statusLabel.includes(elem.value) }) : filterStore.statusLabel,
+    price: { min: props.filterParams.priceFrom ? props.filterParams.priceFrom : props.ranges.price.min, max: props.filterParams.priceTo ? props.filterParams.priceTo : props.ranges.price.max},
+    rooms: props.filterParams.rooms ? props.filterParams.rooms : filterStore.rooms,
+    //rooms: props.filterParams.rooms ? props.filterParams.rooms : [],
+    area: { min: props.filterParams.areaFrom ? props.filterParams.areaFrom : filterStore.area.min, max: props.filterParams.areaTo ? props.filterParams.areaTo : filterStore.area.max},
+    district: props.filterParams.district && props.filterParams.district.length > 0 ? filterDistricts.value.filter(elem => { return props.filterParams.district.includes(elem.value) }) : filterStore.district,
+    street: props.filterParams.street ? filterStreets.value.find(elem => { return elem.label ==  props.filterParams.street.label }) : filterStore.street,
+    floor: { min: props.filterParams.floorFrom ? props.filterParams.floorFrom : filterStore.floor.min, max: props.filterParams.floorTo ? props.filterParams.floorTo : filterStore.floor.max},
+    totalFloors: { min: props.filterParams.totalFloorsFrom ? props.filterParams.totalFloorsFrom : filterStore.totalFloors.min, max: props.filterParams.totalFloorsTo ? props.filterParams.totalFloorsTo : filterStore.totalFloors.max},
+    kitchenArea: { min: props.filterParams.kitchenAreaFrom ? props.filterParams.kitchenAreaFrom : filterStore.kitchenArea.min, max: props.filterParams.kitchenAreaTo ? props.filterParams.kitchenAreaTo : filterStore.kitchenArea.max},
+    livingArea: { min: props.filterParams.livingAreaFrom ? props.filterParams.livingAreaFrom : filterStore.livingArea.min, max: props.filterParams.livingAreaTo ? props.filterParams.livingAreaTo : filterStore.livingArea.max},
+    balconyAmount: { min: props.filterParams.balconyFrom ? props.filterParams.balconyFrom : filterStore.balconyAmount.min, max: props.filterParams.balconyTo ? props.filterParams.balconyTo : filterStore.balconyAmount.max},
+    loggiaAmount: { min: props.filterParams.loggiaFrom ? props.filterParams.loggiaFrom : filterStore.loggiaAmount.min, max: props.filterParams.loggiaTo ? props.filterParams.loggiaTo : filterStore.loggiaAmount.max},
+    windowviewStreet: props.filterParams.windowviewStreet ? true : filterStore.windowviewStreet,
+    windowviewYard: props.filterParams.windowviewYard ? true : filterStore.windowviewYard,
+    panoramicWindows: props.filterParams.panoramicWindows ? true : filterStore.panoramicWindows,
+    builtYear: { min: props.filterParams.builtYearFrom ? props.filterParams.builtYearFrom : filterStore.builtYear.min, max: props.filterParams.builtYearTo ? props.filterParams.builtYearTo : filterStore.builtYear.max},
+    concierge: props.filterParams.concierge ? true : filterStore.concierge,
+    rubbishChute: props.filterParams.rubbishChute ? true : filterStore.rubbishChute,
+    gasPipe: props.filterParams.gasPipe ? true : filterStore.gasPipe,
+    closedTerritory: props.filterParams.closedTerritory ? true : filterStore.closedTerritory,
+    playground: props.filterParams.playground ? true : filterStore.playground,
+    undergroundParking: props.filterParams.undergroundParking ? true : filterStore.undergroundParking,
+    groundParking: props.filterParams.groundParking ? true : filterStore.groundParking,
+    openParking: props.filterParams.openParking ? true : filterStore.openParking,
+    multilevelParking: props.filterParams.multilevelParking ? true : filterStore.multilevelParking,
+    barrier: props.filterParams.barrier ? true : filterStore.barrier,
+
+    /*deal_type: props.filterParams.deal_type ? filters.value.deal_type.options.find(elem => { return elem.value == props.filterParams.deal_type }) : null,
     category: props.filterParams.category ? filterCategory.value.find(elem => { return elem.value == props.filterParams.category }) : null,
     price: { min: props.filterParams.priceFrom ? props.filterParams.priceFrom : props.ranges.price.min, max: props.filterParams.priceTo ? props.filterParams.priceTo : props.ranges.price.max},
     rooms: props.filterParams.rooms ? props.filterParams.rooms : [],
@@ -678,7 +755,7 @@ setup(props) {
     groundParking: props.filterParams.groundParking ? true : false,
     openParking: props.filterParams.openParking ? true : false,
     multilevelParking: props.filterParams.multilevelParking ? true : false,
-    barrier: props.filterParams.barrier ? true : false,
+    barrier: props.filterParams.barrier ? true : false,*/
   })
 
   const formfieldsTest = ref({
@@ -752,10 +829,13 @@ setup(props) {
   })
 
   return {
+    filterStore,
     showMoreFilterParams,
     filters,
     filterCategory,
     filterDistricts,
+    filterAgencies,
+    filterSatusLabels,
     filterStreets,
     filterStreetList,
     roomButtons,

@@ -39,6 +39,8 @@
         :filterParams="filterFields"
         :ranges="ranges"
         :secondaryCategories="secondaryCategories"
+        :agencies="agencies"
+        :statusLabelTypes="statusLabelTypes"
         :districts="districts"
         :streetList="streetList"
       />
@@ -81,6 +83,12 @@ export default {
     districts: {
       type: Array
     },
+    agencies: {
+      type: Array
+    },
+    statusLabelTypes: {
+      type: Object
+    },
     streetList: {
       type: Array
     }
@@ -116,6 +124,8 @@ export default {
       category: props.filterParams.category,
       priceFrom: props.filterParams.priceFrom,
       priceTo: props.filterParams.priceTo,
+      agency: props.filterParams.agency,
+      statusLabel: props.filterParams.statusLabel,
       rooms: props.filterParams.rooms,
       areaFrom: props.filterParams.areaFrom,
       areaTo: props.filterParams.areaTo,
@@ -195,6 +205,19 @@ export default {
         fields.district.forEach(elem => districtFields.push(elem.value))
       }
       filterFields.value.district = districtFields.length > 0 ? districtFields : ''
+
+      let agencyFields = []
+      if (fields.agency && fields.agency.length > 0) {
+        fields.agency.forEach(elem => agencyFields.push(elem.value))
+      }
+      filterFields.value.agency = agencyFields.length > 0 ? agencyFields : ''
+
+      let statusLabelFields = []
+      if (fields.statusLabel && fields.statusLabel.length > 0) {
+        fields.statusLabel.forEach(elem => statusLabelFields.push(elem.value))
+      }
+      filterFields.value.statusLabel = statusLabelFields.length > 0 ? statusLabelFields : ''
+
       filterFields.value.street = fields.street ? fields.street : ''
       //console.log(filterFields.value.deal_type)
       Inertia.get('/secondary', { filter: filterFields.value }, { only: ['advertisements', 'ranges', 'pagination', 'filterParams'], preserveState: true, preserveScroll: true })
