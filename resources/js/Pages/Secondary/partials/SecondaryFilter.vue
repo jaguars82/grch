@@ -1,6 +1,16 @@
 <template>
   <q-card class="q-ml-sm">
     <q-card-section>
+
+      <q-btn
+        class="q-mb-xs"
+        unelevated
+        label="Сбросить фильтр"
+        icon="filter_alt_off"
+        @click="resetFilter"
+        style="width: 100%"
+      />
+
       <q-select outlined v-model="formfields.deal_type" :options="filters.deal_type.options" label="Тип операции" options-dense>
         <template v-slot:append>
           <q-icon
@@ -594,6 +604,7 @@
 <script>
 import { ref, computed, watch } from 'vue'
 import { useSecondaryFilter } from '@/stores/SecondaryFilterStore'
+import { storeToRefs } from "pinia";
 import useEmitter from '@/composables/use-emitter'
 
 export default {
@@ -622,6 +633,7 @@ props: {
   }
 },
 setup(props) {
+  //const { filterStore } = storeToRefs(useSecondaryFilter())
   const filterStore = useSecondaryFilter()
 
   const showMoreFilterParams = ref(false)
@@ -758,10 +770,10 @@ setup(props) {
     barrier: props.filterParams.barrier ? true : false,*/
   })
 
-  const formfieldsTest = ref({
+  /*const formfieldsTest = ref({
     district: null,
     street: null
-  })
+  })*/
 
   const roomButtons = ref([
     {
@@ -823,6 +835,47 @@ setup(props) {
     }
   }
 
+  const setRoomButtonsInactive = () => {
+    roomButtons.value.forEach(button => {
+      button.color = 'white'
+      button.textColor = 'grey'
+      button.onOff = false
+    })
+  }
+
+  const resetFilter = () => {
+    formfields.value.deal_type = null
+    formfields.value.category = null
+    formfields.value.price = { min: null, max: null}
+    formfields.value.agency = null
+    formfields.value.statusLabel = null
+    formfields.value.rooms = []
+    formfields.value.area = { min: null, max: null}
+    formfields.value.district = null
+    formfields.value.street = null
+    formfields.value.floor = { min: null, max: null}
+    formfields.value.totalFloors = { min: null, max: null}
+    formfields.value.kitchenArea = { min: null, max: null}
+    formfields.value.livingArea = { min: null, max: null}
+    formfields.value.balconyAmount = { min: null, max: null}
+    formfields.value.loggiaAmount = { min: null, max: null}
+    formfields.value.windowviewStreet = false
+    formfields.value.windowviewYard = false
+    formfields.value.panoramicWindows = false
+    formfields.value.builtYear = { min: null, max: null}
+    formfields.value.concierge = false
+    formfields.value.rubbishChute = false
+    formfields.value.gasPipe = false
+    formfields.value.closedTerritory = false
+    formfields.value.playground = false
+    formfields.value.undergroundParking = false
+    formfields.value.groundParking = false
+    formfields.value.openParking = false
+    formfields.value.multilevelParking = false
+    formfields.value.barrier = false
+    setRoomButtonsInactive()
+  }
+
   const emitter = useEmitter()
   watch(formfields.value, () => { 
     emitter.emit('secondary-filter-changed', formfields.value)
@@ -841,7 +894,7 @@ setup(props) {
     roomButtons,
     setRoomButtonActive,
     formfields,
-    formfieldsTest
+    resetFilter
   }
  }
 }
