@@ -130,6 +130,17 @@ $this->params['breadcrumbs'][] = $model->number;
                 <?= $this->render('/widgets/flat-price-range', [
                     'model' => $model
                 ]) ?>
+
+                <p class="hidden-xl hidden-lg hidden-md" style="text-align: start;">
+                <?php if ($model->is_reserved != 1
+                    && $model->status == 0
+                    && $model->developer->hasRepresentative()): ?>
+                    <?= Html::a('Забронировать',
+                        ['reservation/make', 'flatId' => $model->id],
+                        ['class' => 'btn btn-red-fill']
+                    ) ?>
+                <?php endif; ?> 
+                </p>
             </div>
 
             <?php if($model->layout): ?>
@@ -391,4 +402,4 @@ $this->params['breadcrumbs'][] = $model->number;
             </div>
         </div>
     </div>
-</div>
+</div>	

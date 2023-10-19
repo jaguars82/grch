@@ -1,6 +1,6 @@
 <template>
   <div>
-    <MainMenu></MainMenu>
+    <MainMenu />
     <slot name="breadcrumbs"></slot>
     <div class="flex row">
       <div class="col">
@@ -13,13 +13,13 @@
     <div class="lt-md">
       <slot name="secondary"></slot>
     </div>
-    <Footer></Footer>
+    <Footer>WTF!?</Footer>
   </div>
 </template>
 
 <script>
-import MainMenu from '../Components/Layout/MainMenu.vue'
-import Footer from '../Components/Layout/Footer.vue'
+import MainMenu from '@/Components/Layout/MainMenu.vue'
+import Footer from '@/Components/Layout/Footer.vue'
 
 export default ({
   name: 'MainLayout',

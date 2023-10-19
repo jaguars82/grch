@@ -382,16 +382,18 @@ class Agency extends \app\models\Agency
 
         foreach ($adsToDeleteIdies as $deleteId) {
             $advertisementToDelete = SecondaryAdvertisement::findOne(['external_id' => $deleteId, 'creation_type' => 1, 'agency_id' => $this->id]);
-            foreach ($advertisementToDelete->statusLabels as $label) {
-                $advertisementToDelete->unlink('statusLabels', $label, true);
-            }
-            foreach ($advertisementToDelete->secondaryRooms as $room) {
-                foreach ($room->images as $image) {
-                    $image->delete();
+            if ($advertisementToDelete !== null) {
+                foreach ($advertisementToDelete->statusLabels as $label) {
+                    $advertisementToDelete->unlink('statusLabels', $label, true);
                 }
-                $room->delete();
+                foreach ($advertisementToDelete->secondaryRooms as $room) {
+                    foreach ($room->images as $image) {
+                        $image->delete();
+                    }
+                    $room->delete();
+                }
+                $advertisementToDelete->delete();
             }
-            $advertisementToDelete->delete();
         }
 
         return $advertisements;
