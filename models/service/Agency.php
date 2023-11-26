@@ -111,11 +111,24 @@ class Agency extends \app\models\Agency
             if (array_key_exists($key, $savedAdvertisements)) {
                 $advertisement = $savedAdvertisements[$advertisementData['external_id']];
 
+                // update advertisement data (if there are any changes)
+                if ($advertisement->last_update_date != $advertisementData['last_update_date']) {
+                    $advertisement->last_update_date = $advertisementData['last_update_date'];
+                    $advertisement->save();
+                }
+
                 // update secondary rooms
                 foreach ($advertisement->secondaryRooms as $secondaryRoom) {
 
-                    // TODO
-                    // update secondary rooms data here
+                    // update secondary rooms data (if there are any changes)
+                    if ($secondaryRoom->price != $advertisementData['price']) {
+                        $secondaryRoom->price = $advertisementData['price'];
+                        $secondaryRoom->save();
+                    }
+                    if ($secondaryRoom->detail != $advertisementData['description']) {
+                        $secondaryRoom->detail = $advertisementData['description'];
+                        $secondaryRoom->save();
+                    }
 
                     // sync room images
                     $savedImagesURLs = array();

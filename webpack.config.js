@@ -43,6 +43,10 @@ module.exports = (env, argv) => {
                     test: /\.sass$/,
                     use:  ['style-loader', 'css-loader', 'sass-loader']
                 },
+                {
+                    test: /\.svg$/,
+                    loader: 'vue-loader',
+                },
             ]
         },
         plugins: [

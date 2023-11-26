@@ -4,13 +4,17 @@
         <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
       </template>
       <template v-slot:main>
-        <q-card class="q-my-md shadow-7">
-          <q-card-section>
-            <h3 class="text-center">Таблица тарифов</h3>
-          </q-card-section>
-          <q-card-section>
-          </q-card-section>
-        </q-card>
+        <NewsItem v-for="post of posts" :item="post" />
+
+        <div class="q-pa-lg flex flex-center">
+          <q-pagination
+            v-model="currentPage"
+            :max="pagination.totalPages"
+            :max-pages="8"
+            @update:model-value="goToPage(currentPage)"
+          />
+        </div>
+        {{ posts }}
       </template>
     </MainLayout>
   </template>
@@ -19,24 +23,24 @@
   import { ref, computed } from 'vue'
   import { Inertia } from '@inertiajs/inertia'
   import MainLayout from '@/Layouts/MainLayout.vue'
+  import NewsItem from '@/Components/News/NewsItem.vue'
   import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
   import Loading from "@/Components/Elements/Loading.vue"
   
   export default {
     props: {
-      model: {
+      posts: {
         type: Array,
         derfault: []
       },
-      developers: {
-        type: Array,
-        default: []
+      pagination: {
+        type: Object,
       }
     },
     components: {
-      MainLayout, Breadcrumbs, Loading
+      MainLayout, NewsItem, Breadcrumbs, Loading
     },
-    setup() {
+    setup(props) {
       const breadcrumbs = ref([
         {
           id: 1,
@@ -48,15 +52,29 @@
         },
         {
           id: 2,
-          label: 'Таблица тарифов',
-          icon: 'toc',
-          url: '/tariff',
+          label: 'Новости и акции',
+          icon: 'feed',
+          url: '/news',
           data: false,
           options: false
         },
       ])
+
+      /*const getCurrentPage = computed(() => {
+        props.pagination.page + 1
+      })*/
+
+      const currentPage = ref(props.pagination.page + 1)
+
+      const goToPage = function (page) {
+        Inertia.get('/news', { page: page })
+      }
   
-      return { breadcrumbs }
+      return {
+        breadcrumbs,
+        currentPage,
+        goToPage
+      }
     },
   }
   </script>

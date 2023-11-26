@@ -143,9 +143,7 @@
     <q-card>
       <q-bar>
         <q-space />
-        <q-btn dense flat icon="close" v-close-popup>
-          <q-tooltip class="bg-white text-primary">Закрыть</q-tooltip>
-        </q-btn>
+        <q-btn round dense flat icon="close" v-close-popup />
       </q-bar>
       <q-card-section class="q-pa-none full-height">
         <q-carousel

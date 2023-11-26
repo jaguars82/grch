@@ -120,6 +120,18 @@ class SvgDom
     }
 
     /**
+     * Get 'viewBox' attribute of the 'svg' tag
+     */
+    public function getSvgViewBox()
+    {
+        if(!$this->svgDom) {
+            $this->createDom();
+        }
+        $rootSvg = $this->svgDom->getElementsByTagName('svg')->item(0);
+        return $rootSvg->getAttribute('viewbox');
+    }
+
+    /**
      * Return content of svg file
      * @return $svgContent
      */

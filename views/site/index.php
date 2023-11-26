@@ -133,6 +133,7 @@ SiteIndexAsset::register($this);
 
 </section>
 
+<?php if(\Yii::$app->user->identity->role !== 'developer_repres'): ?>
 <section class="developer-block">
     <div class="container">
         <p class="h2">
@@ -154,8 +155,10 @@ SiteIndexAsset::register($this);
         ]); ?>
     </div> 
 </section>
+<?php endif; ?>
 
-<!--<section class="agency-block">
+<?php if(\Yii::$app->user->identity->role === 'developer_repres'): ?>
+<section class="agency-block">
     <div class="container">
         <p class="h2">
             Агентства
@@ -178,7 +181,8 @@ SiteIndexAsset::register($this);
             'emptyText' => '',
         ]); ?>
     </div>
-</section>-->
+</section>
+<?php endif; ?>
 
 <!--<section class="bank-block">
     <div class="container">

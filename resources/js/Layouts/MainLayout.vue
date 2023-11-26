@@ -25,7 +25,7 @@ export default ({
   name: 'MainLayout',
   props: {
     secondaryColumns: {
-      type: Number || Boolean,
+      type: [Number, Boolean],
       default: false,
     }
   },

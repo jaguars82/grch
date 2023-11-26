@@ -686,7 +686,7 @@ class Flat extends ActiveRecord
                 
                 $neighboringFlats = $this->getNeighboringFlats()->all();
 
-                if(!is_null($neighboringFlats ) && !empty($neighboringFlats )) {
+                if(!is_null($neighboringFlats) && !empty($neighboringFlats)) {
                     $nodeList = [];
                     foreach($neighboringFlats as $flat) {
                         if(empty($flat->layout_coords)) {
@@ -742,6 +742,24 @@ class Flat extends ActiveRecord
             }
         }
         return $floorLayoutImage;
+    }
+
+    /**
+     * Return a value of 'viewBox' attribute of 'svg' tag
+     *
+     * @return string
+     */
+    public function getFloorLayoutSvgViewBox()
+    {
+        $svgViewBox = null;
+        $floorLayoutPath = \Yii::getAlias("@webroot/uploads/{$this->floorLayout->image}");
+        
+        if(file_exists($floorLayoutPath) && SvgDom::isNameSvg($this->floorLayout->image)) {
+            $floorLayoutDom = new SvgDom($floorLayoutPath);
+            $svgViewBox = $floorLayoutDom->getSvgViewBox();
+            //echo '<pre>'; var_dump($svgViewBox); echo '</pre>'; die;
+        }
+        return $svgViewBox;
     }
 
     /**

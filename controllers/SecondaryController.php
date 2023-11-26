@@ -152,6 +152,7 @@ class SecondaryController extends Controller
             ->offset($pagination->offset)
             ->limit($pagination->limit)
             ->orderBy(['creation_date' => SORT_DESC])
+            //->orderBy(['last_update_date' => SORT_DESC])
             ->all();
 
         $advertisementsArr = array();
@@ -200,8 +201,6 @@ class SecondaryController extends Controller
 
             array_push($advertisementsArr, $advRow);
         }
-
-        // echo'<pre>'; var_dump(StatusLabelType::getAllAsList()); echo'</pre>'; die;
 
         return $this->inertia('Secondary/Index', [
             'user' => \Yii::$app->user->identity,

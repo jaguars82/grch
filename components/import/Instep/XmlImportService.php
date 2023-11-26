@@ -249,7 +249,7 @@ class XmlImportService implements ImportServiceInterface
         $layoutCount = 0;
 
         if (!isset($data->offer)) {
-            throw new AppException("Нет данных о квартирах");
+            // throw new AppException("Нет данных о квартирах");
         }
 
         foreach ($data->offer as $offer) {

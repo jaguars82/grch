@@ -30,7 +30,7 @@ export default ({
         ind: 1,
         name: 'Новости',
         path: '/news',
-        isLink: true
+        isLink: false
       },
       {
         ind: 2,
@@ -42,7 +42,7 @@ export default ({
         ind: 3,
         name: 'ЖК',
         path: '/newbuilding-complex',
-        isLink: true
+        isLink: false
       },
       {
         ind: 4,

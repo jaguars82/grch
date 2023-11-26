@@ -14,7 +14,7 @@ use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
-use yii\web\Controller;
+use tebe\inertia\web\Controller;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -116,13 +116,25 @@ class NewsController extends Controller
             $searchObject = null;
         }
 
-        return $this->render('index', [
+        // echo '<pre>'; var_dump($dataProvider->getModels()); echo '</pre>'; die;
+
+        /*return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'newsDataProvider' => $newsDataProvider,
             'actionsDataProvider' => $actionsDataProvider,
             'newbuildingComplexesDataProvider' => $newbuildingComplexesDataProvider,
             'searchObject' => $searchObject,
+        ]);*/
+
+        $postModels = $dataProvider->getModels();
+
+        return $this->inertia('News/Index', [
+            'posts' => ArrayHelper::toArray($postModels),
+            'pagination' => [
+                'page' => $dataProvider->getPagination()->getPage(),
+                'totalPages' => $dataProvider->getPagination()->getPageCount()
+            ]
         ]);
     }
 

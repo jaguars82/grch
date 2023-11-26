@@ -134,6 +134,8 @@ $this->params['breadcrumbs'][] = $model->number;
                 <p class="hidden-xl hidden-lg hidden-md" style="text-align: start;">
                 <?php if ($model->is_reserved != 1
                     && $model->status == 0
+                    && $model->developer->id != 13
+                    && \Yii::$app->user->identity->role !== 'developer_repres'
                     && $model->developer->hasRepresentative()): ?>
                     <?= Html::a('Забронировать',
                         ['reservation/make', 'flatId' => $model->id],
@@ -301,6 +303,8 @@ $this->params['breadcrumbs'][] = $model->number;
                 <?php endif; ?>
                 <?php if ($model->is_reserved != 1
                     && $model->status == 0
+                    && $model->developer->id != 13
+                    && \Yii::$app->user->identity->role !== 'developer_repres'
                     && $model->developer->hasRepresentative()): ?>
                     <?= Html::a('Забронировать',
                         ['reservation/make', 'flatId' => $model->id],
@@ -315,7 +319,7 @@ $this->params['breadcrumbs'][] = $model->number;
                 <div class="title advantages" style="margin-bottom: 10px;">
                     <!--<span>Стоимость</span>-->
                     <span class="value">
-                        <?php if($model->hasDiscount()): ?>
+                        <?php if($model->hasDiscount() && $model->status == 0): ?>
                         <?= $format->asCurrencyRange(round($model->allCashPricesWithDiscount[0]['price']), $model->price_cash); ?>    
                         <?php else: ?>
                         <?= $format->asCurrency($model->price_cash); ?>
@@ -402,4 +406,4 @@ $this->params['breadcrumbs'][] = $model->number;
             </div>
         </div>
     </div>
-</div>	
+</div>

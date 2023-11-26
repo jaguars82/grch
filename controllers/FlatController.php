@@ -11,7 +11,7 @@ use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\web\Controller;
+use tebe\inertia\web\Controller;
 use yii\web\NotFoundHttpException;
 use app\models\FloorLayout;
 use yii\helpers\Url;
@@ -78,12 +78,34 @@ class FlatController extends Controller
             'sort' => ['attributes' => ['id'], 'defaultOrder' => ['id' => SORT_DESC]],
         ]);
 
-        return $this->render('view', [
+        /*return $this->render('view', [
             'model' => $model,
             'floorLayoutImage' => !is_null($model->floorLayoutSvg) ? $model->floorLayoutSvg : NULL,
             'flatDataProvider' => $flatDataProvider,
             'contactDataProvider' => $contactDataProvider,
             'newbuildingComplexDataProvider' => $newbuildingComplexDataProvider,
+        ]);*/
+
+        return $this->inertia('Flat/View', [
+            'flat' => ArrayHelper::toArray($model, [
+                'app\models\service\Flat' => [
+                    'id', 'newbuilding_id', 'entrance_id', 'address', 'detail', 'area', 'rooms', 'floor', 'index_on_floor', 'price_cash', 'status', 'sold_by_application', 'is_applicated', 'is_reserved', 'created_at', 'updated_at', 'unit_price_cash', 'discount_type', 'discount', 'discount_amount', 'discount_price', 'azimuth', 'notification', 'extra_data', 'composite_flat_id', 'section', 'number', 'layout', 'unit_price_credit', 'price_credit', 'floor_position', 'floor_layout', 'layout_coords', 'is_euro', 'is_studio',
+                    'entranceAzimuth' => function ($flat) { return $flat->entrance->azimuth; },
+                    'masterPlan' => function ($flat) { return $flat->newbuildingComplex->master_plan; },
+                    'floorBackground' => function ($flat) { return $flat->floorLayout !== null ? $flat->floorLayout->image : null; },
+                    'svgViewBox' => function ($flat) { return $flat->floorLayoutSvgViewBox; },
+                    'neighboringFlats' => function ($flat) { return ArrayHelper::toArray($flat->getNeighboringFlats()->all()); },
+                    //'floorLayoutImage' => function ($flat) { return $flat->floorLayoutSvg; },
+                    'complex' => function ($flat) {
+                        return ArrayHelper::toArray($flat->newbuildingComplex, [
+                            'app\models\NewbuildingComplex' => [
+                                'id', 'developer_id', 'name', 'longitude', 'latitude', 'logo', 'detail', 'offer_new_price_permit', 'project_declaration', 'algorithm', 'offer_info', 'created_at', 'updated_at', 'active', 'region_id', 'city_id', 'district_id', 'street_type_id', 'street_name', 'building_type_id', 'building_number', 'master_plan' 
+                            ]
+                        ]);
+                    }
+                ]
+            ]),
+            'otherNC' => ArrayHelper::toArray($newbuildingComplexDataProvider->getModels()),
         ]);
     }
 
@@ -97,7 +119,7 @@ class FlatController extends Controller
      */
     protected function findModel($id, $withRelatedModels = false)
     {
-        $query = Flat::find()->where(['id' => $id]);
+        $query = Flat::find()->where(['id' => $id])->with(['newbuildingComplex']);
         
         if ($withRelatedModels) {
             $query->with(['newbuildingComplex.furnishes.furnishImages']);
