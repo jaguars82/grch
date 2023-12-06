@@ -55,21 +55,17 @@
 
       <p class="text-h4 q-mb-xs">На карте</p>
       
-      <yandex-map
+      <YandexMap
         :settings="yaMapsSettings"
-        :coords="[flat.newbuildingComplex.longitude, flat.newbuildingComplex.latitude]"
-        zoom="16"
-        ymap-class="ya-map-container"
+        :coordinates="[flat.newbuildingComplex.longitude, flat.newbuildingComplex.latitude]"
+        :zoom="16"
       >
-        <ymap-marker
+        <YandexMarker
           marker-id="1"
-          marker-type="placemark"
-          :coords="[flat.newbuildingComplex.longitude, flat.newbuildingComplex.latitude]"
-          :balloon="{header: 'header', body: 'body', footer: 'footer'}"
-          :icon="{color: 'green'}"
-          cluster-name="1"
-        ></ymap-marker>
-      </yandex-map>
+          type="Point"
+          :coordinates="[flat.newbuildingComplex.longitude, flat.newbuildingComplex.latitude]"
+        ></YandexMarker>
+      </YandexMap>
 
     </q-card-section>  
   </q-card>
@@ -80,7 +76,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { asArea, asCurrency, asFloor, asNumberString, asQuarterAndYearDate, asPricePerArea } from '@/helpers/formatter'
 import { yaMapsSettings } from '@/configurations/custom-configs'
-import { yandexMap, ymapMarker } from 'vue-yandex-maps'
+import { YandexMap, YandexMarker } from 'vue-yandex-maps'
 
 export default ({
   props: {
@@ -88,8 +84,7 @@ export default ({
     configuration: Object
   },
   components: {
-    yandexMap,
-    ymapMarker
+    YandexMap, YandexMarker
   },
   setup(props) {
 
@@ -118,7 +113,7 @@ export default ({
 </script>
 
 <style>
-.ya-map-container {
+.yandex-container {
   width: 100%;
   height: 300px!important;
   margin-top: -35px;

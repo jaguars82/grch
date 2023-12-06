@@ -650,22 +650,20 @@
                 <p class="q-pl-xs">Координаты не указаны</p>
               </template>
             </div>
-            <yandex-map
+            <YandexMap
               :settings="yaMapsSettings"
-              :coords="coords"
-              zoom="16"
-              ymap-class="ya-map-container"
+              :coordinates="coords"
+              :zoom="16"
             >
-              <ymap-marker
+              <YandexMarker
                 marker-id="1"
-                marker-type="Placemark"
-                :coords="coords"
+                type="Point"
+                :coordinates="coords"
                 :options="{ draggable: true }"
-                :icon="{iconLayout: 'default#imageWithContent', iconImageHref: '/img/icons/placemark.svg', imageSize: [35, 35], imageOffset: [-17.5, -35]}"
+                :events="['dragend']"
                 @dragend="onMarkerMove"
-                cluster-name="1"
-              ></ymap-marker>
-            </yandex-map>
+              ></YandexMarker>
+            </YandexMap>
           </q-card-section>
         </q-card>
 
@@ -680,10 +678,6 @@
 
       </q-form>
     </template>
-    <!--<template v-slot:secondary>
-      <pre>{{ formfields }}</pre>
-      <pre>{{ manualInputFlags }}</pre>
-    </template>-->
   </MainLayout>
 </template>
 
@@ -696,13 +690,13 @@ import Loading from "@/Components/Elements/Loading.vue"
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
 import TrippleStateLabel from '@/Components/Elements/TrippleStateLabel.vue'
 import { yaMapsSettings } from '@/configurations/custom-configs'
-import { loadYmap, yandexMap, ymapMarker } from 'vue-yandex-maps'
+import { loadYmap, YandexMap, YandexMarker } from 'vue-yandex-maps'
 import { secondaryCategoryOptionList } from '@/composables/formatted-data'
 import { userInfo } from '@/composables/shared-data'
 
 export default {
   components: {
-    MainLayout, RegularContentContainer, Breadcrumbs, TrippleStateLabel, Loading, yandexMap, ymapMarker
+    MainLayout, RegularContentContainer, Breadcrumbs, TrippleStateLabel, Loading, YandexMap, YandexMarker
   },
   props: {
     secondaryCategories: {
@@ -1148,8 +1142,6 @@ export default {
     })
 
     const onRegionDistrictSelect = () => {
-      // formfields.value.city_select = null
-      // formfields.value.city_district = null
       Inertia.visit('/user/secondary/create', {
         method: 'post',
         data: {
@@ -1235,7 +1227,6 @@ export default {
     const coords = ref([51.66109664713779, 39.20007322181243])
     
     const onMarkerMove = event => {
-      //console.log(event.originalEvent.target.geometry._coordinates)
       formfields.value.latitude = event.originalEvent.target.geometry._coordinates[0]
       formfields.value.longitude = event.originalEvent.target.geometry._coordinates[1]
       coords.value[0] = event.originalEvent.target.geometry._coordinates[0]
@@ -1253,8 +1244,6 @@ export default {
           
           let objs = res.geoObjects.toArray();
           adressByCoords.value = objs[0].properties.getAll().text
-          /* for(let i=0; i < objs.length; i++) 
-            console.log(objs[i].properties.getAll()) */
         }
       )
     }
@@ -1265,7 +1254,6 @@ export default {
     const imagesLoading = ref(false)
 
     const onDeleteImage = (ind) => {
-      //imagePreviews.value = []
       const halfBeforeTheUnwantedElement = uploadedImages.value.slice(0, ind)
       const halfAfterTheUnwantedElement = uploadedImages.value.slice(ind+1);
       uploadedImages.value = halfBeforeTheUnwantedElement.concat(halfAfterTheUnwantedElement);
@@ -1341,15 +1329,6 @@ export default {
       })
     }
 
-    /* watch(formfields.value, (val) => {
-      //coords.value[0] = val
-      console.log(val.latitude)
-    }) 
-    watch(formfields.value, (val) => {
-      //coords.value[1] = val
-      console.log(val.longitude)
-    }) */
-
     return {
       user,
       breadcrumbs,
@@ -1404,7 +1383,7 @@ export default {
 </script>
 
 <style>
-.ya-map-container {
+.yandex-container {
   width: 100%;
   height: 400px!important;
   margin-top: -35px;

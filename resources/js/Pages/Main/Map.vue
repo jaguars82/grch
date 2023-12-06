@@ -1,31 +1,26 @@
 <template>
   <MainLayout>
     <template v-slot:main>
-      <yandex-map
+      <YandexMap
         :settings="yaMapsSettings"
-        :coords="initCoords"
-        zoom="12"
-        ymap-class="ya-map-container"
+        :coordinates="initCoords"
+        :zoom="12"
       >
         <template v-if="complexes.length">
-          <ymap-marker
-            v-for="complex of complexes"
-            :marker-id="complex.id"
-            marker-type="placemark"
-            :balloon-template="[
-          '<ul>',
-          '{% for flat in complex.flat %}',
-          '<li>{{ flat.id }}</li>',
-          '{% endfor %}',
-          '</ul>',
-        ].join('')"
-            :coords="[complex.longitude, complex.latitude]"
-            :icon="{color: 'green'}"
-            cluster-name="1"
-          >
-          </ymap-marker>
+          <YandexClusterer>
+            <YandexMarker
+              v-for="complex of complexes"
+              :marker-id="complex.id"
+              type="Point"
+              :coordinates="[complex.longitude, complex.latitude]"
+            >
+              <template #component>
+                <div v-for="flat of complex.flats">{{ flat.id }} = #{{ flat.number }}</div>
+              </template>
+            </YandexMarker>
+          </YandexClusterer>
         </template>
-      </yandex-map>
+      </YandexMap>
       <pre>{{ complexes }}</pre>
       <pre>{{ selectedCity }}</pre>
       <pre>{{ initCoords }}</pre>
@@ -38,11 +33,11 @@ import { ref, computed } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import MainLayout from '@/Layouts/MainLayout.vue'
 import { yaMapsSettings } from '@/configurations/custom-configs'
-import { yandexMap, ymapMarker } from 'vue-yandex-maps'
+import { YandexMap, YandexMarker, YandexClusterer } from 'vue-yandex-maps'
 
 export default {
   components: {
-    MainLayout, yandexMap, ymapMarker
+    MainLayout, YandexMap, YandexMarker, YandexClusterer
   },
   props: {
     selectedCity: {
@@ -79,7 +74,7 @@ export default {
 </script>
 
 <style>
-.ya-map-container {
+.yandex-container {
   width: 100%;
   height: 100vh !important;
   margin-top: -35px;

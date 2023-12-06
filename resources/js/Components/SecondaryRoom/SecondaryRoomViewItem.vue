@@ -112,21 +112,17 @@
             <span v-if="address.cityDistrict">{{ address.cityDistrict }},&nbsp;</span>
             <span v-if="address.streetHouse">{{ address.streetHouse }}</span>
           </div>
-          <yandex-map
+          <YandexMap
             :settings="yaMapsSettings"
-            :coords="[room.latitude, room.longitude]"
-            zoom="16"
-            ymap-class="ya-map-container"
+            :coordinates="[room.latitude, room.longitude]"
+            :zoom="16"
           >
-            <ymap-marker
+            <YandexMarker
               marker-id="1"
-              marker-type="placemark"
-              :coords="[room.latitude, room.longitude]"
-              :balloon="{header: 'header', body: 'body', footer: 'footer'}"
-              :icon="{color: 'green'}"
-              cluster-name="1"
-            ></ymap-marker>
-          </yandex-map>
+              type="Point"
+              :coordinates="[room.latitude, room.longitude]"
+            ></YandexMarker>
+          </YandexMap>
         </q-card-section>
       </q-card>
     </div>
@@ -174,7 +170,7 @@ import { ref, computed } from 'vue'
 import { asDateTime, asNumberString, asFloor, asArea, asCurrency, asPricePerArea } from '@/helpers/formatter'
 import ParamPair from '@/Components/Elements/ParamPair.vue'
 import { yaMapsSettings } from '@/configurations/custom-configs'
-import { yandexMap, ymapMarker } from 'vue-yandex-maps'
+import { YandexMap, YandexMarker } from 'vue-yandex-maps'
 
   
 export default {
@@ -193,7 +189,7 @@ export default {
     }
   },
   components: {
-    ParamPair, yandexMap, ymapMarker
+    ParamPair, YandexMap, YandexMarker
   },
   setup (props) {
     const slide = props.room.images.length ? ref(props.room.images[0].id) : ref(false)
@@ -277,7 +273,7 @@ export default {
 </script>
 
 <style>
-.ya-map-container {
+.yandex-container {
   width: 100%;
   height: 300px!important;
   margin-top: -35px;
