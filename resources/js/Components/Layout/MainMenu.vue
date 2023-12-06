@@ -1,21 +1,18 @@
 <template>
   <div>
-    <div class="q-pa-md">
-      <q-toolbar class="bg-primary text-white">
-        <q-avatar class="q-mr-sm">
-          <a href="/">
-            <img src="/img/icons/logo.svg">
-          </a>
-        </q-avatar>
-        <template v-for="item of menuItems">
-          <a v-if="item.isLink" stretch :href="item.path">
-            <q-btn flat :label="item.name" />
-          </a>
-          <q-btn v-else stretch flat :label="item.name" @click="goPath(item.path)" />
-        </template>
-        
-      </q-toolbar>
-    </div>
+    <q-toolbar class="bg-primary text-white">
+      <q-avatar class="q-mr-sm">
+        <inertia-link href="/">
+          <img src="/img/icons/logo.svg">
+        </inertia-link>
+      </q-avatar>
+      <template v-for="item of menuItems">
+        <a v-if="item.isLink" stretch :href="item.path">
+          <q-btn flat :label="item.name" />
+        </a>
+        <q-btn v-else stretch flat :label="item.name" @click="goPath(item.path)" />
+      </template>
+    </q-toolbar>
   </div>
 </template>
 

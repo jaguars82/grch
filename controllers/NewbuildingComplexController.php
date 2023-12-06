@@ -72,10 +72,8 @@ class NewbuildingComplexController extends Controller
             'developers' => Developer::getAllAsList(),
         ]);*/
 
-        $complexesModels = $dataProvider->getModels();
-
         return $this->inertia('NewbuildingComplex/Index', [
-            'complexes' => ArrayHelper::toArray($complexesModels),
+            'complexes' => ArrayHelper::toArray($dataProvider->getModels()),
             'pagination' => [
                 'page' => $dataProvider->getPagination()->getPage(),
                 'totalPages' => $dataProvider->getPagination()->getPageCount()

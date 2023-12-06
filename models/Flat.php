@@ -852,4 +852,59 @@ class Flat extends ActiveRecord
                 ]
             );
     }
+
+    /**
+     * Get max price of an active flat
+     */
+    public static function getMaxFlatPrice()
+    {
+        return round(
+            Flat::find()
+            ->onlyActive()
+            ->withOnlyActiveNewbuildings()
+            ->max('price_cash')
+        );
+    }
+
+    /**
+     * Get min price of an active flat
+     */
+    public static function getMinFlatPrice()
+    {
+        return round(
+            Flat::find()
+            ->onlyActive()
+            ->withOnlyActiveNewbuildings()
+            ->min('price_cash')
+        );
+    }
+
+    /**
+     * Get max price per m2 of an active flat
+     */
+    public static function getMaxFlatPerUnitPrice()
+    {
+        return round(
+            Flat::find()
+            ->onlyActive()
+            ->withNonNullArea()
+            ->withOnlyActiveNewbuildings()
+            ->max('price_cash / area')
+        );
+    }
+
+    /**
+     * Get max price per m2 of an active flat
+     */
+    public static function getMinFlatPerUnitPrice()
+    {
+        return round(
+            Flat::find()
+            ->onlyActive()
+            ->withNonNullArea()
+            ->withOnlyActiveNewbuildings()
+            ->min('price_cash / area')
+        );
+    }
+
 }

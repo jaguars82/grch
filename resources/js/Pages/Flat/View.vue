@@ -34,7 +34,7 @@
             </div>
           </div>
 
-          <div class="layouts-viewer-container">
+          <div class="layouts-viewer-container" :class="{ 'layouts-viewer-container-large': $q.screen.gt.xs }">
             <q-tab-panels class="full-height" v-model="layoutViewerTab" @transition="onTabChange">
               <q-tab-panel name="apartment">
                 <img class="fit" :src="`/uploads/${flat.layout}`" alt="flat layout" />
@@ -280,8 +280,11 @@ export default {
 .ocomplex-item-img {
   height: 90px;
 }
+.layouts-viewer-container-large {
+  height: 650px;
+}
 .layouts-viewer-container {
-  max-height: 600px;
+  max-height: 650px;
   min-height: 100px;
 }
 .fitwindow {

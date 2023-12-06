@@ -1,11 +1,13 @@
 <template>
   <q-card class="shadow-7">
     <q-card-section class="q-px-md q-py-xs" horizontal>
-      <q-img v-if="flat.layout"
-        class="col-4"
-        :src="`/uploads/${flat.layout}`"
-      />
-      <q-img v-else class="col-4" src="/img/flat.png" />
+      <div class="col-4 self-center">
+        <q-img v-if="flat.layout"
+          fit="scale-down"
+          :src="`/uploads/${flat.layout}`"
+        />
+        <q-img v-else fit="scale-down" src="/img/flat.png" />
+      </div>
       <q-card-section>
         <a :href="`/flat/view?id=${flat.id}`">
           <p class="text-h4 q-mb-xs"><span class="text-capitalize">{{ flatRoomTitle }}</span> квартира № {{ flat.number }}</p>

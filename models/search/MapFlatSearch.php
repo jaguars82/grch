@@ -29,6 +29,7 @@ class MapFlatSearch extends AdvancedFlatSearch
             ->all();
         
         foreach ($queryResult as $item) {
+            $result[$item->newbuildingComplex->id]['id'] = $item->newbuildingComplex->id;
             $result[$item->newbuildingComplex->id]['name'] = $item->newbuildingComplex->name;
             $result[$item->newbuildingComplex->id]['latitude'] = $item->newbuildingComplex->latitude;
             $result[$item->newbuildingComplex->id]['longitude'] = $item->newbuildingComplex->longitude;

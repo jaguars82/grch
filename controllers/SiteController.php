@@ -11,6 +11,7 @@ use app\models\News;
 use app\models\City;
 use app\models\Region;
 use app\models\District;
+use app\models\Flat;
 use app\models\search\AdvancedFlatSearch;
 use app\models\search\MapFlatSearch;
 use app\models\search\SimpleFlatSearch;
@@ -93,25 +94,25 @@ class SiteController extends Controller
         $searchModel = new AdvancedFlatSearch();
         $searchModel->scenario = AdvancedFlatSearch::SCENARIO_SIMPLE;
 
-        $newsList = (new News())->find()->onlyActual()->orderBy(['created_at' => SORT_DESC])->all();
+        $newsList = News::find()->onlyActual()->orderBy(['created_at' => SORT_DESC])->all();
 
-        $newsDataProvider = new ActiveDataProvider([
+        /* $newsDataProvider = new ActiveDataProvider([
             'query' => News::find()->onlyNews()->onlyActual()->limit(4),
             'pagination' => false,
             'sort' => [
                 'attributes' => ['created_at'],
                 'defaultOrder' => ['created_at' => SORT_DESC],
             ],
-        ]);
+        ]); */
 
-        $actionsDataProvider = new ActiveDataProvider([
+        /* $actionsDataProvider = new ActiveDataProvider([
             'query' => News::find()->onlyActions()->onlyActual()->limit(2),
             'pagination' => false,
             'sort' => [
                 'attributes' => ['created_at'],
                 'defaultOrder' => ['created_at' => SORT_DESC],
             ],
-        ]);
+        ]); */
 
         $developerDataProvider = new ActiveDataProvider([
             'query' => Developer::find()->limit(10),
@@ -139,19 +140,24 @@ class SiteController extends Controller
                 'defaultOrder' => ['id' => SORT_DESC],
             ],
         ]);
-
-        return $this->render('index', [
-        //return $this->inertia('Main/Index', [
+        //return $this->render('index', [
+        return $this->inertia('Main/Index', [
             'searchModel' => $searchModel,
-            'newsList' => $newsList,
+            'newsList' => ArrayHelper::toArray($newsList),
+            'initialFilterParams' => [
+                'maxFlatPrice' => Flat::getMaxFlatPrice(),
+                'minFlatPrice' => Flat::getMinFlatPrice(),
+                'maxM2Price' => Flat::getMaxFlatPerUnitPrice(),
+                'minM2Price' => Flat::getMinFlatPerUnitPrice(),
+            ],
             //'newsList' => News::find()->asArray()->all(),
-            'newsDataProvider' =>$newsDataProvider,
-            'actionsDataProvider' => $actionsDataProvider,
+            //'newsDataProvider' =>$newsDataProvider,
+            //'actionsDataProvider' => $actionsDataProvider,
             'developerDataProvider' => $developerDataProvider,
             'agencyDataProvider' => $agencyDataProvider,
             'bankDataProvider' => $bankDataProvider,
-            'districts' => District::getAllForLocationAsList(),
-            'developers' => Developer::getAllAsList(),
+            'districts' => ArrayHelper::toArray(District::getAllForLocationAsList()),
+            'developers' => ArrayHelper::toArray(Developer::getAllAsList()),
             'newbuildingComplexes' => $searchModel->newbuildingComplexes
         ]);
     }
@@ -192,10 +198,30 @@ class SiteController extends Controller
         if(!empty($districts)) {
             $districts = ArrayHelper::map($districts, 'id', 'name');
         }
-        
-        return $this->render('search', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+
+       
+        //return $this->render('search', [
+        return $this->inertia('Main/Search', [
+            //'searchModel' => $searchModel,
+            'searchModel' => $queryParams,
+            'dataProvider' => ArrayHelper::toArray($dataProvider->getModels(), [
+                'app\models\Flat' => [
+                    'id', 'newbuilding_id', 'entrance_id', 'address', 'detail', 'area', 'rooms', 'floor', 'index_on_floor', 'price_cash', 'status', 'sold_by_application', 'is_applicated', 'is_reserved', 'created_at', 'updated_at', 'unit_price_cash', 'discount_type', 'discount', 'discount_amount', 'discount_price', 'azimuth', 'notification', 'extra_data', 'composite_flat_id', 'section', 'number', 'layout', 'unit_price_credit', 'price_credit', 'floor_position', 'floor_layout', 'layout_coords', 'is_euro', 'is_studio',
+                    'newbuilding' => function ($flat) {
+                        return ArrayHelper::toArray($flat->newbuilding);
+                    },
+                    'newbuildingComplex' => function ($flat) {
+                        return ArrayHelper::toArray($flat->newbuildingComplex);
+                    },
+                    'developer' => function ($flat) {
+                        return ArrayHelper::toArray($flat->developer);
+                    }
+                ]
+            ]),
+            'pagination' => [
+                'page' => $dataProvider->getPagination()->getPage(),
+                'totalPages' => $dataProvider->getPagination()->getPageCount()
+            ],
             'newsDataProvider' => $newsDataProvider,
             'itemsCount' => $searchModel->itemsCount,
             'regions' => Region::getAllAsList(),
@@ -216,7 +242,7 @@ class SiteController extends Controller
      */
     public function actionMap()
     {
-        $this->layout = 'map';
+        // $this->layout = 'map';
         
         \Yii::$app->response->cookies->add(new \yii\web\Cookie([
             'name' => 'map-search-query-string-' . \Yii::$app->user->id,
@@ -226,23 +252,23 @@ class SiteController extends Controller
         $searchModel = new MapFlatSearch();
         $result = $searchModel->search(\Yii::$app->request->get(), 'page', true);
 
-        if(!is_null($result)) {
+        /* if(!is_null($result)) {
             foreach($result as &$item) {
                 $item['html'] = $this->renderPartial('/common/_map-flat-list', [
                     'flats' => $item['flats']
                 ]);
                 unset($item['flats']);
             }
-        }
+        } */
 
-        if (\Yii::$app->request->isAjax) {
+        /*if (\Yii::$app->request->isAjax) {
             \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;            
             \Yii::$app->response->data = [
                 'result' => $result,
             ];
             
             return;
-        }
+        }*/
 
         $cities = !is_null($searchModel->region_id) ? City::find()->forRegion($searchModel->region_id)->asArray()->all() : [];
         if(!empty($cities)) {
@@ -263,17 +289,19 @@ class SiteController extends Controller
         }
         $selectedCity = City::findOne($selectedCityId);
 
-        return $this->render('map',  [
+        // return $this->render('map',  [
+        return $this->inertia('Main/Map', [
             'searchModel' => $searchModel,
+            'complexes' => ArrayHelper::toArray($result), 
             'developers' => Developer::getAllAsList(),
             'newbuildingComplexes' => $searchModel->newbuildingComplexes,
-            'positionArray' => $searchModel->positionArray,
+            'positionArray' => ArrayHelper::toArray($searchModel->positionArray),
             'materials' => Newbuilding::getAllMaterialsAsList(),
             'cities' => $cities,
             'districts' => $districts,
             'regions' => Region::getAllAsList(),
             'deadlineYears' => Newbuilding::getAllDeadlineYears(),
-            'selectedCity' => $selectedCity,
+            'selectedCity' => ArrayHelper::toArray($selectedCity),
         ]);
     }
 }

@@ -121,7 +121,7 @@
             </q-form>
           </q-card-section>
         </q-card>
-        <FlatListItem :flat="flat"></FlatListItem>
+        <FlatListItem :flat="flat" />
       </template>
     </MainLayout>
   </div>

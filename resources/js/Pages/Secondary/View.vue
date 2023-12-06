@@ -1,25 +1,25 @@
 <template>
-    <MainLayout>
-      <template v-slot:breadcrumbs>
-        <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
-      </template>
-      <template v-slot:main>
-        <h3 class="text-center">Предложение #{{ advertisement.id }}</h3>
-        <SecondaryRoomViewItem
-          v-for="room of advertisement.secondary_room"
-          :key="room.id"
-          :room="room"
-          :created="advertisement.creation_date"
-          :agency="advertisement.agency"
-          :author="{
-              db: advertisement.author_DB ? advertisement.author_DB : null,
-              info: advertisement.author_info
-          }"
-        />          
+  <MainLayout>
+    <template v-slot:breadcrumbs>
+      <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
+    </template>
+    <template v-slot:main>
+      <h3 class="text-center">Предложение #{{ advertisement.id }}</h3>
+      <SecondaryRoomViewItem
+        v-for="room of advertisement.secondary_room"
+        :key="room.id"
+        :room="room"
+        :created="advertisement.creation_date"
+        :agency="advertisement.agency"
+        :author="{
+            db: advertisement.author_DB ? advertisement.author_DB : null,
+            info: advertisement.author_info
+        }"
+      />          
 
-      </template>
-    </MainLayout>
-  </template>
+    </template>
+  </MainLayout>
+</template>
   
 <script>
 import { ref, computed } from 'vue'
