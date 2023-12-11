@@ -19,7 +19,7 @@
         <a :href="`/newbuilding-complex/view?id=${flat.newbuildingComplex.id}`">
         <!--<inertia-link :href="`/newbuilding-complex/view?id=${flat.newbuildingComplex.id}`">-->
           <div v-if="flat.newbuildingComplex.logo" class="nbc-logo-container">
-            <q-img class="nbc-logo" :src="`/uploads/${flat.newbuildingComplex.logo}`" />
+            <q-img fit="scale-down" :src="`/uploads/${flat.newbuildingComplex.logo}`" />
           </div>
           <p v-else class="text-h5">{{ flat.newbuildingComplex.name }}</p>
         <!--</inertia-link>-->
@@ -59,11 +59,5 @@ export default ({
   justify-content: center;
   width: 80px;
   height: 80px;
-}
-
-.nbc-logo {
-  align-self: center;
-  max-width: 100%;
-  max-height: 100%;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <MainLayout>
+  <MainLayout :drawers="{ left: { is: false, opened: false }, right: { is: true, opened: true } }">
     <template v-slot:main>
       <YandexMap
         :settings="yaMapsSettings"
@@ -15,32 +15,67 @@
               :coordinates="[complex.longitude, complex.latitude]"
             >
               <template #component>
-                <div v-for="flat of complex.flats">{{ flat.id }} = #{{ flat.number }}</div>
+                <q-virtual-scroll
+                  style="max-height: 300px;"
+                  :items="complex.flats"
+                  separator
+                  v-slot="{ item, index }"
+                >
+                  <q-item
+                    :key="item.id"
+                    dense
+                  >
+                    <q-item-section>
+                      <q-item-label>
+                        {{ item.id }} = #{{ item.number }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-virtual-scroll>
               </template>
             </YandexMarker>
           </YandexClusterer>
         </template>
       </YandexMap>
-      <pre>{{ complexes }}</pre>
       <pre>{{ selectedCity }}</pre>
       <pre>{{ initCoords }}</pre>
     </template>
+
+    <template v-slot:right-drawer>
+      <div class="q-pa-md">
+        <AdvancedFlatFilter
+          :searchModel="searchModel.MapFlatSearch"
+          :regions="regions"
+          :cities="cities"
+          :districts="districts"
+          :developers="developers"
+          :newbuildingComplexes="newbuildingComplexes"
+          :positions="positionArray"
+          :material="materials"
+          :deadlineYears="deadlineYears"
+          :rangeEdges="rangeEdges"
+        />
+      </div>
+    </template>
+
   </MainLayout>
 </template>
 
 <script>
 import { ref, computed } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
+import useEmitter from '@/composables/use-emitter'
 import MainLayout from '@/Layouts/MainLayout.vue'
 import { yaMapsSettings } from '@/configurations/custom-configs'
 import { YandexMap, YandexMarker, YandexClusterer } from 'vue-yandex-maps'
+import AdvancedFlatFilter from '@/Pages/Main/partials/AdvancedFlatFilter.vue'
 
 export default {
   components: {
-    MainLayout, YandexMap, YandexMarker, YandexClusterer
+    MainLayout, YandexMap, YandexMarker, YandexClusterer, AdvancedFlatFilter
   },
   props: {
-    selectedCity: {
+    searchModel: {
       type: Object,
       default: {}
     },
@@ -48,10 +83,43 @@ export default {
       type: Array,
       default: []
     },
+    selectedCity: {
+      type: Object,
+      default: {}
+    },
+    regions: {
+      type: Object,
+      default: {}
+    },
+    cities: {
+      type: Object,
+      default: {}
+    },
+    districts: {
+      type: Object,
+      default: {}
+    },
+    developers: {
+      type: Object,
+      default: {}
+    },
+    newbuildingComplexes: {
+      type: Object,
+      default: {}
+    },
     positionArray: {
       type: Object,
       default: {}
-    }
+    },
+    materials: {
+      type: Object,
+      default: {}
+    },
+    deadlineYears: {
+      type: Object,
+      default: {}
+    },
+    rangeEdges: Object,
   },
   setup (props) {
 
@@ -59,10 +127,15 @@ export default {
       let latitude = 39.2112
       let longitude = 51.6708
       if (('latitude' in props.selectedCity && props.selectedCity.latitude) && ('longitude' in props.selectedCity && props.selectedCity.longitude)) {
-        latitude = props.selectedCity.latitude
-        longitude = props.selectedCity.longitude
+        latitude = parseFloat(props.selectedCity.latitude)
+        longitude = parseFloat(props.selectedCity.longitude)
       }
       return [longitude, latitude]
+    })
+
+    const emitter = useEmitter()
+    emitter.on('flat-filter-changed', payload => {
+      Inertia.get('/site/map', { MapFlatSearch: payload, city: payload.city_id }, { preserveState: true })
     })
 
     return {
@@ -78,5 +151,9 @@ export default {
   width: 100%;
   height: 100vh !important;
   margin-top: -35px;
+}
+.yandex-balloon {
+  width: 300px;
+  height: 100px;
 }
 </style>

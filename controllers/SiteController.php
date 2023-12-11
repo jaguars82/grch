@@ -179,8 +179,6 @@ class SiteController extends Controller
         $searchModel = new AdvancedFlatSearch();
         $dataProvider = $searchModel->search($queryParams, 'list-page', true);
 
-        //echo '<pre>'; var_dump($queryParams); echo '</pre>'; die(); 
-
         $newsDataProvider = new ActiveDataProvider([
             'query' => News::find()->onlyActual()->limit(3),
             'pagination' => false,
@@ -199,7 +197,13 @@ class SiteController extends Controller
             $districts = ArrayHelper::map($districts, 'id', 'name');
         }
 
-       
+        if (!array_key_exists('region_id', $queryParams['AdvancedFlatSearch']) || is_null($queryParams['AdvancedFlatSearch']['region_id'])) {
+            $queryParams['AdvancedFlatSearch']['region_id'] = $searchModel->region_id;
+        }
+        if (!array_key_exists('city_id', $queryParams['AdvancedFlatSearch']) || is_null($queryParams['AdvancedFlatSearch']['city_id'])) {
+            $queryParams['AdvancedFlatSearch']['city_id'] = $searchModel->city_id;
+        }
+
         //return $this->render('search', [
         return $this->inertia('Main/Search', [
             //'searchModel' => $searchModel,
@@ -222,7 +226,7 @@ class SiteController extends Controller
                 'page' => $dataProvider->getPagination()->getPage(),
                 'totalPages' => $dataProvider->getPagination()->getPageCount()
             ],
-            'newsDataProvider' => $newsDataProvider,
+            'newsDataProvider' => ArrayHelper::toArray($newsDataProvider->getModels()),
             'itemsCount' => $searchModel->itemsCount,
             'regions' => Region::getAllAsList(),
             'cities' => $cities,
@@ -231,7 +235,29 @@ class SiteController extends Controller
             'newbuildingComplexes' => $searchModel->newbuildingComplexes,
             'positionArray' => $searchModel->positionArray,
             'materials' => Newbuilding::getAllMaterialsAsList(),
-            'deadlineYears' => Newbuilding::getAllDeadlineYears()
+            'deadlineYears' => Newbuilding::getAllDeadlineYears(),
+            'rangeEdges' => [
+                'priceForAll' => [
+                    'min' => Flat::getMinFlatPrice(),
+                    'max' => Flat::getMaxFlatPrice(),
+                ],
+                'priceForM2' => [
+                    'min' => Flat::getMinFlatPerUnitPrice(),
+                    'max' => Flat::getMaxFlatPerUnitPrice(),
+                ],
+                'area' => [
+                    'min' => Flat::getMinFlatArea(),
+                    'max' => Flat::getMaxFlatArea(),
+                ],
+                'floor' => [
+                    'min' => Flat::getMinFlatFloor(),
+                    'max' => Flat::getMaxFlatFloor(),
+                ],
+                'total_floor' => [
+                    'min' => Newbuilding::getMinFloorBuilding(),
+                    'max' => Newbuilding::getMaxFloorBuilding(),
+                ],
+            ]
         ]);
     }
     
@@ -289,9 +315,18 @@ class SiteController extends Controller
         }
         $selectedCity = City::findOne($selectedCityId);
 
+        
+        /* if (!array_key_exists('region_id', $queryParams['MapFlatSearch']) || is_null($queryParams['MapFlatSearch']['region_id'])) {
+            $queryParams['MapFlatSearch']['region_id'] = $searchModel->region_id;
+        }
+        if (!array_key_exists('city_id', $queryParams['MapFlatSearch']) || is_null($queryParams['MapFlatSearch']['city_id'])) {
+            $queryParams['MapFlatSearch']['city_id'] = $searchModel->city_id;
+        } */
+
         // return $this->render('map',  [
         return $this->inertia('Main/Map', [
-            'searchModel' => $searchModel,
+            //'searchModel' => $searchModel,
+            'searchModel' => $queryParams,
             'complexes' => ArrayHelper::toArray($result), 
             'developers' => Developer::getAllAsList(),
             'newbuildingComplexes' => $searchModel->newbuildingComplexes,
@@ -302,6 +337,29 @@ class SiteController extends Controller
             'regions' => Region::getAllAsList(),
             'deadlineYears' => Newbuilding::getAllDeadlineYears(),
             'selectedCity' => ArrayHelper::toArray($selectedCity),
+            'rangeEdges' => [
+                'priceForAll' => [
+                    'min' => Flat::getMinFlatPrice(),
+                    'max' => Flat::getMaxFlatPrice(),
+                ],
+                'priceForM2' => [
+                    'min' => Flat::getMinFlatPerUnitPrice(),
+                    'max' => Flat::getMaxFlatPerUnitPrice(),
+                ],
+                'area' => [
+                    'min' => Flat::getMinFlatArea(),
+                    'max' => Flat::getMaxFlatArea(),
+                ],
+                'floor' => [
+                    'min' => Flat::getMinFlatFloor(),
+                    'max' => Flat::getMaxFlatFloor(),
+                ],
+                'total_floor' => [
+                    'min' => Newbuilding::getMinFloorBuilding(),
+                    'max' => Newbuilding::getMaxFloorBuilding(),
+                ],
+            ]
+
         ]);
     }
 }

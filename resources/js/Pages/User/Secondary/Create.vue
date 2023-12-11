@@ -691,7 +691,7 @@ import RegularContentContainer from '@/Components/Layout/RegularContentContainer
 import TrippleStateLabel from '@/Components/Elements/TrippleStateLabel.vue'
 import { yaMapsSettings } from '@/configurations/custom-configs'
 import { loadYmap, YandexMap, YandexMarker } from 'vue-yandex-maps'
-import { secondaryCategoryOptionList } from '@/composables/formatted-data'
+import { secondaryCategoryOptionList } from '@/composables/formatted-and-processed-data'
 import { userInfo } from '@/composables/shared-data'
 
 export default {

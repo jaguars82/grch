@@ -1,8 +1,9 @@
 <template>
-  <MainLayout>
+  <MainLayout :drawers="{ left: { is: false, opened: false }, right: { is: true, opened: true } }">
     <template v-slot:breadcrumbs>
       <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
     </template>
+
     <template v-slot:main>
       <FlatListItem
         v-for="flat of dataProvider"
@@ -17,28 +18,37 @@
           @update:model-value="goToPage(currentPage)"
         />
       </div>
-      <pre>{{ searchModel }}</pre>
-      <pre>{{ newsDataProvider }}</pre>
-      <pre>{{ itemsCount }}</pre>
-      <pre>{{ regions }}</pre>
-      <pre>{{ cities }}</pre>
-      <pre>{{ districts }}</pre>
-      <pre>{{ developers }}</pre>
-      <pre>{{ newbuildingComplexes }}</pre>
-      <pre>{{ positionArray }}</pre>
-      <pre>{{ materials }}</pre>
-      <pre>{{ deadlineYears }}</pre>
     </template>
+
+    <template v-slot:right-drawer>
+      <div class="q-pa-md">
+        <AdvancedFlatFilter
+          :searchModel="searchModel.AdvancedFlatSearch"
+          :regions="regions"
+          :cities="cities"
+          :districts="districts"
+          :developers="developers"
+          :newbuildingComplexes="newbuildingComplexes"
+          :positions="positionArray"
+          :material="materials"
+          :deadlineYears="deadlineYears"
+          :rangeEdges="rangeEdges"
+        />
+      </div>
+    </template>
+
   </MainLayout>
 </template>
 
 <script>
 import { ref, computed } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
+import useEmitter from '@/composables/use-emitter'
 import MainLayout from '@/Layouts/MainLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import Loading from '@/Components/Elements/Loading.vue'
 import FlatListItem from '@/Components/Flat/FlatListItem.vue'
+import AdvancedFlatFilter from '@/Pages/Main/partials/AdvancedFlatFilter.vue'
 
 export default {
   props: {
@@ -83,8 +93,8 @@ export default {
       default: {}
     },
     positionArray: {
-      type: Array,
-      default: []
+      type: Object,
+      default: {}
     },
     materials: {
       type: Object,
@@ -93,10 +103,11 @@ export default {
     deadlineYears: {
       type: Object,
       default: {}
-    }
+    },
+    rangeEdges: Object,
   },
   components: {
-    MainLayout, Breadcrumbs, Loading, FlatListItem
+    MainLayout, Breadcrumbs, Loading, FlatListItem, AdvancedFlatFilter
   },
   setup(props) {
 
@@ -124,6 +135,11 @@ export default {
     const goToPage = function (page) {
       Inertia.get('/site/search', { 'list-page': page, AdvancedFlatSearch: props.searchModel.AdvancedFlatSearch }/*, { preserveState: true }*/)
     }
+
+    const emitter = useEmitter()
+    emitter.on('flat-filter-changed', payload => {
+      Inertia.get('/site/search', { AdvancedFlatSearch: payload }, { preserveState: true })
+    })
 
     return { breadcrumbs, currentPage, goToPage  }
   }

@@ -81,8 +81,10 @@ class UtilsController extends Controller
             foreach ($flatsGrouppedByFloor as $floor => $floorFlats) {
                 $flatIndex = 1;
                 foreach ($floorFlats as $flat) {
-                    $flat->index_on_floor = $flatIndex;
-                    $flat->save();
+                    if ($flat->index_on_floor != $flatIndex) {
+                        $flat->index_on_floor = $flatIndex;
+                        $flat->save();
+                    }
                     $flatIndex++;
                 }
             }

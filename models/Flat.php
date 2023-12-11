@@ -907,4 +907,54 @@ class Flat extends ActiveRecord
         );
     }
 
+    /**
+     * Get min area of an active flat
+     */
+    public static function getMinFlatArea()
+    {
+        return floor(
+            Flat::find()
+            ->onlyActive()
+            ->withNonNullArea()
+            ->withOnlyActiveNewbuildings()
+            ->min('area')
+        );
+    }
+
+    /**
+     * Get max area of an active flat
+     */
+    public static function getMaxFlatArea()
+    {
+        return ceil(
+            Flat::find()
+            ->onlyActive()
+            ->withOnlyActiveNewbuildings()
+            ->max('area')
+        );
+    }
+
+    /**
+     * Get min floor of an active flat
+     */
+    public static function getMinFlatFloor()
+    {
+        return Flat::find()
+            ->onlyActive()
+            ->withNonNullFloor()
+            ->withOnlyActiveNewbuildings()
+            ->min('floor');
+    }
+
+    /**
+     * Get max floor of an active flat
+     */
+    public static function getMaxFlatFloor()
+    {
+        return Flat::find()
+            ->onlyActive()
+            ->withOnlyActiveNewbuildings()
+            ->max('floor');
+    }
+
 }

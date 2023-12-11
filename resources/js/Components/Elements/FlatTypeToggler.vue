@@ -17,15 +17,15 @@ import useEmitter from '@/composables/use-emitter'
 export default {
   props: {
     flatType: {
-      type: Array,
-      default: []
+      type: String,
+      default: '0'
     }
   },
   setup (props) {
-    const model = ref(props.flatType)
+    const model = ref([props.flatType])
 
     const emitter = useEmitter()
-    watch (model, () => emitter.emit('flat-type-changed', model.value))
+    watch (model, () => emitter.emit('flat-type-changed', model.value.join('')))
 
     const flatTypeButtons = computed(() => {
       return [

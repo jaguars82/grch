@@ -505,4 +505,25 @@ class Newbuilding extends ActiveRecord
         
         return !is_null($result->maxDiscount) ? $result->maxDiscount : NULL;
     }
+
+    /**
+     * Get min total_floors of an active building
+     */
+    public static function getMinFloorBuilding()
+    {
+        return self::find()
+            ->where(['>', 'total_floor', 0])
+            ->onlyActive()
+            ->min('total_floor');
+    }
+
+    /**
+     * Get max total_floors of an active building
+     */
+    public static function getMaxFloorBuilding()
+    {
+        return self::find()
+            ->onlyActive()
+            ->max('total_floor');
+    }
 }

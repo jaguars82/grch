@@ -187,25 +187,21 @@ export default {
 
     const roomsSelect = ref([])
     emitter.on('rooms-amont-changed', (payload) => {
-      // console.log(payload)
       roomsSelect.value = payload
     })
 
-    const flatTypeSelect = ref([])
+    const flatTypeSelect = ref('0')
     emitter.on('flat-type-changed', (payload) => {
-      // console.log(payload)
       flatTypeSelect.value = payload
     })
 
     const priceRangeSelect = ref({ min: null, max: null })
     emitter.on('price-changed', (payload) => {
-      // console.log(payload)
       priceRangeSelect.value = payload
     })
 
     const priceTypeSelect = ref('0')
     emitter.on('price-type-changed', (payload) => {
-      // console.log(payload)
       priceTypeSelect.value = payload
     })
 

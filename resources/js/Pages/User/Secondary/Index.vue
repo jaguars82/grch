@@ -150,7 +150,7 @@ import { ref, computed, watch } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { date } from 'quasar'
 import { asDateTime, asNumberString, asFloor, asArea, asCurrency, asPricePerArea } from '@/helpers/formatter'
-import { secondaryCategoryOptionList, agencyOptionList, userOptionList } from '@/composables/formatted-data'
+import { secondaryCategoryOptionList, idNameObjToOptions, userOptionList } from '@/composables/formatted-and-processed-data'
 import { userInfo } from '@/composables/shared-data'
 import ProfileLayout from '@/Layouts/ProfileLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
@@ -364,7 +364,7 @@ export default ({
     }
 
     const agencyOptions = computed(() => {
-      return agencyOptionList(props.agencies)
+      return idNameObjToOptions(props.agencies)
     })
     const agentOptions = computed(() => { 
       return userOptionList(props.agents)
