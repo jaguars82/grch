@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\components\exceptions\AppException;
 use app\components\traits\CustomRedirects;
+use app\components\SharedDataFilter;
 use app\models\Developer;
 use app\models\Favorite;
 use app\models\Flat;
@@ -49,6 +50,9 @@ class FavoriteController extends Controller
                         'roles' => ['@'],
                     ],
                 ]
+            ],
+            [
+                'class' => SharedDataFilter::class
             ],
         ];
     }

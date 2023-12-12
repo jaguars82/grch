@@ -5,6 +5,7 @@ namespace app\controllers\user;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
+use app\components\SharedDataFilter;
 
 /**
  * UserController implements the CRUD actions for agency's manager.
@@ -37,6 +38,9 @@ class AgencyManagerController extends Controller
                         'roles' => ['@'],
                     ],
                 ]
+            ],
+            [
+                'class' => SharedDataFilter::class
             ],
         ];
     }

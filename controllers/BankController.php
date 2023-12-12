@@ -13,6 +13,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use app\models\form\BankCalculationForm;
 use yii\helpers\ArrayHelper;
+use app\components\SharedDataFilter;
 
 /**
  * BankController implements the CRUD actions for Bank model.
@@ -42,6 +43,9 @@ class BankController extends Controller
                         'roles' => ['@'],
                     ],
                 ]
+            ],
+            [
+                'class' => SharedDataFilter::class
             ],
         ];
     }

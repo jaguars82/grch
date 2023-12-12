@@ -11,6 +11,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use app\components\traits\CustomRedirects;
+use app\components\SharedDataFilter;
 
 /**
  * CityController implements the CRUD actions for City model.
@@ -47,6 +48,9 @@ class CityController extends Controller
                         'roles' => ['@'],
                     ],
                 ]
+            ],
+            [
+                'class' => SharedDataFilter::class
             ],
         ];
     }

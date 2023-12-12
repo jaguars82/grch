@@ -3,6 +3,7 @@
 namespace app\controllers\contact;
 
 use app\components\traits\CustomRedirects;
+use app\components\SharedDataFilter;
 use app\models\Contact;
 use app\models\Developer;
 use app\models\NewbuildingComplex;
@@ -40,6 +41,9 @@ class ContactController extends Controller
                         'roles' => ['@'],
                     ],
                 ]
+            ],
+            [
+                'class' => SharedDataFilter::class
             ],
         ];
     }

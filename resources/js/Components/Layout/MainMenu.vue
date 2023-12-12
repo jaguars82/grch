@@ -12,15 +12,19 @@
         </a>
         <q-btn v-else stretch flat :label="item.name" @click="goPath(item.path)" />
       </template>
+      <separator />
+      <UserMenu />
     </q-toolbar>
   </div>
 </template>
 
 <script>
 import { Inertia } from '@inertiajs/inertia'
+import UserMenu from '@/Components/Layout/UserMenu.vue'
 
 export default ({
   name: 'MainMenu',
+  components: { UserMenu },
   setup() {
     const menuItems = [
       {

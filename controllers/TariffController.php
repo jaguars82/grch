@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\components\traits\CustomRedirects;
+use app\components\SharedDataFilter;
 use app\models\Developer;
 use app\models\Tariff;
 use yii\data\ActiveDataProvider;
@@ -33,6 +34,9 @@ class TariffController extends Controller
                         'roles' => ['@'],
                     ],
                 ]
+            ],
+            [
+                'class' => SharedDataFilter::class
             ],
         ];
     }

@@ -6,7 +6,6 @@ use app\models\User;
 use app\models\form\LoginForm;
 use app\models\form\UnlogForm;
 use Yii;
-//use yii\web\Controller;
 use tebe\inertia\web\Controller;
 
 class AuthController extends Controller

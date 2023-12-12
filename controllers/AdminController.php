@@ -5,7 +5,7 @@ namespace app\controllers;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-
+use app\components\SharedDataFilter;
  
 class AdminController extends Controller 
 {
@@ -26,6 +26,9 @@ class AdminController extends Controller
                         'roles' =>  ['admin'],
                     ],
                 ]
+            ],
+            [
+                'class' => SharedDataFilter::class
             ],
         ];
     }

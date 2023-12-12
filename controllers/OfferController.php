@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\components\exceptions\AppException;
 use app\components\traits\CustomRedirects;
+use app\components\SharedDataFilter;
 use app\models\Flat;
 use app\models\Offer;
 use app\models\search\OfferSearch;
@@ -52,6 +53,9 @@ class OfferController extends Controller
                         'roles' => ['?', '@'],
                     ],
                 ]
+            ],
+            [
+                'class' => SharedDataFilter::class
             ],
         ];
     }

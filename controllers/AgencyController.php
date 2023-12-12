@@ -11,6 +11,7 @@ use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
+use app\components\SharedDataFilter;
 
 /**
  * AgencyController implements the CRUD actions for Agency model.
@@ -40,6 +41,9 @@ class AgencyController extends Controller
                         'roles' => ['@'],
                     ],
                 ]
+            ],
+            [
+                'class' => SharedDataFilter::class
             ],
         ];
     }

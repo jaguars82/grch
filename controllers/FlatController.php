@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\components\traits\CustomRedirects;
+use app\components\SharedDataFilter;
 use app\models\Newbuilding;
 use app\models\NewbuildingComplex;
 use app\models\form\FlatForm;
@@ -44,6 +45,9 @@ class FlatController extends Controller
                         'roles' => ['@'],
                     ],
                 ]
+            ],
+            [
+                'class' => SharedDataFilter::class
             ],
         ];
     }

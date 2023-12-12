@@ -8,7 +8,6 @@ use app\models\User;
 use app\models\form\UserForm;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-// use yii\web\Controller;
 use tebe\inertia\web\Controller;
 
 class ProfileController extends Controller

@@ -11,6 +11,7 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use app\components\SharedDataFilter;
 
 /**
  * DeveloperController implements the CRUD actions for Developer model.
@@ -34,6 +35,9 @@ class DeveloperController extends Controller
                         'roles' => ['@'],
                     ],
                 ]
+            ],
+            [
+                'class' => SharedDataFilter::class
             ],
         ];
     }

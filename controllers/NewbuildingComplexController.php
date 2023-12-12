@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\components\exceptions\AppException;
 use app\components\traits\CustomRedirects;
+use app\components\SharedDataFilter;
 use app\models\Bank;
 use app\models\Developer;
 use app\models\Newbuilding;
@@ -52,6 +53,9 @@ class NewbuildingComplexController extends Controller
                         'roles' => ['@'],
                     ],
                 ]
+            ],
+            [
+                'class' => SharedDataFilter::class
             ],
         ];
     }

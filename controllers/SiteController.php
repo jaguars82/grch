@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\components\SharedDataFilter;
 use app\models\Developer;
 use app\models\Agency;
 use app\models\Bank;
@@ -57,6 +58,9 @@ class SiteController extends Controller
             ],
             [
                 'class' => AuthAmountFilter::className(),
+            ],
+            [
+                'class' => SharedDataFilter::class
             ],
         ];
     }
