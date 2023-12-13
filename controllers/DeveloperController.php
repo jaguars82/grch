@@ -9,7 +9,7 @@ use app\models\search\DeveloperSearch;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\web\Controller;
+use tebe\inertia\web\Controller;
 use yii\web\NotFoundHttpException;
 use app\components\SharedDataFilter;
 
@@ -51,6 +51,7 @@ class DeveloperController extends Controller
             'index' => [
                 'class' => 'app\components\actions\IndexWithSearch',
                 'searchModelClass' => DeveloperSearch::classname(),
+                'view' => 'Developer/Index'
             ],
         ];
     }

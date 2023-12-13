@@ -37,7 +37,7 @@ export default ({
         ind: 2,
         name: 'Застройщики',
         path: '/developer',
-        isLink: true
+        isLink: false
       },
       {
         ind: 3,
@@ -55,7 +55,7 @@ export default ({
         ind: 5,
         name: 'Контакты',
         path: '/agency',
-        isLink: true
+        isLink: false
       },
       {
         ind: 6,

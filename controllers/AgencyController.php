@@ -10,7 +10,7 @@ use app\models\search\AgencySearch;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\web\Controller;
+use tebe\inertia\web\Controller;
 use app\components\SharedDataFilter;
 
 /**
@@ -57,6 +57,7 @@ class AgencyController extends Controller
             'index' => [
                 'class' => 'app\components\actions\IndexWithSearch',
                 'searchModelClass' => AgencySearch::classname(),
+                'view' => 'Agency/Index'
             ],
         ];
     }
