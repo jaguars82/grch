@@ -14,7 +14,6 @@
 </template>
 
 <script>
-import { ref } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 
 export default ({

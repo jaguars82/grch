@@ -24,8 +24,9 @@ class SharedDataFilter extends ActionFilter
                 'user' => $this->getUser()
             ],
             'messages' => [
-                'support' => (new ParamsGet())->getSupportMessagesAmount(),
-                'notifications' => (new ParamsGet())->getNotificationsAmount(),
+                'all' => ParamsGet::getAllEventsParams(),
+                'support' => ParamsGet::getSupportMessagesAmount(),
+                'notifications' => ParamsGet::getNotificationsAmount(),
             ],
             'flash' => $this->getFlashMessages(),
             'errors' => $this->getErrors(),

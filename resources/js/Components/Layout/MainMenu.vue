@@ -12,7 +12,7 @@
         </a>
         <q-btn v-else stretch flat :label="item.name" @click="goPath(item.path)" />
       </template>
-      <separator />
+      <q-space />
       <UserMenu />
     </q-toolbar>
   </div>
