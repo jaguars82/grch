@@ -11,7 +11,7 @@
         <template v-slot:content>
           <div class="q-py-sm q-px-md rounded-borders bg-grey-3">
             <q-chat-message
-              v-for="message of messages"
+              v-for="message of ticket_messages"
               :key="message.id"
               :text="[message.text]"
               :sent="message.author.id === user.id"
@@ -71,7 +71,7 @@ export default ({
   },
   props: {
     ticket: Object,
-    messages: Array
+    ticket_messages: Array
   },
   setup(props) {
     const { user } = userInfo()

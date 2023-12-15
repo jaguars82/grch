@@ -1,11 +1,13 @@
 <template>
-  <MainLayout :secondaryColumns="3">
+  <MainLayout :drawers="{ left: { is: false, opened: false }, right: { is: true, opened: true } }">
+
     <template v-slot:breadcrumbs>
       <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
     </template>
+
     <template v-slot:main>
       <h3 class="text-center">Вторичная продажа</h3>
-      <div v-for="advertisement of advertisements" :key="advertisement.id">
+      <div class="q-mx-md" v-for="advertisement of advertisements" :key="advertisement.id">
         <div v-if="advertisement.statusLabels.length" style="margin-bottom: -25px;">
           <q-chip square color="primary" class="text-white" v-for="status of advertisement.statusLabels">{{ status.type.name }}</q-chip>
         </div>
@@ -31,7 +33,8 @@
         />
       </div>
     </template>
-    <template v-slot:secondary>
+
+    <template v-slot:right-drawer>
       <div class="row justify-center q-my-sm q-px-sm">
         <q-btn color="primary" unelevated label="Добавить объявление" icon="post_add" @click="goToCreateAdd" />
       </div>
@@ -45,6 +48,7 @@
         :streetList="streetList"
       />
     </template>
+
   </MainLayout>
 </template>
   

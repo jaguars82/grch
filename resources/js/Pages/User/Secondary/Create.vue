@@ -4,10 +4,10 @@
       <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
     </template>
     <template v-slot:main>
-      <h3>Создание объявления</h3>
+      <h3 class="q-mx-md">Создание объявления</h3>
       <Loading v-if="loading" />
       <q-form v-else @submit="onSubmit">
-        <q-card>
+        <q-card class="q-mx-md">
           <q-card-section>
             <h4>Текст объявления</h4>
             <div class="row q-col-gutter-none">
@@ -400,7 +400,7 @@
           </q-card-section>
         </q-card>
 
-        <q-card class="q-mt-md">
+        <q-card class="q-mx-md q-mt-md">
           <q-card-section>
             <h4>Фотографии</h4>
 
@@ -459,7 +459,7 @@
           </q-card-section>
         </q-card>
 
-        <q-card class="q-mt-md">
+        <q-card class="q-mx-md q-mt-md">
           <q-card-section>
 
             <h4>Адрес</h4>
@@ -667,7 +667,7 @@
           </q-card-section>
         </q-card>
 
-        <div class="q-mt-md text-right">
+        <div class="q-mx-md q-mt-md text-right">
           <q-btn
             unelevated
             label="Отправить на модерацию"

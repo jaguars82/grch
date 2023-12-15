@@ -160,6 +160,40 @@ class NewbuildingComplexController extends Controller
                     ]); 
                 },
                 'images' => function ($nbc) { return ArrayHelper::toArray($nbc->images); },
+                'materials' => function ($nbc) { return $nbc->materials; },
+                'furnishes' => function ($nbc) { 
+                    return ArrayHelper::toArray($nbc->furnishes, [
+                        'app\models\Furnish' => [
+                            'id', 'name', 'detail',
+                            'furnishImages' => function ($furnish) {
+                                return $furnish->getFurnishImages()->asArray()->all();
+                            }
+                        ]
+                    ]);
+                },
+                'areaRange' => function ($nbc) {
+                   return \Yii::$app->formatter->asAreaRange($nbc->minFlatArea, $nbc->maxFlatArea);
+                },
+                'priceRange' => function ($nbc) {
+                    $prices = ['min' => 0, 'max' => 0];
+                    $minPrice = $nbc->minFlatPrice;
+                    if ($minPrice > 0) $prices['min'] = round($minPrice);
+                    $maxPrice = $nbc->maxFlatPrice;
+                    if ($maxPrice > 0) $prices['max'] = round($maxPrice);
+                    return \Yii::$app->formatter->asCurrencyRange($prices['min'], $prices['max']);
+                },
+                'freeFlats' => function ($nbc) {
+                    return \Yii::$app->formatter->asPercent($nbc->freeFlats);
+                },
+                'nearestDeadline' => function ($nbc) {
+                    return !is_null($nbc->nearestDeadline) ? \Yii::$app->formatter->asQuarterAndYearDate($nbc->nearestDeadline) : 'нет данных';
+                },
+                'minYearlyRate' => function ($nbc) {
+                    return !is_null($nbc->minYearlyRate) ? \Yii::$app->formatter->asPercent($nbc->minYearlyRate) : null;
+                },
+                'maxDiscount' => function ($nbc) {
+                    return !is_null($nbc->maxDiscount) ? \Yii::$app->formatter->asPercent($nbc->maxDiscount) : null;
+                },
                 'flats_by_room' => function ($nbc) {
                     $result = [];
                     // add values for apartments with a sertain amount of rooms
@@ -169,13 +203,6 @@ class NewbuildingComplexController extends Controller
                         $$roomItem = false;
                         if (!is_null($nbc->getMinFlatPriceForRooms($roomval)) && !is_null($nbc->getMaxFlatPriceForRooms($roomval))) {
                             $$roomItem = [
-                                /*'search_url' => Url::to([
-                                    'site/search', 
-                                    'AdvancedFlatSearch[roomsCount][0]' => $roomval,
-                                    'AdvancedFlatSearch[flatType]' => AdvancedFlatSearch::FLAT_TYPE_STANDARD,
-                                    'AdvancedFlatSearch[newbuilding_complex][]' => $nbc->id,
-                                    'AdvancedFlatSearch[developer][]' => $nbc->developer->id,
-                                ]),*/
                                 'search_url' => '/site/search?AdvancedFlatSearch[roomsCount][0]='.$roomval.'&AdvancedFlatSearch[flatType]='.AdvancedFlatSearch::FLAT_TYPE_STANDARD.'&AdvancedFlatSearch[newbuilding_complex][]='.$nbc->id.'&AdvancedFlatSearch[developer][]='.$nbc->developer->id,
                                 'label' => $roomval.' - комнатные',
                                 'price' => \Yii::$app->formatter->asCurrencyRange(round($nbc->getMinFlatPriceForRooms($roomval)), round($nbc->getMaxFlatPriceForRooms($roomval)), 'руб.')
@@ -187,12 +214,6 @@ class NewbuildingComplexController extends Controller
                     $studioItem = false;
                     if (!is_null($nbc->minStudioFlatPrice) && !is_null($nbc->maxStudioFlatPrice)) {
                         $studioItem = [
-                            /*'search_url' => Url::to([
-                                'site/search', 
-                                'AdvancedFlatSearch[flatType]' => AdvancedFlatSearch::FLAT_TYPE_STUDIO,
-                                'AdvancedFlatSearch[newbuilding_complex][]' => $nbc->id,
-                                'AdvancedFlatSearch[developer][]' =>$nbc->developer->id,
-                            ]),*/
                             'search_url' => '/site/search?AdvancedFlatSearch[flatType]='.AdvancedFlatSearch::FLAT_TYPE_STUDIO.'&AdvancedFlatSearch[newbuilding_complex][]='.$nbc->id.'&AdvancedFlatSearch[developer][]='.$nbc->developer->id, 
                             'label' => 'студии',
                             'price' => \Yii::$app->formatter->asCurrencyRange(round($nbc->getMinFlatPriceForRooms($nbc->minStudioFlatPrice)), round($nbc->getMaxFlatPriceForRooms($nbc->maxStudioFlatPrice)), 'руб.')
@@ -201,6 +222,9 @@ class NewbuildingComplexController extends Controller
                     array_push($result, $studioItem);
 
                     return $result;
+                },
+                'advantages' => function ($nbc) {
+                    return !is_null($nbc->advantages) ? $nbc->advantages : [];
                 },
             ]
         ]);

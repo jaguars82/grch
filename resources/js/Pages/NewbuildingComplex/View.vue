@@ -1,5 +1,5 @@
 <template>
-  <MainLayout>
+  <MainLayout :drawers="{ left: { is: false, opened: false }, right: { is: true, opened: true } }">
 
     <template v-slot:breadcrumbs>
       <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
@@ -7,10 +7,8 @@
 
     <template v-slot:main>
 
-      <pre>{{ complex }}</pre>
-
       <!-- Newbuilding complex description section -->
-      <RegularContentContainer>
+      <RegularContentContainer class="q-mx-md ">
         <template v-slot:content>
           <!-- Complex title (name and location) -->
           <div class="row items-center justify-between">
@@ -36,7 +34,7 @@
             </div>
           </div>
           <!-- Comples description and images -->
-          <div v-if="complex.images.length || complex.detail" class="row q-col-gutter-y-md">
+          <div v-if="complex.images.length || complex.detail" class="row q-mt-md q-col-gutter-y-md">
             <div v-if="complex.images.length" class="col-12 col-lg-7">
               <q-carousel
                 :height="$q.screen.xs ? '300px' : $q.screen.gt.md ? '100%' : '400px'"
@@ -62,7 +60,7 @@
       </RegularContentContainer>
 
       <!-- Chesses section -->
-      <RegularContentContainer v-if="complex.newbuildings.length" class="q-mt-md" title="Шахматки/позиции">
+      <RegularContentContainer v-if="complex.newbuildings.length" class="q-mx-md q-mt-md" title="Шахматки/позиции">
         <template v-slot:content>
           <div v-for="building of complex.newbuildings" :key="building.id">
             <q-expansion-item
@@ -117,7 +115,7 @@
       </RegularContentContainer>
 
       <!-- Other newbuilding complexes of this developer section -->
-      <RegularContentContainer v-if="otherNC.length" class="q-mt-md" title="Другие ЖК этого застройщика">
+      <RegularContentContainer v-if="otherNC.length" class="q-mx-md  q-mt-md" title="Другие ЖК этого застройщика">
         <template v-slot:content>
           <div class="row q-mt-sm">
             <template v-for="otherComplex of otherNC">
@@ -140,7 +138,94 @@
           </div>
         </template>
       </RegularContentContainer>
+      <pre>{{ complex }}</pre>
+    </template>
 
+    <template v-slot:right-drawer>
+      <div class="q-pa-md">
+        <p class="q-mb-xs text-h4 text-center">Стоимость объектов</p>
+        <div class="q-py-md rounded-borders bg-grey-2 relative-position">
+          <q-badge v-if="complex.maxDiscount" color="orange" floating>
+            Скидка до {{ complex.maxDiscount }}
+          </q-badge>
+          <p class="q-mb-xs text-h3 text-bold text-blue-8 text-center">
+            {{ complex.priceRange }}
+          </p>
+        </div>
+
+        <p class="q-mb-xs q-mt-md text-h4 text-center">Информация</p>
+        <ParamPair
+          paramName="Площадь"
+          :paramValue="complex.areaRange"
+        />
+        <ParamPair
+          v-if="complex.materials.length"
+          paramName="Материал"
+          :paramValue="complex.materials"
+        />
+        <ParamPair
+          v-if="complex.furnishes.length"
+          paramName="Отделка"
+        >
+          <template v-slot:customValue>
+            <template v-for="(furnish, index) of complex.furnishes">
+              <span class="text-blue-9 cursor-pointer" @click="showFurnishViewer(furnish.id)">{{ furnish.name }}</span>
+              <span v-if="index < complex.furnishes.length - 1">, </span>
+            </template>
+          </template>
+        </ParamPair>
+        <!-- Furnish view fullscreen dialog window -->
+        <q-dialog
+          v-if="complex.furnishes.length"
+          class="fitwindow"
+          v-model="furnishViewer"
+          :maximized="true"
+          transition-show="scale"
+          transition-hide="slide-down"
+        >
+          <q-card>
+            <q-card-section class="q-pa-none full-height">
+
+              <div class="column full-height">
+                <div class="col-1">
+
+                  <q-toolbar class="q-pt-sm q-pr-sm bg-white full-height">
+                    <q-space />
+                    <q-btn class="self-start" round dense flat icon="close" v-close-popup />
+                  </q-toolbar>
+
+                </div>
+                <div class="col-11 q-px-md">
+                  <FinishingCard :finishing="furnishViewerContent" :border="false" />
+                </div>
+              </div>
+            </q-card-section>
+          </q-card>
+        </q-dialog>
+
+        <ParamPair
+          v-if="complex.freeFlats"
+          paramName="Свободно"
+          :paramValue="`${complex.freeFlats} квартир`"
+        />
+
+        <ParamPair
+          v-if="complex.minYearlyRate"
+          paramName="Ставка от"
+          :paramValue="complex.minYearlyRate"
+        />
+
+        <ParamPair
+          v-if="complex.nearestDeadline"
+          paramName="Ближайшая сдача"
+          :paramValue="complex.nearestDeadline"
+        />
+
+        <div class="q-mt-md">
+          <AdvantagesBlock v-if="complex.advantages.length" :advantages="complex.advantages" :inColumn="true" />
+        </div>
+
+      </div>
     </template>
 
   </MainLayout>
@@ -154,6 +239,8 @@ import MainLayout from '@/Layouts/MainLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import Loading from "@/Components/Elements/Loading.vue"
 import ParamPair from '@/Components/Elements/ParamPair.vue'
+import FinishingCard from '@/Components/FinishingCard.vue'
+import AdvantagesBlock from '@/Components/Elements/AdvantagesBlock.vue'
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
 
 export default {
@@ -168,7 +255,7 @@ export default {
     },
   },
   components: {
-    MainLayout, Breadcrumbs, Loading, ParamPair, RegularContentContainer
+    MainLayout, Breadcrumbs, Loading, ParamPair, FinishingCard, AdvantagesBlock, RegularContentContainer
   },
   setup(props) {
     const breadcrumbs = ref([
@@ -216,6 +303,15 @@ export default {
       Inertia.get('/flat/view', { id: flatId })
     }
 
+    const furnishViewer = ref(false)
+
+    const furnishViewerContent = ref({})
+
+    const showFurnishViewer = (furnishId) => {
+      furnishViewerContent.value = props.complex.furnishes.find(furnish => { return furnish.id == furnishId })
+      furnishViewer.value = true
+    }
+
     return {
       asCurrency,
       breadcrumbs,
@@ -223,7 +319,10 @@ export default {
       focusOn,
       focusOff,
       goToComplex,
-      goToFlat
+      goToFlat,
+      furnishViewer,
+      showFurnishViewer,
+      furnishViewerContent
     }
   },
 }
@@ -235,5 +334,10 @@ export default {
   }
   .ocomplex-item-img {
     height: 90px;
+  }
+  .fitwindow {
+    height: 100vh;
+    max-height: 100vh;
+    width: 100%;
   }
 </style>

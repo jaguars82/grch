@@ -7,7 +7,7 @@
     <template v-slot:main>
       <FlatListItem
         v-for="flat of dataProvider"
-        class="q-ml-md q-mt-md"
+        class="q-mx-md q-mt-md"
         :flat="flat"
       />
       <div class="q-pa-lg flex flex-center">

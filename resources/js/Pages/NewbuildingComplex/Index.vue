@@ -1,13 +1,14 @@
 <template>
   <MainLayout>
+    
     <template v-slot:breadcrumbs>
       <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
     </template>
-    <template v-slot:main>
 
+    <template v-slot:main>
       <template v-for="developer of complexes">
-        <h3 class="q-mt-md q-mb-sm text-center">{{ developer.name }}</h3>
-        <div class="row q-col-gutter-x-xs q-col-gutter-y-md">
+        <h3 class="q-mx-md q-mt-md q-mb-sm text-center">{{ developer.name }}</h3>
+        <div class="row q-pl-md q-col-gutter-x-xs q-col-gutter-y-md">
           <template v-for="complex of developer.complexes">
             <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
               <q-card
@@ -37,6 +38,7 @@
         />
       </div>
     </template>
+
   </MainLayout>
 </template>
   

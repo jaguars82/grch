@@ -3,10 +3,11 @@
 namespace app\controllers\user;
 
 use app\components\traits\CustomRedirects;
+use app\components\SharedDataFilter;
 use app\models\User;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\web\Controller;
+use tebe\inertia\web\Controller;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -31,6 +32,9 @@ class UserController extends Controller
             'access' => [
                 'class' => AccessControl::className(),
                 'rules' => []
+            ],
+            [
+                'class' => SharedDataFilter::class
             ],
         ];
     }

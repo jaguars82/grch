@@ -1,5 +1,5 @@
 <template>
-  <MainLayout>
+  <MainLayout :drawers="{ left: { is: false, opened: false }, right: { is: true, opened: true } }">
 
     <template v-slot:breadcrumbs>
       <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
@@ -7,10 +7,23 @@
 
     <template v-slot:main>
 
-      <pre>{{ flat }}</pre>
+      <!-- Description section -->
+      <RegularContentContainer class="q-mx-md">
+        <template v-slot:content>
+          <!-- Complex title (name and location) -->
+          <div class="row items-center justify-between">
+            <div class="col-10">
+              <h1>{{ flat.complex.name }}</h1>
+            </div>
+            <div class="col-2">
+              <q-img fit="scale-down" :src="flat.complex.logo ? `/uploads/${flat.complex.logo}` : `/img/newbuilding-complex.png`" :alt="flat.complex.name" />
+            </div>
+          </div>
+        </template>
+      </RegularContentContainer>
 
       <!-- Layouts viewer section -->
-      <RegularContentContainer>
+      <RegularContentContainer class="q-mt-md q-mx-md">
         <template v-slot:content>
 
           <div class="row">
@@ -135,10 +148,12 @@
       </q-dialog>
 
       <!-- Chesses section -->
-      <RegularContentContainer v-if="true" class="q-mt-md" title="Шахматки/позиции">
+      <RegularContentContainer v-if="true" class="q-mt-md q-mx-md" title="Шахматки/позиции">
         <template v-slot:content>
         </template>
       </RegularContentContainer>
+
+      <pre>{{ flat }}</pre>
 
     </template>
 
@@ -200,7 +215,7 @@ export default {
       },
       {
         id: 4,
-        label: props.flat.number,
+        label: String(props.flat.number),
         icon: 'tag',
         url: `/flat/view?id=${props.flat.id}`,
         data: false,

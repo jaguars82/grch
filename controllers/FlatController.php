@@ -100,13 +100,53 @@ class FlatController extends Controller
                     'svgViewBox' => function ($flat) { return $flat->floorLayoutSvgViewBox; },
                     'neighboringFlats' => function ($flat) { return ArrayHelper::toArray($flat->getNeighboringFlats()->all()); },
                     //'floorLayoutImage' => function ($flat) { return $flat->floorLayoutSvg; },
+                    'developer' => function ($flat) {
+                        return ArrayHelper::toArray($flat->developer, ['app\models\Developer' => ['id', 'name']]);
+                    },
                     'complex' => function ($flat) {
                         return ArrayHelper::toArray($flat->newbuildingComplex, [
                             'app\models\NewbuildingComplex' => [
-                                'id', 'developer_id', 'name', 'longitude', 'latitude', 'logo', 'detail', 'offer_new_price_permit', 'project_declaration', 'algorithm', 'offer_info', 'created_at', 'updated_at', 'active', 'region_id', 'city_id', 'district_id', 'street_type_id', 'street_name', 'building_type_id', 'building_number', 'master_plan' 
+                                'id', 'developer_id', 'name', 'longitude', 'latitude', 'logo', 'detail', 'offer_new_price_permit', 'project_declaration', 'algorithm', 'offer_info', 'created_at', 'updated_at', 'active', 'region_id', 'city_id', 'district_id', 'street_type_id', 'street_name', 'building_type_id', 'building_number', 'master_plan',
+                                'newbuildings' => function ($nbc) {
+                                    return ArrayHelper::toArray($nbc->newbuildings, [
+                                        'app\models\Newbuilding' => [
+                                            'id', 'newbuilding_complex_id', 'azimuth', 'name', 'address', 'longitude', 'latitude', 'detail', 'total_floor', 'material', 'status', 'deadline', 'active',
+                                            'entrances' => function ($newbuilding) {
+                                                return ArrayHelper::toArray($newbuilding->entrances, [
+                                                    'app\models\Entrance' => [
+                                                        'id', 'newbuilding_id', 'name', 'number', 'floors', 'material', 'status', 'deadline', 'azimuth', 'longitude', 'latitude',
+                                                        'flats' => function ($entrance) {
+                                                            $flats = ArrayHelper::toArray($entrance->flats, [
+                                                                'app\models\Flat' => [
+                                                                    'id', 'newbuilding_id', 'entrance_id', 'address', 'detail', 'area', 'rooms', 'floor', 'index_on_floor', 'price_cash', 'status', 'sold_by_application', 'is_applicated', 'is_reserved', 'created_at', 'updated_at', 'unit_price_cash', 'discount_type', 'discount', 'discount_amount', 'discount_price', 'azimuth', 'notification', 'extra_data', 'composite_flat_id', 'section', 'number', 'layout', 'unit_price_credit', 'price_credit', 'floor_position', 'floor_layout', 'layout_coords', 'is_euro', 'is_studio',
+                                                                    'has_discount' => function ($flat) {
+                                                                        return $flat->hasDiscount();
+                                                                    },
+                                                                    'price_range' => function ($flat) {
+                                                                        return $flat->hasDiscount() ? \Yii::$app->formatter->asCurrencyRange(round($flat->allCashPricesWithDiscount[0]['price']), $flat->price_cash) : '';
+                                                                    }
+                                                                ]
+                                                            ]);
+                                                            return ArrayHelper::map($flats, 'id', function($item) { return $item; }, 'floor');
+                                                        },
+                                                    ]
+                                                ]);
+                                            }
+                                        ]
+                                    ]); 
+                                },
+                                'freeFlats' => function ($nbc) {
+                                    return \Yii::$app->formatter->asPercent($nbc->freeFlats);
+                                },
+                                'nearestDeadline' => function ($nbc) {
+                                    return !is_null($nbc->nearestDeadline) ? \Yii::$app->formatter->asQuarterAndYearDate($nbc->nearestDeadline) : 'нет данных';
+                                },
                             ]
                         ]);
-                    }
+                    },
+                    'building' => function ($flat) {
+                        return ArrayHelper::toArray($flat->newbuilding, ['app\models\Newbuilding' => ['id', 'name']]);
+                    },
                 ]
             ]),
             'otherNC' => ArrayHelper::toArray($newbuildingComplexDataProvider->getModels()),

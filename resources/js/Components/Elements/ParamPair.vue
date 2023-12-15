@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="paramName && paramValue"
+    v-if="paramName"
     class="row no-wrap justify-between"
     :class="{ 'cursor-pointer': link.length, 'rounded-borders': link.length }"
     @click="goLink"
@@ -11,12 +11,14 @@
       <span :class="{ 'text-blue-9': link.length }">{{ paramName }}:</span>
     </div>
     <div class="col-7 text-right q-py-sm text-bold" :class="{ 'q-pr-sm': link.length }">
-      <span :class="{ 'text-blue-9': link.length }">{{ paramValue }}</span>
+      <span v-if="!customContentProvided" :class="{ 'text-blue-9': link.length }">{{ Array.isArray(paramValue) ? paramValue.join(', ') : paramValue }}</span>
+      <slot name="customValue"></slot>
     </div>
   </div>
 </template>
 
 <script>
+import { computed } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 
 export default {
@@ -26,7 +28,7 @@ export default {
       default: ''
     },
     paramValue: {
-      type: [String, Number, Boolean],
+      type: [String, Number, Array, Boolean],
       default: ''
     },
     link: {
@@ -34,11 +36,9 @@ export default {
       default: false
     }
   },
-  setup (props) {
+  setup (props, { slots }) {
     const goLink = () => {
       if (typeof props.link === 'string' && props.link.length > 0) {
-        //const url = new URL()
-        console.log(props.link)
         Inertia.get(props.link)
       }
     }
@@ -55,10 +55,15 @@ export default {
       }
     }
 
+    const customContentProvided = computed(() => {
+      return 'customValue' in slots && typeof slots.customValue === 'function' ? true : false
+    })
+
     return {
       goLink,
       highlightLink,
-      unHighlightLink
+      unHighlightLink,
+      customContentProvided
     }
   }
 }

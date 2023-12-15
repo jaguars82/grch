@@ -1,6 +1,6 @@
 <template>
-  <p class="text-h4">Преимущества</p>
-  <div class="advantages-container">
+  <p class="text-h4" :class="{'text-center': inColumn}">Преимущества</p>
+  <div :class="[inColumn ? 'column' : 'advantages-container']">
     <div class="advantage-container q-ma-sm" v-for="advantage of advantages" :key="advantage.id">
       <q-avatar size="md" square v-if="advantage.icon">
         <img :src="`/uploads/${advantage.icon}`">
@@ -14,7 +14,11 @@
 <script>
 export default {
   props: {
-    advantages: Array
+    advantages: Array,
+    inColumn: {
+      type: Boolean,
+      default: false
+    }
   },
 }
 </script>

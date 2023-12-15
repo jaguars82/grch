@@ -752,12 +752,13 @@ class Flat extends ActiveRecord
     public function getFloorLayoutSvgViewBox()
     {
         $svgViewBox = null;
-        $floorLayoutPath = \Yii::getAlias("@webroot/uploads/{$this->floorLayout->image}");
-        
-        if(file_exists($floorLayoutPath) && SvgDom::isNameSvg($this->floorLayout->image)) {
-            $floorLayoutDom = new SvgDom($floorLayoutPath);
-            $svgViewBox = $floorLayoutDom->getSvgViewBox();
-            //echo '<pre>'; var_dump($svgViewBox); echo '</pre>'; die;
+        if (!is_null($this->floorLayout)) {
+            $floorLayoutPath = \Yii::getAlias("@webroot/uploads/{$this->floorLayout->image}");
+            
+            if(file_exists($floorLayoutPath) && SvgDom::isNameSvg($this->floorLayout->image)) {
+                $floorLayoutDom = new SvgDom($floorLayoutPath);
+                $svgViewBox = $floorLayoutDom->getSvgViewBox();
+            }
         }
         return $svgViewBox;
     }

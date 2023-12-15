@@ -1,5 +1,5 @@
 <template>
-  <q-card class="q-ml-sm">
+  <q-card class="no-shadow">
     <q-card-section>
 
       <q-btn
@@ -11,7 +11,7 @@
         style="width: 100%"
       />
 
-      <q-select outlined v-model="formfields.deal_type" :options="filters.deal_type.options" label="Тип операции" options-dense>
+      <q-select outlined v-model="formfields.deal_type" :options="filters.deal_type.options" label="Тип операции" options-dense dense>
         <template v-slot:append>
           <q-icon
             v-if="formfields.deal_type !== null"
@@ -22,7 +22,7 @@
         </template>
       </q-select>
 
-      <q-select outlined v-model="formfields.category" :options="filterCategory" label="Категория" options-dense>
+      <q-select outlined v-model="formfields.category" :options="filterCategory" label="Категория" options-dense dense>
         <template v-slot:append>
           <q-icon
             v-if="formfields.category !== null"
@@ -33,7 +33,7 @@
         </template>
       </q-select>
 
-      <q-select outlined v-model="formfields.agency" :options="filterAgencies" label="Агентство" multiple options-dense use-chips>
+      <q-select outlined v-model="formfields.agency" :options="filterAgencies" label="Агентство" multiple options-dense use-chips dense>
         <template v-slot:append>
           <q-icon
             v-if="formfields.agency !== null"
@@ -44,7 +44,7 @@
         </template>
       </q-select>
 
-      <q-select outlined v-model="formfields.statusLabel" :options="filterSatusLabels" label="Статус объявления" multiple options-dense use-chips>
+      <q-select outlined v-model="formfields.statusLabel" :options="filterSatusLabels" label="Статус объявления" multiple options-dense use-chips dense>
         <template v-slot:append>
           <q-icon
             v-if="formfields.statusLabel !== null"
@@ -58,7 +58,7 @@
       <h5>Цена:</h5>
       <div class="row">
         <div class="col-6 q-pr-xs">
-          <q-input outlined v-model="formfields.price.min" label="От">
+          <q-input outlined v-model="formfields.price.min" label="От" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.price.min != '' && formfields.price.min != ranges.price.min"
@@ -71,7 +71,7 @@
           </q-input>
         </div>
         <div class="col-6 q-pl-xs">
-          <q-input outlined v-model="formfields.price.max" label="До">
+          <q-input outlined v-model="formfields.price.max" label="До" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.price.max != '' && formfields.price.max != ranges.price.max"
@@ -106,7 +106,7 @@
       <h5>Общая площадь:</h5>
       <div class="row">
         <div class="col-6 q-pr-xs">
-          <q-input outlined v-model="formfields.area.min" label="От">
+          <q-input outlined v-model="formfields.area.min" label="От" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.area.min != '' && formfields.area.min != ranges.area.min"
@@ -128,7 +128,7 @@
           </q-input>
         </div>
         <div class="col-6 q-pl-xs">
-          <q-input outlined v-model="formfields.area.max" label="До">
+          <q-input outlined v-model="formfields.area.max" label="До" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.area.max != '' && formfields.area.max != ranges.area.max"
@@ -158,7 +158,7 @@
         label
       />
 
-      <q-select outlined v-model="formfields.district" :options="filterDistricts" label="Район" multiple options-dense use-chips>
+      <q-select outlined v-model="formfields.district" :options="filterDistricts" label="Район" multiple options-dense use-chips dense>
         <template v-slot:append>
           <q-icon
             v-if="formfields.district !== null"
@@ -169,7 +169,7 @@
         </template>
       </q-select>
 
-      <q-select outlined v-model="formfields.street" :options="filterStreets" label="Улица" use-input hide-selected fill-input options-dense @filter="filterStreetList">
+      <q-select outlined v-model="formfields.street" :options="filterStreets" label="Улица" use-input hide-selected fill-input options-dense @filter="filterStreetList" dense>
         <template v-slot:append>
           <q-icon
             v-if="formfields.street !== null"
@@ -183,7 +183,7 @@
       <h5>Этаж:</h5>
       <div class="row">
         <div class="col-6 q-pr-xs">
-          <q-input outlined v-model="formfields.floor.min" label="От">
+          <q-input outlined v-model="formfields.floor.min" label="От" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.floor.min != '' && formfields.floor.min != ranges.floor.min"
@@ -205,7 +205,7 @@
           </q-input>
         </div>
         <div class="col-6 q-pl-xs">
-          <q-input outlined v-model="formfields.floor.max" label="До">
+          <q-input outlined v-model="formfields.floor.max" label="До" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.floor.max != '' && formfields.floor.max != ranges.floor.max"
@@ -238,7 +238,7 @@
       <h5>Этажность:</h5>
       <div class="row">
         <div class="col-6 q-pr-xs">
-          <q-input outlined v-model="formfields.totalFloors.min" label="От">
+          <q-input outlined v-model="formfields.totalFloors.min" label="От" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.totalFloors.min != '' && formfields.totalFloors.min != ranges.total_floors.min"
@@ -260,7 +260,7 @@
           </q-input>
         </div>
         <div class="col-6 q-pl-xs">
-          <q-input outlined v-model="formfields.totalFloors.max" label="До">
+          <q-input outlined v-model="formfields.totalFloors.max" label="До" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.totalFloors.max != '' && formfields.totalFloors.max != ranges.total_floors.max"
@@ -302,7 +302,7 @@
       <h5>Площадь кухни:</h5>
       <div class="row">
         <div class="col-6 q-pr-xs">
-          <q-input outlined v-model="formfields.kitchenArea.min" label="От">
+          <q-input outlined v-model="formfields.kitchenArea.min" label="От" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.kitchenArea.min != '' && formfields.kitchenArea.min != ranges.kitchen_area.min"
@@ -324,7 +324,7 @@
           </q-input>
         </div>
         <div class="col-6 q-pl-xs">
-          <q-input outlined v-model="formfields.kitchenArea.max" label="До">
+          <q-input outlined v-model="formfields.kitchenArea.max" label="До" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.kitchenArea.max != '' && formfields.kitchenArea.max != ranges.kitchen_area.max"
@@ -357,7 +357,7 @@
       <h5>Жилая площадь:</h5>
       <div class="row">
         <div class="col-6 q-pr-xs">
-          <q-input outlined v-model="formfields.livingArea.min" label="От">
+          <q-input outlined v-model="formfields.livingArea.min" label="От" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.livingArea.min != '' && formfields.livingArea.min != ranges.living_area.min"
@@ -379,7 +379,7 @@
           </q-input>
         </div>
         <div class="col-6 q-pl-xs">
-          <q-input outlined v-model="formfields.livingArea.max" label="До">
+          <q-input outlined v-model="formfields.livingArea.max" label="До" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.livingArea.max != '' && formfields.livingArea.max != ranges.living_area.max"
@@ -412,7 +412,7 @@
       <h5>Количество балконов:</h5>
       <div class="row">
         <div class="col-6 q-pr-xs">
-          <q-input outlined v-model="formfields.balconyAmount.min" label="От">
+          <q-input outlined v-model="formfields.balconyAmount.min" label="От" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.balconyAmount.min != '' && formfields.balconyAmount.min != ranges.balcony_amount.min"
@@ -434,7 +434,7 @@
           </q-input>
         </div>
         <div class="col-6 q-pl-xs">
-          <q-input outlined v-model="formfields.balconyAmount.max" label="До">
+          <q-input outlined v-model="formfields.balconyAmount.max" label="До" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.balconyAmount.max != '' && formfields.balconyAmount.max != ranges.balcony_amount.max"
@@ -467,7 +467,7 @@
       <h5>Количество лоджий:</h5>
       <div class="row">
         <div class="col-6 q-pr-xs">
-          <q-input outlined v-model="formfields.loggiaAmount.min" label="От">
+          <q-input outlined v-model="formfields.loggiaAmount.min" label="От" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.loggiaAmount.min != '' && formfields.loggiaAmount.min != ranges.loggia_amount.min"
@@ -489,7 +489,7 @@
           </q-input>
         </div>
         <div class="col-6 q-pl-xs">
-          <q-input outlined v-model="formfields.loggiaAmount.max" label="До">
+          <q-input outlined v-model="formfields.loggiaAmount.max" label="До" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.loggiaAmount.max != '' && formfields.loggiaAmount.max != ranges.loggia_amount.max"
@@ -526,7 +526,7 @@
       <h5>Год сдачи/постройки:</h5>
       <div class="row">
         <div class="col-6 q-pr-xs">
-          <q-input outlined v-model="formfields.builtYear.min" label="От">
+          <q-input outlined v-model="formfields.builtYear.min" label="От" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.builtYear.min != '' && formfields.builtYear.min != ranges.built_year.min"
@@ -548,7 +548,7 @@
           </q-input>
         </div>
         <div class="col-6 q-pl-xs">
-          <q-input outlined v-model="formfields.builtYear.max" label="До">
+          <q-input outlined v-model="formfields.builtYear.max" label="До" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.builtYear.max != '' && formfields.builtYear.max != ranges.built_year.max"
@@ -590,12 +590,6 @@
       <q-checkbox v-model="formfields.barrier" label="Шлагбаум" />
 
       </template>
-
-      <!--
-      <pre>{{ filterParams }}</pre>
-      <pre>{{ ranges }}</pre>
-      <pre>{{ formfieldsTest }}</pre>
-      -->
 
     </q-card-section>
   </q-card>
