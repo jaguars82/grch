@@ -11,20 +11,44 @@
     <q-drawer
       v-if="drawers.left.is"
       v-model="drawerLeft"
+      :bordered="xsOptions"
       side="left"
       :width="300"
-      :breakpoint="500"
+      :breakpoint="100"
+      :mini-to-overlay="xsOptions"
+      :mini="miniStateLeft"
     >
+      <template v-slot:mini>
+        <div class="row justify-center">
+          <q-btn class="q-mt-sm" round unelevated icon="menu" @click="miniStateLeft = false"/>
+        </div>
+      </template>
+
+      <div class="row justify-end items-center">
+        <q-btn size="sm" dense class="q-my-xs q-mr-sm" round unelevated icon="close" @click="miniStateLeft = true"/>
+      </div>
       <slot name="left-drawer"></slot>
     </q-drawer>
 
     <q-drawer
       v-if="drawers.right.is"
       v-model="drawerRight"
+      :bordered="xsOptions"
       side="right"
       :width="300"
-      :breakpoint="500"
+      :breakpoint="100"
+      :mini-to-overlay="xsOptions"
+      :mini="miniStateRight"
     >
+      <template v-slot:mini>
+        <div class="row justify-center">
+          <q-btn class="q-mt-sm" round unelevated icon="menu_open" @click="miniStateRight = false"/>
+        </div>
+      </template>
+
+      <div class="row justify-start items-center">
+        <q-btn size="sm" dense class="q-my-xs q-ml-sm" round unelevated icon="close" @click="miniStateRight = true"/>
+      </div>
       <slot name="right-drawer"></slot>
     </q-drawer>
 
@@ -55,7 +79,8 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { useQuasar } from 'quasar'
 import MainMenu from '@/Components/Layout/MainMenu.vue'
 import Footer from '@/Components/Layout/Footer.vue'
 import ScrollToTopButton from '@/Components/Elements/ScrollToTopButton.vue'
@@ -87,9 +112,24 @@ export default ({
     ScrollToTopButton
   },
   setup(props) {
+    const $q = useQuasar()
     const drawerRight = ref(props.drawers.right.opened)
     const drawerLeft = ref(props.drawers.left.opened)
-    return { drawerLeft, drawerRight }
+    const miniStateRight = ref($q.screen.lt.md ? true : false)
+    const miniStateLeft = ref($q.screen.lt.md ? true : false)
+    const xsOptions = ref($q.screen.lt.sm ? true : false)
+    const onResize = () => {
+      miniStateRight.value = $q.screen.lt.md ? true : false
+      miniStateLeft.value = $q.screen.lt.md ? true : false
+      xsOptions.value = $q.screen.lt.sm ? true : false
+    }
+    onMounted(() => {
+      window.addEventListener('resize', onResize)
+    })
+    onUnmounted(() => {
+      window.removeEventListener('resize', onResize)
+    })
+    return { drawerLeft, drawerRight, miniStateLeft, miniStateRight, xsOptions }
   },
 })
 </script>

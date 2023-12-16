@@ -10,10 +10,22 @@
 
     <q-drawer
       v-model="drawerLeft"
+      :bordered="xsOptions"
       side="left"
       :width="300"
-      :breakpoint="500"
+      :breakpoint="100"
+      :mini-to-overlay="xsOptions"
+      :mini="miniState"
     >
+      <template v-slot:mini>
+        <div class="row justify-center">
+          <q-btn class="q-mt-sm" round unelevated icon="menu" @click="miniState = false"/>
+        </div>
+      </template>
+
+      <div class="row justify-end items-center">
+        <q-btn size="sm" dense class="q-my-xs q-mr-sm" round unelevated icon="close" @click="miniState = true"/>
+      </div>
       <ProfileMenu></ProfileMenu>
     </q-drawer>
 
@@ -48,7 +60,8 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { useQuasar } from 'quasar'
 import MainMenu from '@/Components/Layout/MainMenu.vue'
 import ProfileMenu from '@/Components/Layout/ProfileMenu.vue'
 import Footer from '@/Components/Layout/Footer.vue'
@@ -72,9 +85,22 @@ export default ({
     ScrollToTopButton
   },
   setup(props) {
+    const $q = useQuasar()
     const drawerRight = ref(props.rightDrawer.opened)
     const drawerLeft = ref(true)
-    return { drawerLeft, drawerRight }
+    const miniState = ref($q.screen.lt.md ? true : false)
+    const xsOptions = ref($q.screen.lt.sm ? true : false)
+    const onResize = () => {
+      miniState.value = $q.screen.lt.md ? true : false
+      xsOptions.value = $q.screen.lt.sm ? true : false
+    }
+    onMounted(() => {
+      window.addEventListener('resize', onResize)
+    })
+    onUnmounted(() => {
+      window.removeEventListener('resize', onResize)
+    })
+    return { drawerLeft, drawerRight, miniState, xsOptions }
   },
 })
 </script>

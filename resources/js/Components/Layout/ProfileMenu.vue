@@ -1,6 +1,6 @@
 <template>
   <q-card class="no-shadow">
-    <q-card-section>
+    <q-card-section class="q-pt-xs">
       <q-img class="rounded-borders" :src="user.photo ? `/uploads/${user.photo}` : '/img/user-nofoto.jpg'" />
       <div class="text-center text-h4 q-mt-sm">
         {{ user.first_name }} {{ user.last_name }}
