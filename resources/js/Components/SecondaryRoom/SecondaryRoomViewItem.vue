@@ -1,6 +1,6 @@
 <template>
   <q-card
-      class="q-my-md shadow-12"
+    class="q-ma-md shadow-12"
   >
     <q-card-section horizontal>
       <q-card-section class="col-8">
@@ -26,7 +26,7 @@
     </q-card-section>
   </q-card>
 
-  <div class="row">
+  <div class="row q-px-md">
 
     <div class="col-8">
       <q-card class="shadow-12">

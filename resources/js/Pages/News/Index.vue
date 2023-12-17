@@ -4,7 +4,7 @@
         <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
       </template>
       <template v-slot:main>
-        <NewsItem v-for="post of posts" :item="post" />
+        <NewsItem class="q-mx-md" v-for="post of posts" :item="post" />
 
         <div class="q-pa-lg flex flex-center">
           <q-pagination

@@ -115,7 +115,10 @@ class FavoriteController extends Controller
             return $this->redirectBackWhenException($e);
         }
 
-        return $this->redirectWithSuccess(['flat/view', 'id' => $flatId], 'Квартира добавлена в избранное');
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;        
+        \Yii::$app->response->data = ['status' => 'success', 'message' => 'Квартира добавлена в список избранного'];
+
+        // return $this->redirectWithSuccess(['flat/view', 'id' => $flatId], 'Квартира добавлена в избранное');
     }
 
     /**
@@ -152,8 +155,11 @@ class FavoriteController extends Controller
         }
         
         $model->delete();
+
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;        
+        \Yii::$app->response->data = ['status' => 'success', 'message' => 'Квартира удалена из списка избранного'];
         
-        return $this->redirectWithSuccess(['flat/view', 'id' => $flat->id], 'Квартира удалена из избранного');
+        // return $this->redirectWithSuccess(['flat/view', 'id' => $flat->id], 'Квартира удалена из избранного');
     }
     
     /**

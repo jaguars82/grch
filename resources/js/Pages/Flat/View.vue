@@ -19,6 +19,7 @@
                 <span v-else> Подъезд {{ flat.section }}</span>
               </p>
             </div>
+            <!-- Flat price (single value or range) -->
             <div class="col-12">
               <p class="text-h1 text-bold text-blue-8 q-mb-xs">
                 <span v-if="flat.hasDiscount && flat.priceRange && flat.status === 0">
@@ -28,6 +29,7 @@
                   {{ asCurrency(flat.price_cash) }}
                 </span>
               </p>
+              <!-- Prices with discount (if any) -->
               <q-expansion-item
                 header-class="rounded-borders"
                 v-if="flat.allDiscounts.length"
@@ -77,6 +79,12 @@
                 </div>
               </q-expansion-item>
             </div>
+
+            <!-- Action buttons (add to favorite, commercial, reserve) -->
+            <div class="row q-mt-md full-width items-center justify-end">
+              <FlatActionButtons :flat="{ id: flat.id, isFavorite: flat.isFavorite }" />
+            </div>
+
           </div>
         </template>
       </RegularContentContainer>
@@ -452,6 +460,7 @@ import { asArea, asCurrency, asFloor, asNumberString, asQuarterAndYearDate, asPr
 import MainLayout from '@/Layouts/MainLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import Loading from "@/Components/Elements/Loading.vue"
+import FlatActionButtons from '@/Components/Flat/FlatActionButtons/FlatActionButtons.vue'
 import ParamPair from '@/Components/Elements/ParamPair.vue'
 import Compass from '@/Components/Svg/Compass.vue'
 import FloorLayoutForAFlat from '@/Components/Svg/FloorLayoutForAFlat.vue'
@@ -472,7 +481,7 @@ export default {
     },
   },
   components: {
-    MainLayout, Breadcrumbs, Loading, ParamPair, Compass, FloorLayoutForAFlat, FinishingCard, AdvantagesBlock, RegularContentContainer
+    MainLayout, Breadcrumbs, Loading, ParamPair, FlatActionButtons, Compass, FloorLayoutForAFlat, FinishingCard, AdvantagesBlock, RegularContentContainer
   },
   setup(props) {
     const breadcrumbs = ref([

@@ -5,10 +5,19 @@
     </template>
     <template v-slot:main>
 
-      <div class="row q-col-gutter-x-xs q-col-gutter-y-md">
+      <div class="row q-px-md q-col-gutter-x-xs q-col-gutter-y-md">
         <template v-for="developer of dataProvider">
           <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-            {{ developer.name }}
+            <OrganizationInfoCard
+              :id="developer.id"
+              :name="developer.name"
+              :addres="developer.address"
+              :logo="developer.logo"
+              icon="source_environment"
+              :url="developer.url"
+              :phone="developer.phone"
+              pathToView="/developer"
+            />
           </div>
         </template>
       </div>

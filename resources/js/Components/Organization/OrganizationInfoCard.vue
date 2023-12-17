@@ -1,43 +1,38 @@
 <template>
+
   <q-card
-    flat
-    bordered
     class="full-height cursor-pointer"
     @click="goToView"
     @mouseenter="focusOn"
     @mouseleave="focusOff"
   >
     <q-card-section>
-      <div class="card-header-content">
-        <img class="logo q-pr-md" v-if="logo" :src="`/uploads/${logo}`" />
-        <q-avatar class="q-pr-md" v-else :icon="icon" />
-        <div class="header-text">
-          <div class="text-right">
-            <span class="text-h4">{{ name }}</span>
-          </div>
-          <div class="text-right" v-if="address">
-            <span>{{ address }}</span>
-          </div>
-          <div class="text-right" v-if="url">
-            <a target="_blank" :href="url">
-              <q-icon class="q-mr-xs" name="language" />
-              {{ url }}
-            </a>
-          </div>
-          <div v-if="email">
-            <a :href="`mailto:${email}`">
-              <q-icon class="q-mr-xs" name="alternate_email" />
-              {{ email }}
-            </a>
-          </div>
-          <div v-if="phone">
-            <q-icon class="q-mr-xs" name="call" />
-            {{ phone }}
-          </div>
-        </div>
-      </div>
+      <q-img class="item-img" fit="scale-down" :src="`/uploads/${logo}`" :alt="name" />
     </q-card-section>
-    <q-card-section v-if="detail" v-html="detail">
+    <q-card-section>
+      <p class="text-h4 text-center">{{ name }}</p>
+    </q-card-section>
+    <q-card-section>
+      <div v-if="address">
+        <q-icon class="q-mr-xs" name="location_on" />
+        <span>{{ address }}</span>
+      </div>
+      <div v-if="url">
+        <a target="_blank" :href="url">
+          <q-icon class="q-mr-xs" name="language" />
+          {{ url }}
+        </a>
+      </div>
+      <div v-if="email">
+        <a :href="`mailto:${email}`">
+          <q-icon class="q-mr-xs" name="alternate_email" />
+          {{ email }}
+        </a>
+      </div>
+      <div v-if="phone">
+        <q-icon class="q-mr-xs" name="call" />
+        {{ phone }}
+      </div>
     </q-card-section>
   </q-card>
 </template>
@@ -103,23 +98,7 @@ export default {
 </script>
 
 <style scoped>
-.card-header-content {
-  display: flex;
-  align-items: center;
-}
-.card-header-content :first-child {
-  max-width: 50%;
-}
-.card-header-content :last-child {
-  flex-grow: 1;
-}
-.logo {
-  height: 80px;
-}
-.header-text {
-  display: flex;
-  flex-direction: column;
-  justify-items: center;
-  align-items: flex-end;
+.item-img {
+  height: 120px;
 }
 </style>
