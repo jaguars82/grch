@@ -94,9 +94,13 @@ class FlatController extends Controller
             'flat' => ArrayHelper::toArray($model, [
                 'app\models\service\Flat' => [
                     'id', 'newbuilding_id', 'entrance_id', 'address', 'detail', 'area', 'rooms', 'floor', 'index_on_floor', 'price_cash', 'status', 'sold_by_application', 'is_applicated', 'is_reserved', 'created_at', 'updated_at', 'unit_price_cash', 'discount_type', 'discount', 'discount_amount', 'discount_price', 'azimuth', 'notification', 'extra_data', 'composite_flat_id', 'section', 'number', 'layout', 'unit_price_credit', 'price_credit', 'floor_position', 'floor_layout', 'layout_coords', 'is_euro', 'is_studio',
+                    'hasDiscount' => function ($flat) { return $flat->hasDiscount(); },
+                    'allDiscounts' => function ($flat) { return $flat->allCashPricesWithDiscount; },
+                    'priceRange' => function ($flat) { return $flat->hasDiscount() ? \Yii::$app->formatter->asCurrencyRange(round($flat->allCashPricesWithDiscount[0]['price']), $flat->price_cash) : null; },
                     'entranceAzimuth' => function ($flat) { return $flat->entrance->azimuth; },
                     'masterPlan' => function ($flat) { return $flat->newbuildingComplex->master_plan; },
                     'floorBackground' => function ($flat) { return $flat->floorLayout !== null ? $flat->floorLayout->image : null; },
+                    'deadLine' => function ($flat) { return strtotime(date("Y-m-d")) > strtotime($flat->newbuilding->deadline) ? 'Позиция сдана' : \Yii::$app->formatter->asQuarterAndYearDate($flat->newbuilding->deadline); },
                     'svgViewBox' => function ($flat) { return $flat->floorLayoutSvgViewBox; },
                     'neighboringFlats' => function ($flat) { return ArrayHelper::toArray($flat->getNeighboringFlats()->all()); },
                     //'floorLayoutImage' => function ($flat) { return $flat->floorLayoutSvg; },
@@ -107,6 +111,17 @@ class FlatController extends Controller
                         return ArrayHelper::toArray($flat->newbuildingComplex, [
                             'app\models\NewbuildingComplex' => [
                                 'id', 'developer_id', 'name', 'longitude', 'latitude', 'logo', 'detail', 'offer_new_price_permit', 'project_declaration', 'algorithm', 'offer_info', 'created_at', 'updated_at', 'active', 'region_id', 'city_id', 'district_id', 'street_type_id', 'street_name', 'building_type_id', 'building_number', 'master_plan',
+                                'address' => function ($nbc) { return $nbc->address; },
+                                'furnishes' => function ($nbc) { 
+                                    return ArrayHelper::toArray($nbc->furnishes, [
+                                        'app\models\Furnish' => [
+                                            'id', 'name', 'detail',
+                                            'furnishImages' => function ($furnish) {
+                                                return $furnish->getFurnishImages()->asArray()->all();
+                                            }
+                                        ]
+                                    ]);
+                                },
                                 'newbuildings' => function ($nbc) {
                                     return ArrayHelper::toArray($nbc->newbuildings, [
                                         'app\models\Newbuilding' => [
@@ -138,14 +153,23 @@ class FlatController extends Controller
                                 'freeFlats' => function ($nbc) {
                                     return \Yii::$app->formatter->asPercent($nbc->freeFlats);
                                 },
+                                'minYearlyRate' => function ($nbc) {
+                                    return !is_null($nbc->minYearlyRate) ? \Yii::$app->formatter->asPercent($nbc->minYearlyRate) : null;
+                                },
                                 'nearestDeadline' => function ($nbc) {
                                     return !is_null($nbc->nearestDeadline) ? \Yii::$app->formatter->asQuarterAndYearDate($nbc->nearestDeadline) : 'нет данных';
+                                },
+                                'advantages' => function ($nbc) {
+                                    return !is_null($nbc->advantages) ? $nbc->advantages : [];
                                 },
                             ]
                         ]);
                     },
                     'building' => function ($flat) {
-                        return ArrayHelper::toArray($flat->newbuilding, ['app\models\Newbuilding' => ['id', 'name']]);
+                        return ArrayHelper::toArray($flat->newbuilding, ['app\models\Newbuilding' => ['id', 'name', 'total_floor', 'material']]);
+                    },
+                    'entrance' => function ($flat) {
+                        return ArrayHelper::toArray($flat->entrance, ['app\models\Entrance' => ['id', 'name', 'number']]);
                     },
                 ]
             ]),

@@ -41,7 +41,7 @@ export default ({
   setup(props) {
 
     const flatRoomTitle = computed(() => `${asNumberString(props.flat.rooms)}комнатная`)
-    const flatFloor = computed(()=> asFloor(props.flat.floor, props.flat.newbuilding.total_floor))
+    const flatFloor = computed(() => asFloor(props.flat.floor, props.flat.newbuilding.total_floor))
     const flatArea = computed(() => asArea(props.flat.area))
     const flatPriceCash = computed(() => asCurrency(props.flat.price_cash))
     const flatPricePerMeter = computed(() => asPricePerArea(props.flat.price_cash / props.flat.area))

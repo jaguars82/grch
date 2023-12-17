@@ -11,12 +11,15 @@
       <RegularContentContainer class="q-mx-md ">
         <template v-slot:content>
           <!-- Complex title (name and location) -->
-          <div class="row items-center justify-between">
+          <div class="row items-start justify-between">
             <div class="col-10 col-sm-12">
               <h1>{{ complex.name }}</h1>
+              <p v-if="complex.address" class="q-mt-xs text-h4 text-grey">
+                {{ complex.address }}
+              </p>
             </div>
             <div class="col-2 lt-sm">
-              <q-img fit="scale-down" :src="complex.logo ? `/uploads/${complex.logo}` : `/img/newbuilding-complex.png`" :alt="complex.name" />
+              <img :src="complex.logo ? `/uploads/${complex.logo}` : `/img/newbuilding-complex.png`" :alt="complex.name" />
             </div>
           </div>
           <!-- Prices by flat type and complex logo -->
@@ -30,7 +33,7 @@
               />
             </div>
             <div class="col-4 gt-xs">
-              <q-img fit="scale-down" :src="complex.logo ? `/uploads/${complex.logo}` : `/img/newbuilding-complex.png`" :alt="complex.name" />
+              <q-img class="complex-logo" fit="scale-down" :src="complex.logo ? `/uploads/${complex.logo}` : `/img/newbuilding-complex.png`" :alt="complex.name" />
             </div>
           </div>
           <!-- Comples description and images -->
@@ -331,6 +334,9 @@ export default {
 <style scoped>
   .row.justify-between::before, .row.justify-between::after {
     display: none;
+  }
+  .complex-logo {
+    max-height: 200px;
   }
   .ocomplex-item-img {
     height: 90px;

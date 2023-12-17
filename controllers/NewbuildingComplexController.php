@@ -131,6 +131,7 @@ class NewbuildingComplexController extends Controller
         $complex = ArrayHelper::toArray($model, [
             'app\models\service\NewbuildingComplex' => [
                 'id', 'developer_id', 'name', 'longitude', 'longitude', 'logo', 'detail',
+                'address' => function ($nbc) { return $nbc->address; },
                 'newbuildings' => function ($nbc) {
                     return ArrayHelper::toArray($nbc->newbuildings, [
                         'app\models\Newbuilding' => [

@@ -7,7 +7,7 @@
     @mouseenter="highlightLink"
     @mouseleave="unHighlightLink"
   >
-    <div class="col-5 q-py-sm" :class="{ 'q-pl-sm': link.length }">
+    <div class="col-5 q-py-sm" :class="{ 'q-pl-sm': link.length, 'text-grey': !link.length }">
       <span :class="{ 'text-blue-9': link.length }">{{ paramName }}:</span>
     </div>
     <div class="col-7 text-right q-py-sm text-bold" :class="{ 'q-pr-sm': link.length }">
