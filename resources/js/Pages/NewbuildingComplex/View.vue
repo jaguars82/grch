@@ -62,6 +62,20 @@
         </template>
       </RegularContentContainer>
 
+      <!-- Map -->
+      <RegularContentContainer v-if="complex.latitude && complex.longitude" class="q-mt-md q-mx-md">
+        <template v-slot:content>
+          <ObjectOnMap
+            :address="complex.address"
+            :latitude="complex.latitude"
+            :longitude="complex.longitude"
+            :markers="[{ latitude: complex.latitude, longitude: complex.longitude }]"
+            :reverseCoords="true"
+            :reverseMarkerCoords="true"
+          />
+        </template>
+      </RegularContentContainer>
+
       <!-- Chesses section -->
       <RegularContentContainer v-if="complex.newbuildings.length" class="q-mx-md q-mt-md" title="Шахматки/позиции">
         <template v-slot:content>
@@ -240,10 +254,11 @@ import { Inertia } from '@inertiajs/inertia'
 import { asArea, asCurrency, asFloor, asNumberString, asQuarterAndYearDate, asPricePerArea } from '@/helpers/formatter'
 import MainLayout from '@/Layouts/MainLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
-import Loading from "@/Components/Elements/Loading.vue"
+import Loading from '@/Components/Elements/Loading.vue'
 import ParamPair from '@/Components/Elements/ParamPair.vue'
 import FinishingCard from '@/Components/FinishingCard.vue'
 import AdvantagesBlock from '@/Components/Elements/AdvantagesBlock.vue'
+import ObjectOnMap from '@/Components/Map/ObjectOnMap.vue'
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
 
 export default {
@@ -258,7 +273,7 @@ export default {
     },
   },
   components: {
-    MainLayout, Breadcrumbs, Loading, ParamPair, FinishingCard, AdvantagesBlock, RegularContentContainer
+    MainLayout, Breadcrumbs, Loading, ParamPair, FinishingCard, AdvantagesBlock, ObjectOnMap, RegularContentContainer
   },
   setup(props) {
     const breadcrumbs = ref([

@@ -69,12 +69,6 @@ class NewbuildingComplexController extends Controller
     {
         $searchModel = new NewbuildingComplexSearch();
         $dataProvider = $searchModel->search(\Yii::$app->request->queryParams);
-        /*return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'itemsCount' => $searchModel->itemsCount,
-            'developers' => Developer::getAllAsList(),
-        ]);*/
 
         return $this->inertia('NewbuildingComplex/Index', [
             'complexes' => ArrayHelper::toArray($dataProvider->getModels()),
@@ -118,19 +112,9 @@ class NewbuildingComplexController extends Controller
                 'sort' => ['attributes' => ['id'], 'defaultOrder' => ['id' => SORT_DESC]],
             ]);
 
-        /*return $this->render('view', [
-            'model' => $model,
-            'projectDeclaration' => new ProjectDeclarationForm(),
-            'newsDataProvider' => $newsDataProvider,
-            'newbuildingComplexesDataProvider' => $newbuildingComplexesDataProvider,
-            'contactDataProvider' => $contactDataProvider,
-        ]);*/
-
-        //echo '<pre>'; var_dump($model);  echo '</pre>'; die;
-
         $complex = ArrayHelper::toArray($model, [
             'app\models\service\NewbuildingComplex' => [
-                'id', 'developer_id', 'name', 'longitude', 'longitude', 'logo', 'detail',
+                'id', 'developer_id', 'name', 'latitude', 'longitude', 'logo', 'detail',
                 'address' => function ($nbc) { return $nbc->address; },
                 'newbuildings' => function ($nbc) {
                     return ArrayHelper::toArray($nbc->newbuildings, [

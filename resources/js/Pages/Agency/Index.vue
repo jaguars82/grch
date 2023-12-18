@@ -11,12 +11,12 @@
             <OrganizationInfoCard
               :id="agency.id"
               :name="agency.name"
-              :addres="agency.address"
+              :address="agency.address"
               :logo="agency.logo"
               icon="source_environment"
               :url="agency.url"
               :phone="agency.phone"
-              pathToView="/agency"
+              pathToView="/agency/view"
             />
           </div>
         </template>
@@ -69,7 +69,7 @@ export default {
       {
         id: 2,
         label: 'Агентства',
-        icon: 'engineering',
+        icon: 'real_estate_agent',
         url: '/agency',
         data: false,
         options: false

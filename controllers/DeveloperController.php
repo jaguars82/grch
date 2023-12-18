@@ -9,6 +9,7 @@ use app\models\search\DeveloperSearch;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use tebe\inertia\web\Controller;
 use yii\web\NotFoundHttpException;
 use app\components\SharedDataFilter;
@@ -91,12 +92,12 @@ class DeveloperController extends Controller
             'sort' => ['attributes' => ['id'], 'defaultOrder' => ['id' => SORT_DESC]], 
         ]);
         
-        return $this->render('view', [
-            'model' => $model,
-            'newbuildingComplexDataProvider' => $newbuildingComplexDataProvider,
-            'newsDataProvider' => $newsDataProvider,
-            'contactDataProvider' => $contactDataProvider,
-            'officeDataProvider' => $officeDataProvider
+        return $this->inertia('Developer/View', [
+            'developer' => ArrayHelper::toArray($model),
+            'newbuildingComplexDataProvider' => ArrayHelper::toArray($newbuildingComplexDataProvider->getModels()),
+            'newsDataProvider' => ArrayHelper::toArray($newsDataProvider->getModels()),
+            'contactDataProvider' => ArrayHelper::toArray($contactDataProvider->getModels()),
+            'officeDataProvider' => ArrayHelper::toArray($officeDataProvider->getModels())
         ]);
     }
 

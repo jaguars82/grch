@@ -10,6 +10,7 @@ use app\models\search\AgencySearch;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use tebe\inertia\web\Controller;
 use app\components\SharedDataFilter;
 
@@ -91,11 +92,11 @@ class AgencyController extends Controller
             'sort' => ['attributes' => ['id'], 'defaultOrder' => ['id' => SORT_DESC]],
         ]);
         
-        return $this->render('view', [
-            'model' => $model,
-            'contactDataProvider' => $contactDataProvider,
-            'managerDataProvider' => $managerDataProvider,
-            'agentDataProvider' => $agentDataProvider,
+        return $this->inertia('Agency/View', [
+            'agency' => ArrayHelper::toArray($model),
+            'contactDataProvider' => ArrayHelper::toArray($contactDataProvider->getModels()),
+            'managerDataProvider' => ArrayHelper::toArray($managerDataProvider->getModels()),
+            'agentDataProvider' => ArrayHelper::toArray($agentDataProvider->getModels()),
         ]);
     }
     

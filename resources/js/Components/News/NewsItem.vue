@@ -1,5 +1,5 @@
 <template>
-  <q-card class="q-my-md shadow-7">
+  <q-card class="q-my-md" :class="{ 'shadow-7': shadow, 'no-shadow': !shadow }">
     <q-card-section>
       <div class="text-h6">{{ item.title }}</div>
       <div class="text-subtitle2">{{ asDateTime(item.created_at) }}</div>
@@ -20,6 +20,10 @@ export default {
     item: {
       type: Object,
       default: {}
+    },
+    shadow: {
+      type: Boolean,
+      default: true
     }
   },
   setup () {

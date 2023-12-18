@@ -11,12 +11,12 @@
             <OrganizationInfoCard
               :id="developer.id"
               :name="developer.name"
-              :addres="developer.address"
+              :address="developer.address"
               :logo="developer.logo"
               icon="source_environment"
               :url="developer.url"
               :phone="developer.phone"
-              pathToView="/developer"
+              pathToView="/developer/view"
             />
           </div>
         </template>

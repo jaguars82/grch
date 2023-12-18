@@ -3,7 +3,7 @@
     round
     unelevated
     outline
-    color="primary"
+    color="orange"
     @click="goToMakeCommercial"
     label="КП"
   >
