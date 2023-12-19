@@ -6,16 +6,16 @@
 
     <template v-slot:main>
       <FlatListItem
-        v-for="flat of dataProvider"
+        v-for="favorite of activeDataProvider"
         class="q-mx-md q-mt-md"
-        :flat="flat"
+        :flat="favorite.flat"
       />
       <div class="q-pa-lg flex flex-center">
         <q-pagination
-          v-model="currentPage"
-          :max="pagination.totalPages"
+          v-model="currentActivePage"
+          :max="paginationActive.totalPages"
           :max-pages="8"
-          @update:model-value="goToPage(currentPage)"
+          @update:model-value="goToActivePage(currentActivePage)"
         />
       </div>
     </template>
@@ -31,7 +31,6 @@ import MainLayout from '@/Layouts/MainLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import Loading from '@/Components/Elements/Loading.vue'
 import FlatListItem from '@/Components/Flat/FlatListItem.vue'
-import AdvancedFlatFilter from '@/Pages/Main/partials/AdvancedFlatFilter.vue'
 
 export default {
   props: {
@@ -39,19 +38,27 @@ export default {
       type: Object,
       default: {}
     },
-    dataProvider: {
+    activeDataProvider: {
       type: Array,
       default: []
     },
-    pagination: {
+    archiveDataProvider: {
+      type: Array,
+      default: []
+    },
+    paginationActive: {
       type: Object,
       default: {}
     },
-    newsDataProvider: {
-      type: Array,
-      default: []
+    paginationArchive: {
+      type: Object,
+      default: {}
     },
-    itemsCount: {
+    activeItemsCount: {
+      type: Number,
+      default: 0
+    },
+    archiveItemsCount: {
       type: Number,
       default: 0
     },
@@ -71,7 +78,7 @@ export default {
       type: Object,
       default: {}
     },
-    newbuildingComplexes: {
+    /*newbuildingComplexes: {
       type: Object,
       default: {}
     },
@@ -87,10 +94,10 @@ export default {
       type: Object,
       default: {}
     },
-    rangeEdges: Object,
+    rangeEdges: Object,*/
   },
   components: {
-    MainLayout, Breadcrumbs, Loading, FlatListItem, AdvancedFlatFilter
+    MainLayout, Breadcrumbs, Loading, FlatListItem
   },
   setup(props) {
 
@@ -105,26 +112,27 @@ export default {
       },
       {
         id: 2,
-        label: 'Расширенный поиск',
-        icon: 'search',
-        url: '/site/search',
+        label: 'Избранное',
+        icon: 'bookmark',
+        url: '/site/favorite',
         data: false,
         options: false
       },
     ])
 
-    const currentPage = ref(props.pagination.page + 1)
+    const currentActivePage = ref(props.paginationActive.page + 1)
+    const currentArchivePage = ref(props.paginationArchive.page + 1)
 
-    const goToPage = function (page) {
-      Inertia.get('/site/search', { 'list-page': page, AdvancedFlatSearch: props.searchModel.AdvancedFlatSearch }/*, { preserveState: true }*/)
+    const goToActivePage = function (page) {
+      Inertia.get('/favorite', { 'page': page, /*AdvancedFlatSearch: props.searchModel.AdvancedFlatSearch*/ })
     }
 
-    const emitter = useEmitter()
+    /*const emitter = useEmitter()
     emitter.on('flat-filter-changed', payload => {
       Inertia.get('/site/search', { AdvancedFlatSearch: payload }, { preserveState: true })
-    })
+    })*/
 
-    return { breadcrumbs, currentPage, goToPage  }
+    return { breadcrumbs, currentActivePage, currentArchivePage /*goToPage */ }
   }
 }
 </script>

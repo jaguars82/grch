@@ -100,28 +100,15 @@
                     </div>
                   </template>
 
-                  <div class="row" v-for="floor of Object.keys(entrance.flats).reverse()">
-                    <div class="col-1">{{ floor }}</div>
-                    <div class="col-11">
-                      <div class="row">
-                        <div class="column cursor-pointer"
-                          v-for="flatId of Object.keys(entrance.flats[floor])"
-                          @click="goToFlat(entrance.flats[floor][flatId].id)"
-                          @mouseenter="focusOn"
-                          @mouseleave="focusOff"
-                        >
-                          <div class="row justify-between">
-                            <div>{{ entrance.flats[floor][flatId].rooms }}</div>
-                            <div>{{ entrance.flats[floor][flatId].number }}</div>
-                          </div>
-                          <div>
-                            <span v-if="entrance.flats[floor][flatId].has_discount">{{ entrance.flats[floor][flatId].price_range }}</span>
-                            <span v-else>{{ asCurrency(entrance.flats[floor][flatId].price_cash) }}</span>
-                          </div>
+                  <div class="bg-grey-3 q-pa-sm rounded-borders overflow-auto">
+                    <div class="row q-pl-lg relative-position" v-for="floor of Object.keys(entrance.flats).reverse()">
+                      <div class="col-1 absolute-left text-weight-bolder text-grey">{{ floor }}</div>
+                      <div class="col-11">
+                        <div class="row no-wrap">
+                          <FlatCell v-for="flatId of Object.keys(entrance.flats[floor])" :flat="entrance.flats[floor][flatId]" />
                         </div>
                       </div>
                     </div>
-                    
                   </div>
                   
                 </q-expansion-item>
@@ -256,6 +243,7 @@ import MainLayout from '@/Layouts/MainLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import Loading from '@/Components/Elements/Loading.vue'
 import ParamPair from '@/Components/Elements/ParamPair.vue'
+import FlatCell from '@/Components/Chess/FlatCell.vue'
 import FinishingCard from '@/Components/FinishingCard.vue'
 import AdvantagesBlock from '@/Components/Elements/AdvantagesBlock.vue'
 import ObjectOnMap from '@/Components/Map/ObjectOnMap.vue'
@@ -273,7 +261,7 @@ export default {
     },
   },
   components: {
-    MainLayout, Breadcrumbs, Loading, ParamPair, FinishingCard, AdvantagesBlock, ObjectOnMap, RegularContentContainer
+    MainLayout, Breadcrumbs, Loading, ParamPair, FlatCell, FinishingCard, AdvantagesBlock, ObjectOnMap, RegularContentContainer
   },
   setup(props) {
     const breadcrumbs = ref([
@@ -337,7 +325,6 @@ export default {
       focusOn,
       focusOff,
       goToComplex,
-      goToFlat,
       furnishViewer,
       showFurnishViewer,
       furnishViewerContent

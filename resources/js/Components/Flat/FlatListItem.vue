@@ -1,5 +1,5 @@
 <template>
-  <q-card class="shadow-7">
+  <q-card class="flat-card shadow-7">
     <q-card-section class="q-px-md q-py-xs" horizontal>
       <div class="col-4 self-center">
         <q-img v-if="flat.layout"
@@ -54,6 +54,9 @@ export default ({
 </script>
 
 <style scoped>
+.flat-card {
+  max-height: 350px;
+}
 .nbc-logo-container {
   display: flex;
   justify-content: center;

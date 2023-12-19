@@ -82,8 +82,36 @@ class FavoriteController extends Controller
 
         return $this->inertia('Favorite/Index', [
             'searchModel' => $searchModel,
-            'activeDataProvider' => ArrayHelper::toArray($activeDataProvider->getModels()),
+            'activeDataProvider' => ArrayHelper::toArray($activeDataProvider->getModels(), [
+                'app\models\Favorite' => [
+                    'id', 'user_id', 'flat_id', 'comment', 'archived_by', 
+                    'flat' => function ($favorite) {
+                        return ArrayHelper::toArray($favorite->flat, [
+                            'app\models\Flat' => [
+                                'id', 'newbuilding_id', 'entrance_id', 'address', 'detail', 'area', 'rooms', 'floor', 'index_on_floor', 'price_cash', 'status', 'sold_by_application', 'is_applicated', 'is_reserved', 'created_at', 'updated_at', 'unit_price_cash', 'discount_type', 'discount', 'discount_amount', 'discount_price', 'azimuth', 'notification', 'extra_data', 'composite_flat_id', 'section', 'number', 'layout', 'unit_price_credit', 'price_credit', 'floor_position', 'floor_layout', 'layout_coords', 'is_euro', 'is_studio',
+                                'newbuilding' => function ($flat) {
+                                    return ArrayHelper::toArray($flat->newbuilding);
+                                },
+                                'newbuildingComplex' => function ($flat) {
+                                    return ArrayHelper::toArray($flat->newbuildingComplex);
+                                },
+                                'developer' => function ($flat) {
+                                    return ArrayHelper::toArray($flat->developer);
+                                }
+                            ]
+                        ]);
+                    }
+                ]
+            ]),
             'archiveDataProvider' => ArrayHelper::toArray($archiveDataProvider->getModels()),
+            'paginationActive' => [
+                'page' => $activeDataProvider->getPagination()->getPage(),
+                'totalPages' => $activeDataProvider->getPagination()->getPageCount()
+            ],
+            'paginationArchive' => [
+                'page' => $archiveDataProvider->getPagination()->getPage(),
+                'totalPages' => $archiveDataProvider->getPagination()->getPageCount()
+            ],
             'activeItemsCount' => $activeItemsCount,
             'archiveItemsCount' => $archiveItemsCount,
             'developers' => Developer::getAllAsList(),
