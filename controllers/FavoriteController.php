@@ -13,7 +13,7 @@ use app\models\search\FavoriteFlatSearch;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\base\InvalidParamException;
-use yii\web\Controller;
+use tebe\inertia\web\Controller;
 use yii\web\NotFoundHttpException;
 use app\models\Region;
 use app\models\City;
@@ -80,10 +80,10 @@ class FavoriteController extends Controller
             $districts = ArrayHelper::map($districts, 'id', 'name');
         }
 
-        return $this->render('index', [
+        return $this->inertia('Favorite/Index', [
             'searchModel' => $searchModel,
-            'activeDataProvider' => $activeDataProvider,
-            'archiveDataProvider' => $archiveDataProvider,
+            'activeDataProvider' => ArrayHelper::toArray($activeDataProvider->getModels()),
+            'archiveDataProvider' => ArrayHelper::toArray($archiveDataProvider->getModels()),
             'activeItemsCount' => $activeItemsCount,
             'archiveItemsCount' => $archiveItemsCount,
             'developers' => Developer::getAllAsList(),

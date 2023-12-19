@@ -21,6 +21,7 @@
         </template>
       </RegularContentContainer>
       
+      <!-- Map -->
       <RegularContentContainer v-if="agency.latitude && agency.longitude" class="q-mt-md q-mx-md">
         <template v-slot:content>
           <ObjectOnMap

@@ -237,6 +237,20 @@
         </template>
       </RegularContentContainer>
 
+      <!-- Map -->
+      <RegularContentContainer v-if="flat.complex.latitude && flat.complex.longitude" class="q-mt-md q-mx-md">
+        <template v-slot:content>
+          <ObjectOnMap
+            :address="flat.complex.address"
+            :latitude="flat.complex.latitude"
+            :longitude="flat.complex.longitude"
+            :markers="[{ latitude: flat.complex.latitude, longitude: flat.complex.longitude }]"
+            :reverseCoords="true"
+            :reverseMarkerCoords="true"
+          />
+        </template>
+      </RegularContentContainer>
+
       <!-- Layouts fullscreen popup window -->
       <q-dialog
         class="fitwindow"
@@ -465,6 +479,7 @@ import ParamPair from '@/Components/Elements/ParamPair.vue'
 import Compass from '@/Components/Svg/Compass.vue'
 import FloorLayoutForAFlat from '@/Components/Svg/FloorLayoutForAFlat.vue'
 import FinishingCard from '@/Components/FinishingCard.vue'
+import ObjectOnMap from '@/Components/Map/ObjectOnMap.vue'
 import AdvantagesBlock from '@/Components/Elements/AdvantagesBlock.vue'
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
 import useEmitter from '@/composables/use-emitter'
@@ -481,7 +496,7 @@ export default {
     },
   },
   components: {
-    MainLayout, Breadcrumbs, Loading, ParamPair, FlatActionButtons, Compass, FloorLayoutForAFlat, FinishingCard, AdvantagesBlock, RegularContentContainer
+    MainLayout, Breadcrumbs, Loading, ParamPair, FlatActionButtons, Compass, FloorLayoutForAFlat, FinishingCard, ObjectOnMap, AdvantagesBlock, RegularContentContainer
   },
   setup(props) {
     const breadcrumbs = ref([

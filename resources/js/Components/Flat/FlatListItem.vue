@@ -9,21 +9,21 @@
         <q-img v-else fit="scale-down" src="/img/flat.png" />
       </div>
       <q-card-section>
-        <a :href="`/flat/view?id=${flat.id}`">
+        <inertia-link :href="`/flat/view?id=${flat.id}`">
           <p class="text-h4 q-mb-xs"><span class="text-capitalize">{{ flatRoomTitle }}</span> квартира № {{ flat.number }}</p>
-        </a>
+        </inertia-link>
         <p class="q-mb-xs">{{ flatArea }}, {{ flatFloor }}, сдача: {{ flatDeadline }}</p>
         <p class="text-bold">{{ flat.developer.name }} > {{ flat.newbuildingComplex.name }} > {{ flat.newbuilding.name }}</p>
         <p class="text-h2 text-bold text-blue-8 q-mb-xs">{{ flatPriceCash }}</p>
         <p class="text-grey-7">{{ flatPricePerMeter }}</p>
-        <a :href="`/newbuilding-complex/view?id=${flat.newbuildingComplex.id}`">
+        <inertia-link :href="`/newbuilding-complex/view?id=${flat.newbuildingComplex.id}`">
         <!--<inertia-link :href="`/newbuilding-complex/view?id=${flat.newbuildingComplex.id}`">-->
           <div v-if="flat.newbuildingComplex.logo" class="nbc-logo-container">
             <q-img fit="scale-down" :src="`/uploads/${flat.newbuildingComplex.logo}`" />
           </div>
           <p v-else class="text-h5">{{ flat.newbuildingComplex.name }}</p>
         <!--</inertia-link>-->
-        </a>
+        </inertia-link>
       </q-card-section>
     </q-card-section>
   </q-card>
