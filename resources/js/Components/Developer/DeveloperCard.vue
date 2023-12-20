@@ -35,7 +35,7 @@
 export default {
   name: 'DeveloperCard',
   props: {
-    developer: Array,
+    developer: Object,
   },
 }
 </script>

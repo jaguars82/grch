@@ -82,21 +82,42 @@
           <div v-for="building of complex.newbuildings" :key="building.id">
             <q-expansion-item
               class="q-my-sm"
-              header-class="rounded-borders position-item"
+              header-class="rounded-borders position-item bg-primary text-white"
+              expand-icon-class="text-white"
             >
               <template v-slot:header>
                 <div class="row items-center full-width">
-                  <div class="col-4">{{ building.name }}</div>
+                  <div class="col-2 text-bold">{{ building.name }}</div>
+                  <div class="col-3">
+                    <span v-if="building.aviableFlats > 0">Доступно {{ building.aviableFlats }}. </span>
+                    <span v-if="building.reservedFlats > 0">Бронь {{ building.reservedFlats }}</span>
+                  </div>
+                  <div class="col-3 text-bold">
+                    {{ building.deadlineString }}
+                  </div>
+                  <div class="col-3">
+                    {{ building.totalFloorString }}
+                  </div>
                 </div>
               </template>
 
               <template v-if="building.entrances.length">
                 <q-expansion-item
+                  class="q-my-sm"
                   v-for="entrance of building.entrances"
+                  dense
+                  dense-toggle
                 >
                   <template v-slot:header>
                     <div class="row items-center full-width">
-                      <div class="col-4">{{ entrance.name }}</div>
+                      <div class="col-2 text-bold">{{ entrance.name }}</div>
+                      <div class="col text-grey">
+                        <span v-if="entrance.aviableFlats > 0">доступно {{ entrance.aviableFlats }}</span>
+                        <span v-if="entrance.reservedFlats > 0">, бронь{{ entrance.reservedFlats }}, </span>
+                        <span>{{ entrance.deadlineString }}</span>
+                        <span v-if="entrance.floors">, {{ entrance.floors }} этажей</span>
+                        <span v-if="entrance.material">, {{ entrance.material }}</span>
+                      </div>
                     </div>
                   </template>
 
@@ -142,7 +163,7 @@
           </div>
         </template>
       </RegularContentContainer>
-      <pre>{{ complex }}</pre>
+      <!--<pre>{{ complex }}</pre>-->
     </template>
 
     <template v-slot:right-drawer>
@@ -271,7 +292,7 @@ export default {
         icon: 'home',
         url: '/',
         data: false,
-        options: 'native'
+        options: false
       },
       {
         id: 2,

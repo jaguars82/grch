@@ -15,6 +15,8 @@
               :coordinates="[complex.longitude, complex.latitude]"
             >
               <template #component>
+                <p class="q-px-md q-my-xs text-h5">{{ complex.name }}</p>
+                <p class="q-my-xs"><span class="q-px-md text-grey">подходящих объектов: </span><span class="text-bold">{{ complex.flats.length }}</span></p>
                 <q-virtual-scroll
                   style="max-height: 300px;"
                   :items="complex.flats"
@@ -27,7 +29,7 @@
                   >
                     <q-item-section>
                       <q-item-label>
-                        {{ item.id }} = #{{ item.number }}
+                        Квартира №{{ item.number }}
                       </q-item-label>
                     </q-item-section>
                   </q-item>
@@ -37,8 +39,6 @@
           </YandexClusterer>
         </template>
       </YandexMap>
-      <pre>{{ selectedCity }}</pre>
-      <pre>{{ initCoords }}</pre>
     </template>
 
     <template v-slot:right-drawer>
@@ -154,6 +154,6 @@ export default {
 }
 .yandex-balloon {
   width: 300px;
-  height: 100px;
+  height: 200px;
 }
 </style>

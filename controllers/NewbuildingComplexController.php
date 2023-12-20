@@ -120,10 +120,17 @@ class NewbuildingComplexController extends Controller
                     return ArrayHelper::toArray($nbc->newbuildings, [
                         'app\models\Newbuilding' => [
                             'id', 'newbuilding_complex_id', 'azimuth', 'name', 'address', 'longitude', 'latitude', 'detail', 'total_floor', 'material', 'status', 'deadline', 'active',
+                            'aviableFlats' => function ($newbuilding) { return $newbuilding->getActiveFlats()->count(); },
+                            'reservedFlats' => function ($newbuilding) { return $newbuilding->getReservedFlats()->count(); },
+                            'deadlineString' => function ($newbuilding) { return (empty($newbuilding->deadline) ? 'Нет данных' : strtotime(date("Y-m-d")) > strtotime($newbuilding->deadline)) ? 'позиция сдана' : \Yii::$app->formatter->asQuarterAndYearDate($newbuilding->deadline); },
+                            'totalFloorString' => function ($newbuilding) { return empty($newbuilding->total_floor) ? 'этажность не указана' : $newbuilding->total_floor.' этажей'; },
                             'entrances' => function ($newbuilding) {
                                 return ArrayHelper::toArray($newbuilding->entrances, [
                                     'app\models\Entrance' => [
                                         'id', 'newbuilding_id', 'name', 'number', 'floors', 'material', 'status', 'deadline', 'azimuth', 'longitude', 'latitude',
+                                        'aviableFlats' => function ($entrance) { return $entrance->getActiveFlats()->count(); },
+                                        'reservedFlats' => function ($entrance) { return $entrance->getReservedFlats()->count(); },
+                                        'deadlineString' => function ($entrance) { return (is_null($entrance->deadline) ? 'нет данных' : strtotime(date("Y-m-d")) > strtotime($entrance->deadline)) ? 'подъезд сдан' : \Yii::$app->formatter->asQuarterAndYearDate($entrance->deadline); },
                                         'flats' => function ($entrance) {
                                             $flats = ArrayHelper::toArray($entrance->flats, [
                                                 'app\models\Flat' => [

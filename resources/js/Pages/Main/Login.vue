@@ -6,10 +6,11 @@
           <div class="col-md-8 offset-md-2 col-xs-12 q-pl-md q-pr-md q-pt-sm">
             <q-card flat class="bg-white text-black">
               <div class="row">
-                <div class="col-12 col-sm-6 q-pa-md">
+                <div class="col-12 col-sm-6">
                   <q-img
-                    placeholder-src="~assets/images/loginpage.jpg"
-                    src="~assets/images/loginpage.jpg"
+                    class="fit"
+                    placeholder-src="/img/login-img.svg"
+                    src="/img/login-img.svg"
                     spinner-color="white"
                   ></q-img>
                 </div>
@@ -17,9 +18,9 @@
                 <div class="col-12 col-sm-6">
                   <div class="q-pa-md">
                     <div
-                      class="text-h6 q-pb-md text-blue-8 text-center text-bold"
+                      class="text-h6 q-pb-md text-blue-8 text-center text-bold text-uppercase"
                     >
-                      Вход на платформу
+                      Авторизация
                     </div>
                     <q-form
                       @submit="onSubmit"

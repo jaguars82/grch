@@ -111,7 +111,7 @@ export default {
         icon: 'home',
         url: '/',
         data: false,
-        options: 'native'
+        options: false
       },
       {
         id: 2,

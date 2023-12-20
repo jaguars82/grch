@@ -151,8 +151,8 @@ class NewsController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
+        return $this->inertia('News/View', [
+            'news' => ArrayHelper::toArray($this->findModel($id)),
         ]);
     }
     

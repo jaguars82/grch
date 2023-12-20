@@ -1,7 +1,8 @@
 <template>
+  <div class="full-width topoffset"></div>
   <div>
     <q-layout
-      view="hhh LpR fff"
+      view="hhh LpR lfr"
     >
     
     <q-header>
@@ -19,11 +20,13 @@
       :mini="miniStateLeft"
     >
       <template v-slot:mini>
+        <div class="topoffset"></div>
         <div class="row justify-center">
           <q-btn class="q-mt-sm" round unelevated icon="menu" @click="miniStateLeft = false"/>
         </div>
       </template>
 
+      <div class="topoffset"></div>
       <div class="row justify-end items-center">
         <q-btn size="sm" dense class="q-my-xs q-mr-sm" round unelevated icon="close" @click="miniStateLeft = true"/>
       </div>
@@ -41,11 +44,13 @@
       :mini="miniStateRight"
     >
       <template v-slot:mini>
+        <div class="topoffset"></div>
         <div class="row justify-center">
           <q-btn class="q-mt-sm" round unelevated icon="menu_open" @click="miniStateRight = false"/>
         </div>
       </template>
 
+      <div class="topoffset"></div>
       <div class="row justify-start items-center">
         <q-btn size="sm" dense class="q-my-xs q-ml-sm" round unelevated icon="close" @click="miniStateRight = true"/>
       </div>
@@ -59,13 +64,14 @@
           <div class="col">
             <slot name="main"></slot>
           </div>
-          <div v-if="secondaryColumns" :class="`gt-sm col-${secondaryColumns}`">
+          <div v-if="secondaryColumns" :class="`gt-xs col-${secondaryColumns}`">
             <slot name="secondary"></slot>
           </div>
         </div>
         <div class="lt-md">
           <slot name="secondary"></slot>
         </div>
+        <div class="topoffset"></div>
         <ScrollToTopButton />
       </q-page>
     </q-page-container>
@@ -133,3 +139,11 @@ export default ({
   },
 })
 </script>
+
+<style scoped>
+.topoffset {
+  height: 58px;
+  min-height: 58px;
+  max-height: 58px;
+}
+</style>

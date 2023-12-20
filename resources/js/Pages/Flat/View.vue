@@ -12,7 +12,20 @@
         <template v-slot:content>
           <div class="row items-center justify-start">
             <div class="col-12">
-              <h1 class="q-mt-xs"><span class="text-capitalize">{{ asNumberString(flat.rooms) }}</span>комнатная квартира № {{ flat.number }}</h1>
+              <h1 class="q-mt-xs">
+                <span class="text-capitalize">{{ asNumberString(flat.rooms) }}</span>комнатная квартира № {{ flat.number }}
+              </h1>
+              <div>
+                <q-chip v-if="flat.status === 0" color="positive" class="text-white">
+                  продается
+                </q-chip>
+                <q-chip v-else-if="flat.status === 1" color="warning" class="text-white">
+                  бронь
+                </q-chip>
+                <q-chip v-else-if="flat.status === 2" color="negative" class="text-white">
+                  продана
+                </q-chip>
+              </div>
               <p class="q-mb-xs text-h4 text-grey">
                 {{ flat.developer.name }} > {{ flat.complex.name }} > {{ flat.building.name }} >
                 <span v-if="flat.entrance.name"> {{ flat.entrance.name }}</span>
@@ -82,7 +95,11 @@
 
             <!-- Action buttons (add to favorite, commercial, reserve) -->
             <div class="row q-mt-md full-width items-center justify-end">
-              <FlatActionButtons :flat="{ id: flat.id, isFavorite: flat.isFavorite }" />
+              <FlatActionButtons
+                v-if="flat.status === 0"
+                :res="flat.developer.id != 13 && flat.is_reserved != 1 && flat.developer.hasRepresentative"
+                :flat="{ id: flat.id, isFavorite: flat.isFavorite }"
+              />
             </div>
 
           </div>
@@ -234,6 +251,65 @@
       <!-- Chesses section -->
       <RegularContentContainer v-if="true" class="q-mt-md q-mx-md" title="Шахматки/позиции">
         <template v-slot:content>
+
+          <div v-for="building of flat.complex.newbuildings" :key="building.id">
+            <q-expansion-item
+              class="q-my-sm"
+              header-class="rounded-borders position-item bg-primary text-white"
+              expand-icon-class="text-white"
+            >
+              <template v-slot:header>
+                <div class="row items-center full-width">
+                  <div class="col-2 text-bold">{{ building.name }}</div>
+                  <div class="col-3">
+                    <span v-if="building.aviableFlats > 0">Доступно {{ building.aviableFlats }}. </span>
+                    <span v-if="building.reservedFlats > 0">Бронь {{ building.reservedFlats }}</span>
+                  </div>
+                  <div class="col-3 text-bold">
+                    {{ building.deadlineString }}
+                  </div>
+                  <div class="col-3">
+                    {{ building.totalFloorString }}
+                  </div>
+                </div>
+              </template>
+
+              <template v-if="building.entrances.length">
+                <q-expansion-item
+                  class="q-my-sm"
+                  v-for="entrance of building.entrances"
+                  dense
+                  dense-toggle
+                >
+                  <template v-slot:header>
+                    <div class="row items-center full-width">
+                      <div class="col-2 text-bold">{{ entrance.name }}</div>
+                      <div class="col text-grey">
+                        <span v-if="entrance.aviableFlats > 0">доступно {{ entrance.aviableFlats }}</span>
+                        <span v-if="entrance.reservedFlats > 0">, бронь{{ entrance.reservedFlats }}, </span>
+                        <span>{{ entrance.deadlineString }}</span>
+                        <span v-if="entrance.floors">, {{ entrance.floors }} этажей</span>
+                        <span v-if="entrance.material">, {{ entrance.material }}</span>
+                      </div>
+                    </div>
+                  </template>
+
+                  <div class="bg-grey-3 q-pa-sm rounded-borders overflow-auto">
+                    <div class="row q-pl-lg relative-position" v-for="floor of Object.keys(entrance.flats).reverse()">
+                      <div class="col-1 absolute-left text-weight-bolder text-grey">{{ floor }}</div>
+                      <div class="col-11">
+                        <div class="row no-wrap">
+                          <FlatCell v-for="flatId of Object.keys(entrance.flats[floor])" :flat="entrance.flats[floor][flatId]" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                </q-expansion-item>
+              </template>
+            </q-expansion-item>
+          </div>
+
         </template>
       </RegularContentContainer>
 
@@ -389,8 +465,7 @@
         </q-card>
       </q-dialog>
 
-
-      <pre>{{ flat }}</pre>
+      <!--<pre>{{ flat }}</pre>-->
 
     </template>
 
@@ -408,6 +483,15 @@
             <span v-if="flat.hasDiscount && flat.priceRange && flat.status === 0">{{ flat.priceRange }}</span>
             <span v-else>{{ asCurrency(flat.price_cash) }}</span>
           </p>
+        </div>
+
+        <div class="row q-mt-md justify-center">
+          <FlatActionButtons
+            v-if="flat.status === 0"
+            :fav="false"
+            :res="flat.developer.id != 13 && flat.is_reserved != 1 && flat.developer.hasRepresentative"
+            :flat="{ id: flat.id, isFavorite: flat.isFavorite }"
+          />
         </div>
 
         <p class="q-mb-xs q-mt-md text-h4 text-center">Информация</p>
@@ -478,6 +562,7 @@ import FlatActionButtons from '@/Components/Flat/FlatActionButtons/FlatActionBut
 import ParamPair from '@/Components/Elements/ParamPair.vue'
 import Compass from '@/Components/Svg/Compass.vue'
 import FloorLayoutForAFlat from '@/Components/Svg/FloorLayoutForAFlat.vue'
+import FlatCell from '@/Components/Chess/FlatCell.vue'
 import FinishingCard from '@/Components/FinishingCard.vue'
 import ObjectOnMap from '@/Components/Map/ObjectOnMap.vue'
 import AdvantagesBlock from '@/Components/Elements/AdvantagesBlock.vue'
@@ -496,7 +581,7 @@ export default {
     },
   },
   components: {
-    MainLayout, Breadcrumbs, Loading, ParamPair, FlatActionButtons, Compass, FloorLayoutForAFlat, FinishingCard, ObjectOnMap, AdvantagesBlock, RegularContentContainer
+    MainLayout, Breadcrumbs, Loading, ParamPair, FlatActionButtons, Compass, FloorLayoutForAFlat, FlatCell, FinishingCard, ObjectOnMap, AdvantagesBlock, RegularContentContainer
   },
   setup(props) {
     const breadcrumbs = ref([
@@ -506,7 +591,7 @@ export default {
         icon: 'home',
         url: '/',
         data: false,
-        options: 'native'
+        options: false
       },
       {
         id: 2,

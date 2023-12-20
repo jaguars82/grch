@@ -88,8 +88,6 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {        
-        $this->layout = 'fullWidth';
-
         \Yii::$app->response->cookies->add(new \yii\web\Cookie([
             'name' => 'site-index-query-string-' . \Yii::$app->user->id,
             'value' => \Yii::$app->request->queryString,
@@ -148,6 +146,44 @@ class SiteController extends Controller
         return $this->inertia('Main/Index', [
             'searchModel' => $searchModel,
             'newsList' => ArrayHelper::toArray($newsList),
+            'flatsByParams' => [
+                'byRoom' => [
+                    [
+                        'param' => '1-комнатные',
+                        'val' => Flat::getWithRooms(1)->onlyActive()->count(),
+                    ],
+                    [
+                        'param' => '2-комнатные',
+                        'val' => Flat::getWithRooms(2)->onlyActive()->count(),
+                    ],
+                    [
+                        'param' => '3-комнатные',
+                        'val' => Flat::getWithRooms(3)->onlyActive()->count(),
+                    ],
+                    [
+                        'param' => 'Квартиры-студии',
+                        'val' => Flat::getStudio()->onlyActive()->count(),
+                    ],
+                ],
+                'byDeadline' => [
+                    [
+                        'param' => 'Сданные',
+                        'val' => Flat::getSurrendered()->onlyActive()->count(),
+                    ],
+                    [
+                        'param' => 'До конца года',
+                        'val' => Flat::getWithEndYearDeadline()->onlyActive()->count(),
+                    ],
+                    [
+                        'param' => 'Сдача в '.date('Y', strtotime('+1 year')),
+                        'val' => Flat::getAfterYearsDeadline(1)->onlyActive()->count(),
+                    ],
+                    [
+                        'param' => 'Сдача в '.date('Y', strtotime('+2 year')).' и после',
+                        'val' => Flat::getAfterYearsDeadline(2)->onlyActive()->count(),
+                    ],
+                ]
+            ],
             'initialFilterParams' => [
                 'maxFlatPrice' => Flat::getMaxFlatPrice(),
                 'minFlatPrice' => Flat::getMinFlatPrice(),
@@ -157,9 +193,28 @@ class SiteController extends Controller
             //'newsList' => News::find()->asArray()->all(),
             //'newsDataProvider' =>$newsDataProvider,
             //'actionsDataProvider' => $actionsDataProvider,
-            'developerDataProvider' => $developerDataProvider,
-            'agencyDataProvider' => $agencyDataProvider,
-            'bankDataProvider' => $bankDataProvider,
+            'developerDataProvider' => ArrayHelper::toArray($developerDataProvider->getModels(), [
+                'app\models\Developer' => [
+                    'id', 'contact_id', 'name', 'address', 'logo', 'detail', 'longitude', 'latitude', 'phone', 'url', 'email',
+                    'complexesAmount' => function ($developer) {
+                        return $developer->getNewbuildingComplexes()->onlyActive()->count();
+                    },  
+                    'flatsAmount' => function ($developer) {
+                        return $developer->getFlats()->onlyActive()->count();
+                    },  
+                    'actionsAmount' => function ($developer) {
+                        return $developer->actionNumber;
+                    },
+                    'shortDescription' => function ($developer) {
+                        return !is_null($developer->detail) ? \Yii::$app->formatter->asShortText($developer->detail, 200, true) : '';
+                    },
+                    'hasRepresentative' => function ($developer) {
+                        return $developer->hasRepresentative();
+                    },
+                ]
+            ]),
+            'agencyDataProvider' => ArrayHelper::toArray($agencyDataProvider->getModels()),
+            'bankDataProvider' => ArrayHelper::toArray($bankDataProvider->getModels()),
             'districts' => ArrayHelper::toArray(District::getAllForLocationAsList()),
             'developers' => ArrayHelper::toArray(Developer::getAllAsList()),
             'newbuildingComplexes' => $searchModel->newbuildingComplexes

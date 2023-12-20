@@ -70,7 +70,7 @@ export default {
         icon: 'home',
         url: '/',
         data: false,
-        options: 'native'
+        options: false
       },
       {
         id: 2,
@@ -85,7 +85,6 @@ export default {
     const focusOn = function (event) {
       event.target.classList.add('shadow-15')
     }
-
     const focusOff = function (event) {
       event.target.classList.remove('shadow-15')
     }

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="fixed-top">
     <q-toolbar class="bg-primary text-white">
       <q-avatar class="q-mr-sm">
         <inertia-link href="/">

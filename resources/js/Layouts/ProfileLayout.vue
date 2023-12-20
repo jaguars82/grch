@@ -1,7 +1,8 @@
 <template>
+  <div class="topoffset"></div>
   <div>
     <q-layout
-      view="hhh LpR fff"
+      view="hhh LpR lfr"
     >
 
     <q-header>
@@ -18,11 +19,13 @@
       :mini="miniState"
     >
       <template v-slot:mini>
+        <div class="topoffset"></div>
         <div class="row justify-center">
           <q-btn class="q-mt-sm" round unelevated icon="menu" @click="miniState = false"/>
         </div>
       </template>
 
+      <div class="topoffset"></div>
       <div class="row justify-end items-center">
         <q-btn size="sm" dense class="q-my-xs q-mr-sm" round unelevated icon="close" @click="miniState = true"/>
       </div>
@@ -36,6 +39,7 @@
       :width="300"
       :breakpoint="500"
     >
+      <div class="topoffset"></div>
       <slot name="right-drawer"></slot>
     </q-drawer>
 
@@ -47,6 +51,7 @@
             <slot name="main"></slot>
           </div>
         </div>
+        <div class="topoffset"></div>
         <ScrollToTopButton />
       </q-page>
     </q-page-container>
@@ -104,3 +109,11 @@ export default ({
   },
 })
 </script>
+
+<style scoped>
+.topoffset {
+  height: 58px;
+  min-height: 58px;
+  max-height: 58px;
+}
+</style>

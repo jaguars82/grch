@@ -1,11 +1,15 @@
 <template>
   <MainLayout>
     <template v-slot:main>
-      <q-parallax
-        src="/img/search-index-back.jpg"
+      <div
+        class="row items-center justify-center q-pa-lg header-img"
+        style="background-image: url(/img/search-index-back.jpg);"
       >
+      <!--<q-parallax
+        src="/img/search-index-back.jpg"
+      >-->
         <!-- Search form -->
-        <div class="row justify-center" :class="{ 'width-98': $q.screen.lt.md, 'width-80': $q.screen.gt.sm, 'items-center': $q.screen.gt.sm }">
+        <div class="row justify-center q-my-lg" :class="{ 'width-98': $q.screen.lt.md, 'width-80': $q.screen.gt.sm, 'items-center': $q.screen.gt.sm }">
           <div class="col-10">
             <div class="row q-col-gutter-none">
               <div class="col-12 col-sm-4 col-md-2 no-padding">
@@ -61,8 +65,8 @@
             </div>
           </div>
           <div class="col-2">
-            <q-btn unelevated round icon="search" @click="search" />
-            <q-btn unelevated round icon="pin_drop" @click="mapSearch" />
+            <q-btn color="primary" class="text-white q-ml-sm q-mr-xs" unelevated round icon="search" @click="search" />
+            <q-btn color="white" class="text-grey-7" unelevated round icon="pin_drop" @click="mapSearch" />
           </div>
         </div>
 
@@ -70,7 +74,7 @@
         <div class="row" :class="{ 'width-98': $q.screen.lt.md, 'width-80': $q.screen.gt.sm }">
           <!-- News slider -->
           <div class="col-12 col-md-6">
-            <q-card class="header-card">
+            <q-card class="header-card q-mt-md">
               <q-card-section>
                 <q-carousel
                   v-if="newsList.length"
@@ -94,8 +98,19 @@
                   >
                     <div class="slide-content">
                       <p class="text-h3 ellipsis">{{ news.title }}</p>
-                      <div class="q-mt-md text-center ellipsis-3-lines">
-                        {{ news.detail }}
+                      <div class="q-mt-md row" style="height: 200px;">
+                        <q-img class="col-4" v-if="news.image" :src="`/uploads/${news.image}`" />
+                        <div class="q-px-sm" :class="{'col-8': news.image, 'col-12': !news.image}">
+                        <q-badge v-if="news.category === 1" color="orange" class="text-white">Акция</q-badge>
+                        <q-badge v-else-if="news.category === 2" color="primary" class="text-white">Новость</q-badge>
+                        <div class="text-h5 text-grey">{{ asDateTime(news.created_at) }}</div>
+                        <div class="q-mt-sm ellipsis-3-lines">
+                          {{ news.detail }}
+                        </div>
+                        <div class="full-width q-mt-md text-right">
+                          <q-btn outline rounded color="white" size="sm" icon="east" label="Открыть" @click="goToNews(news.id)" />
+                        </div>
+                        </div>
                       </div>
                     </div>
                   </q-carousel-slide>
@@ -104,12 +119,51 @@
             </q-card>
           </div>
           <!-- Flats by room -->
+          <div class="col-6 col-md-3">
+            <q-card class="header-card q-mt-md q-py-md">
+              <q-card-section>
+                <p class="text-h3 ellipsis text-center text-white">По количеству комнат</p>
+                <div v-for="param of flatsByParams.byRoom" class="q-mt-lg row justify-between">
+                  <div class="text-white">{{ param.param }}</div>
+                  <div class="text-white">{{ param.val }}</div>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
           <!-- Flats by deadline -->
+          <div class="col-6 col-md-3">
+            <q-card class="header-card q-mt-md q-py-md">
+              <q-card-section>
+                <p class="text-h3 ellipsis text-center text-white">По сроку сдачи</p>
+                <div v-for="param of flatsByParams.byDeadline" class="q-mt-lg row justify-between">
+                  <div class="text-white">{{ param.param }}</div>
+                  <div class="text-white">{{ param.val }}</div>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
         </div>
 
-      </q-parallax>
-      <pre>{{ developers }}</pre>
-      <pre>{{ districtSelect }}</pre>
+      <!--</q-parallax>-->
+      </div>
+
+      <div class="row">
+        <div class="col-12 text-center">
+          <h3 class="q-my-md">Застройщики</h3>
+        </div>
+        <q-virtual-scroll
+          class="q-mx-md hide-scrollbar"
+          :items="developerDataProvider"
+          virtual-scroll-horizontal
+          v-slot="{ item, index }"
+        >
+          <div class="q-mx-sm q-mb-lg"
+            :key="index"
+          >
+            <DeveloperResumeCard :developer="item" />
+          </div>
+        </q-virtual-scroll>
+      </div>
     </template>
   </MainLayout>
 </template>
@@ -118,12 +172,14 @@
 <script>
 import { ref, computed, onMounted } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
+import { asDateTime } from '@/helpers/formatter'
 import axios from 'axios'
 import MainLayout from '@/Layouts/MainLayout.vue'
 import RoomsAmountButtons from '@/Components/Elements/RoomsAmountButtons.vue'
 import useEmitter from '@/composables/use-emitter'
 import FlatTypeToggler from '@/Components/Elements/FlatTypeToggler.vue'
 import PriceRangeWithToggler from '@/Components/Elements/Ranges/PriceRangeWithToggler.vue'
+import DeveloperResumeCard from '@/Components/Developer/DeveloperResumeCard.vue'
 
 export default {
   props: {
@@ -131,17 +187,18 @@ export default {
     newsList: {
       type: Array
     },
+    flatsByParams: Object,
     initialFilterParams: Object,
     // newsDataProvider: Object,
     // actionsDataProvider: Object,
-    developerDataProvider: Object,
-    agencyDataProvider: Object,
-    bankDataProvider: Object,
+    developerDataProvider: Array,
+    agencyDataProvider: Array,
+    bankDataProvider: Array,
     districts: Object,
     developers: Object,
     newbuildingComplexes: Object
   },
-  components: { MainLayout, RoomsAmountButtons, FlatTypeToggler, PriceRangeWithToggler },
+  components: { MainLayout, RoomsAmountButtons, FlatTypeToggler, PriceRangeWithToggler, DeveloperResumeCard },
   setup(props) {
     const emitter = useEmitter()
 
@@ -227,9 +284,14 @@ export default {
     }
 
     const newsSlide = ref(props.newsList[0].id ?? false)
+    const goToNews = (newsId) => {
+      Inertia.get('/news/view', { id: newsId })
+    }
 
     return {
+      asDateTime,
       newsSlide,
+      goToNews,
       districtSelect,
       districtOptions,
       developerSelect,
@@ -243,16 +305,19 @@ export default {
       newbuildingComplexesOptions,
       search,
       mapSearch,
-      model: ref(null),
-      options: [
-        'Google', 'Facebook', 'Twitter', 'Apple', 'Oracle'
-      ]
     }
   },
 }
 </script>
 
 <style scoped>
+.row.justify-between::before, .row.justify-between::after {
+  display: none;
+}
+.header-img {
+  background-repeat: no-repeat;
+  background-size: cover;
+}
 .width-80 {
   width: 80%;
 }
