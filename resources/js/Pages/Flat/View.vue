@@ -252,63 +252,67 @@
       <RegularContentContainer v-if="true" class="q-mt-md q-mx-md" title="Шахматки/позиции">
         <template v-slot:content>
 
-          <div v-for="building of flat.complex.newbuildings" :key="building.id">
-            <q-expansion-item
-              class="q-my-sm"
-              header-class="rounded-borders position-item bg-primary text-white"
-              expand-icon-class="text-white"
-            >
-              <template v-slot:header>
-                <div class="row items-center full-width">
-                  <div class="col-2 text-bold">{{ building.name }}</div>
-                  <div class="col-3">
-                    <span v-if="building.aviableFlats > 0">Доступно {{ building.aviableFlats }}. </span>
-                    <span v-if="building.reservedFlats > 0">Бронь {{ building.reservedFlats }}</span>
-                  </div>
-                  <div class="col-3 text-bold">
-                    {{ building.deadlineString }}
-                  </div>
-                  <div class="col-3">
-                    {{ building.totalFloorString }}
-                  </div>
-                </div>
-              </template>
-
-              <template v-if="building.entrances.length">
-                <q-expansion-item
-                  class="q-my-sm"
-                  v-for="entrance of building.entrances"
-                  dense
-                  dense-toggle
-                >
-                  <template v-slot:header>
-                    <div class="row items-center full-width">
-                      <div class="col-2 text-bold">{{ entrance.name }}</div>
-                      <div class="col text-grey">
-                        <span v-if="entrance.aviableFlats > 0">доступно {{ entrance.aviableFlats }}</span>
-                        <span v-if="entrance.reservedFlats > 0">, бронь{{ entrance.reservedFlats }}, </span>
-                        <span>{{ entrance.deadlineString }}</span>
-                        <span v-if="entrance.floors">, {{ entrance.floors }} этажей</span>
-                        <span v-if="entrance.material">, {{ entrance.material }}</span>
-                      </div>
+          <template v-for="building of flat.complex.newbuildings" :key="building.id">
+            <div v-if="building.active">
+              <q-expansion-item
+                class="q-my-sm"
+                header-class="rounded-borders position-item bg-primary text-white"
+                expand-icon-class="text-white"
+                :default-opened="building.id === flat.newbuilding_id"
+              >
+                <template v-slot:header>
+                  <div class="row items-center full-width">
+                    <div class="col-2 text-bold">{{ building.name }}</div>
+                    <div class="col-3">
+                      <span v-if="building.aviableFlats > 0">Доступно {{ building.aviableFlats }}. </span>
+                      <span v-if="building.reservedFlats > 0">Бронь {{ building.reservedFlats }}</span>
                     </div>
-                  </template>
+                    <div class="col-3 text-bold">
+                      {{ building.deadlineString }}
+                    </div>
+                    <div class="col-3">
+                      {{ building.totalFloorString }}
+                    </div>
+                  </div>
+                </template>
 
-                  <div class="bg-grey-3 q-pa-sm rounded-borders overflow-auto">
-                    <div class="row q-pl-lg relative-position" v-for="floor of Object.keys(entrance.flats).reverse()">
-                      <div class="col-1 absolute-left text-weight-bolder text-grey">{{ floor }}</div>
-                      <div class="col-11">
-                        <div class="row no-wrap">
-                          <FlatCell v-for="flatId of Object.keys(entrance.flats[floor])" :flat="entrance.flats[floor][flatId]" />
+                <template v-if="building.entrances.length">
+                  <q-expansion-item
+                    class="q-my-sm"
+                    v-for="entrance of building.entrances"
+                    :default-opened="entrance.id === flat.entrance_id"
+                    dense
+                    dense-toggle
+                  >
+                    <template v-slot:header>
+                      <div class="row items-center full-width">
+                        <div class="col-2 text-bold">{{ entrance.name }}</div>
+                        <div class="col text-grey">
+                          <span v-if="entrance.aviableFlats > 0">доступно {{ entrance.aviableFlats }}</span>
+                          <span v-if="entrance.reservedFlats > 0">, бронь{{ entrance.reservedFlats }}, </span>
+                          <span>{{ entrance.deadlineString }}</span>
+                          <span v-if="entrance.floors">, {{ entrance.floors }} этажей</span>
+                          <span v-if="entrance.material">, {{ entrance.material }}</span>
+                        </div>
+                      </div>
+                    </template>
+
+                    <div class="bg-grey-3 q-pa-sm rounded-borders overflow-auto">
+                      <div class="row q-pl-lg relative-position" v-for="floor of Object.keys(entrance.flats).reverse()">
+                        <div class="col-1 absolute-left text-weight-bolder text-grey">{{ floor }}</div>
+                        <div class="col-11">
+                          <div class="row no-wrap">
+                            <FlatCell v-for="flatId of Object.keys(entrance.flats[floor])" :flat="entrance.flats[floor][flatId]" :currentlyOpened="flatId == flat.id" />
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  
-                </q-expansion-item>
-              </template>
-            </q-expansion-item>
-          </div>
+                    
+                  </q-expansion-item>
+                </template>
+              </q-expansion-item>
+            </div>
+          </template>
 
         </template>
       </RegularContentContainer>

@@ -55,6 +55,7 @@ class DeveloperController extends Controller
             'index' => [
                 'class' => 'app\components\actions\IndexWithSearch',
                 'searchModelClass' => DeveloperSearch::classname(),
+                'oldAdminPanel' => true,
             ],
         ];
     }

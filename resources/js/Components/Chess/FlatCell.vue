@@ -1,5 +1,7 @@
 <template>
-  <div class="column q-ma-xs q-pa-xs cursor-pointer rounded-borders bg-white flat-cell"
+  <div
+    class="column q-ma-xs q-pa-xs cursor-pointer rounded-borders bg-white flat-cell"
+    :class="{ 'bg-blue-2': currentlyOpened }"
     @click="goToFlat(flat.id)"
     @mouseenter="focusOn"
     @mouseleave="focusOff"
@@ -32,7 +34,11 @@ import { asArea, asCurrency, asPricePerArea } from '@/helpers/formatter'
 
 export default {
   props: {
-    flat: Object
+    flat: Object,
+    currentlyOpened: {
+      type: Boolean,
+      default: false
+    }
   },
   setup (props) {
     const color = computed(() => {
@@ -52,9 +58,11 @@ export default {
     })
     
     const focusOn = function (event) {
+      if (props.currentlyOpened) return
       event.target.classList.add(`bg-${color.value}-2`)
     }
     const focusOff = function (event) {
+      if (props.currentlyOpened) return
       event.target.classList.remove(`bg-${color.value}-2`)
     }
     const goToFlat = function (flatId) {

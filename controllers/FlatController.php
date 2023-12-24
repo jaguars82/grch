@@ -131,7 +131,7 @@ class FlatController extends Controller
                                     ]);
                                 },
                                 'newbuildings' => function ($nbc) {
-                                    return ArrayHelper::toArray($nbc->newbuildings, [
+                                    return ArrayHelper::toArray($nbc->activeNewbuildings, [
                                         'app\models\Newbuilding' => [
                                             'id', 'newbuilding_complex_id', 'azimuth', 'name', 'address', 'longitude', 'latitude', 'detail', 'total_floor', 'material', 'status', 'deadline', 'active',
                                             'aviableFlats' => function ($newbuilding) { return $newbuilding->getActiveFlats()->count(); },

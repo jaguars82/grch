@@ -3,6 +3,7 @@
     <q-card-section class="q-px-md q-py-xs" horizontal>
       <div class="col-4 self-center">
         <q-img v-if="flat.layout"
+          class="flat-img"
           fit="scale-down"
           :src="`/uploads/${flat.layout}`"
         />
@@ -54,7 +55,7 @@ export default ({
 </script>
 
 <style scoped>
-.flat-card {
+.flat-card .flat-img {
   max-height: 350px;
 }
 .nbc-logo-container {

@@ -465,6 +465,11 @@ class NewbuildingComplex extends ActiveRecord
                 ->inverseOf('newbuildingComplex');
     }
 
+    public function getActiveNewbuildings()
+    {
+        return $this->getNewbuildings()->onlyActive();
+    }
+
 
     public function getVirtualbuildings()
     {
