@@ -55,6 +55,7 @@ class AgencyController extends Controller
             'index' => [
                 'class' => 'app\components\actions\IndexWithSearch',
                 'searchModelClass' => AgencySearch::classname(),
+                'oldAdminPanel' => true,
             ],
         ];
     }

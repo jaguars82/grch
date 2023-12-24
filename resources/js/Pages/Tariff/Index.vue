@@ -4,7 +4,7 @@
       <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
     </template>
     <template v-slot:main>
-      <q-card class="q-my-md shadow-7">
+      <q-card class="q-ma-md shadow-7">
         <q-card-section>
           <h3 class="text-center">Таблица тарифов</h3>
         </q-card-section>
@@ -79,7 +79,7 @@ export default {
         icon: 'home',
         url: '/',
         data: false,
-        options: 'native'
+        options: false
       },
       {
         id: 2,

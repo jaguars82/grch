@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\components\traits\CustomRedirects;
+use app\components\SharedDataFilter;
 use app\models\Developer;
 use app\models\NewbuildingComplex;
 use app\models\NewsFile;
@@ -14,7 +15,7 @@ use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
-use yii\web\Controller;
+use tebe\inertia\web\Controller;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -50,6 +51,9 @@ class NewsController extends Controller
                         'roles' => ['@'],
                     ],
                 ]
+            ],
+            [
+                'class' => SharedDataFilter::class
             ],
         ];
     }
@@ -116,13 +120,25 @@ class NewsController extends Controller
             $searchObject = null;
         }
 
-        return $this->render('index', [
+        // echo '<pre>'; var_dump($dataProvider->getModels()); echo '</pre>'; die;
+
+        /*return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'newsDataProvider' => $newsDataProvider,
             'actionsDataProvider' => $actionsDataProvider,
             'newbuildingComplexesDataProvider' => $newbuildingComplexesDataProvider,
             'searchObject' => $searchObject,
+        ]);*/
+
+        $postModels = $dataProvider->getModels();
+
+        return $this->inertia('News/Index', [
+            'posts' => ArrayHelper::toArray($postModels),
+            'pagination' => [
+                'page' => $dataProvider->getPagination()->getPage(),
+                'totalPages' => $dataProvider->getPagination()->getPageCount()
+            ]
         ]);
     }
 
@@ -135,8 +151,8 @@ class NewsController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
+        return $this->inertia('News/View', [
+            'news' => ArrayHelper::toArray($this->findModel($id)),
         ]);
     }
     

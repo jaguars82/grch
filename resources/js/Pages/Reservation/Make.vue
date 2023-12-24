@@ -2,7 +2,7 @@
   <div>
     <MainLayout>
       <template v-slot:main>
-        <q-card class="q-my-md shadow-7">
+        <q-card class="q-ma-md shadow-7">
           <q-card-section>
             <h3 class="text-center">Заявка на бронирование квартиры</h3>
           </q-card-section>
@@ -101,27 +101,31 @@
             </div>
 
             <div class="row q-py-sm">
-              <div class="col">
+              <div class="col q-mx-sm">
                 <q-checkbox v-model="formfields.self_reservation" label="Самостоятельное бронирование"></q-checkbox>
               </div>
             </div>
 
-            <q-banner v-if="formfields.self_reservation" inline-actions rounded class="bg-orange text-white">
-              <template v-slot:avatar>
-                <q-icon name="report" color="white" />
-              </template>
-              Обратите внимание: при выборе этой опции Вы осуществляете действия по бронированию объекта самостоятельно, без помощи агрегатора
-            </q-banner>
+            <div class="row">
+              <div class="col q-mx-md">
+                <q-banner v-if="formfields.self_reservation" inline-actions rounded class="q-mx-md bg-orange text-white">
+                  <template v-slot:avatar>
+                    <q-icon name="report" color="white" />
+                  </template>
+                  <span class="text-h5"><span class="text-uppercase">Обратите внимание</span>: при выборе этой опции Вы осуществляете действия по бронированию объекта самостоятельно, без помощи агрегатора</span>
+                </q-banner>
+              </div>
+            </div>
 
             <div class="q-mt-lg text-center">
-              <q-btn label="Отправить заявку" type="submit" color="primary"/>
+              <q-btn unelevated label="Отправить заявку" type="submit" color="primary"/>
               <q-btn label="Сбросить" type="reset" color="primary" flat class="q-ml-sm" />
               <q-btn label="Отмена" color="primary" flat class="q-ml-sm" @click="closeApplication" />
             </div>
             </q-form>
           </q-card-section>
         </q-card>
-        <FlatListItem :flat="flat"></FlatListItem>
+        <FlatListItem class="q-mx-md" :flat="flat" />
       </template>
     </MainLayout>
   </div>

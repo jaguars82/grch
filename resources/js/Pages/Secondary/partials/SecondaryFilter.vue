@@ -1,8 +1,17 @@
 <template>
-  <q-card class="q-ml-sm">
+  <q-card class="no-shadow">
     <q-card-section>
 
-      <q-select outlined v-model="formfields.deal_type" :options="filters.deal_type.options" label="Тип операции" options-dense>
+      <q-btn
+        class="q-mb-xs"
+        unelevated
+        label="Сбросить фильтр"
+        icon="filter_alt_off"
+        @click="resetFilter"
+        style="width: 100%"
+      />
+
+      <q-select outlined v-model="formfields.deal_type" :options="filters.deal_type.options" label="Тип операции" options-dense dense>
         <template v-slot:append>
           <q-icon
             v-if="formfields.deal_type !== null"
@@ -13,7 +22,7 @@
         </template>
       </q-select>
 
-      <q-select outlined v-model="formfields.category" :options="filterCategory" label="Категория" options-dense>
+      <q-select outlined v-model="formfields.category" :options="filterCategory" label="Категория" options-dense dense>
         <template v-slot:append>
           <q-icon
             v-if="formfields.category !== null"
@@ -24,10 +33,32 @@
         </template>
       </q-select>
 
+      <q-select outlined v-model="formfields.agency" :options="filterAgencies" label="Агентство" multiple options-dense use-chips dense>
+        <template v-slot:append>
+          <q-icon
+            v-if="formfields.agency !== null"
+            class="cursor-pointer"
+            name="clear"
+            @click.stop.prevent="formfields.agency = null"
+          />
+        </template>
+      </q-select>
+
+      <q-select outlined v-model="formfields.statusLabel" :options="filterSatusLabels" label="Статус объявления" multiple options-dense use-chips dense>
+        <template v-slot:append>
+          <q-icon
+            v-if="formfields.statusLabel !== null"
+            class="cursor-pointer"
+            name="clear"
+            @click.stop.prevent="formfields.statusLabel = null"
+          />
+        </template>
+      </q-select>
+
       <h5>Цена:</h5>
       <div class="row">
         <div class="col-6 q-pr-xs">
-          <q-input outlined v-model="formfields.price.min" label="От">
+          <q-input outlined v-model="formfields.price.min" label="От" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.price.min != '' && formfields.price.min != ranges.price.min"
@@ -40,7 +71,7 @@
           </q-input>
         </div>
         <div class="col-6 q-pl-xs">
-          <q-input outlined v-model="formfields.price.max" label="До">
+          <q-input outlined v-model="formfields.price.max" label="До" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.price.max != '' && formfields.price.max != ranges.price.max"
@@ -75,7 +106,7 @@
       <h5>Общая площадь:</h5>
       <div class="row">
         <div class="col-6 q-pr-xs">
-          <q-input outlined v-model="formfields.area.min" label="От">
+          <q-input outlined v-model="formfields.area.min" label="От" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.area.min != '' && formfields.area.min != ranges.area.min"
@@ -97,7 +128,7 @@
           </q-input>
         </div>
         <div class="col-6 q-pl-xs">
-          <q-input outlined v-model="formfields.area.max" label="До">
+          <q-input outlined v-model="formfields.area.max" label="До" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.area.max != '' && formfields.area.max != ranges.area.max"
@@ -127,7 +158,7 @@
         label
       />
 
-      <q-select outlined v-model="formfields.district" :options="filterDistricts" label="Район" multiple options-dense use-chips>
+      <q-select outlined v-model="formfields.district" :options="filterDistricts" label="Район" multiple options-dense use-chips dense>
         <template v-slot:append>
           <q-icon
             v-if="formfields.district !== null"
@@ -138,7 +169,7 @@
         </template>
       </q-select>
 
-      <q-select outlined v-model="formfields.street" :options="filterStreets" label="Улица" use-input hide-selected fill-input options-dense @filter="filterStreetList">
+      <q-select outlined v-model="formfields.street" :options="filterStreets" label="Улица" use-input hide-selected fill-input options-dense @filter="filterStreetList" dense>
         <template v-slot:append>
           <q-icon
             v-if="formfields.street !== null"
@@ -152,7 +183,7 @@
       <h5>Этаж:</h5>
       <div class="row">
         <div class="col-6 q-pr-xs">
-          <q-input outlined v-model="formfields.floor.min" label="От">
+          <q-input outlined v-model="formfields.floor.min" label="От" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.floor.min != '' && formfields.floor.min != ranges.floor.min"
@@ -174,7 +205,7 @@
           </q-input>
         </div>
         <div class="col-6 q-pl-xs">
-          <q-input outlined v-model="formfields.floor.max" label="До">
+          <q-input outlined v-model="formfields.floor.max" label="До" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.floor.max != '' && formfields.floor.max != ranges.floor.max"
@@ -207,7 +238,7 @@
       <h5>Этажность:</h5>
       <div class="row">
         <div class="col-6 q-pr-xs">
-          <q-input outlined v-model="formfields.totalFloors.min" label="От">
+          <q-input outlined v-model="formfields.totalFloors.min" label="От" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.totalFloors.min != '' && formfields.totalFloors.min != ranges.total_floors.min"
@@ -229,7 +260,7 @@
           </q-input>
         </div>
         <div class="col-6 q-pl-xs">
-          <q-input outlined v-model="formfields.totalFloors.max" label="До">
+          <q-input outlined v-model="formfields.totalFloors.max" label="До" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.totalFloors.max != '' && formfields.totalFloors.max != ranges.total_floors.max"
@@ -271,7 +302,7 @@
       <h5>Площадь кухни:</h5>
       <div class="row">
         <div class="col-6 q-pr-xs">
-          <q-input outlined v-model="formfields.kitchenArea.min" label="От">
+          <q-input outlined v-model="formfields.kitchenArea.min" label="От" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.kitchenArea.min != '' && formfields.kitchenArea.min != ranges.kitchen_area.min"
@@ -293,7 +324,7 @@
           </q-input>
         </div>
         <div class="col-6 q-pl-xs">
-          <q-input outlined v-model="formfields.kitchenArea.max" label="До">
+          <q-input outlined v-model="formfields.kitchenArea.max" label="До" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.kitchenArea.max != '' && formfields.kitchenArea.max != ranges.kitchen_area.max"
@@ -326,7 +357,7 @@
       <h5>Жилая площадь:</h5>
       <div class="row">
         <div class="col-6 q-pr-xs">
-          <q-input outlined v-model="formfields.livingArea.min" label="От">
+          <q-input outlined v-model="formfields.livingArea.min" label="От" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.livingArea.min != '' && formfields.livingArea.min != ranges.living_area.min"
@@ -348,7 +379,7 @@
           </q-input>
         </div>
         <div class="col-6 q-pl-xs">
-          <q-input outlined v-model="formfields.livingArea.max" label="До">
+          <q-input outlined v-model="formfields.livingArea.max" label="До" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.livingArea.max != '' && formfields.livingArea.max != ranges.living_area.max"
@@ -381,7 +412,7 @@
       <h5>Количество балконов:</h5>
       <div class="row">
         <div class="col-6 q-pr-xs">
-          <q-input outlined v-model="formfields.balconyAmount.min" label="От">
+          <q-input outlined v-model="formfields.balconyAmount.min" label="От" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.balconyAmount.min != '' && formfields.balconyAmount.min != ranges.balcony_amount.min"
@@ -403,7 +434,7 @@
           </q-input>
         </div>
         <div class="col-6 q-pl-xs">
-          <q-input outlined v-model="formfields.balconyAmount.max" label="До">
+          <q-input outlined v-model="formfields.balconyAmount.max" label="До" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.balconyAmount.max != '' && formfields.balconyAmount.max != ranges.balcony_amount.max"
@@ -436,7 +467,7 @@
       <h5>Количество лоджий:</h5>
       <div class="row">
         <div class="col-6 q-pr-xs">
-          <q-input outlined v-model="formfields.loggiaAmount.min" label="От">
+          <q-input outlined v-model="formfields.loggiaAmount.min" label="От" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.loggiaAmount.min != '' && formfields.loggiaAmount.min != ranges.loggia_amount.min"
@@ -458,7 +489,7 @@
           </q-input>
         </div>
         <div class="col-6 q-pl-xs">
-          <q-input outlined v-model="formfields.loggiaAmount.max" label="До">
+          <q-input outlined v-model="formfields.loggiaAmount.max" label="До" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.loggiaAmount.max != '' && formfields.loggiaAmount.max != ranges.loggia_amount.max"
@@ -495,7 +526,7 @@
       <h5>Год сдачи/постройки:</h5>
       <div class="row">
         <div class="col-6 q-pr-xs">
-          <q-input outlined v-model="formfields.builtYear.min" label="От">
+          <q-input outlined v-model="formfields.builtYear.min" label="От" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.builtYear.min != '' && formfields.builtYear.min != ranges.built_year.min"
@@ -517,7 +548,7 @@
           </q-input>
         </div>
         <div class="col-6 q-pl-xs">
-          <q-input outlined v-model="formfields.builtYear.max" label="До">
+          <q-input outlined v-model="formfields.builtYear.max" label="До" dense>
             <template v-slot:prepend>
               <q-icon
                 v-if="formfields.builtYear.max != '' && formfields.builtYear.max != ranges.built_year.max"
@@ -560,18 +591,14 @@
 
       </template>
 
-      <!--
-      <pre>{{ filterParams }}</pre>
-      <pre>{{ ranges }}</pre>
-      <pre>{{ formfieldsTest }}</pre>
-      -->
-
     </q-card-section>
   </q-card>
 </template>
 
 <script>
 import { ref, computed, watch } from 'vue'
+import { useSecondaryFilter } from '@/stores/SecondaryFilterStore'
+import { storeToRefs } from "pinia";
 import useEmitter from '@/composables/use-emitter'
 
 export default {
@@ -586,6 +613,12 @@ props: {
   secondaryCategories: {
     type: Object,
   },
+  agencies: {
+    type: Array
+  },
+  statusLabelTypes: {
+    type: Object
+  },
   districts: {
     type: Array
   },
@@ -594,6 +627,9 @@ props: {
   }
 },
 setup(props) {
+  //const { filterStore } = storeToRefs(useSecondaryFilter())
+  const filterStore = useSecondaryFilter()
+
   const showMoreFilterParams = ref(false)
 
   const filters = ref({
@@ -630,6 +666,22 @@ setup(props) {
     return districts
   })
 
+  const filterAgencies = computed(() => {
+    const agencies = []
+    props.agencies.forEach(agency => {
+      agencies.push({ label: agency.name, value: agency.id })
+    })
+    return agencies
+  })
+
+  const filterSatusLabels = computed(() => {
+    const labels = []
+    for (const id in props.statusLabelTypes) {
+      labels.push({ value: id, label: props.statusLabelTypes[id] })
+    }
+    return labels
+  })
+
   const streetListRef = ref(props.streetList)
 
   const filterStreets = computed(() => {
@@ -652,7 +704,38 @@ setup(props) {
   }
 
   const formfields = ref({
-    deal_type: props.filterParams.deal_type ? filters.value.deal_type.options.find(elem => { return elem.value == props.filterParams.deal_type }) : null,
+    deal_type: props.filterParams.deal_type ? filters.value.deal_type.options.find(elem => { return elem.value == props.filterParams.deal_type }) : filterStore.deal_type,
+    category: props.filterParams.category ? filterCategory.value.find(elem => { return elem.value == props.filterParams.category }) : filterStore.category,
+    agency: props.filterParams.agency ? filterAgencies.value.filter(elem => { return props.filterParams.agency.includes(elem.value) }) : filterStore.agency,
+    statusLabel: props.filterParams.statusLabel ? filterSatusLabels.value.filter(elem => { return props.filterParams.statusLabel.includes(elem.value) }) : filterStore.statusLabel,
+    price: { min: props.filterParams.priceFrom ? props.filterParams.priceFrom : props.ranges.price.min, max: props.filterParams.priceTo ? props.filterParams.priceTo : props.ranges.price.max},
+    rooms: props.filterParams.rooms ? props.filterParams.rooms : filterStore.rooms,
+    //rooms: props.filterParams.rooms ? props.filterParams.rooms : [],
+    area: { min: props.filterParams.areaFrom ? props.filterParams.areaFrom : filterStore.area.min, max: props.filterParams.areaTo ? props.filterParams.areaTo : filterStore.area.max},
+    district: props.filterParams.district && props.filterParams.district.length > 0 ? filterDistricts.value.filter(elem => { return props.filterParams.district.includes(elem.value) }) : filterStore.district,
+    street: props.filterParams.street ? filterStreets.value.find(elem => { return elem.label ==  props.filterParams.street.label }) : filterStore.street,
+    floor: { min: props.filterParams.floorFrom ? props.filterParams.floorFrom : filterStore.floor.min, max: props.filterParams.floorTo ? props.filterParams.floorTo : filterStore.floor.max},
+    totalFloors: { min: props.filterParams.totalFloorsFrom ? props.filterParams.totalFloorsFrom : filterStore.totalFloors.min, max: props.filterParams.totalFloorsTo ? props.filterParams.totalFloorsTo : filterStore.totalFloors.max},
+    kitchenArea: { min: props.filterParams.kitchenAreaFrom ? props.filterParams.kitchenAreaFrom : filterStore.kitchenArea.min, max: props.filterParams.kitchenAreaTo ? props.filterParams.kitchenAreaTo : filterStore.kitchenArea.max},
+    livingArea: { min: props.filterParams.livingAreaFrom ? props.filterParams.livingAreaFrom : filterStore.livingArea.min, max: props.filterParams.livingAreaTo ? props.filterParams.livingAreaTo : filterStore.livingArea.max},
+    balconyAmount: { min: props.filterParams.balconyFrom ? props.filterParams.balconyFrom : filterStore.balconyAmount.min, max: props.filterParams.balconyTo ? props.filterParams.balconyTo : filterStore.balconyAmount.max},
+    loggiaAmount: { min: props.filterParams.loggiaFrom ? props.filterParams.loggiaFrom : filterStore.loggiaAmount.min, max: props.filterParams.loggiaTo ? props.filterParams.loggiaTo : filterStore.loggiaAmount.max},
+    windowviewStreet: props.filterParams.windowviewStreet ? true : filterStore.windowviewStreet,
+    windowviewYard: props.filterParams.windowviewYard ? true : filterStore.windowviewYard,
+    panoramicWindows: props.filterParams.panoramicWindows ? true : filterStore.panoramicWindows,
+    builtYear: { min: props.filterParams.builtYearFrom ? props.filterParams.builtYearFrom : filterStore.builtYear.min, max: props.filterParams.builtYearTo ? props.filterParams.builtYearTo : filterStore.builtYear.max},
+    concierge: props.filterParams.concierge ? true : filterStore.concierge,
+    rubbishChute: props.filterParams.rubbishChute ? true : filterStore.rubbishChute,
+    gasPipe: props.filterParams.gasPipe ? true : filterStore.gasPipe,
+    closedTerritory: props.filterParams.closedTerritory ? true : filterStore.closedTerritory,
+    playground: props.filterParams.playground ? true : filterStore.playground,
+    undergroundParking: props.filterParams.undergroundParking ? true : filterStore.undergroundParking,
+    groundParking: props.filterParams.groundParking ? true : filterStore.groundParking,
+    openParking: props.filterParams.openParking ? true : filterStore.openParking,
+    multilevelParking: props.filterParams.multilevelParking ? true : filterStore.multilevelParking,
+    barrier: props.filterParams.barrier ? true : filterStore.barrier,
+
+    /*deal_type: props.filterParams.deal_type ? filters.value.deal_type.options.find(elem => { return elem.value == props.filterParams.deal_type }) : null,
     category: props.filterParams.category ? filterCategory.value.find(elem => { return elem.value == props.filterParams.category }) : null,
     price: { min: props.filterParams.priceFrom ? props.filterParams.priceFrom : props.ranges.price.min, max: props.filterParams.priceTo ? props.filterParams.priceTo : props.ranges.price.max},
     rooms: props.filterParams.rooms ? props.filterParams.rooms : [],
@@ -678,13 +761,13 @@ setup(props) {
     groundParking: props.filterParams.groundParking ? true : false,
     openParking: props.filterParams.openParking ? true : false,
     multilevelParking: props.filterParams.multilevelParking ? true : false,
-    barrier: props.filterParams.barrier ? true : false,
+    barrier: props.filterParams.barrier ? true : false,*/
   })
 
-  const formfieldsTest = ref({
+  /*const formfieldsTest = ref({
     district: null,
     street: null
-  })
+  })*/
 
   const roomButtons = ref([
     {
@@ -746,22 +829,66 @@ setup(props) {
     }
   }
 
+  const setRoomButtonsInactive = () => {
+    roomButtons.value.forEach(button => {
+      button.color = 'white'
+      button.textColor = 'grey'
+      button.onOff = false
+    })
+  }
+
+  const resetFilter = () => {
+    formfields.value.deal_type = null
+    formfields.value.category = null
+    formfields.value.price = { min: null, max: null}
+    formfields.value.agency = null
+    formfields.value.statusLabel = null
+    formfields.value.rooms = []
+    formfields.value.area = { min: null, max: null}
+    formfields.value.district = null
+    formfields.value.street = null
+    formfields.value.floor = { min: null, max: null}
+    formfields.value.totalFloors = { min: null, max: null}
+    formfields.value.kitchenArea = { min: null, max: null}
+    formfields.value.livingArea = { min: null, max: null}
+    formfields.value.balconyAmount = { min: null, max: null}
+    formfields.value.loggiaAmount = { min: null, max: null}
+    formfields.value.windowviewStreet = false
+    formfields.value.windowviewYard = false
+    formfields.value.panoramicWindows = false
+    formfields.value.builtYear = { min: null, max: null}
+    formfields.value.concierge = false
+    formfields.value.rubbishChute = false
+    formfields.value.gasPipe = false
+    formfields.value.closedTerritory = false
+    formfields.value.playground = false
+    formfields.value.undergroundParking = false
+    formfields.value.groundParking = false
+    formfields.value.openParking = false
+    formfields.value.multilevelParking = false
+    formfields.value.barrier = false
+    setRoomButtonsInactive()
+  }
+
   const emitter = useEmitter()
   watch(formfields.value, () => { 
     emitter.emit('secondary-filter-changed', formfields.value)
   })
 
   return {
+    filterStore,
     showMoreFilterParams,
     filters,
     filterCategory,
     filterDistricts,
+    filterAgencies,
+    filterSatusLabels,
     filterStreets,
     filterStreetList,
     roomButtons,
     setRoomButtonActive,
     formfields,
-    formfieldsTest
+    resetFilter
   }
  }
 }

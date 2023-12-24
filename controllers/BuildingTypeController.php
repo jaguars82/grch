@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use app\components\traits\CustomRedirects;
+use app\components\SharedDataFilter;
 
 /**
  * BuildingTypeController implements the CRUD actions for BuildingType model.
@@ -41,7 +42,10 @@ class BuildingTypeController extends Controller
                         'roles' => ['admin'],
                     ],
                 ]
-            ]
+            ],
+            [
+                'class' => SharedDataFilter::class
+            ],
         ];
     }
 

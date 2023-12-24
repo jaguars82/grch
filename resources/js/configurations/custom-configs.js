@@ -4,6 +4,8 @@ const yandexApiKey = '09731c10-0210-4c10-9e11-dc7adfd70130'
 const yaMapsSettings = {
   apiKey: yandexApiKey,
   lang: 'ru_RU',
+  coordorder: 'latlong',
+  debug: false,
   version: '2.1'
 }
 

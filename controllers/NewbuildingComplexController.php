@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\components\exceptions\AppException;
 use app\components\traits\CustomRedirects;
+use app\components\SharedDataFilter;
 use app\models\Bank;
 use app\models\Developer;
 use app\models\Newbuilding;
@@ -12,13 +13,15 @@ use app\models\form\NewbuildingComplexForm;
 use app\models\form\ProjectDeclarationForm;
 use app\models\search\NewbuildingComplexSearch;
 use app\models\search\NewbuildingComplexFlatSearch;
+use app\models\search\AdvancedFlatSearch;
 use app\models\service\NewbuildingComplex;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
-use yii\web\Controller;
+use yii\helpers\Url;
+use tebe\inertia\web\Controller;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -51,6 +54,9 @@ class NewbuildingComplexController extends Controller
                     ],
                 ]
             ],
+            [
+                'class' => SharedDataFilter::class
+            ],
         ];
     }
     
@@ -63,11 +69,13 @@ class NewbuildingComplexController extends Controller
     {
         $searchModel = new NewbuildingComplexSearch();
         $dataProvider = $searchModel->search(\Yii::$app->request->queryParams);
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'itemsCount' => $searchModel->itemsCount,
-            'developers' => Developer::getAllAsList(),
+
+        return $this->inertia('NewbuildingComplex/Index', [
+            'complexes' => ArrayHelper::toArray($dataProvider->getModels()),
+            'pagination' => [
+                'page' => $dataProvider->getPagination()->getPage(),
+                'totalPages' => $dataProvider->getPagination()->getPageCount()
+            ]
         ]);
     }
 
@@ -81,23 +89,6 @@ class NewbuildingComplexController extends Controller
     public function actionView($id)
     {
         $model = $this->findModel($id, true);       
-        /*$positions = [];
-        $positionArray = [];
-        $number = 1;
-        foreach ($model->getNewbuildings()->with(['activeFlats'])->all() as $newbuilding) {
-            $positions[] = [
-                'name' => $newbuilding->name,
-                'number' => $number++,
-                'developer_id' => $newbuilding->newbuildingComplex->developer_id,
-                'newbuilding_complex_id' => $newbuilding->newbuilding_complex_id,
-                'newbuilding_id' => $newbuilding->id,
-                'flats' => count($newbuilding->activeFlats),
-                'status' => $newbuilding->status,
-                'floors' => $newbuilding->total_floor,
-                'active' => $newbuilding->active,
-            ];
-            $positionArray[$newbuilding->id] = \Yii::$app->formatter->asCapitalize($newbuilding->name);
-        }*/
         
         $newsDataProvider = new ActiveDataProvider([
             'query' => $model->getNews()->limit(4),
@@ -112,17 +103,127 @@ class NewbuildingComplexController extends Controller
         ]);
         
         $newbuildingComplexesDataProvider = new ActiveDataProvider([
-            'query' => NewbuildingComplex::find()->onlyActive()->onlyWithActiveBuildings()->andWhere(['!=', 'id', $model->id])->andWhere(['=', 'developer_id', $model->developer_id])/*->limit(6)*/,
-            'pagination' => false,
-            'sort' => ['attributes' => ['id'], 'defaultOrder' => ['id' => SORT_DESC]],
+            'query' => NewbuildingComplex::find()
+                ->onlyActive()
+                ->onlyWithActiveBuildings()
+                ->andWhere(['!=', 'id', $model->id])
+                ->andWhere(['=', 'developer_id', $model->developer_id]),
+                'pagination' => false,
+                'sort' => ['attributes' => ['id'], 'defaultOrder' => ['id' => SORT_DESC]],
+            ]);
+
+        $complex = ArrayHelper::toArray($model, [
+            'app\models\service\NewbuildingComplex' => [
+                'id', 'developer_id', 'name', 'latitude', 'longitude', 'logo', 'detail',
+                'address' => function ($nbc) { return $nbc->address; },
+                'newbuildings' => function ($nbc) {
+                    return ArrayHelper::toArray($nbc->activeNewbuildings, [
+                        'app\models\Newbuilding' => [
+                            'id', 'newbuilding_complex_id', 'azimuth', 'name', 'address', 'longitude', 'latitude', 'detail', 'total_floor', 'material', 'status', 'deadline', 'active',
+                            'aviableFlats' => function ($newbuilding) { return $newbuilding->getActiveFlats()->count(); },
+                            'reservedFlats' => function ($newbuilding) { return $newbuilding->getReservedFlats()->count(); },
+                            'deadlineString' => function ($newbuilding) { return (empty($newbuilding->deadline) ? 'Нет данных' : strtotime(date("Y-m-d")) > strtotime($newbuilding->deadline)) ? 'позиция сдана' : \Yii::$app->formatter->asQuarterAndYearDate($newbuilding->deadline); },
+                            'totalFloorString' => function ($newbuilding) { return empty($newbuilding->total_floor) ? 'этажность не указана' : $newbuilding->total_floor.' этажей'; },
+                            'entrances' => function ($newbuilding) {
+                                return ArrayHelper::toArray($newbuilding->entrances, [
+                                    'app\models\Entrance' => [
+                                        'id', 'newbuilding_id', 'name', 'number', 'floors', 'material', 'status', 'deadline', 'azimuth', 'longitude', 'latitude',
+                                        'aviableFlats' => function ($entrance) { return $entrance->getActiveFlats()->count(); },
+                                        'reservedFlats' => function ($entrance) { return $entrance->getReservedFlats()->count(); },
+                                        'deadlineString' => function ($entrance) { return (is_null($entrance->deadline) ? 'нет данных' : strtotime(date("Y-m-d")) > strtotime($entrance->deadline)) ? 'подъезд сдан' : \Yii::$app->formatter->asQuarterAndYearDate($entrance->deadline); },
+                                        'flats' => function ($entrance) {
+                                            $flats = ArrayHelper::toArray($entrance->flats, [
+                                                'app\models\Flat' => [
+                                                    'id', 'newbuilding_id', 'entrance_id', 'address', 'detail', 'area', 'rooms', 'floor', 'index_on_floor', 'price_cash', 'status', 'sold_by_application', 'is_applicated', 'is_reserved', 'created_at', 'updated_at', 'unit_price_cash', 'discount_type', 'discount', 'discount_amount', 'discount_price', 'azimuth', 'notification', 'extra_data', 'composite_flat_id', 'section', 'number', 'layout', 'unit_price_credit', 'price_credit', 'floor_position', 'floor_layout', 'layout_coords', 'is_euro', 'is_studio',
+                                                    'has_discount' => function ($flat) {
+                                                        return $flat->hasDiscount();
+                                                    },
+                                                    'price_range' => function ($flat) {
+                                                        return $flat->hasDiscount() ? \Yii::$app->formatter->asCurrencyRange(round($flat->allCashPricesWithDiscount[0]['price']), $flat->price_cash) : '';
+                                                    }
+                                                ]
+                                            ]);
+                                            return ArrayHelper::map($flats, 'id', function($item) { return $item; }, 'floor');
+                                        },
+                                    ]
+                                ]);
+                            }
+                        ]
+                    ]); 
+                },
+                'images' => function ($nbc) { return ArrayHelper::toArray($nbc->images); },
+                'materials' => function ($nbc) { return $nbc->materials; },
+                'furnishes' => function ($nbc) { 
+                    return ArrayHelper::toArray($nbc->furnishes, [
+                        'app\models\Furnish' => [
+                            'id', 'name', 'detail',
+                            'furnishImages' => function ($furnish) {
+                                return $furnish->getFurnishImages()->asArray()->all();
+                            }
+                        ]
+                    ]);
+                },
+                'areaRange' => function ($nbc) {
+                   return \Yii::$app->formatter->asAreaRange($nbc->minFlatArea, $nbc->maxFlatArea);
+                },
+                'priceRange' => function ($nbc) {
+                    $prices = ['min' => 0, 'max' => 0];
+                    $minPrice = $nbc->minFlatPrice;
+                    if ($minPrice > 0) $prices['min'] = round($minPrice);
+                    $maxPrice = $nbc->maxFlatPrice;
+                    if ($maxPrice > 0) $prices['max'] = round($maxPrice);
+                    return \Yii::$app->formatter->asCurrencyRange($prices['min'], $prices['max']);
+                },
+                'freeFlats' => function ($nbc) {
+                    return \Yii::$app->formatter->asPercent($nbc->freeFlats);
+                },
+                'nearestDeadline' => function ($nbc) {
+                    return !is_null($nbc->nearestDeadline) ? \Yii::$app->formatter->asQuarterAndYearDate($nbc->nearestDeadline) : 'нет данных';
+                },
+                'minYearlyRate' => function ($nbc) {
+                    return !is_null($nbc->minYearlyRate) ? \Yii::$app->formatter->asPercent($nbc->minYearlyRate) : null;
+                },
+                'maxDiscount' => function ($nbc) {
+                    return !is_null($nbc->maxDiscount) ? \Yii::$app->formatter->asPercent($nbc->maxDiscount) : null;
+                },
+                'flats_by_room' => function ($nbc) {
+                    $result = [];
+                    // add values for apartments with a sertain amount of rooms
+                    $roomsAmount = [1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5];
+                    foreach ($roomsAmount as $roomind => $roomval) {
+                        $roomItem = $roomind.'Room';
+                        $$roomItem = false;
+                        if (!is_null($nbc->getMinFlatPriceForRooms($roomval)) && !is_null($nbc->getMaxFlatPriceForRooms($roomval))) {
+                            $$roomItem = [
+                                'search_url' => '/site/search?AdvancedFlatSearch[roomsCount][0]='.$roomval.'&AdvancedFlatSearch[flatType]='.AdvancedFlatSearch::FLAT_TYPE_STANDARD.'&AdvancedFlatSearch[newbuilding_complex][]='.$nbc->id.'&AdvancedFlatSearch[developer][]='.$nbc->developer->id,
+                                'label' => $roomval.' - комнатные',
+                                'price' => \Yii::$app->formatter->asCurrencyRange(round($nbc->getMinFlatPriceForRooms($roomval)), round($nbc->getMaxFlatPriceForRooms($roomval)), 'руб.')
+                            ];
+                        }
+                        array_push($result, $$roomItem);
+                    }
+                    // add a value for studios
+                    $studioItem = false;
+                    if (!is_null($nbc->minStudioFlatPrice) && !is_null($nbc->maxStudioFlatPrice)) {
+                        $studioItem = [
+                            'search_url' => '/site/search?AdvancedFlatSearch[flatType]='.AdvancedFlatSearch::FLAT_TYPE_STUDIO.'&AdvancedFlatSearch[newbuilding_complex][]='.$nbc->id.'&AdvancedFlatSearch[developer][]='.$nbc->developer->id, 
+                            'label' => 'студии',
+                            'price' => \Yii::$app->formatter->asCurrencyRange(round($nbc->getMinFlatPriceForRooms($nbc->minStudioFlatPrice)), round($nbc->getMaxFlatPriceForRooms($nbc->maxStudioFlatPrice)), 'руб.')
+                        ];
+                    }
+                    array_push($result, $studioItem);
+
+                    return $result;
+                },
+                'advantages' => function ($nbc) {
+                    return !is_null($nbc->advantages) ? $nbc->advantages : [];
+                },
+            ]
         ]);
 
-        return $this->render('view', [
-            'model' => $model,
-            'projectDeclaration' => new ProjectDeclarationForm(),
-            'newsDataProvider' => $newsDataProvider,
-            'newbuildingComplexesDataProvider' => $newbuildingComplexesDataProvider,
-            'contactDataProvider' => $contactDataProvider,
+        return $this->inertia('NewbuildingComplex/View', [
+            'complex' => $complex,
+            'otherNC' => ArrayHelper::toArray($newbuildingComplexesDataProvider->getModels()),
         ]);
     }
 
@@ -136,7 +237,9 @@ class NewbuildingComplexController extends Controller
      */
     protected function findModel($id, $withRelatedModels = false)
     {
-        $query = NewbuildingComplex::find()->where(['id' => $id]);
+        $query = NewbuildingComplex::find()
+            ->with(['newbuildings', 'images'])
+            ->where(['id' => $id]);
         
         if ($withRelatedModels) {
             $query->with(['furnishes.furnishImages']);

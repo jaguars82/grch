@@ -95,6 +95,16 @@ class FlatQuery extends ActiveQuery
     }
 
     /**
+     * Get flats with not null floor
+     *
+     * @return yii\db\ActiveQuery
+     */
+    public function withNonNullFloor()
+    {
+        return $this->andWhere("floor > 0");
+    }
+
+    /**
      * Get flats with only active newbuildigns
      *
      * @return yii\db\ActiveQuery

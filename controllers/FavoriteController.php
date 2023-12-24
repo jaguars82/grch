@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\components\exceptions\AppException;
 use app\components\traits\CustomRedirects;
+use app\components\SharedDataFilter;
 use app\models\Developer;
 use app\models\Favorite;
 use app\models\Flat;
@@ -12,7 +13,7 @@ use app\models\search\FavoriteFlatSearch;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\base\InvalidParamException;
-use yii\web\Controller;
+use tebe\inertia\web\Controller;
 use yii\web\NotFoundHttpException;
 use app\models\Region;
 use app\models\City;
@@ -50,6 +51,9 @@ class FavoriteController extends Controller
                     ],
                 ]
             ],
+            [
+                'class' => SharedDataFilter::class
+            ],
         ];
     }
     
@@ -76,10 +80,38 @@ class FavoriteController extends Controller
             $districts = ArrayHelper::map($districts, 'id', 'name');
         }
 
-        return $this->render('index', [
+        return $this->inertia('Favorite/Index', [
             'searchModel' => $searchModel,
-            'activeDataProvider' => $activeDataProvider,
-            'archiveDataProvider' => $archiveDataProvider,
+            'activeDataProvider' => ArrayHelper::toArray($activeDataProvider->getModels(), [
+                'app\models\Favorite' => [
+                    'id', 'user_id', 'flat_id', 'comment', 'archived_by', 
+                    'flat' => function ($favorite) {
+                        return ArrayHelper::toArray($favorite->flat, [
+                            'app\models\Flat' => [
+                                'id', 'newbuilding_id', 'entrance_id', 'address', 'detail', 'area', 'rooms', 'floor', 'index_on_floor', 'price_cash', 'status', 'sold_by_application', 'is_applicated', 'is_reserved', 'created_at', 'updated_at', 'unit_price_cash', 'discount_type', 'discount', 'discount_amount', 'discount_price', 'azimuth', 'notification', 'extra_data', 'composite_flat_id', 'section', 'number', 'layout', 'unit_price_credit', 'price_credit', 'floor_position', 'floor_layout', 'layout_coords', 'is_euro', 'is_studio',
+                                'newbuilding' => function ($flat) {
+                                    return ArrayHelper::toArray($flat->newbuilding);
+                                },
+                                'newbuildingComplex' => function ($flat) {
+                                    return ArrayHelper::toArray($flat->newbuildingComplex);
+                                },
+                                'developer' => function ($flat) {
+                                    return ArrayHelper::toArray($flat->developer);
+                                }
+                            ]
+                        ]);
+                    }
+                ]
+            ]),
+            'archiveDataProvider' => ArrayHelper::toArray($archiveDataProvider->getModels()),
+            'paginationActive' => [
+                'page' => $activeDataProvider->getPagination()->getPage(),
+                'totalPages' => $activeDataProvider->getPagination()->getPageCount()
+            ],
+            'paginationArchive' => [
+                'page' => $archiveDataProvider->getPagination()->getPage(),
+                'totalPages' => $archiveDataProvider->getPagination()->getPageCount()
+            ],
             'activeItemsCount' => $activeItemsCount,
             'archiveItemsCount' => $archiveItemsCount,
             'developers' => Developer::getAllAsList(),
@@ -111,7 +143,10 @@ class FavoriteController extends Controller
             return $this->redirectBackWhenException($e);
         }
 
-        return $this->redirectWithSuccess(['flat/view', 'id' => $flatId], 'Квартира добавлена в избранное');
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;        
+        \Yii::$app->response->data = ['status' => 'success', 'message' => 'Квартира добавлена в список избранного'];
+
+        // return $this->redirectWithSuccess(['flat/view', 'id' => $flatId], 'Квартира добавлена в избранное');
     }
 
     /**
@@ -148,8 +183,11 @@ class FavoriteController extends Controller
         }
         
         $model->delete();
+
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;        
+        \Yii::$app->response->data = ['status' => 'success', 'message' => 'Квартира удалена из списка избранного'];
         
-        return $this->redirectWithSuccess(['flat/view', 'id' => $flat->id], 'Квартира удалена из избранного');
+        // return $this->redirectWithSuccess(['flat/view', 'id' => $flat->id], 'Квартира удалена из избранного');
     }
     
     /**

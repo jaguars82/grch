@@ -10,6 +10,7 @@ namespace app\controllers;
 
 use app\components\exceptions\AppException;
 use app\components\traits\CustomRedirects;
+use app\components\SharedDataFilter;
 use app\models\form\ImportForm;
 use app\models\service\Developer;
 use app\models\service\NewbuildingComplex;
@@ -45,6 +46,9 @@ class ImportController extends Controller
                         'roles' => ['@'],
                     ],
                 ],
+            ],
+            [
+                'class' => SharedDataFilter::class
             ],
         ];
     }

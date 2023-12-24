@@ -10,7 +10,7 @@ use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-
+use app\components\SharedDataFilter;
 
 class EntranceController extends Controller
 {
@@ -31,6 +31,9 @@ class EntranceController extends Controller
                         'roles' => ['@'],
                     ],
                 ]
+            ],
+            [
+                'class' => SharedDataFilter::class
             ],
         ];
     }

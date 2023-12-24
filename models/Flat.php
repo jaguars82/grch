@@ -686,7 +686,7 @@ class Flat extends ActiveRecord
                 
                 $neighboringFlats = $this->getNeighboringFlats()->all();
 
-                if(!is_null($neighboringFlats ) && !empty($neighboringFlats )) {
+                if(!is_null($neighboringFlats) && !empty($neighboringFlats)) {
                     $nodeList = [];
                     foreach($neighboringFlats as $flat) {
                         if(empty($flat->layout_coords)) {
@@ -742,6 +742,25 @@ class Flat extends ActiveRecord
             }
         }
         return $floorLayoutImage;
+    }
+
+    /**
+     * Return a value of 'viewBox' attribute of 'svg' tag
+     *
+     * @return string
+     */
+    public function getFloorLayoutSvgViewBox()
+    {
+        $svgViewBox = null;
+        if (!is_null($this->floorLayout)) {
+            $floorLayoutPath = \Yii::getAlias("@webroot/uploads/{$this->floorLayout->image}");
+            
+            if(file_exists($floorLayoutPath) && SvgDom::isNameSvg($this->floorLayout->image)) {
+                $floorLayoutDom = new SvgDom($floorLayoutPath);
+                $svgViewBox = $floorLayoutDom->getSvgViewBox();
+            }
+        }
+        return $svgViewBox;
     }
 
     /**
@@ -834,4 +853,109 @@ class Flat extends ActiveRecord
                 ]
             );
     }
+
+    /**
+     * Get max price of an active flat
+     */
+    public static function getMaxFlatPrice()
+    {
+        return round(
+            Flat::find()
+            ->onlyActive()
+            ->withOnlyActiveNewbuildings()
+            ->max('price_cash')
+        );
+    }
+
+    /**
+     * Get min price of an active flat
+     */
+    public static function getMinFlatPrice()
+    {
+        return round(
+            Flat::find()
+            ->onlyActive()
+            ->withOnlyActiveNewbuildings()
+            ->min('price_cash')
+        );
+    }
+
+    /**
+     * Get max price per m2 of an active flat
+     */
+    public static function getMaxFlatPerUnitPrice()
+    {
+        return round(
+            Flat::find()
+            ->onlyActive()
+            ->withNonNullArea()
+            ->withOnlyActiveNewbuildings()
+            ->max('price_cash / area')
+        );
+    }
+
+    /**
+     * Get max price per m2 of an active flat
+     */
+    public static function getMinFlatPerUnitPrice()
+    {
+        return round(
+            Flat::find()
+            ->onlyActive()
+            ->withNonNullArea()
+            ->withOnlyActiveNewbuildings()
+            ->min('price_cash / area')
+        );
+    }
+
+    /**
+     * Get min area of an active flat
+     */
+    public static function getMinFlatArea()
+    {
+        return floor(
+            Flat::find()
+            ->onlyActive()
+            ->withNonNullArea()
+            ->withOnlyActiveNewbuildings()
+            ->min('area')
+        );
+    }
+
+    /**
+     * Get max area of an active flat
+     */
+    public static function getMaxFlatArea()
+    {
+        return ceil(
+            Flat::find()
+            ->onlyActive()
+            ->withOnlyActiveNewbuildings()
+            ->max('area')
+        );
+    }
+
+    /**
+     * Get min floor of an active flat
+     */
+    public static function getMinFlatFloor()
+    {
+        return Flat::find()
+            ->onlyActive()
+            ->withNonNullFloor()
+            ->withOnlyActiveNewbuildings()
+            ->min('floor');
+    }
+
+    /**
+     * Get max floor of an active flat
+     */
+    public static function getMaxFlatFloor()
+    {
+        return Flat::find()
+            ->onlyActive()
+            ->withOnlyActiveNewbuildings()
+            ->max('floor');
+    }
+
 }

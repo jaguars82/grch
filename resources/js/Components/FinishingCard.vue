@@ -1,5 +1,5 @@
 <template>
-  <q-card flat bordered class="q-my-sm">
+  <q-card flat :bordered="border" class="q-my-sm">
     <q-card-section>
       <div class="card-header-content">
         <div class="header-text">
@@ -43,9 +43,13 @@
 <script>
 import { ref } from 'vue'
 export default {
-  name: 'NewbuildingComplexCard',
+  name: 'FinishingCard',
   props: {
-    finishing: Array,
+    finishing: Object,
+    border: {
+      type: Boolean,
+      default: true
+    }
   },
   setup (props) {
     const slide = ref(props.finishing.furnishImages[0].id)

@@ -61,7 +61,7 @@ function asQuarterAndYearDate (dateValue, isQuarterString = true) {
 }
 
 function asPricePerArea (amount) {
-  const formattedAmount = new Intl.NumberFormat('ru-RU', { minimumFractionDigits: 2 }).format(amount);
+  const formattedAmount = new Intl.NumberFormat('ru-RU', { minimumFractionDigits: 0 }).format(amount);
 	return amount > 0 ? `${formattedAmount}  ₽/м²` : ''
 }
 

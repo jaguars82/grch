@@ -15,14 +15,19 @@ $mainMenuItems = [
     ['label' => 'Новости', 'url' => ['/news']],
     ['label' => 'Застройщики', 'url' => ['/developer']],
     ['label' => 'ЖК', 'url' => ['/newbuilding-complex']],
-    ['label' => 'Вторичка', 'url' => ['/secondary']],
+    // ['label' => 'Вторичка', 'url' => ['/secondary']],
     // ['label' => 'Банки', 'url' => ['/bank']],
     // ['label' => 'Агентства', 'url' => ['/agency']],
     ['label' => 'Контакты', 'url' => ['/agency']],
-    ['label' => 'Тарифы', 'url' => ['/tariff']],
+    //['label' => 'Тарифы', 'url' => ['/tariff']],
 ];
 
 $user = Yii::$app->user->identity;
+
+if ($user !== null && $user->role !== 'developer_repres') {
+    array_push($mainMenuItems, ['label' => 'Вторичка', 'url' => ['/secondary']]);
+    array_push($mainMenuItems, ['label' => 'Тарифы', 'url' => ['/tariff']]);
+}
 ?>
 
 <header class="header">

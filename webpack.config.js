@@ -43,10 +43,21 @@ module.exports = (env, argv) => {
                     test: /\.sass$/,
                     use:  ['style-loader', 'css-loader', 'sass-loader']
                 },
+                {
+                    test: /\.svg$/,
+                    loader: 'vue-loader',
+                },
             ]
         },
         plugins: [
-            new VueLoaderPlugin()
+            new VueLoaderPlugin(),
+            // Define Bundler Build Feature Flags
+            new webpack.DefinePlugin({
+                // Drop Options API from bundle
+                // __VUE_OPTIONS_API__: false,
+                // Enable Vue devtools on production
+                __VUE_PROD_DEVTOOLS__: true,
+            }),
         ]
     };
 };

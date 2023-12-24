@@ -56,6 +56,7 @@ class BankController extends Controller
             'index' => [
                 'class' => 'app\components\actions\IndexWithSearch',
                 'searchModelClass' => BankSearch::classname(),
+                'oldAdminPanel' => true,
             ],
         ];
     }

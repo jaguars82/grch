@@ -228,6 +228,8 @@ class DomClickSchemeFeed implements ImportServiceInterface
 		                'unit_price_cash' => $unitPrice,
 		                'price_cash' => (float)$flat->price,
 		                'status' => (int)$flat->status,
+                        'is_euro' => isset($flat->is_euro) ? (int)$flat->is_euro : 0,
+                        'is_studio' => isset($flat->is_studio) ? (int)$flat->is_studio : 0,
 						// 'layout' => $layout,
 		            ];
 

@@ -175,7 +175,7 @@ class SupportTicketController extends Controller
 
         return $this->inertia('User/SupportTicket/View', [
             'ticket' => ArrayHelper::toArray($ticket),
-            'messages' => $messages_array,
+            'ticket_messages' => $messages_array,
         ]);
     }
 

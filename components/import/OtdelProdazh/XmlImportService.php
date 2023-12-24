@@ -225,7 +225,7 @@ class XmlImportService implements ImportServiceInterface
 		                'number' => (int)$flat->apartment,
 		                'section' => $section,
 		                'floor' => (int)$flat->floor,
-		                'area' => (float)$flat->area,
+		                'area' => (float)str_replace(',', '.', $flat->area),
 		                'rooms' => (int)$flat->room,
 		                'unit_price_cash' => $unitPrice,
 		                'price_cash' => (float)$flat->price,

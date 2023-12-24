@@ -1,11 +1,13 @@
 <template>
-  <MainLayout :secondaryColumns="3">
+  <MainLayout :drawers="{ left: { is: false, opened: false }, right: { is: true, opened: true } }">
+
     <template v-slot:breadcrumbs>
       <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
     </template>
+
     <template v-slot:main>
       <h3 class="text-center">Вторичная продажа</h3>
-      <div v-for="advertisement of advertisements" :key="advertisement.id">
+      <div class="q-mx-md" v-for="advertisement of advertisements" :key="advertisement.id">
         <div v-if="advertisement.statusLabels.length" style="margin-bottom: -25px;">
           <q-chip square color="primary" class="text-white" v-for="status of advertisement.statusLabels">{{ status.type.name }}</q-chip>
         </div>
@@ -31,7 +33,8 @@
         />
       </div>
     </template>
-    <template v-slot:secondary>
+
+    <template v-slot:right-drawer>
       <div class="row justify-center q-my-sm q-px-sm">
         <q-btn color="primary" unelevated label="Добавить объявление" icon="post_add" @click="goToCreateAdd" />
       </div>
@@ -39,10 +42,13 @@
         :filterParams="filterFields"
         :ranges="ranges"
         :secondaryCategories="secondaryCategories"
+        :agencies="agencies"
+        :statusLabelTypes="statusLabelTypes"
         :districts="districts"
         :streetList="streetList"
       />
     </template>
+
   </MainLayout>
 </template>
   
@@ -81,6 +87,12 @@ export default {
     districts: {
       type: Array
     },
+    agencies: {
+      type: Array
+    },
+    statusLabelTypes: {
+      type: Object
+    },
     streetList: {
       type: Array
     }
@@ -99,7 +111,7 @@ export default {
         icon: 'home',
         url: '/',
         data: false,
-        options: 'native'
+        options: false
       },
       {
         id: 2,
@@ -116,6 +128,8 @@ export default {
       category: props.filterParams.category,
       priceFrom: props.filterParams.priceFrom,
       priceTo: props.filterParams.priceTo,
+      agency: props.filterParams.agency,
+      statusLabel: props.filterParams.statusLabel,
       rooms: props.filterParams.rooms,
       areaFrom: props.filterParams.areaFrom,
       areaTo: props.filterParams.areaTo,
@@ -195,6 +209,19 @@ export default {
         fields.district.forEach(elem => districtFields.push(elem.value))
       }
       filterFields.value.district = districtFields.length > 0 ? districtFields : ''
+
+      let agencyFields = []
+      if (fields.agency && fields.agency.length > 0) {
+        fields.agency.forEach(elem => agencyFields.push(elem.value))
+      }
+      filterFields.value.agency = agencyFields.length > 0 ? agencyFields : ''
+
+      let statusLabelFields = []
+      if (fields.statusLabel && fields.statusLabel.length > 0) {
+        fields.statusLabel.forEach(elem => statusLabelFields.push(elem.value))
+      }
+      filterFields.value.statusLabel = statusLabelFields.length > 0 ? statusLabelFields : ''
+
       filterFields.value.street = fields.street ? fields.street : ''
       //console.log(filterFields.value.deal_type)
       Inertia.get('/secondary', { filter: filterFields.value }, { only: ['advertisements', 'ranges', 'pagination', 'filterParams'], preserveState: true, preserveScroll: true })

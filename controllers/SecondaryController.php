@@ -6,6 +6,7 @@ use app\models\District;
 use app\models\SecondaryAdvertisement;
 use app\models\SecondaryRoom;
 use app\models\SecondaryCategory;
+use app\models\StatusLabelType;
 use app\components\traits\CustomRedirects;
 use app\components\SharedDataFilter;
 use yii\filters\AccessControl;
@@ -50,8 +51,11 @@ class SecondaryController extends Controller
 
         // filter data (if we get filter fields' params) before getting ranges' edge points (min, max) from database
         if ($filter = \Yii::$app->request->get('filter')) {
-            //echo '<pre>'; var_dump(\Yii::$app->request->get('filter')); echo '</pre>'; die;
+            if (!empty($filter['statusLabel'])) {
+                $query->joinWith('statusLabels')->where(['status_label.label_type_id' => $filter['statusLabel']]);
+            }
             if (!empty($filter['deal_type'])) $query->andWhere(['deal_type' => (int)$filter['deal_type']]);
+            if (!empty($filter['agency'])) $query->andWhere(['agency_id' => $filter['agency']]);
             if (!empty($filter['category'])) $query->andWhere(['room.category_id' => (int)$filter['category']]);
             if (isset($filter['rooms']) && count($filter['rooms']) > 0) {
                 $roomAmounts = $filter['rooms'];
@@ -148,6 +152,7 @@ class SecondaryController extends Controller
             ->offset($pagination->offset)
             ->limit($pagination->limit)
             ->orderBy(['creation_date' => SORT_DESC])
+            //->orderBy(['last_update_date' => SORT_DESC])
             ->all();
 
         $advertisementsArr = array();
@@ -245,7 +250,9 @@ class SecondaryController extends Controller
             ],
             'secondaryCategories' => SecondaryCategory::getCategoryTree(),
             'districts' => District::find()->orderBy(['id' => SORT_ASC])->asArray()->all(),
+            'agencies' => SecondaryAdvertisement::getAgenciesWithAdvertisements(),
             'streetList' => SecondaryRoom::getStreetList(),
+            'statusLabelTypes' => StatusLabelType::getAllAsList(),
             'filterParams' => isset($filter) ? $filter : []
         ]);
     }

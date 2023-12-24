@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\components\traits\CustomRedirects;
+use app\components\SharedDataFilter;
 use app\models\FloorLayout;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -30,6 +31,9 @@ class FloorLayoutController extends Controller
                         'roles' => ['@'],
                     ],
                 ]
+            ],
+            [
+                'class' => SharedDataFilter::class
             ],
         ];
     }

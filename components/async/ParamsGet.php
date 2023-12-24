@@ -7,19 +7,19 @@ use app\models\Notification;
 
 class ParamsGet
 {
-    public function getAllEventsParams() {
+    public static function getAllEventsParams() {
         $status = false;
         $amount = 0;
 
         // check support messages
-        $support_messages_amount = $this->getSupportMessagesAmount();
+        $support_messages_amount = self::getSupportMessagesAmount();
         if($support_messages_amount > 0) { 
             $amount = $amount + $support_messages_amount;
             $status = true;
         }
 
         // check notifications
-        $notifications_amount = $this->getNotificationsAmount();
+        $notifications_amount = self::getNotificationsAmount();
         if($notifications_amount > 0) {
             $amount = $amount + $notifications_amount;
             $status = true;
@@ -36,7 +36,7 @@ class ParamsGet
     /**
      * Get amount of unread user support messages (if there are any)
      */
-    public function getSupportMessagesAmount() {
+    public static function getSupportMessagesAmount() {
         $ticket_model = new SupportTicket();
 
         if(\Yii::$app->user->can('admin')) {
@@ -50,7 +50,7 @@ class ParamsGet
     /**
      * Get amount of unread notifications (if therer are any)
      */
-    public function getNotificationsAmount()
+    public static function getNotificationsAmount()
     {
         $notification = new Notification();
 

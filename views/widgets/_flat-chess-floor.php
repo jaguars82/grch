@@ -20,7 +20,7 @@ $format = \Yii::$app->formatter;
                 <span class="number">№ <?= $flatItem->number?></span>
             </div>
             <p class="price">
-                <?php if($flatItem->hasDiscount()): ?>
+                <?php if($flatItem->hasDiscount() && $flatItem->status == 0): ?>
                 <?= $format->asCurrencyRange(round($flatItem->allCashPricesWithDiscount[0]['price']), $flatItem->price_cash); ?>
                 <span class="chess-discount-badge">
                     акция

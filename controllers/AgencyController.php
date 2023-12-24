@@ -10,7 +10,9 @@ use app\models\search\AgencySearch;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\web\Controller;
+use yii\helpers\ArrayHelper;
+use tebe\inertia\web\Controller;
+use app\components\SharedDataFilter;
 
 /**
  * AgencyController implements the CRUD actions for Agency model.
@@ -41,6 +43,9 @@ class AgencyController extends Controller
                     ],
                 ]
             ],
+            [
+                'class' => SharedDataFilter::class
+            ],
         ];
     }
     
@@ -53,6 +58,7 @@ class AgencyController extends Controller
             'index' => [
                 'class' => 'app\components\actions\IndexWithSearch',
                 'searchModelClass' => AgencySearch::classname(),
+                'view' => 'Agency/Index'
             ],
         ];
     }
@@ -86,11 +92,11 @@ class AgencyController extends Controller
             'sort' => ['attributes' => ['id'], 'defaultOrder' => ['id' => SORT_DESC]],
         ]);
         
-        return $this->render('view', [
-            'model' => $model,
-            'contactDataProvider' => $contactDataProvider,
-            'managerDataProvider' => $managerDataProvider,
-            'agentDataProvider' => $agentDataProvider,
+        return $this->inertia('Agency/View', [
+            'agency' => ArrayHelper::toArray($model),
+            'contactDataProvider' => ArrayHelper::toArray($contactDataProvider->getModels()),
+            'managerDataProvider' => ArrayHelper::toArray($managerDataProvider->getModels()),
+            'agentDataProvider' => ArrayHelper::toArray($agentDataProvider->getModels()),
         ]);
     }
     

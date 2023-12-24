@@ -7,6 +7,7 @@ use app\models\NewbuildingComplex;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
+use yii\helpers\ArrayHelper;
 
 /**
  * NewbuildingComplexSearch represents the model behind the search form of `app\models\NewbuildingComplex`.
@@ -98,6 +99,16 @@ class NewbuildingComplexSearch extends NewbuildingComplex
                         ->with(['actions', 'flatsWithDiscount', 'activeActions']),
                     'pagination' => false,
                 ]),
+                'complexes' => ArrayHelper::toArray(
+                    $developer
+                        ->getNewbuildingComplexes()
+                        ->onlyActive($onlyActiveNewbuildingComplex)
+                        ->onlyWithActiveBuildings()
+                        ->onlyWithActiveFlats($this->only_active)
+                        ->andFilterWhere(['like', 'newbuilding_complex.name', $this->name])
+                        ->with(['actions', 'flatsWithDiscount', 'activeActions'])
+                        ->all(),
+                )
             ];
             
             $developersData[] = $developerData;

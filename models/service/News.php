@@ -56,7 +56,7 @@ class News extends \app\models\News
                 $actionDataObject = new ActionData();
                 $actionDataObject->fill($actionData);
     
-                if ($actionFlatData != null && isset($actionData['discount_type']) && !empty($actionData['discount_type'])) {
+                if ($actionFlatData != null && isset($actionData['discount_type']) && (!empty($actionData['discount_type']) || $actionData['discount_type'] == 0)) {
                     
                     $discount = self::setDiscountField($actionData);
                     $actionFlatData->setDiscount($discount, $news, false, $actionData['discount_type']);
@@ -67,7 +67,6 @@ class News extends \app\models\News
             $transaction->commit();
         } catch(\Exception $e) {
             $transaction->rollBack();
-            echo '<pre>'; var_dump($e); echo '</pre>'; die;
             throw $e;
         }
         
@@ -133,7 +132,7 @@ class News extends \app\models\News
                     $actionData['flat_filter'] = json_encode($actionFlatData->flatFilter);
                     $actionDataObject = new ActionData();
                     $actionDataObject->fill($actionData);
-                    if ($actionFlatData != null && !empty($actionData['discount_type'])) {
+                    if ($actionFlatData != null  && (!empty($actionData['discount_type']) || $actionData['discount_type'] == 0)) {
                         $discount = self::setDiscountField($actionData);
                         $actionFlatData->setDiscount($discount, $this, true, $actionData['discount_type']);
                     }
@@ -141,8 +140,8 @@ class News extends \app\models\News
                 } else {
                     $actionData['flat_filter'] = json_encode($actionFlatData->flatFilter);
                     $this->actionData->fill($actionData);
-                    
-                    if ($actionFlatData != null && !empty($actionData['discount_type'])) {
+
+                    if ($actionFlatData != null && (!empty($actionData['discount_type']) || $actionData['discount_type'] === '0')) {
                         switch($actionData['discount_type']) {
                             case 0:
                                 $discount = $actionData['discount'];

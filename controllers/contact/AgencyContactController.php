@@ -3,6 +3,7 @@
 namespace app\controllers\contact;
 
 use app\components\traits\CustomRedirects;
+use app\components\SharedDataFilter;
 use app\models\Agency;
 use app\models\Contact;
 use app\models\form\ContactForm;
@@ -40,6 +41,9 @@ class AgencyContactController extends Controller
                         'roles' => ['admin', 'manager'],
                     ],
                 ]
+            ],
+            [
+                'class' => SharedDataFilter::class
             ],
         ];
     }
