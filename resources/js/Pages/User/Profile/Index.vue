@@ -27,9 +27,9 @@
           </div>
         </q-card-section>
         <q-card-actions align="right">
-          <a :href="`/user/profile/update?id=${user.id}`">
+          <inertia-link :href="`/user/profile/update?id=${user.id}`">
           <q-btn padding="xs md" unelevated rounded color="primary" icon="edit" label="Редактировать"></q-btn>
-          </a>
+          </inertia-link>
           <q-btn v-if="user.passauth_enabled" class="q-ml-sm" padding="xs md" unelevated rounded color="primary" icon="vpn_key" label="Изменить пароль" @click="openPassDialog"></q-btn>
         </q-card-actions>
       </q-card>
@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { useQuasar } from 'quasar'
 import ProfileLayout from '@/Layouts/ProfileLayout.vue'
@@ -81,6 +81,10 @@ export default ({
     Breadcrumbs
   },
   props: {
+    messageSuccess: {
+      type: [Boolean, String],
+      default: false
+    },
     passSaved: {
       type: Boolean,
       default: false
@@ -117,6 +121,19 @@ export default ({
     ])
 
     const $q = useQuasar()
+
+    onMounted(() => {
+      if (props.messageSuccess) {
+        Inertia.get('/user/profile', { only: ['user'] })
+        $q.notify({
+          position: 'top',
+          message: props.messageSuccess,
+          color: 'green',
+          icon: 'done',
+          multiLine: false,
+        })
+      }
+    })
 
     const createPassDialog = ref(false)
 

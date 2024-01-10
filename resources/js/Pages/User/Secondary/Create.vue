@@ -1322,7 +1322,6 @@ export default {
       formfields.value.city_id = formfields.value.city_select !== null ? formfields.value.city_select.value : null
       formfields.value.district_id = formfields.value.city_district_select !== null ? formfields.value.city_district_select.value : null
       formfields.value.images = uploadedImages.value
-      console.log(formfields.value)
       Inertia.post(`/user/secondary/create`, formfields.value)
       Inertia.on('finish', (event) => {
         loading.value = false

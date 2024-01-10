@@ -81,7 +81,8 @@ class UserForm extends Model
      */
     public function process()
     {
-        $this->photo = UploadedFile::getInstance($this, 'photo');
+        // $this->photo = UploadedFile::getInstance($this, 'photo');
+        $this->photo = UploadedFile::getInstanceByName('photo');
         
         if (!$this->validate()) {
             return false;

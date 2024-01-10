@@ -9,6 +9,7 @@ use app\models\form\UserForm;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use tebe\inertia\web\Controller;
+use yii\web\UploadedFile;
 
 class ProfileController extends Controller
 {
@@ -40,13 +41,6 @@ class ProfileController extends Controller
         ];
     }
 
-    /*public function actionIndex()
-    {
-        return $this->render('index', [
-            'user' => \Yii::$app->user->identity
-        ]);
-    }*/
-
     public function actionIndex()
     {
         if (\Yii::$app->request->isPost) {
@@ -76,7 +70,7 @@ class ProfileController extends Controller
         $form = (new UserForm())->fill($model->attributes);
         $form->scenario = UserForm::SCENARIO_UPDATE;
         
-        if (\Yii::$app->request->isPost && $form->load(\Yii::$app->request->post()) && $form->process()) {            
+        if (\Yii::$app->request->isPost && $form->load(\Yii::$app->request->post(), '') && $form->process()) {      
             try {
                 $model->fill($form->attributes, ['photo']);
                 
@@ -88,13 +82,15 @@ class ProfileController extends Controller
                 
                 $model->save();
             } catch (\Exception $e) {
-                return $this->redirectBackWhenException($e);
+                // return $this->redirectBackWhenException($e);
+                return $this->inertia('User/Profile/Update', ['messageError' => !empty($e) ? $e : 'Ошибка при обновлении профиля']);
             }
 
-            return $this->redirectWithSuccess(['user/profile/index'], 'Информация профиля обновлена');
+            // return $this->redirectWithSuccess(['user/profile/index'], 'Информация профиля обновлена');
+            return $this->inertia('User/Profile/Index', ['messageSuccess' => 'Информация профиля обновлена']);
         }
 
-        return $this->render('update', [
+        return $this->inertia('User/Profile/Update', [
             'model' => $form,
             'user' => $model,
             'redirectUrl' => 'index'

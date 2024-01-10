@@ -70,7 +70,6 @@ class SecondaryController extends Controller
     {
         // create new advertisement
         if (\Yii::$app->request->isPost && \Yii::$app->request->post('operation') === 'create_add') {
-
             $advertisementForm = new SecondaryAdvertisementForm();
             $roomForm = new SecondaryRoomForm();
 
@@ -88,9 +87,9 @@ class SecondaryController extends Controller
                 $roomForm->advertisement_id = $advertisementModel->id;
                 $roomForm->process();
                 $roomModel = (new SecondaryRoom())->fill($roomForm->attributes);
-                //echo '<pre>'; var_dump($roomModel); echo '</pre>'; die;
                 if(!$roomModel->validate()){
-                    echo '<pre>'; var_dump($roomModel->errors); echo '</pre>'; die;
+                   // echo '<pre>'; var_dump($roomModel->errors); echo '</pre>'; die;
+                   echo 'ошибки при валидации объявления';
                 }
                 $roomModel->save();
                 
