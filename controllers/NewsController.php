@@ -138,7 +138,25 @@ class NewsController extends Controller
             'pagination' => [
                 'page' => $dataProvider->getPagination()->getPage(),
                 'totalPages' => $dataProvider->getPagination()->getPageCount()
-            ]
+            ],
+            'newbuildingComplexesDataProvider' => ArrayHelper::toArray($newbuildingComplexesDataProvider->getModels(), [
+                'app\models\Developer' => [
+                    'id', 'name', 'logo',
+                    'newsCount' => function ($developer) {
+                        return count($developer->getNews()->all());
+                    },
+                    'complexes' => function ($developer) {
+                        return ArrayHelper::toArray($developer->newbuildingComplexes, [
+                            'app\models\NewbuildingComplex' => [
+                                'id', 'name', 'logo',
+                                'newsCount' => function ($nbc) {
+                                    return count($nbc->news);
+                                }
+                            ],
+                        ]);
+                    },
+                ],
+            ]),
         ]);
     }
 
