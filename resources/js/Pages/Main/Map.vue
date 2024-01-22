@@ -1,5 +1,5 @@
 <template>
-  <MainLayout :drawers="{ left: { is: false, opened: false }, right: { is: true, opened: true } }">
+  <MainLayout :gutters="false" :drawers="{ left: { is: false, opened: false }, right: { is: true, opened: true } }">
     <template v-slot:main>
       <YandexMap
         :settings="yaMapsSettings"

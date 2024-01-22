@@ -13,7 +13,7 @@
       v-model="drawerLeft"
       :bordered="xsOptions"
       side="left"
-      :width="300"
+      :width="$q.screen.gt.md ? 400 : 300"
       :breakpoint="100"
       :mini-to-overlay="xsOptions"
       :mini="miniState"
@@ -36,15 +36,17 @@
       v-if="rightDrawer.is"
       v-model="drawerRight"
       side="right"
-      :width="300"
-      :breakpoint="500"
+      :width="$q.screen.gt.md ? 400 : 300"
+      :breakpoint="100"
     >
       <div class="topoffset"></div>
       <slot name="right-drawer"></slot>
     </q-drawer>
 
     <q-page-container>
-      <q-page>
+      <q-page
+        :class="{ 'q-px-xl': $q.screen.lg || $q.screen.xl }"
+      >
         <slot name="breadcrumbs"></slot>
         <div class="row">
           <div class="col-12 q-pr-md">

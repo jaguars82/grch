@@ -14,7 +14,7 @@
       v-model="drawerLeft"
       :bordered="xsOptions"
       side="left"
-      :width="300"
+      :width="$q.screen.gt.md ? 400 : 300"
       :breakpoint="100"
       :mini-to-overlay="xsOptions"
       :mini="miniStateLeft"
@@ -38,7 +38,7 @@
       v-model="drawerRight"
       :bordered="xsOptions"
       side="right"
-      :width="300"
+      :width="$q.screen.gt.md ? 400 : 300"
       :breakpoint="100"
       :mini-to-overlay="xsOptions"
       :mini="miniStateRight"
@@ -58,7 +58,9 @@
     </q-drawer>
 
     <q-page-container>
-      <q-page>
+      <q-page
+        :class="{ 'q-px-xl': gutters && ($q.screen.lg || $q.screen.xl) }"
+      >
         <slot name="breadcrumbs"></slot>
         <div class="flex row">
           <div class="col">
@@ -94,6 +96,10 @@ import ScrollToTopButton from '@/Components/Elements/ScrollToTopButton.vue'
 export default ({
   name: 'MainLayout',
   props: {
+    gutters: {
+      type: Boolean,
+      default: true
+    },
     drawers: {
       type: Object,
       default: {

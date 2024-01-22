@@ -1,5 +1,5 @@
 <template>
-  <MainLayout>
+  <MainLayout :gutters="false">
     <template v-slot:main>
       <div
         class="row items-center justify-center q-pa-lg header-img"
