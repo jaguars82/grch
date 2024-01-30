@@ -49,12 +49,38 @@
           <q-card-section class="row items-center q-pb-none">
             <div class="text-h4">Задайте пароль для входа в систему</div>
             <q-space />
-            <q-btn icon="close" flat round dense v-close-popup />
+            <q-btn class="q-ml-md" icon="close" flat round dense v-close-popup />
           </q-card-section>
 
           <q-card-section>
-            <q-input type="password" outlined v-model="formfields.password" label="Введите пароль" />
-            <q-input type="password" outlined v-model="formfields.passwordConfirm" label="Подтвердите пароль" />
+            <q-input
+              :type="showPass ? 'text' : 'password'"
+              outlined
+              v-model="formfields.password"
+              label="Введите пароль"
+            >
+              <template v-slot:append>
+                <q-icon
+                  class="cursor-pointer"
+                  :name="showPass ? 'visibility_off' : 'visibility'"
+                  @click.stop.prevent="showPass = !showPass"
+                />
+              </template>
+            </q-input>
+            <q-input
+              :type="showPassConf ? 'text' : 'password'"
+              outlined
+              v-model="formfields.passwordConfirm"
+              label="Подтвердите пароль"
+            >
+              <template v-slot:append>
+                <q-icon
+                  class="cursor-pointer"
+                  :name="showPassConf ? 'visibility_off' : 'visibility'"
+                  @click.stop.prevent="showPassConf = !showPassConf"
+                />
+              </template>
+            </q-input>
           </q-card-section>
           <q-card-actions align="right">
             <q-btn padding="xs md" unelevated rounded color="primary" icon="done" label="Сохранить" @click="onSubmitPassword" :disable="!canSubmitPassword"></q-btn>
@@ -137,6 +163,9 @@ export default ({
 
     const createPassDialog = ref(false)
 
+    const showPass = ref(false)
+    const showPassConf = ref(false)
+
     const formfields = ref(
       {
         password: '',
@@ -175,7 +204,7 @@ export default ({
       })
     }
 
-    return { user, breadcrumbs, formfields, openPassDialog, createPassDialog, canSubmitPassword, onSubmitPassword }
+    return { user, breadcrumbs, formfields, openPassDialog, createPassDialog, showPass, showPassConf, canSubmitPassword, onSubmitPassword }
   },
 })
 </script>

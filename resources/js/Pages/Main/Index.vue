@@ -104,9 +104,7 @@
                         <q-badge v-if="news.category === 1" color="orange" class="text-white">Акция</q-badge>
                         <q-badge v-else-if="news.category === 2" color="primary" class="text-white">Новость</q-badge>
                         <div class="text-h5 text-grey">{{ asDateTime(news.created_at) }}</div>
-                        <div class="q-mt-sm ellipsis-3-lines">
-                          {{ news.detail }}
-                        </div>
+                        <div class="news-content-preview q-mt-sm ellipsis-3-lines">{{ stripHtml(news.detail) }}</div>
                         <div class="full-width q-mt-md text-right">
                           <q-btn outline rounded color="white" size="sm" icon="east" label="Открыть" @click="goToNews(news.id)" />
                         </div>
@@ -173,6 +171,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { asDateTime } from '@/helpers/formatter'
+import { stripHtml } from '@/helpers/utils'
 import axios from 'axios'
 import MainLayout from '@/Layouts/MainLayout.vue'
 import RoomsAmountButtons from '@/Components/Elements/RoomsAmountButtons.vue'
@@ -290,6 +289,7 @@ export default {
 
     return {
       asDateTime,
+      stripHtml,
       newsSlide,
       goToNews,
       districtSelect,

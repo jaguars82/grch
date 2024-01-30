@@ -69,6 +69,12 @@ class LoginForm extends Model
         if (!$this->hasErrors()) {
             $user = $this->getUser();
 
+            if (!$user) {
+                \Yii::$app->session->setFlash('error', 'Пользователь не найден. Пожалуйста, проверьте правильность ввода email');
+                $this->addError($attribute, 'Usernot found.');
+                return;
+            }
+
             if (!$user->passauth_enabled) {
                 \Yii::$app->session->setFlash('error', 'Вход по паролю не настроен. Пожалуйста, авторизуйтесь по коду на email и создайте пароль в Личном Кабинете');
                 $this->addError($attribute, 'Password not set.');

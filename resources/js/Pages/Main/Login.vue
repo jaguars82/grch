@@ -41,7 +41,7 @@
                       <template v-if="loginway === 'pass'">
                         <q-input
                           outlined
-                          type="password"
+                          :type="showPass ? 'text' : 'password'"
                           v-model="password"
                           label="Пароль"
                           lazy-rules
@@ -50,7 +50,15 @@
                               (val !== null && val !== '') ||
                               'Пожалуйста, введите пароль',
                           ]"
-                        />
+                        >
+                          <template v-slot:append>
+                            <q-icon
+                              class="cursor-pointer"
+                              :name="showPass ? 'visibility_off' : 'visibility'"
+                              @click.stop.prevent="showPass = !showPass"
+                            />
+                          </template>
+                        </q-input>
                       </template>
 
                       <template v-else-if="loginway === 'otp'">
@@ -91,39 +99,49 @@
           </div>
         </div>
 
-        <FlashMessage :open="flashDialog" :messageType="flashDialogSettings.messageType" :messageText="flashDialogSettings.messageText" />
-
       </q-page>
     </q-page-container>
   </q-layout>
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 import axios from 'axios'
 import { Inertia } from '@inertiajs/inertia'
-import FlashMessage from '@/Components/Elements/FlashMessage.vue'
+import { useQuasar } from 'quasar'
+//import FlashMessage from '@/Components/Elements/FlashMessage.vue'
 
 export default {
-  components: {
+  /*components: {
     FlashMessage
+  },*/
+  props: {
+    model: Object,
+    defaultLogin: String,
+    error: {
+      type: [String, Boolean],
+      default: false
+    },
   },
-  setup () {
+  setup (props) {
     const loginway = ref('pass')
     const email = ref(null)
     const password = ref(null)
     const otp = ref('')
 
+    const showPass = ref(false)
+
     const codeIsSent = ref(false)
 
-    const flashDialog = ref(false)
+    // const flashDialog = ref(false)
+    const $q = useQuasar()
     const flashDialogSettings = ref({})
 
     const sendCode = () => {
       axios.post('/auth/send-code', { email: email.value })
       .then(function (response) {
         if (response.data.error) {
-          flashDialogSettings.value.messageType = 'danger'
+          flashDialogSettings.value.color = 'red'
           switch (response.data.error) {
             case 'bad_email':
               flashDialogSettings.value.messageText = 'Неверный email. Попробуйте ещё раз или обратитесь в службу поддержки.'
@@ -135,14 +153,21 @@ export default {
               flashDialogSettings.value.messageText = 'Произошла ошибка. Обратитесь в службу поддержки.'
           }
         } else {
-          flashDialogSettings.value.messageType = 'success'
+          flashDialogSettings.value.color = 'green'
           flashDialogSettings.value.messageText = 'Вам на e-mail отправлено письмо с кодом для входа на сайт'
           codeIsSent.value = true
         }
-        flashDialog.value = true
+        // flashDialog.value = true
+        $q.notify({
+          position: 'top',
+          message: flashDialogSettings.value.messageText,
+          color: flashDialogSettings.value.color,
+          icon: 'info',
+          multiLine: false,
+        })
       })
       .catch(function (error) {
-        console.log(error)
+        // console.log(error)
       })
     }
     const onSubmit = () => {
@@ -154,16 +179,35 @@ export default {
       otp.value = ''
     }
 
+    const loginError = computed (() => {
+      return props.error
+    })
+
+    watch (loginError, () => {
+      if (loginError !== false) {
+        $q.notify({
+          position: 'top',
+          message: props.error,
+          color: 'red',
+          icon: 'info',
+          multiLine: false,
+        })
+        codeIsSent.value = false
+        otp.value = ''
+      }
+    })
+
     return {
       loginway,
       email,
       password,
       otp,
+      showPass,
       codeIsSent,
       sendCode,
       onReset,
       onSubmit,
-      flashDialog,
+      // flashDialog,
       flashDialogSettings
     }
   }
