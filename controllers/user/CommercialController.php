@@ -63,8 +63,16 @@ class CommercialController extends Controller
 
         $flat = ArrayHelper::toArray($model);
         $flat['developer'] = ArrayHelper::toArray($model->developer);
+        $flat['entrance'] = ArrayHelper::toArray($model->entrance);
         $flat['newbuilding'] = ArrayHelper::toArray($model->newbuilding);
-        $flat['newbuildingComplex'] = ArrayHelper::toArray($model->newbuildingComplex);
+        $flat['newbuildingComplex'] = ArrayHelper::toArray($model->newbuildingComplex, [
+            'app\models\NewbuildingComplex' => [
+                'id', 'name', 'logo',
+                'address' => function ($nbc) {
+                    return $nbc->address;
+                },
+            ]
+        ]);
 
         $commercials = (new Commercial())->editableCommercials;
 

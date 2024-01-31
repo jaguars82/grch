@@ -631,15 +631,15 @@ class NewbuildingComplex extends ActiveRecord
         return $address;
     }
 
-    public function setAddress($address)
+    /*public function setAddress($address)
     {
 
-    }
+    }*/
 
-    public function setDistrict($district)
+    /*public function setDistrict($district)
     {
 
-    }
+    }*/
 
     /**
      * Getting minimum flat area
