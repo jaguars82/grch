@@ -1,6 +1,6 @@
 <template>
   <div class="fixed-top">
-    <q-toolbar class="bg-primary text-white">
+    <q-toolbar class="bg-primary text-white q-pr-none">
       <q-avatar class="q-mr-sm">
         <inertia-link href="/">
           <img src="/img/icons/logo.svg">
@@ -24,7 +24,7 @@
         </q-menu>
       </q-btn>
       <q-space />
-      <UserMenu />
+      <UserMenu v-if="!$q.screen.xs" />
     </q-toolbar>
   </div>
 </template>

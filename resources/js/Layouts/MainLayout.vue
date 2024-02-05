@@ -5,10 +5,12 @@
       view="hhh LpR lfr"
     >
     
+    <!-- Top menu -->
     <q-header>
       <MainMenu />
     </q-header>
 
+    <!-- Left drawer -->
     <q-drawer
       v-if="drawers.left.is"
       v-model="drawerLeft"
@@ -33,6 +35,7 @@
       <slot name="left-drawer"></slot>
     </q-drawer>
 
+    <!-- Right drawer -->
     <q-drawer
       v-if="drawers.right.is"
       v-model="drawerRight"
@@ -44,19 +47,26 @@
       :mini="miniStateRight"
     >
       <template v-slot:mini>
-        <div class="topoffset"></div>
+        <div class="topoffset">
+          <UserMenu v-if="$q.screen.xs" />
+        </div>
         <div class="row justify-center">
           <q-btn class="q-mt-sm" round unelevated icon="menu_open" @click="miniStateRight = false"/>
         </div>
       </template>
 
-      <div class="topoffset"></div>
+      <div class="topoffset">
+        <div class="flex justify-end">
+          <UserMenu v-if="$q.screen.xs" />
+        </div>
+      </div>
       <div class="row justify-start items-center">
         <q-btn size="sm" dense class="q-my-xs q-ml-sm" round unelevated icon="close" @click="miniStateRight = true"/>
       </div>
       <slot name="right-drawer"></slot>
     </q-drawer>
 
+    <!-- Page -->
     <q-page-container>
       <q-page
         :class="{ 'q-px-xl': gutters && ($q.screen.lg || $q.screen.xl) }"
@@ -78,6 +88,7 @@
       </q-page>
     </q-page-container>
     
+    <!-- Footer -->
     <q-footer>
       <Footer />
     </q-footer>
@@ -90,6 +101,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useQuasar } from 'quasar'
 import MainMenu from '@/Components/Layout/MainMenu.vue'
+import UserMenu from '@/Components/Layout/UserMenu.vue'
 import Footer from '@/Components/Layout/Footer.vue'
 import ScrollToTopButton from '@/Components/Elements/ScrollToTopButton.vue'
 
@@ -120,6 +132,7 @@ export default ({
   },
   components: {
     MainMenu,
+    UserMenu,
     Footer,
     ScrollToTopButton
   },
