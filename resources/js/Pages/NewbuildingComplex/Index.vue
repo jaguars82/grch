@@ -33,7 +33,7 @@
         <q-pagination
           v-model="currentPage"
           :max="pagination.totalPages"
-          :max-pages="8"
+          :max-pages="$q.screen.xs ? 4 : 8"
           @update:model-value="goToPage(currentPage)"
         />
       </div>

@@ -1,7 +1,7 @@
 <template>
   <div
-    class="column q-ma-xs q-pa-xs cursor-pointer rounded-borders bg-white flat-cell"
-    :class="{ 'bg-blue-2': currentlyOpened }"
+    class="column q-ma-xs q-pa-xs cursor-pointer rounded-borders bg-white"
+    :class="{ 'flat-cell-sm': $q.screen.xs, 'flat-cell-md': $q.screen.gt.xs, 'bg-blue-2': currentlyOpened }"
     @click="goToFlat(flat.id)"
     @mouseenter="focusOn"
     @mouseleave="focusOff"
@@ -9,12 +9,12 @@
     <div class="row justify-between">
       <q-badge :color="color">{{ flat.rooms }}
       </q-badge>
-      <q-badge color="orange" v-if="flat.status === 0 && flat.has_discount">
-        Акция
+      <q-badge class="gt-xs" color="orange" v-if="flat.status === 0 && flat.has_discount">
+        <span>Акция</span>
       </q-badge>
       <div class="text-grey-7">№ <span class="text-weight-bolder">{{ flat.number }}</span></div>
     </div>
-    <div class="q-py-sm text-bold">
+    <div class="q-py-sm" :class="{ 'text-bold': $q.screen.gt.xs, 'text-h6': $q.screen.xs }">
       <span v-if="flat.has_discount">{{ flat.price_range }}</span>
       <span v-else>{{ asCurrency(flat.price_cash) }}</span>
     </div>
@@ -86,8 +86,12 @@ export default {
   .row.justify-between::before, .row.justify-between::after {
     display: none;
   }
-  .flat-cell {
+  .flat-cell-md {
     width: 120px;
     min-width: 120px;
+  }
+  .flat-cell-sm {
+    width: 80px;
+    min-width: 80px;
   }
 </style>
