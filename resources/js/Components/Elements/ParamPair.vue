@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="paramName"
+    v-if="paramName && paramValue !== false"
     class="row no-wrap justify-between"
     :class="{ 'cursor-pointer': link.length, 'rounded-borders': link.length }"
     @click="goLink"

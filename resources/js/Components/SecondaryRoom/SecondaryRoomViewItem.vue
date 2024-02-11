@@ -1,35 +1,42 @@
 <template>
   <q-card
-    class="q-ma-md shadow-12"
+    class="q-ma-md shadow-7"
   >
-    <q-card-section horizontal>
-      <q-card-section class="col-8">
-        <p class="text-h4">
-          <span v-if="isFlat" class="text-capitalize">{{ roomTitle }}&nbsp;</span>
-          <span>{{ category }}</span>
-          <span v-if="roomArea">, {{ roomArea }}</span>
-          <span v-if="roomFloor">, {{ roomFloor }}</span>
-        </p>
-        <p>
-          <span v-if="address.city">{{ address.city }},&nbsp;</span>
-          <span v-if="address.cityDistrict">{{ address.cityDistrict }},&nbsp;</span>
-          <span v-if="address.streetHouse">{{ address.streetHouse }}</span>
-        </p>
-        <p>{{ creationDate }}</p>
-      </q-card-section>
-      <q-card-section class="col-4">
-        <p class="text-h2 text-bold text-right text-blue-8 q-mb-xs">{{ roomPrice }}</p>
-        <p v-if="roomPricePerMeter" class="text-grey-7 text-right">
-          {{ roomPricePerMeter }}
-        </p>
-      </q-card-section>
+    <q-card-section class="col-12">
+      <p class="q-mb-sm" :class="{ 'text-bold': $q.screen.xs, 'text-h5': $q.screen.xs, 'text-h4': $q.screen.sm, 'text-h3': $q.screen.gt.sm }">
+        <span v-if="isFlat" class="text-capitalize">{{ roomTitle }}&ensp;</span>
+        <span>{{ category }}</span>
+        <span v-if="roomArea">, {{ roomArea }}</span>
+        <span v-if="roomFloor">, {{ roomFloor }}</span>
+      </p>
+      <p class="q-mb-sm">
+        <span v-if="address.city">{{ address.city }},&ensp;</span>
+        <span v-if="address.cityDistrict">{{ address.cityDistrict }},&ensp;</span>
+        <span v-if="address.streetHouse">{{ address.streetHouse }}</span>
+      </p>
+      <p>{{ creationDate }}</p>
+      <p class="text-bold text-blue-8 q-mb-xs" :class="{ 'text-h3': $q.screen.xs, 'text-h2': $q.screen.gt.xs }">{{ roomPrice }}</p>
+      <p v-if="roomPricePerMeter" class="text-grey-7">
+        {{ roomPricePerMeter }}
+      </p>
+
+      <div v-if="paramPairs.length" class="row">
+        <template v-for="param of paramPairs" :key="param.id">
+        <div v-if="param.value !== false" class="col-12 col-sm-6 col-lg-4">
+          <ParamPair
+            :paramName="param.name"
+            :paramValue="param.value"
+          />
+        </div>
+        </template>
+      </div>
     </q-card-section>
   </q-card>
 
   <div class="row q-px-md">
 
-    <div class="col-8">
-      <q-card class="shadow-12">
+    <div class="col-12">
+      <q-card class="shadow-7">
         <q-card-section>
           <q-carousel
             v-if="room.images.length"
@@ -58,7 +65,7 @@
       </q-card>
     </div>
 
-    <div class="col-4">
+    <!--<div class="col-4">
       <q-card class="shadow-12 q-ml-md q-mb-md">
         <q-card-section>
           <div class="row no-wrap justify-start items-center">
@@ -125,9 +132,23 @@
           </YandexMap>
         </q-card-section>
       </q-card>
-    </div>
+    </div>-->
 
   </div>
+
+  <!-- Map -->
+  <RegularContentContainer v-if="room.latitude && room.longitude" class="q-mt-md q-mx-md">
+    <template v-slot:content>
+      <ObjectOnMap
+        :address="address.addressString"
+        :latitude="room.latitude"
+        :longitude="room.longitude"
+        :markers="[{ latitude: room.latitude, longitude: room.longitude }]"
+        :reverseCoords="false"
+        :reverseMarkerCoords="false"
+      />
+    </template>
+  </RegularContentContainer>
 
   <q-dialog
     v-model="imageViewer"
@@ -169,8 +190,8 @@
 import { ref, computed } from 'vue'
 import { asDateTime, asNumberString, asFloor, asArea, asCurrency, asPricePerArea } from '@/helpers/formatter'
 import ParamPair from '@/Components/Elements/ParamPair.vue'
-import { yaMapsSettings } from '@/configurations/custom-configs'
-import { YandexMap, YandexMarker } from 'vue-yandex-maps'
+import ObjectOnMap from '@/Components/Map/ObjectOnMap.vue'
+import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
 
   
 export default {
@@ -189,7 +210,7 @@ export default {
     }
   },
   components: {
-    ParamPair, YandexMap, YandexMarker
+    ParamPair, RegularContentContainer, ObjectOnMap
   },
   setup (props) {
     const slide = props.room.images.length ? ref(props.room.images[0].id) : ref(false)
@@ -220,9 +241,14 @@ export default {
       const city = props.room.city_DB ? props.room.city_DB.name : locationInfo && locationInfo.locality_name ? locationInfo.locality_name : ''
       const cityDistrict = props.room.district_DB ? props.room.district_DB.name : locationInfo && locationInfo.non_admin_sub_locality_name ? locationInfo.non_admin_sub_locality_name : locationInfo && locationInfo.sub_locality_name ? locationInfo.sub_locality_name : ''
       const streetHouse = props.room.address ? props.room.address : locationInfo && locationInfo.address ? locationInfo.address : ''
-      return { regionDistrict, city, cityDistrict, streetHouse }
+
+      const cityString = city ? `${city}, ` : ''
+      const cityDistrictString = cityDistrict ? `${cityDistrict}, ` : ''
+      const streetHouseString = streetHouse ? `${streetHouse}` : ''
+
+      return { regionDistrict, city, cityDistrict, streetHouse, addressString: `${cityString}${cityDistrictString}${streetHouseString}` }
     })
-    const advAuthor = computed(() => {
+    /*const advAuthor = computed(() => {
       let fullName = ''
       let photo = ''
       let phone = ''
@@ -243,7 +269,7 @@ export default {
         email = authorParsed.email ? authorParsed.email : null
       }
       return { fullName, photo, phone, email }
-    })
+    })*/
     const roomDetail = computed(() => {
       return props.room.detail.replace(/<\/?[^>]+>/gi, "")
     })
@@ -267,7 +293,7 @@ export default {
       imageViewer.value = true
     }
 
-    return { slide, category, isFlat, roomTitle, roomFloor, roomArea, roomPrice, roomPricePerMeter, creationDate, address, advAuthor, roomDetail, yaMapsSettings, paramPairs, imageViewer, onImageClick }
+    return { slide, category, isFlat, roomTitle, roomFloor, roomArea, roomPrice, roomPricePerMeter, creationDate, address, roomDetail, paramPairs, imageViewer, onImageClick }
   }
 }
 </script>

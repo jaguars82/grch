@@ -529,8 +529,6 @@
         </q-card>
       </q-dialog>
 
-      <!--<pre>{{ flat }}</pre>-->
-
     </template>
 
     <!-- Right Drawer -->
