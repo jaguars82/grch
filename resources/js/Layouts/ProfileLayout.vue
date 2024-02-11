@@ -6,7 +6,7 @@
     >
 
     <q-header>
-      <MainMenu />
+      <MainMenu :showUserMenuOnSmallScreen="rightDrawer.is ? false : true" />
     </q-header>
 
     <q-drawer

@@ -28,9 +28,9 @@
         </q-card-section>
         <q-card-actions align="right">
           <inertia-link :href="`/user/profile/update?id=${user.id}`">
-          <q-btn padding="xs md" unelevated rounded color="primary" icon="edit" label="Редактировать"></q-btn>
+          <q-btn :padding="$q.screen.gt.xs ? 'xs md' : 'sm'" unelevated :round="$q.screen.xs" :rounded="$q.screen.gt.xs" color="primary" icon="edit" :label="$q.screen.gt.xs ? 'Редактировать' : ''"></q-btn>
           </inertia-link>
-          <q-btn v-if="user.passauth_enabled" class="q-ml-sm" padding="xs md" unelevated rounded color="primary" icon="vpn_key" label="Изменить пароль" @click="openPassDialog"></q-btn>
+          <q-btn v-if="user.passauth_enabled" outline class="q-ml-xs" :padding="$q.screen.gt.xs ? 'xs md' : 'sm'" unelevated :round="$q.screen.xs" :rounded="$q.screen.gt.xs" color="primary" icon="vpn_key" :label="$q.screen.gt.xs ? 'Изменить пароль' : ''" @click="openPassDialog"></q-btn>
         </q-card-actions>
       </q-card>
 
@@ -46,7 +46,7 @@
 
       <q-dialog v-model="createPassDialog" persistent>
         <q-card>
-          <q-card-section class="row items-center q-pb-none">
+          <q-card-section class="row items-center q-pb-none no-wrap">
             <div class="text-h4">Задайте пароль для входа в систему</div>
             <q-space />
             <q-btn class="q-ml-md" icon="close" flat round dense v-close-popup />
@@ -83,8 +83,8 @@
             </q-input>
           </q-card-section>
           <q-card-actions align="right">
-            <q-btn padding="xs md" unelevated rounded color="primary" icon="done" label="Сохранить" @click="onSubmitPassword" :disable="!canSubmitPassword"></q-btn>
-            <q-btn padding="xs md" unelevated rounded icon="close" label="Отмена" v-close-popup></q-btn>
+            <q-btn :padding="$q.screen.gt.xs ? 'xs md' : 'sm'" unelevated :round="$q.screen.xs" :rounded="$q.screen.gt.xs" color="primary" icon="done" :label="$q.screen.gt.xs ? 'Сохранить' : ''" @click="onSubmitPassword" :disable="!canSubmitPassword"></q-btn>
+            <q-btn :padding="$q.screen.gt.xs ? 'xs md' : 'sm'" unelevated :round="$q.screen.xs" :rounded="$q.screen.gt.xs" icon="close" :label="$q.screen.gt.xs ? 'Отмена' : ''" v-close-popup></q-btn>
           </q-card-actions>
         </q-card>
       </q-dialog>

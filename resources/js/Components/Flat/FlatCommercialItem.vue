@@ -24,9 +24,9 @@
           </div>
         </div>
       </div>
-      <div class="row">
-        <div v-if="viewOptions.group.floor" class="col-6 q-my-md">
-          <div class="image-frame rounded-borders q-mr-sm q-px-sm q-py-md">
+      <div class="row q-col-gutter-none">
+        <div v-if="viewOptions.group.floor" class="col-12 col-md-6 q-mt-md q-pr-none">
+          <div class="image-frame rounded-borders q-px-sm q-py-md" :class="{ 'q-mr-sm': $q.screen.gt.sm }">
             <p class="text-h4 text-center">План этажа</p>
             <div class="image-aligner small">
               <img
@@ -36,8 +36,8 @@
             </div>
           </div>
         </div>
-        <div class="col-6 q-my-md">
-          <div class="image-frame rounded-borders q-ml-sm q-px-sm q-py-md">
+        <div class="col-12 col-md-6 q-mt-md q-pr-none">
+          <div class="image-frame rounded-borders q-px-sm q-py-md" :class="{ 'q-ml-sm': $q.screen.gt.sm }">
             <p class="text-h4 text-center">Генплан</p>
             <div class="image-aligner small">
               <img

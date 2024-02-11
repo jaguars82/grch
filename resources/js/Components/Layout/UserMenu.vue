@@ -1,5 +1,5 @@
 <template>
-  <q-btn :class="{ 'q-px-xs': $q.screen.xs, 'q-px-sm': $q.screen.sm }" unelevated no-caps :color="$q.screen.xs ? 'white' : 'primary'">
+  <q-btn square :class="{ 'q-px-xs': $q.screen.xs, 'q-px-sm': $q.screen.sm }" unelevated no-caps color="primary">
     <template v-slot:default>
       <!-- Button label -->
       <div class="row items-center no-wrap">

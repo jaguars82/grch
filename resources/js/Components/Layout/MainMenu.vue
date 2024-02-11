@@ -24,7 +24,7 @@
         </q-menu>
       </q-btn>
       <q-space />
-      <UserMenu v-if="!$q.screen.xs" />
+      <UserMenu v-if="!$q.screen.xs || ($q.screen.xs && showUserMenuOnSmallScreen)" />
     </q-toolbar>
   </div>
 </template>
@@ -36,6 +36,12 @@ import UserMenu from '@/Components/Layout/UserMenu.vue'
 export default ({
   name: 'MainMenu',
   components: { UserMenu },
+  props: {
+    showUserMenuOnSmallScreen: {
+      type: Boolean,
+      default: false
+    }
+  },
   setup() {
     const menuItems = [
       {

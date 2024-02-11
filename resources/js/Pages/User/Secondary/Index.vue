@@ -10,19 +10,23 @@
               <q-btn color="primary" unelevated label="Создать объявление" icon="post_add" @click="createAdd" />
             </div>
             <div class="row q-mt-md" v-if="user.role === 'admin' || user.role === 'manager'">
-              <div class="col-1">
+              <div class="col-1 gt-xs">
                 <q-icon :color="filters.agency === null && filters.agent === null && filters.category === null ? 'grey-5' : 'orange'" size="md" name="filter_alt"></q-icon>
               </div>
-              <div v-if="user.role === 'admin'" class="col-3">
-                <q-select class="q-gutter-sm" outlined clearable v-model="filters.agency" :options="agencyOptions" label="Агентство" @update:model-value="onAgencySelect" dense options-dense />
+              <div class="col-10">
+                <div class="row q-col-gutter-none">
+                  <div v-if="user.role === 'admin'" class="col-12 col-sm-6 col-md-4" :class="{ 'q-pr-none': $q.screen.gt.xs }">
+                    <q-select class="q-gutter-sm" outlined clearable v-model="filters.agency" :options="agencyOptions" label="Агентство" @update:model-value="onAgencySelect" dense options-dense />
+                  </div>
+                  <div class="col-12 col-sm-6" :class="{ 'q-pr-none': $q.screen.gt.sm, 'col-md-4': user.role === 'admin'  }">
+                    <q-select class="q-gutter-sm" outlined clearable v-model="filters.agent" :options="agentOptions" label="Сотрудник" dense options-dense />
+                  </div>
+                  <div class="col-12" :class="user.role === 'admin' ? 'col-md-4' : 'col-sm-6'">
+                    <q-select class="q-gutter-sm" outlined clearable v-model="filters.category" :options="categoryOptions" label="Категория" dense options-dense />
+                  </div>
+                </div>
               </div>
-              <div class="col-4">
-                <q-select class="q-gutter-sm" outlined clearable v-model="filters.agent" :options="agentOptions" label="Сотрудник" dense options-dense />
-              </div>
-              <div class="col-3">
-                <q-select class="q-gutter-sm" outlined clearable v-model="filters.category" :options="categoryOptions" label="Категория" dense options-dense />
-              </div>
-              <div class="col-1 q-pl-md">
+              <div class="col-1">
                 <q-btn :color="filters.agency === null && filters.agent === null && filters.category === null ? 'grey-5' : 'primary'" unelevated round icon="filter_alt_off" @click="filterReset">
                   <q-tooltip>
                     Сбросить фильтр

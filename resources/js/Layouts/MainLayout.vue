@@ -7,7 +7,7 @@
     
     <!-- Top menu -->
     <q-header>
-      <MainMenu />
+      <MainMenu :showUserMenuOnSmallScreen="drawers.right.is ? false : true" />
     </q-header>
 
     <!-- Left drawer -->
@@ -22,13 +22,13 @@
       :mini="miniStateLeft"
     >
       <template v-slot:mini>
-        <div class="topoffset"></div>
+        <div :class="{ 'topoffset-xs': $q.screen.xs, 'topoffset': $q.screen.gt.xs }"></div>
         <div class="row justify-center">
           <q-btn class="q-mt-sm" round unelevated icon="menu" @click="miniStateLeft = false"/>
         </div>
       </template>
 
-      <div class="topoffset"></div>
+      <div :class="{ 'topoffset-xs': $q.screen.xs, 'topoffset': $q.screen.gt.xs }"></div>
       <div class="row justify-end items-center">
         <q-btn size="sm" dense class="q-my-xs q-mr-sm" round unelevated icon="close" @click="miniStateLeft = true"/>
       </div>
@@ -47,7 +47,7 @@
       :mini="miniStateRight"
     >
       <template v-slot:mini>
-        <div class="topoffset">
+        <div class="bg-primary" :class="{ 'topoffset-xs': $q.screen.xs, 'topoffset': $q.screen.gt.xs }">
           <UserMenu v-if="$q.screen.xs" />
         </div>
         <div class="row justify-center">
@@ -55,7 +55,7 @@
         </div>
       </template>
 
-      <div class="topoffset">
+      <div class="bg-primary" :class="{ 'topoffset-xs': $q.screen.xs, 'topoffset': $q.screen.gt.xs }">
         <div class="flex justify-end">
           <UserMenu v-if="$q.screen.xs" />
         </div>
@@ -164,5 +164,10 @@ export default ({
   height: 58px;
   min-height: 58px;
   max-height: 58px;
+}
+.topoffset-xs {
+  height: 50px;
+  min-height: 50px;
+  max-height: 50px;
 }
 </style>
