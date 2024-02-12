@@ -1,5 +1,5 @@
 <template>
-  <div class="full-width topoffset"></div>
+  <div class="full-width" :class="{ 'topoffset-xs': $q.screen.xs, 'topoffset': $q.screen.gt.xs }"></div>
   <div>
     <q-layout
       view="hhh LpR lfr"
