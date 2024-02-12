@@ -9,33 +9,45 @@
           <loading v-if="loading" size="md" text="Идёт подготовка коммерческого предложения" />
           <template v-else>
             <h5>Действие с выбранным объектом:</h5>
-            <q-btn
-              color="primary"
-              unelevated
-              label="Сформировать новое КП"
-              @click="crateNew"
-            />
-            <q-btn
-              v-if="commercials.length > 0"
-              class="q-ml-md"
-              color="primary"
-              unelevated
-              label="Добавить к существующему КП"
-            >
-              <q-menu auto-close>
-                <q-list>
-                  <q-item
-                    v-for="commercial in commercials"
-                    :key="commercial.id"
-                    clickable
-                    v-ripple
-                    @click="addTo(commercial.id)"
-                  >
-                    №&nbsp;<strong>{{ commercial.number }}</strong>&nbsp;от {{ asDateTime(commercial.created_at) }}
-                  </q-item>
-                </q-list>
-              </q-menu>
-            </q-btn>
+            <div class="flex justify-end">
+              <q-btn
+                color="primary"
+                :padding="$q.screen.gt.xs ? 'xs md' : 'sm'"
+                unelevated
+                :round="$q.screen.xs"
+                :rounded="$q.screen.gt.xs"
+                :label="$q.screen.sm ? 'Новое КП' : $q.screen.gt.sm ? 'Сформировать новое КП' : ''"
+                @click="crateNew"
+                icon="add"
+              />
+              <q-btn
+                v-if="commercials.length > 0"
+                class="q-ml-sm"
+                color="primary"
+                :padding="$q.screen.gt.xs ? 'xs md' : 'sm'"
+                unelevated
+                :round="$q.screen.xs"
+                :rounded="$q.screen.gt.xs"
+                :label="$q.screen.sm ? 'Добавить к существующему' : $q.screen.gt.sm ? 'Добавить к существующему КП' : ''"
+                icon="post_add"
+              >
+                <q-menu auto-close>
+                  <p class="q-mt-md q-mx-md text-h5 text-grey-7 text-bold text-uppercase">Выберите КП:</p>
+                  <q-list>
+                    <q-item
+                      v-for="commercial in commercials"
+                      :key="commercial.id"
+                      clickable
+                      v-ripple
+                      @click="addTo(commercial.id)"
+                      dense
+                    >
+                      №&nbsp;<span class="text-bold text-grey-7">{{ commercial.number }}</span>&nbsp;от <span class="text-bold text-grey-7">{{ asDateTime(commercial.created_at) }}</span>
+                    </q-item>
+                  </q-list>
+                </q-menu>
+              </q-btn>
+            </div>
           </template>
         </template>
       </RegularContentContainer>

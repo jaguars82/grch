@@ -653,6 +653,7 @@
             <YandexMap
               :settings="yaMapsSettings"
               :coordinates="coords"
+              :options="{ autoFitToViewport: 'always' }"
               :zoom="16"
             >
               <YandexMarker

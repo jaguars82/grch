@@ -58,6 +58,7 @@
       <YandexMap
         :settings="yaMapsSettings"
         :coordinates="[flat.newbuildingComplex.longitude, flat.newbuildingComplex.latitude]"
+        :options="{ autoFitToViewport: 'always' }"
         :zoom="16"
       >
         <YandexMarker

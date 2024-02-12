@@ -39,7 +39,7 @@
               <q-img class="complex-logo" fit="scale-down" :src="complex.logo ? `/uploads/${complex.logo}` : `/img/newbuilding-complex.png`" :alt="complex.name" />
             </div>
           </div>
-          <!-- Comples description and images -->
+          <!-- Complex description and images -->
           <div v-if="complex.images.length || complex.detail" class="row q-mt-md q-col-gutter-y-md">
             <div v-if="complex.images.length" class="col-12 col-lg-7">
               <q-carousel
@@ -308,6 +308,42 @@
     </template>
 
   </MainLayout>
+
+  <q-dialog
+    v-model="imageViewer"
+    persistent
+    :maximized="true"
+    transition-show="slide-up"
+    transition-hide="slide-down"
+  >
+    <q-card>
+      <q-bar>
+        <q-space />
+        <q-btn round dense flat icon="close" v-close-popup />
+      </q-bar>
+      <q-card-section class="q-pa-none full-height">
+        <q-carousel
+          class="full-height"
+          v-if="complex.images.length"
+          swipeable
+          animated
+          v-model="slide"
+          arrows
+          thumbnails
+          infinite
+        >
+          <q-carousel-slide
+            v-for="image of complex.images"
+            :key="image.id"
+            :name="image.id"
+            :img-src="`/uploads/${image.file}`"
+            @click="imageViewer = false"
+          />
+        </q-carousel>
+      </q-card-section>
+    </q-card>
+  </q-dialog>
+
 </template>
   
 <script>
@@ -368,6 +404,12 @@ export default {
 
     const slide = props.complex.images.length ? ref(props.complex.images[0].id) : ref(false)
 
+    const imageViewer = ref(false)
+
+    const onImageClick = (image) => {
+      imageViewer.value = true
+    }
+
     const focusOn = function (event) {
       event.target.classList.add('bg-grey-3')
     }
@@ -397,6 +439,8 @@ export default {
       asCurrency,
       breadcrumbs,
       slide,
+      imageViewer,
+      onImageClick,
       focusOn,
       focusOff,
       goToComplex,

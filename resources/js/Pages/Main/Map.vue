@@ -4,6 +4,7 @@
       <YandexMap
         :settings="yaMapsSettings"
         :coordinates="initCoords"
+        :options="{ autoFitToViewport: 'always' }"
         :zoom="12"
       >
         <template v-if="complexes.length">

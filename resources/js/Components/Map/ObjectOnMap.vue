@@ -10,6 +10,7 @@
   <YandexMap
     :settings="yaMapsSettings"
     :coordinates="mapCoordinates"
+    :options="{ autoFitToViewport: 'always' }"
     :zoom="16"
   >
     <template v-if="markers.length">
