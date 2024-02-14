@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { computed } from 'vue'
 
 export default {
   props: {
@@ -45,7 +45,7 @@ export default {
     }
   },
   setup (props) {
-    const dialog = ref(props.open)
+    const dialog = computed(() => { return props.open })
     return { dialog }
   }
 }

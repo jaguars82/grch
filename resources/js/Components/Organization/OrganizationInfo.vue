@@ -1,10 +1,10 @@
 <template>
   <div class="row items-start justify-between">
     <div class="col-10 col-sm-12">
-      <h1>{{ name }}</h1>
+      <p class="q-mt-xs q-mb-sm" :class="{ 'text-h1': $q.screen.gt.sm, 'text-h2': $q.screen.sm, 'text-h3': $q.screen.xs }">{{ name }}</p>
       <p v-if="address" class="q-mt-xs text-grey">
-        <q-icon size="md" color="grey" class="q-mr-xs" name="location_on" />
-        <span class="text-h4">{{ address }}</span>
+        <q-icon :size="$q.screen.xs ? 'sm' : 'md'" color="grey" class="q-mr-xs" name="location_on" />
+        <span :class="{ 'text-h4': $q.screen.gt.xs,'text-h5': $q.screen.xs }">{{ address }}</span>
       </p>
     </div>
     <div class="col-2 lt-sm">
@@ -15,19 +15,19 @@
     <div class="col-12 col-sm-7">
       <div v-if="url">
         <a target="_blank" :href="url">
-          <q-icon size="md" class="q-mr-xs" name="language" />
-          <span class="text-h4">{{ url }}</span>
+          <q-icon :size="$q.screen.xs ? 'sm' : 'md'" :class="{ 'q-mr-xs': $q.screen.xs, 'q-mr-sm': $q.screen.gt.xs }" name="language" />
+          <span :class="{ 'text-h4': $q.screen.gt.xs,'text-h5': $q.screen.xs }">{{ url }}</span>
         </a>
       </div>
       <div v-if="email">
         <a :href="`mailto:${email}`">
-          <q-icon size="md" class="q-mr-xs" name="alternate_email" />
-          <span class="text-h4">{{ email }}</span>
+          <q-icon :size="$q.screen.xs ? 'sm' : 'md'" :class="{ 'q-mr-xs': $q.screen.xs, 'q-mr-sm': $q.screen.gt.xs }" name="alternate_email" />
+          <span :class="{ 'text-h4': $q.screen.gt.xs,'text-h5': $q.screen.xs }">{{ email }}</span>
         </a>
       </div>
       <div v-if="phone">
-        <q-icon class="q-mr-xs" name="call" />
-        <span class="text-h4">{{ phone }}</span>
+        <q-icon :size="$q.screen.xs ? 'sm' : 'md'" :class="{ 'q-mr-xs': $q.screen.xs, 'q-mr-sm': $q.screen.gt.xs }" name="call" />
+        <span :class="{ 'text-h4': $q.screen.gt.xs,'text-h5': $q.screen.xs }">{{ phone }}</span>
       </div>
     </div>
     <div class="col-4 gt-xs">

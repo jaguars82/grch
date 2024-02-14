@@ -128,7 +128,14 @@ class ApplicationController extends Controller
         $flat['developer'] = ArrayHelper::toArray($application->flat->developer);
         $flat['entrance'] = ArrayHelper::toArray($application->flat->entrance);
         $flat['newbuilding'] = ArrayHelper::toArray($application->flat->newbuilding);
-        $flat['newbuildingComplex'] = ArrayHelper::toArray($application->flat->newbuildingComplex);
+        $flat['newbuildingComplex'] = ArrayHelper::toArray($application->flat->newbuildingComplex, [
+            'app\models\NewbuildingComplex' => [
+                'id', 'name', 'logo',
+                'address' => function ($nbc) {
+                    return $nbc->address;
+                },
+            ]
+        ]);
 
         if (\Yii::$app->request->isPost  && \Yii::$app->request->post('operation')) {
             

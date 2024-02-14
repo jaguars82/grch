@@ -4,7 +4,7 @@
       <template v-slot:main>
         <q-card class="q-ma-md shadow-7">
           <q-card-section>
-            <h3 class="text-center">Заявка на бронирование квартиры</h3>
+            <p class="text-center" :class="{ 'text-h4': $q.screen.xs, 'text-h3': $q.screen.gt.xs }">Заявка на бронирование квартиры</p>
           </q-card-section>
           <q-card-section>
             <Loading v-if="loading" />
@@ -73,7 +73,7 @@
               @submit="onSubmit"
               @reset="onReset"
             >
-            <div class="row q-py-sm">
+            <div class="row q-py-sm q-col-gutter-none">
               <div class="col-sm-4 col-xs-12">
                 <q-input outlined v-model="formfields.client_lastname" label="Фамилия клиента" />
               </div>
@@ -85,29 +85,43 @@
               </div>
             </div>
 
-            <div class="row q-py-sm">
+            <div class="row q-py-sm q-col-gutter-none">
               <div class="col-sm-6 col-xs-12">
-                <q-input outlined v-model="formfields.client_phone" label="Телефон клиента" />
+                <q-input
+                  outlined
+                  mask="# (###) ###-##-##"
+                  unmasked-value
+                  v-model="formfields.client_phone"
+                  label="Телефон клиента"
+                />
               </div>
               <div class="col-sm-6 col-xs-12">
-                <q-input outlined v-model="formfields.client_email" label="Email клиента" />
+                <q-input
+                  outlined
+                  v-model="formfields.client_email"
+                  label="Email клиента"
+                  :rules="[
+                    (val) =>
+                      (/^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(val)) || 'Пожалуйста, введите корректный email',
+                  ]"
+                />
               </div>
             </div>
 
             <div class="row q-py-sm">
-              <div class="col q-mx-md">
+              <div class="col q-mr-md">
                 <q-input outlined autogrow v-model="formfields.applicant_comment" label="Комментарий к заявке" />
               </div>
             </div>
 
             <div class="row q-py-sm">
-              <div class="col q-mx-sm">
+              <div class="col q-mr-sm">
                 <q-checkbox v-model="formfields.self_reservation" label="Самостоятельное бронирование"></q-checkbox>
               </div>
             </div>
 
-            <div class="row">
-              <div class="col q-mx-md">
+            <div class="row q-col-gutter-none">
+              <div class="col q-mr-md">
                 <q-banner v-if="formfields.self_reservation" inline-actions rounded class="q-mx-md bg-orange text-white">
                   <template v-slot:avatar>
                     <q-icon name="report" color="white" />
@@ -117,10 +131,39 @@
               </div>
             </div>
 
-            <div class="q-mt-lg text-center">
-              <q-btn unelevated label="Отправить заявку" type="submit" color="primary"/>
-              <q-btn label="Сбросить" type="reset" color="primary" flat class="q-ml-sm" />
-              <q-btn label="Отмена" color="primary" flat class="q-ml-sm" @click="closeApplication" />
+            <div class="q-mt-lg text-right">
+              <q-btn
+                :padding="$q.screen.gt.xs ? 'xs md' : 'sm'"
+                unelevated
+                :round="$q.screen.xs"
+                :rounded="$q.screen.gt.xs"
+                :label="$q.screen.sm ? 'Отправить' : $q.screen.gt.sm ? 'Отправить заявку' : ''"
+                type="submit"
+                color="primary"
+                icon="done"
+              />
+              <q-btn
+                :label="$q.screen.gt.xs ? 'Сбросить' : ''"
+                type="reset"
+                color="primary"
+                flat
+                :padding="$q.screen.gt.xs ? 'xs md' : 'sm'"
+                :round="$q.screen.xs"
+                :rounded="$q.screen.gt.xs"
+                class="q-ml-sm"
+                icon="refresh"
+              />
+              <q-btn
+                :label="$q.screen.gt.xs ? 'Отмена' : ''"
+                color="primary"
+                flat
+                :padding="$q.screen.gt.xs ? 'xs md' : 'sm'"
+                :round="$q.screen.xs"
+                :rounded="$q.screen.gt.xs"
+                class="q-ml-sm"
+                @click="closeApplication"
+                icon="close"
+              />
             </div>
             </q-form>
           </q-card-section>

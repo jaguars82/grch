@@ -1,15 +1,16 @@
 <template>
   <div v-if="header" class="row items-start">
-    <div class="col-1">
-      <q-avatar icon="location_on" color="primary"/>
+    <div class="col">
+      <q-avatar :size="$q.screen.lt.md ? 'lg' : 'xl'" icon="location_on" color="primary"/>
     </div>
-    <div class="col-11">
+    <div :class="{ 'col-11': $q.screen.gt.xs, 'col-10': $q.screen.lt.sm }">
       <TitleSubtitle title="На карте" :subtitle="address"/>
     </div>
   </div>
   <YandexMap
     :settings="yaMapsSettings"
     :coordinates="mapCoordinates"
+    :options="{ autoFitToViewport: 'always' }"
     :zoom="16"
   >
     <template v-if="markers.length">

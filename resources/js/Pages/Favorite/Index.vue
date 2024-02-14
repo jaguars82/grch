@@ -14,7 +14,7 @@
         <q-pagination
           v-model="currentActivePage"
           :max="paginationActive.totalPages"
-          :max-pages="8"
+          :max-pages="$q.screen.xs ? 4 : 8"
           @update:model-value="goToActivePage(currentActivePage)"
         />
       </div>

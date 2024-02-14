@@ -156,7 +156,10 @@ class TransfertYandexXMLImportService implements SecondaryImportServiceInterface
             $balcony_amount = '';
             $loggia_amount = '';
             if (!empty($advertisement->balcony)) {
-                switch ($advertisement->balcony) {
+                switch (mb_strtolower($advertisement->balcony)) {
+                    case 'терраса':
+                    case 'нет':
+                        break;
                     case 'балкон':
                         $balcony_amount = 1;
                         break;
@@ -205,12 +208,16 @@ class TransfertYandexXMLImportService implements SecondaryImportServiceInterface
             $viewStreet = false;
             foreach ($advertisement->{'window-view'} as $windowview) {
                 if (!in_array($windowview, $windowviews)) {
-                    switch ($windowview) {
+                    switch (mb_strtolower($windowview)) {
                         case 'на улицу':
                             $viewStreet = true;
                             break;
                         case 'во двор':
                             $viewYard = true;
+                            break;
+                        case 'во двор и на улицу':
+                            $viewYard = true;
+                            $viewStreet = true;
                             break;
                     }
                     array_push($windowviews, $windowview);

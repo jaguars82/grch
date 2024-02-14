@@ -1,9 +1,10 @@
 <template>
-  <MainLayout :drawers="{ left: { is: false, opened: false }, right: { is: true, opened: true } }">
+  <MainLayout :gutters="false" :drawers="{ left: { is: false, opened: false }, right: { is: true, opened: true } }">
     <template v-slot:main>
       <YandexMap
         :settings="yaMapsSettings"
         :coordinates="initCoords"
+        :options="{ autoFitToViewport: 'always' }"
         :zoom="12"
       >
         <template v-if="complexes.length">

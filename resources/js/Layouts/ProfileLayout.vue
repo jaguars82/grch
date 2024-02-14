@@ -6,14 +6,14 @@
     >
 
     <q-header>
-      <MainMenu />
+      <MainMenu :showUserMenuOnSmallScreen="rightDrawer.is ? false : true" />
     </q-header>
 
     <q-drawer
       v-model="drawerLeft"
       :bordered="xsOptions"
       side="left"
-      :width="300"
+      :width="$q.screen.gt.md ? 400 : 300"
       :breakpoint="100"
       :mini-to-overlay="xsOptions"
       :mini="miniState"
@@ -27,7 +27,8 @@
 
       <div class="topoffset"></div>
       <div class="row justify-end items-center">
-        <q-btn size="sm" dense class="q-my-xs q-mr-sm" round unelevated icon="close" @click="miniState = true"/>
+        <q-btn size="sm" dense class="q-my-xs q-mr-sm lt-lg" round unelevated icon="close" @click="miniState = true"/>
+        <q-icon color="transparent" class="gt-md" size="sm" name="fake-icon" />
       </div>
       <ProfileMenu></ProfileMenu>
     </q-drawer>
@@ -36,15 +37,17 @@
       v-if="rightDrawer.is"
       v-model="drawerRight"
       side="right"
-      :width="300"
-      :breakpoint="500"
+      :width="$q.screen.gt.md ? 400 : 300"
+      :breakpoint="100"
     >
       <div class="topoffset"></div>
       <slot name="right-drawer"></slot>
     </q-drawer>
 
     <q-page-container>
-      <q-page>
+      <q-page
+        :class="{ 'gaps-lg': $q.screen.lg, 'gaps-xl': $q.screen.xl }"
+      >
         <slot name="breadcrumbs"></slot>
         <div class="row">
           <div class="col-12 q-pr-md">
@@ -115,5 +118,13 @@ export default ({
   height: 58px;
   min-height: 58px;
   max-height: 58px;
+}
+.gaps-lg {
+  padding-left: 70px;
+  padding-right: 70px;
+}
+.gaps-xl {
+  padding-left: 120px;
+  padding-right: 120px;
 }
 </style>

@@ -15,13 +15,15 @@
       <q-btn
         v-for="action of actions"
         :key="action.id"
+        :padding="$q.screen.gt.xs ? 'xs md' : 'sm'"
         :color="action.style.color ? action.style.color : 'pimary'"
         unelevated
         :outline="action.style.outline ? action.style.outline : false"
-        :rounded="action.style.rounded ? action.style.rounded : false"
+        :rounded="$q.screen.gt.xs"
+        :round="$q.screen.xs"
         :class="action.style.class ? action.style.class : ''"
         :icon="action.icon"
-        :label="action.text"
+        :label="$q.screen.gt.xs ? action.text : ''"
         @click="action.action"
       />
     </q-card-actions>

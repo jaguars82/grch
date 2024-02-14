@@ -1,11 +1,11 @@
 <template>
   <q-card
-      class="q-my-md shadow-7"
+    class="q-my-md shadow-7"
   >
-    <q-card-section horizontal>
+    <q-card-section :class="{ 'q-pa-xs': $q.screen.xs }" :horizontal="$q.screen.gt.xs">
       <q-carousel
         v-if="room.images.length"
-        class="col-5"
+        :class="{ 'col-5': $q.screen.gt.xs, 'img-xs': $q.screen.xs }"
         animated
         v-model="slide"
         arrows
@@ -19,10 +19,11 @@
           :img-src="image.location_type === 'local' ? `/uploads/${image.filename}` : image.url"
         />
       </q-carousel>
-      <q-card-section :class="room.images.length ? 'col-7' : 'col-12'">
+      <q-card-section :class="$q.screen.gt.xs && room.images.length ? 'col-7' : 'col-12'">
         <inertia-link :href="`/secondary/view?id=${advId}`">
-        <p class="text-h4">
-          <span v-if="isFlat" class="text-capitalize">{{ roomTitle }}&nbsp;</span>
+        <p :class="{ 'text-bold': $q.screen.xs, 'text-h5': $q.screen.xs, 'text-h4': $q.screen.sm, 'text-h3': $q.screen.gt.sm }">
+          <span v-if="isFlat" class="text-capitalize">{{ roomTitle }}</span>
+          <span v-if="isFlat">&ensp;</span>
           <span>{{ category }}</span>
           <span v-if="roomArea">, {{ roomArea }}</span>
           <span v-if="roomFloor">, {{ roomFloor }}</span>
@@ -31,15 +32,17 @@
         <p>{{ creationDate }}</p>
         <p>
           <!--<span v-if="address.regionDistrict">{{ address.regionDistrict }},&nbsp;</span>-->
-          <span v-if="address.city">{{ address.city }},&nbsp;</span>
-          <span v-if="address.cityDistrict">{{ address.cityDistrict }},&nbsp;</span>
+          <span v-if="address.city">{{ address.city }}</span>
+          <span v-if="address.city && (address.cityDistrict || address.streetHouse)">, </span>
+          <span v-if="address.cityDistrict">{{ address.cityDistrict }}</span>
+          <span v-if="address.cityDistrict && address.streetHouse">, </span>
           <span v-if="address.streetHouse">{{ address.streetHouse }}</span>
         </p>
-        <p class="text-h2 text-bold text-blue-8 q-mb-xs">{{ roomPrice }}</p>
+        <p class="text-bold text-blue-8 q-mb-xs" :class="{ 'text-h3': $q.screen.xs, 'text-h2': $q.screen.gt.xs }">{{ roomPrice }}</p>
         <p v-if="roomPricePerMeter" class="text-grey-7">
           {{ roomPricePerMeter }}
         </p>
-        <div class="row justify-end items-center">
+        <div class="row no-wrap justify-end items-center">
           <div>
             {{ advAuthor.fullName }}
           </div>
@@ -121,3 +124,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.img-xs {
+  max-height: 300px;
+}
+</style>

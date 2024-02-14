@@ -1,5 +1,5 @@
 <template>
-  <MainLayout>
+  <MainLayout :gutters="false">
     <template v-slot:main>
       <div
         class="row items-center justify-center q-pa-lg header-img"
@@ -10,14 +10,14 @@
       >-->
         <!-- Search form -->
         <div class="row justify-center q-my-lg" :class="{ 'width-98': $q.screen.lt.md, 'width-80': $q.screen.gt.sm, 'items-center': $q.screen.gt.sm }">
-          <div class="col-10">
+          <div :class="{ 'col-12': $q.screen.xs, 'col-10': $q.screen.gt.xs }">
             <div class="row q-col-gutter-none">
               <div class="col-12 col-sm-4 col-md-2 no-padding">
-                <q-select square outlined v-model="districtSelect" :options="districtOptions" label="Район" class="search-input" multiple use-chips emit-value map-options options-dense>
+                <q-select square outlined v-model="districtSelect" :options="districtOptions" label="Район" class="search-input" multiple use-chips emit-value map-options options-dense :dense="$q.screen.lt.md">
                 </q-select>
               </div>
               <div class="col-12 col-sm-4 col-md-2 no-padding">
-                <q-input square outlined readonly v-model="roomsSelect" label="Количество комнат" class="search-input">
+                <q-input square outlined readonly v-model="roomsSelect" label="Количество комнат" class="search-input" :dense="$q.screen.lt.md">
                   <template v-slot:append>
                     <q-icon name="edit_note" class="cursor-pointer">
                       <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -35,13 +35,13 @@
                 </q-input>
               </div>
               <div class="col-12 col-sm-4 col-md-3 no-padding">
-                <q-select square outlined v-model="developerSelect" :options="developerOptions" label="Застройщик" class="search-input" @update:model-value="onDeveloperSelect" multiple use-chips emit-value map-options options-dense />
+                <q-select square outlined v-model="developerSelect" :options="developerOptions" label="Застройщик" class="search-input" @update:model-value="onDeveloperSelect" multiple use-chips emit-value map-options options-dense :dense="$q.screen.lt.md" />
               </div>
               <div class="col-12 col-sm-6 col-md-3 no-padding">
-                <q-select square outlined v-model="newbuildingComplexesSelect" :options="newbuildingComplexesOptions" label="Жилой комплекс" class="search-input" multiple use-chips emit-value map-options options-dense />
+                <q-select square outlined v-model="newbuildingComplexesSelect" :options="newbuildingComplexesOptions" label="Жилой комплекс" class="search-input" multiple use-chips emit-value map-options options-dense :dense="$q.screen.lt.md" />
               </div>
               <div class="col-12 col-sm-6 col-md-2 no-padding">
-                <q-input square outlined readonly v-model="model" label="Цена" class="search-input">
+                <q-input square outlined readonly v-model="model" label="Цена" class="search-input" :dense="$q.screen.lt.md">
                   <template v-slot:append>
                     <q-icon name="tune" class="cursor-pointer">
                       <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -64,9 +64,9 @@
               </div>
             </div>
           </div>
-          <div class="col-2">
-            <q-btn color="primary" class="text-white q-ml-sm q-mr-xs" unelevated round icon="search" @click="search" />
-            <q-btn color="white" class="text-grey-7" unelevated round icon="pin_drop" @click="mapSearch" />
+          <div class="col-2" :class="{ 'col-2': $q.screen.gt.xs, 'col-12': $q.screen.xs, 'text-right': $q.screen.xs, 'q-mt-sm': $q.screen.xs }">
+            <q-btn color="primary" :size="$q.screen.sm ? 'sm' : 'md'" class="text-white q-ml-sm q-mr-xs" unelevated round icon="search" @click="search" />
+            <q-btn color="white" :size="$q.screen.sm ? 'sm' : 'md'" class="text-grey-7" unelevated round icon="pin_drop" @click="mapSearch" />
           </div>
         </div>
 
@@ -74,8 +74,8 @@
         <div class="row" :class="{ 'width-98': $q.screen.lt.md, 'width-80': $q.screen.gt.sm }">
           <!-- News slider -->
           <div class="col-12 col-md-6">
-            <q-card class="header-card q-mt-md">
-              <q-card-section>
+            <q-card class="header-card" :class="{ 'q-mt-md': $q.screen.gt.sm, 'q-mt-none': $q.screen.lt.md }">
+              <q-card-section :class="{ 'q-pa-none': $q.screen.lt.md }">
                 <q-carousel
                   v-if="newsList.length"
                   v-model="newsSlide"
@@ -97,16 +97,14 @@
                     class="column no-wrap flex-center"
                   >
                     <div class="slide-content">
-                      <p class="text-h3 ellipsis">{{ news.title }}</p>
+                      <p class="ellipsis" :class="{ 'text-h3': $q.screen.gt.sm, 'text-h4': $q.screen.lt.md }">{{ news.title }}</p>
                       <div class="q-mt-md row" style="height: 200px;">
                         <q-img class="col-4" v-if="news.image" :src="`/uploads/${news.image}`" />
                         <div class="q-px-sm" :class="{'col-8': news.image, 'col-12': !news.image}">
                         <q-badge v-if="news.category === 1" color="orange" class="text-white">Акция</q-badge>
                         <q-badge v-else-if="news.category === 2" color="primary" class="text-white">Новость</q-badge>
                         <div class="text-h5 text-grey">{{ asDateTime(news.created_at) }}</div>
-                        <div class="q-mt-sm ellipsis-3-lines">
-                          {{ news.detail }}
-                        </div>
+                        <div class="news-content-preview q-mt-sm ellipsis-3-lines">{{ stripHtml(news.detail) }}</div>
                         <div class="full-width q-mt-md text-right">
                           <q-btn outline rounded color="white" size="sm" icon="east" label="Открыть" @click="goToNews(news.id)" />
                         </div>
@@ -120,9 +118,9 @@
           </div>
           <!-- Flats by room -->
           <div class="col-6 col-md-3">
-            <q-card class="header-card q-mt-md q-py-md">
+            <q-card class="header-card q-mt-md" :class="{ 'q-py-md': $q.screen.gt.sm, 'q-py-none': $q.screen.lt.md }">
               <q-card-section>
-                <p class="text-h3 ellipsis text-center text-white">По количеству комнат</p>
+                <p class="ellipsis text-center text-white" :class="{ 'text-h3': $q.screen.gt.sm, 'text-h4': $q.screen.lt.md }">По количеству комнат</p>
                 <div v-for="param of flatsByParams.byRoom" class="q-mt-lg row justify-between">
                   <div class="text-white">{{ param.param }}</div>
                   <div class="text-white">{{ param.val }}</div>
@@ -132,9 +130,9 @@
           </div>
           <!-- Flats by deadline -->
           <div class="col-6 col-md-3">
-            <q-card class="header-card q-mt-md q-py-md">
+            <q-card class="header-card q-mt-md" :class="{ 'q-py-md': $q.screen.gt.sm, 'q-py-none': $q.screen.lt.md }">
               <q-card-section>
-                <p class="text-h3 ellipsis text-center text-white">По сроку сдачи</p>
+                <p class="ellipsis text-center text-white" :class="{ 'text-h3': $q.screen.gt.sm, 'text-h4': $q.screen.lt.md }">По сроку сдачи</p>
                 <div v-for="param of flatsByParams.byDeadline" class="q-mt-lg row justify-between">
                   <div class="text-white">{{ param.param }}</div>
                   <div class="text-white">{{ param.val }}</div>
@@ -173,6 +171,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { asDateTime } from '@/helpers/formatter'
+import { stripHtml } from '@/helpers/utils'
 import axios from 'axios'
 import MainLayout from '@/Layouts/MainLayout.vue'
 import RoomsAmountButtons from '@/Components/Elements/RoomsAmountButtons.vue'
@@ -290,6 +289,7 @@ export default {
 
     return {
       asDateTime,
+      stripHtml,
       newsSlide,
       goToNews,
       districtSelect,

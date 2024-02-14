@@ -17,7 +17,6 @@ class AuthController extends Controller
         }
 
         $model = new LoginForm();
-        //echo '<pre>'; var_dump($model); echo '</pre>';
         
         //if ($model->load(Yii::$app->request->post())) {
         if (Yii::$app->request->isPost) {
@@ -57,7 +56,7 @@ class AuthController extends Controller
                     //return $this->inertia('Main/Index');
                 } else {
                     //return $this->goBack();
-                     return $this->redirect(['login',
+                    return $this->redirect(['login',
                         'model' => $model,
                         'defaultLogin' => isset($defaultLogin) ? $defaultLogin : 'otp',
                      ]);
@@ -76,6 +75,7 @@ class AuthController extends Controller
         return $this->inertia('Main/Login', [
             'model' => $model,
             'defaultLogin' => isset($defaultLogin) ? $defaultLogin : 'pass',
+            'error' => \Yii::$app->session->hasFlash('error') ? \Yii::$app->session->getFlash('error') : false,
         ]);
     }
 

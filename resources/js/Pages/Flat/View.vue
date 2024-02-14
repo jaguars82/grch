@@ -12,9 +12,9 @@
         <template v-slot:content>
           <div class="row items-center justify-start">
             <div class="col-12">
-              <h1 class="q-mt-xs">
+              <p class="q-mt-xs q-mb-sm" :class="{ 'text-h1': $q.screen.gt.sm, 'text-h2': $q.screen.sm, 'text-h3': $q.screen.xs }">
                 <span class="text-capitalize">{{ asNumberString(flat.rooms) }}</span>комнатная квартира № {{ flat.number }}
-              </h1>
+              </p>
               <div>
                 <q-chip v-if="flat.status === 0" color="positive" class="text-white">
                   продается
@@ -26,7 +26,10 @@
                   продана
                 </q-chip>
               </div>
-              <p class="q-mb-xs text-h4 text-grey">
+              <p
+                class="q-mb-xs text-grey"
+                :class="{ 'text-h4': $q.screen.gt.sm, 'text-h5': $q.screen.sm, 'text-h6': $q.screen.xs }"
+              >
                 {{ flat.developer.name }} > {{ flat.complex.name }} > {{ flat.building.name }} >
                 <span v-if="flat.entrance.name"> {{ flat.entrance.name }}</span>
                 <span v-else> Подъезд {{ flat.section }}</span>
@@ -34,7 +37,7 @@
             </div>
             <!-- Flat price (single value or range) -->
             <div class="col-12">
-              <p class="text-h1 text-bold text-blue-8 q-mb-xs">
+              <p class="text-bold text-blue-8 q-mb-xs" :class="{ 'text-h1': $q.screen.gt.sm, 'text-h2': $q.screen.sm, 'text-h3': $q.screen.xs }">
                 <span v-if="flat.hasDiscount && flat.priceRange && flat.status === 0">
                   {{ flat.priceRange }}
                 </span>
@@ -44,7 +47,7 @@
               </p>
               <!-- Prices with discount (if any) -->
               <q-expansion-item
-                header-class="rounded-borders"
+                header-class="rounded-borders q-px-xs"
                 v-if="flat.allDiscounts.length"
                 v-model="discountListExpanded"
                 icon="price_change"
@@ -53,37 +56,55 @@
               >
                 <template v-slot:header>
                   <div class="row items-center full-width">
-                    <div class="col-1">
+                    <div class="col">
                       <q-avatar size="md" icon="price_change" color="orange" text-color="white" />
                     </div>
-                    <div class="col-11">
+                    <div :class="{ 'col-10': $q.screen.xs, 'col-11': $q.screen.gt.xs }">
                       Варианты стоимости
                     </div>
                   </div>
                 </template>
 
                 <div class="row items-center q-py-sm">
-                  <div class="col-2 q-px-sm text-strong">
+                  <div class="col-12 q-px-sm lt-md">
+                    <span>{{ asCurrency(flat.price_cash) }}</span>
+                    <q-badge class="q-mx-sm" color="orange">
+                      базовая цена
+                    </q-badge>
+                  </div>
+                  <div class="col-2 gt-sm q-px-sm text-strong">
                     {{ asCurrency(flat.price_cash) }}
                   </div>
-                  <div class="col-2">
+                  <div class="col-2 gt-sm">
                     <q-badge color="orange">
                       базовая цена
                     </q-badge>
                   </div>
                 </div>
                 <div v-for="discount of flat.allDiscounts" class="row items-center q-py-sm">
-                  <div class="col-2 q-px-sm text-strong">
+                  <div class="col-12 q-px-sm lt-md">
+                    <span>{{ asCurrency(discount.price) }}</span>
+                    <q-badge class="q-mx-sm" color="orange">
+                      <span v-if="discount.discount_type === 0">- {{ discount.discount }} %</span>
+                      <span v-else-if="discount.discount_type === 1">- {{ asCurrency(discount.discount_amount) }}</span>
+                      <span v-else-if="discount.discount_type === 2">цена по акции</span>
+                    </q-badge>
+                    <span class="text-grey" v-if="discount.resume">- {{ discount.resume }}</span>
+                    <span v-else>- {{ discount.title }}</span>
+                    <q-icon name="info" color="grey" size="sm" class="q-px-md cursor-pointer" @click="showDiscountInfoWindow(discount.id)">
+                    </q-icon>
+                  </div>
+                  <div class="col-2 gt-sm q-px-sm text-strong">
                     {{ asCurrency(discount.price) }}
                   </div>
-                  <div class="col-2">
+                  <div class="col-2 gt-sm">
                     <q-badge color="orange">
-                        <span v-if="discount.discount_type === 0">- {{ discount.discount }} %</span>
-                        <span v-else-if="discount.discount_type === 1">- {{ asCurrency(discount.discount_amount) }}</span>
-                        <span v-else-if="discount.discount_type === 2">цена по акции</span>
-                      </q-badge>
+                      <span v-if="discount.discount_type === 0">- {{ discount.discount }} %</span>
+                      <span v-else-if="discount.discount_type === 1">- {{ asCurrency(discount.discount_amount) }}</span>
+                      <span v-else-if="discount.discount_type === 2">цена по акции</span>
+                    </q-badge>
                   </div>
-                  <div class="col-8 text-grey">
+                  <div class="col-8 gt-sm text-grey">
                     <span v-if="discount.resume">- {{ discount.resume }}</span>
                     <span v-else>- {{ discount.title }}</span>
                     <q-icon name="info" size="sm" class="q-px-md cursor-pointer" @click="showDiscountInfoWindow(discount.id)">
@@ -207,10 +228,10 @@
         <template v-slot:content>
 
           <div class="row">
-            <div class="col-1">
+            <div class="col">
               <q-btn round unelevated icon="zoom_out_map" @click="fullscreenLayoutsViewer = true" />
             </div>
-            <div class="col-11">
+            <div :class="{ 'col-10': $q.screen.xs, 'col-11': $q.screen.gt.xs }">
               <q-tabs
                 v-model="layoutViewerTab"
                 outside-arrows
@@ -220,9 +241,9 @@
                 align="right"
                 class="text-primary"
               >
-                <q-tab name="apartment" icon="space_dashboard" label="Квартира" />
-                <q-tab name="floor" icon="dashboard" label="Этаж" />
-                <q-tab name="plan" icon="backup_table" label="Генплан" />
+                <q-tab name="apartment" icon="space_dashboard" :label="$q.screen.gt.xs ? 'Квартира' : 'кв.'" />
+                <q-tab name="floor" icon="dashboard" :label="$q.screen.gt.xs ? 'Этаж' : 'эт.'" />
+                <q-tab name="plan" icon="backup_table" :label="$q.screen.gt.xs ? 'Генплан' : 'план'" />
               </q-tabs>
             </div>
           </div>
@@ -262,16 +283,43 @@
               >
                 <template v-slot:header>
                   <div class="row items-center full-width">
-                    <div class="col-2 text-bold">{{ building.name }}</div>
-                    <div class="col-3">
-                      <span v-if="building.aviableFlats > 0">Доступно {{ building.aviableFlats }}. </span>
+                    <!-- Building info header for xs screens -->
+                    <div class="col-12 xs">
+                      <span class="text-bold">{{ building.name }}</span>
+                      <span v-if="building.aviableFlats > 0 || building.reservedFlats > 0" class="text-bold">.  </span>
+                      <span v-if="building.aviableFlats > 0">Доступно {{ building.aviableFlats }}</span>
+                      <span v-if="building.aviableFlats > 0 && building.reservedFlats > 0">.  </span>
                       <span v-if="building.reservedFlats > 0">Бронь {{ building.reservedFlats }}</span>
+                      <span>, {{ building.deadlineString }}</span>
+                      <span>, {{ building.totalFloorString }}</span>
                     </div>
-                    <div class="col-3 text-bold">
-                      {{ building.deadlineString }}
+                    <!-- Building info header for sm+ screens -->
+                    <div class="col-2 text-bold gt-xs">
+                      <div class="flex justify-between">
+                        <div>{{ building.name }}</div>
+                        <q-separator class="gt-sm" color="white" vertical />
+                      </div>
                     </div>
-                    <div class="col-3">
-                      {{ building.totalFloorString }}
+                    <div class="col-3 gt-xs">
+                      <div class="flex justify-between">
+                        <div class="q-px-sm">
+                          <span v-if="building.aviableFlats > 0">Доступно {{ building.aviableFlats }}</span>
+                          <span v-if="building.aviableFlats > 0 && building.reservedFlats > 0">.  </span>
+                          <span v-if="building.reservedFlats > 0">Бронь {{ building.reservedFlats }}</span>
+                        </div>
+                        <q-separator class="gt-sm" color="white" vertical />
+                      </div>
+                    </div>
+                    <div class="col-3 text-bold gt-xs">
+                      <div class="flex justify-between">
+                        <div class="q-px-sm">
+                          {{ building.deadlineString }}
+                        </div>
+                        <q-separator class="gt-sm" color="white" vertical />
+                      </div>
+                    </div>
+                    <div class="col-3 gt-xs">
+                      <div class="q-px-sm">{{ building.totalFloorString }}</div>
                     </div>
                   </div>
                 </template>
@@ -286,20 +334,32 @@
                   >
                     <template v-slot:header>
                       <div class="row items-center full-width">
-                        <div class="col-2 text-bold">{{ entrance.name }}</div>
-                        <div class="col text-grey">
-                          <span v-if="entrance.aviableFlats > 0">доступно {{ entrance.aviableFlats }}</span>
-                          <span v-if="entrance.reservedFlats > 0">, бронь{{ entrance.reservedFlats }}, </span>
+                        <!-- Entrance info header for xs & md screens -->
+                        <div class="col-12 lt-md">
+                          <span class="text-bold">{{ entrance.name }}</span>
+                          <span v-if="entrance.aviableFlats > 0 || entrance.reservedFlats > 0" class="text-bold">, </span>
+                          <span v-if="entrance.aviableFlats > 0" class="text-grey">доступно - <span class="text-bold">{{ entrance.aviableFlats }}</span>, </span>
+                          <span v-if="entrance.reservedFlats > 0" class="text-grey">бронь - <span class="text-bold">{{ entrance.reservedFlats }}</span>, </span>
+                          <span v-if="entrance.aviableFlats < 1 && entrance.reservedFlats < 1" class="text-bold">, </span>
+                          <span class="text-grey">{{ entrance.deadlineString }}</span>
+                          <span v-if="entrance.floors" class="text-grey">, {{ entrance.floors }} этажей</span>
+                          <span v-if="entrance.material" class="text-grey text-lowercase">, {{ entrance.material }}</span>
+                        </div>
+                        <!-- Entrance info header for md+ screens -->
+                        <div class="col-2 gt-sm text-bold">{{ entrance.name }}</div>
+                        <div class="col gt-sm text-grey">
+                          <span v-if="entrance.aviableFlats > 0">доступно - <span class="text-bold">{{ entrance.aviableFlats }}</span>, </span>
+                          <span v-if="entrance.reservedFlats > 0">бронь - <span class="text-bold">{{ entrance.reservedFlats }}</span>, </span>
                           <span>{{ entrance.deadlineString }}</span>
                           <span v-if="entrance.floors">, {{ entrance.floors }} этажей</span>
-                          <span v-if="entrance.material">, {{ entrance.material }}</span>
+                          <span v-if="entrance.material" class="text-lowercase">, {{ entrance.material }}</span>
                         </div>
                       </div>
                     </template>
 
                     <div class="bg-grey-3 q-pa-sm rounded-borders overflow-auto">
                       <div class="row q-pl-lg relative-position" v-for="floor of Object.keys(entrance.flats).reverse()">
-                        <div class="col-1 absolute-left text-weight-bolder text-grey">{{ floor }}</div>
+                        <div class="col absolute-left text-weight-bolder text-grey">{{ floor }}</div>
                         <div class="col-11">
                           <div class="row no-wrap">
                             <FlatCell v-for="flatId of Object.keys(entrance.flats[floor])" :flat="entrance.flats[floor][flatId]" :currentlyOpened="flatId == flat.id" />
@@ -395,9 +455,9 @@
                       vertical
                       class="text-primary"
                     >
-                      <q-tab name="apartment" icon="space_dashboard" label="Квартира" />
-                      <q-tab name="floor" icon="dashboard" label="Этаж" />
-                      <q-tab name="plan" icon="backup_table" label="Генплан" />
+                      <q-tab name="apartment" icon="space_dashboard" :label="$q.screen.gt.xs ? 'Квартира' : 'кв-ра'" />
+                      <q-tab name="floor" icon="dashboard" :label="$q.screen.gt.xs ? 'Этаж' : 'этаж'" />
+                      <q-tab name="plan" icon="backup_table" :label="$q.screen.gt.xs ? 'Генплан' : 'план'" />
                     </q-tabs>
                   </div>
                 </div>
@@ -468,8 +528,6 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
-
-      <!--<pre>{{ flat }}</pre>-->
 
     </template>
 

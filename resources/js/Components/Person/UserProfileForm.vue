@@ -94,8 +94,8 @@
     </div>
 
     <div class="row justify-end q-px-md q-pt-lg">
-      <q-btn type="submit" padding="xs md" unelevated rounded color="primary" icon="done" label="Сохранить" :disable="!canSubmitForm" />
-      <q-btn class="q-ml-xs" padding="xs md" unelevated rounded icon="close" label="Отмена" @click="onCancel" />
+      <q-btn type="submit" :padding="$q.screen.gt.xs ? 'xs md' : 'sm'" unelevated :round="$q.screen.xs" :rounded="$q.screen.gt.xs" color="primary" icon="done" :label="$q.screen.gt.xs ? 'Сохранить' : ''" :disable="!canSubmitForm" />
+      <q-btn class="q-ml-xs" :padding="$q.screen.gt.xs ? 'xs md' : 'sm'" unelevated :round="$q.screen.xs" :rounded="$q.screen.gt.xs" icon="close" :label="$q.screen.gt.xs ? 'Отмена' : ''" @click="onCancel" />
     </div>
   </q-form>
 </template>

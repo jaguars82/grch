@@ -7,9 +7,9 @@
       <RegularContentContainer :title="`Коммерческое предложение №${commercial.number}`">
         <template v-slot:content>
 
-          <q-bar class="q-px-none bg-white">
+          <q-bar class="q-px-none q-my-sm bg-white">
             
-            <q-btn unelevated label="Поделиться" icon="share">
+            <q-btn unelevated :label="$q.screen.gt.xs ? 'Поделиться' : ''" icon="share">
               <q-menu auto-close>
                 <q-list>
                   <q-item clickable v-ripple>
@@ -56,7 +56,7 @@
               </q-menu>
             </q-btn>
 
-            <q-btn unelevated label="Настройки" icon="checklist">
+            <q-btn unelevated :label="$q.screen.gt.xs ? 'Настройки' : ''" icon="checklist">
               <q-menu>
                 <q-list>
 
@@ -186,17 +186,23 @@
                   </q-item>
 
                 </q-list>
-                <q-btn
-                  class="q-mt-sm"
-                  label="Сохранить настройки"
-                  icon="save"
-                  @click="saveSettings"
-                  :disable="JSON.stringify(commercialSettings) == commercial.settings"
-                />
+                <div class="q-my-sm q-pr-sm flex justify-end">
+                  <q-btn
+                    unelevated
+                    rounded
+                    color="primary"
+                    outline
+                    size="sm"
+                    label="Сохранить настройки"
+                    icon="save"
+                    @click="saveSettings"
+                    :disable="JSON.stringify(commercialSettings) == commercial.settings"
+                  />
+                </div>
               </q-menu>
             </q-btn>
 
-            <q-btn unelevated label="Управление объектами" icon="maps_home_work" @click="controlDialogs.flats = true" />
+            <q-btn unelevated :label="$q.screen.gt.xs ? 'Управление объектами' : ''" icon="maps_home_work" @click="controlDialogs.flats = true" />
           </q-bar>
 
           <q-dialog v-model="shareDialogs.copyLink" persistent>
@@ -245,7 +251,7 @@
                 <div class="row" v-for="flat in flats" :key="flat.id">
                   <div class="col-10">{{ flat.newbuildingComplex.name }} > {{ flat.newbuilding.name }} > {{ flat.entrance.name }} > № {{ flat.number }}</div>
                   <div class="col-2 text-right">
-                    <q-btn icon="delete" @click="removeFlat(flat.id)">
+                    <q-btn unelevated round icon="delete" class="text-red" @click="removeFlat(flat.id)">
                       <q-tooltip :delay="1000" :offset="[0, 5]">Удалить этот объект из КП</q-tooltip>
                     </q-btn>
                   </div>
@@ -257,25 +263,30 @@
             </q-card>
           </q-dialog>
 
-          <q-card flat bordered class="q-mt-sm">
+          <q-card flat :class="{ 'hidden': !PDFloading }">
             <q-card-section>
               <Loading v-if="PDFloading" size="md" text="Идёт подготовка PDF-файла" />
-          
-            <q-card class="hidden q-mb-md">
-              <q-card-section>
-                <div class="text-right"><q-btn flat icon="close" @click="closePDFLink" /></div>
-                Если загрузка файла не началась автоматически, 
-              <a
-                class="d-hidden"
-                ref="pdfLink"
-                download
-                :href="`/downloads/Коммерческое предложение - ${commercial.number}.pdf`"
-              >
-              воспользуйтесь ссылкой
-              </a>
-              </q-card-section>
-            </q-card>
+            </q-card-section>
+            <q-card-section>
+              <q-card class="hidden q-mb-md">
+                <q-card-section>
+                  <div class="text-right"><q-btn flat icon="close" @click="closePDFLink" /></div>
+                  Если загрузка файла не началась автоматически, 
+                  <a
+                    class="d-hidden"
+                    ref="pdfLink"
+                    download
+                    :href="`/downloads/Коммерческое предложение - ${commercial.number}.pdf`"
+                  >
+                  воспользуйтесь ссылкой
+                  </a>
+                </q-card-section>
+              </q-card>
+            </q-card-section>
+          </q-card>
 
+          <q-card flat bordered class="q-mt-sm">
+            <q-card-section>
               <UserInfoBar v-if="commercialSettings.initiator" :user="commercial.initiator" />
             </q-card-section>
           </q-card>

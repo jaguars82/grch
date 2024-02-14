@@ -6,9 +6,7 @@
         <q-chip v-if="item.category === 1" color="orange" class="text-white">Акция</q-chip>
         <q-chip v-else-if="item.category === 2" color="primary" class="text-white">Новость</q-chip>
       
-        <div class="q-mt-lg ellipsis-3-lines">
-          {{ item.detail }}
-        </div>
+        <div class="q-mt-lg ellipsis-3-lines" v-html="item.detail"></div>
       </q-card-section>
       <q-img v-if="item.image" class="col-4" :src="`/uploads/${item.image}`" />
     </q-card-section>

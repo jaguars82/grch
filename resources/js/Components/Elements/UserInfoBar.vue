@@ -1,22 +1,25 @@
 <template>
-  <div class="user-info-bar">
-    <div v-if="user.organization" class="user-organization-info">
-      <img class="organization-logo" v-if="user.organization.logo" :src="`/uploads/${user.organization.logo}`">
+  <div class="flex items-center" :class="{ 'justify-end': $q.screen.xs, 'justify-between': $q.screen.gt.xs }">
+    <div v-if="user.organization" class="gt-xs user-organization-info">
+      <img class="organization-logo" v-if="user.organization.logo" :src="`/uploads/${user.organization.logo}`" />
     </div>
     <div class="user-personal-info">
       <div>
         <p class="q-mb-xs">
           <span v-if="user.last_name"><strong>{{ user.last_name }}&nbsp;</strong></span>
           <span v-if="user.first_name"><strong>{{ user.first_name }}</strong></span>
+          <span v-if="user.organization">, <span class="text-grey-7">{{ user.organization.name }}</span></span>
         </p>
         <div class="contact-item" v-if="user.phone">
           <q-icon class="q-pr-xs" name="call" />
           <span>{{ user.phone }}</span>
         </div>
         <div class="contact-item" v-if="user.email">
-          <q-icon class="q-pr-xs" name="mail" />
-          <span>{{ user.email }}</span>
-          </div>
+          <a :href="`mailto:${user.email}`">
+            <q-icon class="q-pr-xs" name="mail" />
+            <span>{{ user.email }}</span>
+          </a>
+        </div>
       </div>
       <div class="q-px-xs">
         <q-avatar size="70px">
@@ -36,11 +39,11 @@ export default {
 </script>
 
 <style scoped>
-  .user-info-bar {
+  /*.user-info-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-  }
+  }*/
 
   .user-personal-info {
     display: flex;
