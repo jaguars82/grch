@@ -55,7 +55,7 @@ class ReservationController extends Controller
         $flat['newbuilding'] = ArrayHelper::toArray($model->newbuilding);
         $flat['newbuildingComplex'] = ArrayHelper::toArray($model->newbuildingComplex, [
             'app\models\NewbuildingComplex' => [
-                'id', 'name', 'logo',
+                'id', 'name', 'logo', 'developer_id',
                 'address' => function ($nbc) {
                     return $nbc->address;
                 },

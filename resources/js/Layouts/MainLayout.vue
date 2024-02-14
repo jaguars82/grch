@@ -55,13 +55,15 @@
         </div>
       </template>
 
-      <div class="bg-primary" :class="{ 'topoffset-xs': $q.screen.xs, 'topoffset': $q.screen.gt.xs }">
+      <div class="bg-primary fixed-top z-top" :class="{ 'topoffset-xs': $q.screen.xs, 'topoffset': $q.screen.gt.xs }">
         <div class="flex justify-end">
           <UserMenu v-if="$q.screen.xs" />
         </div>
       </div>
+      <div :class="{ 'topoffset-xs': $q.screen.xs, 'topoffset': $q.screen.gt.xs }"></div>
       <div class="row justify-start items-center">
-        <q-btn size="sm" dense class="q-my-xs q-ml-sm" round unelevated icon="close" @click="miniStateRight = true"/>
+        <q-btn size="sm" dense class="q-my-xs q-ml-sm lt-xl" round unelevated icon="close" @click="miniStateRight = true"/>
+        <q-icon color="transparent" class="xl" size="sm" name="fake-icon" />
       </div>
       <slot name="right-drawer"></slot>
     </q-drawer>
@@ -69,7 +71,7 @@
     <!-- Page -->
     <q-page-container>
       <q-page
-        :class="{ 'q-px-xl': gutters && ($q.screen.lg || $q.screen.xl) }"
+        :class="{ 'gaps-lg': gutters && $q.screen.lg, 'gaps-xl': gutters && $q.screen.xl }"
       >
         <slot name="breadcrumbs"></slot>
         <div class="flex row">
@@ -169,5 +171,13 @@ export default ({
   height: 50px;
   min-height: 50px;
   max-height: 50px;
+}
+.gaps-lg {
+  padding-left: 70px;
+  padding-right: 70px;
+}
+.gaps-xl {
+  padding-left: 120px;
+  padding-right: 120px;
 }
 </style>

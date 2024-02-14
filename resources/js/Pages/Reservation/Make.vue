@@ -87,10 +87,24 @@
 
             <div class="row q-py-sm q-col-gutter-none">
               <div class="col-sm-6 col-xs-12">
-                <q-input outlined v-model="formfields.client_phone" label="Телефон клиента" />
+                <q-input
+                  outlined
+                  mask="# (###) ###-##-##"
+                  unmasked-value
+                  v-model="formfields.client_phone"
+                  label="Телефон клиента"
+                />
               </div>
               <div class="col-sm-6 col-xs-12">
-                <q-input outlined v-model="formfields.client_email" label="Email клиента" />
+                <q-input
+                  outlined
+                  v-model="formfields.client_email"
+                  label="Email клиента"
+                  :rules="[
+                    (val) =>
+                      (/^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(val)) || 'Пожалуйста, введите корректный email',
+                  ]"
+                />
               </div>
             </div>
 

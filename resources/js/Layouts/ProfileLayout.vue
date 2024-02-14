@@ -27,7 +27,8 @@
 
       <div class="topoffset"></div>
       <div class="row justify-end items-center">
-        <q-btn size="sm" dense class="q-my-xs q-mr-sm" round unelevated icon="close" @click="miniState = true"/>
+        <q-btn size="sm" dense class="q-my-xs q-mr-sm lt-lg" round unelevated icon="close" @click="miniState = true"/>
+        <q-icon color="transparent" class="gt-md" size="sm" name="fake-icon" />
       </div>
       <ProfileMenu></ProfileMenu>
     </q-drawer>
@@ -45,7 +46,7 @@
 
     <q-page-container>
       <q-page
-        :class="{ 'q-px-xl': $q.screen.lg || $q.screen.xl }"
+        :class="{ 'gaps-lg': $q.screen.lg, 'gaps-xl': $q.screen.xl }"
       >
         <slot name="breadcrumbs"></slot>
         <div class="row">
@@ -117,5 +118,13 @@ export default ({
   height: 58px;
   min-height: 58px;
   max-height: 58px;
+}
+.gaps-lg {
+  padding-left: 70px;
+  padding-right: 70px;
+}
+.gaps-xl {
+  padding-left: 120px;
+  padding-right: 120px;
 }
 </style>
