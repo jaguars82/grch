@@ -40,7 +40,26 @@
                     <div>{{ props.row.author_phone }}</div>
                   </q-td>
                   <q-td key="status" :props="props">
-                    {{ props.row.status }}
+                    <div>{{ props.row.status }}</div>
+                    <div class="text-grey-7 text-caption">Последнее обновление: {{ asUpdateDateTime(props.row.updated) }}</div>
+                    <template v-if="props.row.expectedAction">
+                      <template v-if="
+                        user.role === 'manager' && props.row.applicant_id == user.id
+                        || user.role === 'agent' && props.row.applicant_id == user.id
+                        || user.role === 'developer_repres' && props.row.developer_id == user.developer_id
+                        || user.role === 'admin'
+                      ">
+                        <q-banner inline-actions dense rounded class="q-mt-xs bg-orange-1 text-orange-9">
+                          {{ props.row.expectedAction.operationLabel }}
+                          <template v-slot:avatar>
+                            <q-icon name="error" color="orange" />
+                          </template>
+                          <template v-slot:action>
+                            <q-btn size="xs" flat round icon="arrow_forward" @click="goToApplication(props.row.id)" />
+                          </template>
+                        </q-banner>
+                      </template>
+                    </template>
                   </q-td>
                   <q-td key="client_fio" :props="props">
                     <div class="text-bold">{{ props.row.client_fio }}</div>
@@ -85,7 +104,8 @@ import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
 import GridTableToggle from '@/Components/Elements/GridTableToggle.vue'
 import useEmitter from '@/composables/use-emitter'
-import { asDate } from '@/helpers/formatter'
+import { asDate, asUpdateDateTime } from '@/helpers/formatter'
+import { getApplicationFormParamsByStatus } from '@/composables/components-configurations'
 import { userInfo } from '@/composables/shared-data'
 
 export default ({
@@ -166,12 +186,20 @@ export default ({
           client_fio: `${row.client_lastname} ${row.client_firstname} ${row.client_middlename}`,
           client_phone: row.client_phone,
           link: `/user/application/view?id=${row.id}`,
+          expectedAction: getApplicationFormParamsByStatus(row.status, user.value.role),
+          applicant_id: row.applicant_id,
+          developer_id: row.developer_id,
           created: asDate(row.created_at),
+          updated: row.updated_at,
         }
         processedRows.push(processedItem)
       });
       return processedRows
     })
+
+    const goToApplication = (applicationId) => {
+      Inertia.get(`/user/application/view`, { id: applicationId })
+    }
 
     const appsGridView = ref(false)
 
@@ -202,8 +230,10 @@ export default ({
     }
 
     return {
+      asUpdateDateTime,
       user,
       breadcrumbs,
+      goToApplication,
       appsGridView,
       columns,
       rows,

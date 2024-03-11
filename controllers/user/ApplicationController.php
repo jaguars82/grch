@@ -93,7 +93,7 @@ class ApplicationController extends Controller
         $applications = $query
             ->offset($pagination->offset)
             ->limit($pagination->limit)
-            ->orderBy(['created_at' => SORT_DESC])
+            ->orderBy(['updated_at' => SORT_DESC])
             ->all();
 
         /**

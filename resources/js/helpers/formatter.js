@@ -25,6 +25,15 @@ function asDateTime (rawDate) {
   return `${day}.${month}.${date.getFullYear()}, ${hour}:${minute}`
 }
 
+function asUpdateDateTime (rawDate) {
+  const date = new Date(rawDate)
+  const day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+  const month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
+  const hour = date.getHours() < 10 ? '0' + date.getHours() : date.getHours()
+  const minute = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
+  return `${day}.${month}.${date.getFullYear()} в ${hour}:${minute}`
+}
+
 function asFloor (floor, totalFloors) {
   return totalFloors > 0 ? `${floor}-й этаж (из ${totalFloors})` : `${floor}-й этаж`
 }
@@ -72,4 +81,4 @@ function asPricePerArea (amount) {
 	return amount > 0 ? `${formattedAmount}  ₽/м²` : ''
 }
 
-export { asArea, asCurrency, asDate, asDateTime, asFloor, asNumberString, asQuarterAndYearDate, asPricePerArea }
+export { asArea, asCurrency, asDate, asDateTime, asUpdateDateTime, asFloor, asNumberString, asQuarterAndYearDate, asPricePerArea }
