@@ -214,8 +214,12 @@ class Developer extends \app\models\Developer
             if (array_key_exists($newbuildingComplexData['name'], $savedNewbuildingComplex)) {
                 $newbuildingComplex = $savedNewbuildingComplex[$newbuildingComplexData['name']];
             } else {
+                // fix 'setting up read-only property NewbuildingComplex::district'
+                if (array_key_exists('district', $newbuildingComplexData)) {
+                   unset($newbuildingComplexData['district']); 
+                }
+                
                 $newbuildingComplexData['feed_name'] = $newbuildingComplexData['name'];
-
                 $newbuildingComplex = new NewbuildingComplex($newbuildingComplexData);
                 $newbuildingComplex->developer_id = $this->id;
                 $newbuildingComplex->save();

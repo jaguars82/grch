@@ -9,6 +9,13 @@ function asCurrency (amount, fractionDigits = false) {
 	return amount > 0 ? `${formattedAmount} ₽` : 'стоимость не указана'
 }
 
+function asDate (rawDate) {
+  const date = new Date(rawDate)
+  const day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+  const month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
+  return `${day}.${month}.${date.getFullYear()}`
+}
+
 function asDateTime (rawDate) {
   const date = new Date(rawDate)
   const day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
@@ -65,4 +72,4 @@ function asPricePerArea (amount) {
 	return amount > 0 ? `${formattedAmount}  ₽/м²` : ''
 }
 
-export { asArea, asCurrency, asDateTime, asFloor, asNumberString, asQuarterAndYearDate, asPricePerArea }
+export { asArea, asCurrency, asDate, asDateTime, asFloor, asNumberString, asQuarterAndYearDate, asPricePerArea }

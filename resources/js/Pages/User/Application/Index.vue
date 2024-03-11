@@ -32,16 +32,19 @@
               <template v-slot:body="props">
                 <q-tr :props="props">
                   <q-td key="application_number" :props="props">
-                    {{ props.row.application_number }}
+                    <inertia-link :href="`/user/application/view?id=${props.row.id}`"><span class="text-bold">{{ props.row.application_number }}</span></inertia-link> от {{ props.row.created }}
                   </q-td>
-                  <q-td key="application_number" :props="props">
-                    {{ props.row.author }}
+                  <q-td key="author" :props="props">
+                    <div><span class="text-bold">{{ props.row.author }},</span>
+                    {{ props.row.agency }}, {{ props.row.role }}</div>
+                    <div>{{ props.row.author_phone }}</div>
                   </q-td>
                   <q-td key="status" :props="props">
                     {{ props.row.status }}
                   </q-td>
                   <q-td key="client_fio" :props="props">
-                    {{ props.row.client_fio }}
+                    <div class="text-bold">{{ props.row.client_fio }}</div>
+                    <div v-if="props.row.client_phone">{{ props.row.client_phone }}</div>
                   </q-td>
                   <q-td key="link" :props="props">
                     <inertia-link :href="props.row.link">
@@ -82,6 +85,7 @@ import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
 import GridTableToggle from '@/Components/Elements/GridTableToggle.vue'
 import useEmitter from '@/composables/use-emitter'
+import { asDate } from '@/helpers/formatter'
 import { userInfo } from '@/composables/shared-data'
 
 export default ({
@@ -144,7 +148,7 @@ export default ({
       { name: 'application_number', required: true, align: 'left', label: 'Номер заявки', field: 'application_number', sortable: true },
       { name: 'author', required: true, align: 'left', label: 'Автор', field: 'author', sortable: true },
       { name: 'status', required: true, align: 'left', label: 'Статус', field: 'status', sortable: true },
-      { name: 'client_fio', align: 'center', label: 'ФИО клиента', field: 'client_fio', sortable: true },
+      { name: 'client_fio', align: 'left', label: 'ФИО клиента', field: 'client_fio', sortable: true },
       { name: 'link', align: 'center', label: '', field: 'link', sortable: false },
     ]
 
@@ -153,11 +157,16 @@ export default ({
       props.applications.forEach(row => {
         const processedItem = {
           id: row.id,
-          author: `${row.author.last_name} ${row.author.first_name}, ${row.author.roleLabel} ${row.author.agency_name}`,
+          author: `${row.author.last_name} ${row.author.first_name}`,
+          author_phone: row.author.phone,
+          agency: row.author.agency_name,
+          role: row.author.roleLabel,
           application_number: row.application_number,
           status: props.statusMap[row.status],
           client_fio: `${row.client_lastname} ${row.client_firstname} ${row.client_middlename}`,
-          link: `/user/application/view?id=${row.id}`
+          client_phone: row.client_phone,
+          link: `/user/application/view?id=${row.id}`,
+          created: asDate(row.created_at),
         }
         processedRows.push(processedItem)
       });

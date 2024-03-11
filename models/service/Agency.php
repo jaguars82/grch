@@ -185,7 +185,7 @@ class Agency extends \app\models\Agency
                 $newAdvertisementRow['agency_id'] = $this->id;
                 $newAdvertisementRow['creation_type'] = 1;
                 $newAdvertisementRow['author_id'] = $authorId !== 0 ? $authorId : null;
-                $newAdvertisementRow['author_info'] = json_encode($advertisementData['agent']) ;
+                $newAdvertisementRow['author_info'] = json_encode($advertisementData['agent'], JSON_UNESCAPED_UNICODE) ;
                 $newAdvertisementRow['is_active'] = 1;
                 $newAdvertisementRow['creation_date'] = $advertisementData['creation_date'];
                 $newAdvertisementRow['last_update_date'] = $advertisementData['last_update_date'];
@@ -366,7 +366,7 @@ class Agency extends \app\models\Agency
                 $newSecondaryRoomRow['street_name'] = $advertisementData['street_name'];
                 $newSecondaryRoomRow['building_number'] = $advertisementData['building_number'];
                 $newSecondaryRoomRow['address'] = $advertisementData['location']['address'];
-                $newSecondaryRoomRow['location_info'] = json_encode($advertisementData['location']);
+                $newSecondaryRoomRow['location_info'] = json_encode($advertisementData['location'], JSON_UNESCAPED_UNICODE);
 
                 // var_dump($newSecondaryRoomRow); die;
 
