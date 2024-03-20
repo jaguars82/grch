@@ -14,7 +14,7 @@
       :bordered="xsOptions"
       side="left"
       :width="$q.screen.gt.md ? 400 : 300"
-      :breakpoint="100"
+      :breakpoint="600"
       :mini-to-overlay="xsOptions"
       :mini="miniState"
     >
@@ -38,7 +38,7 @@
       v-model="drawerRight"
       side="right"
       :width="$q.screen.gt.md ? 400 : 300"
-      :breakpoint="100"
+      :breakpoint="600"
     >
       <div class="topoffset"></div>
       <slot name="right-drawer"></slot>

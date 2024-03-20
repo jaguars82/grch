@@ -6,6 +6,20 @@
     <template v-slot:main>
       <RegularContentContainer title="Заявки">
         <template v-slot:content>
+
+          <q-btn class="q-mt-sm" unelevated color="primary" label="Создать заявку" icon="note_add" @click="newAppDialog = true" />
+          <q-dialog v-model="newAppDialog">
+            <q-card>
+              <q-card-section class="row items-center q-pb-none no-wrap">
+                <div class="text-h4">Укажите объект для бронирования</div>
+                <q-space />
+                <q-btn class="q-ml-md" icon="close" flat round dense v-close-popup />
+              </q-card-section>
+              <q-card-section>
+                <SelectObject />
+              </q-card-section>
+            </q-card>
+          </q-dialog>
           
           <GridTableToggle :defaultMode="appsGridView" />
 
@@ -103,6 +117,7 @@ import ProfileLayout from '@/Layouts/ProfileLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
 import GridTableToggle from '@/Components/Elements/GridTableToggle.vue'
+import SelectObject from '@/Components/Forms/SelectObject.vue'
 import useEmitter from '@/composables/use-emitter'
 import { asDate, asUpdateDateTime } from '@/helpers/formatter'
 import { getApplicationFormParamsByStatus } from '@/composables/components-configurations'
@@ -113,7 +128,8 @@ export default ({
     ProfileLayout,
     Breadcrumbs,
     RegularContentContainer,
-    GridTableToggle
+    GridTableToggle,
+    SelectObject
   },
   props: {
     applications: Array,
@@ -163,6 +179,8 @@ export default ({
         rowsNumber: props.totalRows
       }
     })
+
+    const newAppDialog = ref(false)
 
     const columns = [
       { name: 'application_number', required: true, align: 'left', label: 'Номер заявки', field: 'application_number', sortable: true },
@@ -235,6 +253,7 @@ export default ({
       breadcrumbs,
       goToApplication,
       appsGridView,
+      newAppDialog,
       columns,
       rows,
       pagination,

@@ -17,9 +17,9 @@
             >
               <input type="hidden" v-model="formfields.operation" />
 
-              <div v-if="eOperation === 'change_object' && application.status < 3">
+              <div v-if="eOperation === 'change_object' && application.status < 3" class="row q-col-gutter-none">
 
-                <div class="col-sm-6 col-xs-12 q-py-xs">
+                <div class="col-12 col-sm-6 q-py-xs" :class="{'q-pr-none': $q.screen.xs }">
                   <q-select
                     outlined
                     v-model="optfields.developer_select"
@@ -45,7 +45,7 @@
                   </q-select>
                 </div>
 
-                <div class="col-sm-6 col-xs-12 q-py-xs">
+                <div class="col-12 col-sm-6 q-py-xs q-pr-none">
                   <q-select
                     outlined
                     v-model="optfields.buildingComplex_select"
@@ -71,7 +71,7 @@
                   </q-select>
                 </div>
 
-                <div class="col-sm-4 col-xs-12 q-py-xs">
+                <div class="col-12 col-sm-4 q-py-xs" :class="{'q-pr-none': $q.screen.xs }">
                   <q-select
                     outlined
                     v-model="optfields.building_select"
@@ -96,7 +96,7 @@
                   </q-select>
                 </div>
 
-                <div class="col-sm-4 col-xs-12 q-py-xs">
+                <div class="col-12 col-sm-4 q-py-xs" :class="{'q-pr-none': $q.screen.xs }">
                   <q-select
                     outlined
                     v-model="optfields.entrance_select"
@@ -120,7 +120,7 @@
                   </q-select>
                 </div>
 
-                <div class="col-sm-4 col-xs-12 q-py-xs">
+                <div class="col-12 col-sm-4 q-py-xs q-pr-none">
                   <q-select
                     outlined
                     v-model="optfields.flat_select"
@@ -146,31 +146,30 @@
 
                 <div
                   v-if="formfields.operation === 'approve_reservation_by_developer' || formfields.operation === 'approve_reservation_from_developer_by_admin' && application.status == 2"
-                  class="q-pa-md"                
                 >
-                  <div class="row q-py-sm">
-                    <div class="col-sm-4 col-xs-12">
+                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                    <div class="col-12 col-sm-4" :class="{'q-py-xs': $q.screen.gt.xs, 'q-pr-none': $q.screen.xs }">
                       <q-input outlined v-model="formfields.manager_lastname" label="Фамилия менеджера" />
                     </div>
-                    <div class="col-sm-4 col-xs-12">
+                    <div class="col-12 col-sm-4" :class="{'q-py-xs': $q.screen.gt.xs, 'q-pr-none': $q.screen.xs }">
                       <q-input outlined v-model="formfields.manager_firstname" label="Имя менеджера" />
                     </div>
-                    <div class="col-sm-4 col-xs-12">
+                    <div class="col-12 col-sm-4 q-pr-none" :class="{'q-py-xs': $q.screen.gt.xs }">
                       <q-input outlined v-model="formfields.manager_middlename" label="Отчество менеджера" />
                     </div>
                   </div>
 
-                  <div class="row q-py-sm">
-                    <div class="col-sm-6 col-xs-12">
+                  <div class="row q-col-gutter-none" :class="{'q-py-sm': $q.screen.xs }">
+                    <div class="col-12 col-sm-6" :class="{'q-py-xs': $q.screen.gt.xs, 'q-pr-none': $q.screen.xs }">
                       <q-input outlined v-model="formfields.manager_phone" label="Телефон менеджера" />
                     </div>
-                    <div class="col-sm-6 col-xs-12">
+                    <div class="col-12 col-sm-6 q-pr-none" :class="{'q-py-xs': $q.screen.gt.xs }">
                       <q-input outlined v-model="formfields.manager_email" label="Email менеджера" />
                     </div>
                   </div>
 
-                  <div class="row q-py-sm">
-                    <div class="col q-mx-md">
+                  <div class="row q-col-gutter-none" :class="{'q-pt-sm': $q.screen.xs }">
+                    <div class="col" :class="{'q-py-xs': $q.screen.gt.xs }">
                       <q-input outlined autogrow v-model="formfields.reservation_conditions" label="Условия бронирования" />
                     </div>
                   </div>
@@ -221,7 +220,7 @@ export default {
     Loading
   },
   props: {
-    application: Array,
+    application: Object,
     statusMap: Array,
     eOperation: {
       type: String,
@@ -483,7 +482,8 @@ export default {
       entranceOptions,
       onEntranceSelect,
       flatOptions,
-      onSubmit }
+      onSubmit
+    }
   }
 }
 
