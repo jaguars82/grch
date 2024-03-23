@@ -1,6 +1,6 @@
 <?php
 
-namespace app\components\import\Vdk;
+namespace app\components\import\Rassvet;
 
 use app\components\exceptions\AppException;
 use app\components\import\ImportServiceInterface;
@@ -9,7 +9,7 @@ use app\models\Flat;
 /**
  * Service for importing flat's data from xml-feed for developer "ВДК"
  */
-class XmlImportService implements ImportServiceInterface
+class XmlImportServiceDomClickSchema implements ImportServiceInterface
 {
     /**
      * {@inheritdoc}
@@ -167,21 +167,16 @@ class XmlImportService implements ImportServiceInterface
             $this->checkObjectData($complex);
             $objectName = (string)$complex->name;
 
-            // manual corrections for some newbuilding complexes
-			if (strpos($objectName, "Бунин 3 очередь") !== false) {
-				$objectName = "ЖК «Бунин»";
-			}
-
 			if (!isset($complex->buildings->building)) {
 				continue;
 			}
 
             if (($currentObjectId = $this->getCurrentEntityId($objects, $objectName)) == -1) {
-                $address = (string)$complex->address;
+                // $address = (string)$complex->address;
 
                 $objects[$objectId] = [
                     'name' => $objectName,
-                    'address' => $address,
+                    // 'address' => $address,
                     'district' => NULL,
                 ];
 
