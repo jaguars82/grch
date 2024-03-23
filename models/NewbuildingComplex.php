@@ -84,7 +84,7 @@ class NewbuildingComplex extends ActiveRecord
             [['archive_id', 'building_type_id', 'street_type_id', 'district_id', 'city_id', 'region_id', 'developer_id', 'offer_new_price_permit'], 'integer'],
             [['building_number'], 'string', 'max' => 20],
             [['longitude', 'latitude'], 'double'],
-            [['detail', 'offer_info', 'algorithm'], 'string'],
+            [['detail', 'offer_info', 'algorithm', 'address'], 'string'],
             [['project_declaration', 'bank_tariffs', 'virtual_structure', 'virtualbuildings'], 'safe'],
             [['name', 'logo', 'street_name', 'master_plan'], 'string', 'max' => 200],
             [['name', 'logo'], 'unique'],
