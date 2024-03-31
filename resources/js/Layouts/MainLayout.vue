@@ -17,21 +17,25 @@
       :bordered="xsOptions"
       side="left"
       :width="$q.screen.gt.md ? 400 : 300"
-      :breakpoint="600"
+      :breakpoint="$q.platform.is.mobile ? 1024 : 100"
       :mini-to-overlay="xsOptions"
       :mini="miniStateLeft"
     >
       <template v-slot:mini>
-        <div :class="{ 'topoffset-xs': $q.screen.xs, 'topoffset': $q.screen.gt.xs }"></div>
-        <div class="row justify-center">
-          <q-btn class="q-mt-sm" round unelevated icon="menu" @click="miniStateLeft = false"/>
-        </div>
+        <template v-if="!$q.platform.is.mobile">
+          <div :class="{ 'topoffset-xs': $q.screen.xs, 'topoffset': $q.screen.gt.xs }"></div>
+          <div class="row justify-center">
+            <q-btn class="q-mt-sm" round unelevated icon="menu" @click="miniStateLeft = false"/>
+          </div>
+        </template>
       </template>
 
-      <div :class="{ 'topoffset-xs': $q.screen.xs, 'topoffset': $q.screen.gt.xs }"></div>
-      <div class="row justify-end items-center">
-        <q-btn size="sm" dense class="q-my-xs q-mr-sm" round unelevated icon="close" @click="miniStateLeft = true"/>
-      </div>
+      <template v-if="!$q.platform.is.mobile">
+        <div :class="{ 'topoffset-xs': $q.screen.xs, 'topoffset': $q.screen.gt.xs }"></div>
+        <div class="row justify-end items-center">
+          <q-btn size="sm" dense class="q-my-xs q-mr-sm" round unelevated icon="close" @click="miniStateLeft = true"/>
+        </div>
+      </template>
       <slot name="left-drawer"></slot>
     </q-drawer>
 
@@ -42,36 +46,38 @@
       :bordered="xsOptions"
       side="right"
       :width="$q.screen.gt.md ? 400 : 300"
-      :breakpoint="600"
+      :breakpoint="$q.platform.is.mobile ? 1024 : 100"
       :mini-to-overlay="xsOptions"
       :mini="miniStateRight"
     >
       <template v-slot:mini>
-        <div class="bg-primary" :class="{ 'topoffset-xs': $q.screen.xs, 'topoffset': $q.screen.gt.xs }">
-          <UserMenu v-if="$q.screen.xs" />
-        </div>
-        <div class="row justify-center">
-          <q-btn class="q-mt-sm" round unelevated icon="menu_open" @click="miniStateRight = false"/>
-        </div>
+        <template v-if="!$q.platform.is.mobile">
+          <div class="bg-primary" :class="{ 'topoffset-xs': $q.screen.xs, 'topoffset': $q.screen.gt.xs }">
+            <UserMenu v-if="$q.screen.xs" />
+          </div>
+          <div class="row justify-center">
+            <q-btn class="q-mt-sm" round unelevated icon="menu_open" @click="miniStateRight = false"/>
+          </div>
+        </template>
       </template>
 
-      <div class="bg-primary fixed-top z-top" :class="{ 'topoffset-xs': $q.screen.xs, 'topoffset': $q.screen.gt.xs }">
-        <div class="flex justify-end">
-          <UserMenu v-if="$q.screen.xs" />
+      <template v-if="!$q.platform.is.mobile">
+        <div class="bg-primary" :class="{ 'topoffset-xs': $q.screen.xs, 'topoffset': $q.screen.gt.xs }">
+          <div class="flex justify-end">
+            <UserMenu v-if="$q.screen.xs" />
+          </div>
         </div>
-      </div>
-      <div :class="{ 'topoffset-xs': $q.screen.xs, 'topoffset': $q.screen.gt.xs }"></div>
-      <div class="row justify-start items-center">
-        <q-btn size="sm" dense class="q-my-xs q-ml-sm lt-xl" round unelevated icon="close" @click="miniStateRight = true"/>
-        <q-icon color="transparent" class="xl" size="sm" name="fake-icon" />
-      </div>
+        <div class="row justify-start items-center">
+          <q-btn size="sm" dense class="q-my-xs q-ml-sm" round unelevated icon="close" @click="miniStateRight = true"/>
+        </div>
+      </template>
       <slot name="right-drawer"></slot>
     </q-drawer>
 
     <!-- Page -->
     <q-page-container>
       <q-page
-        :class="{ 'gaps-lg': gutters && $q.screen.lg, 'gaps-xl': gutters && $q.screen.xl }"
+        :class="{ 'q-px-xl': gutters && ($q.screen.lg || $q.screen.xl) }"
       >
         <slot name="breadcrumbs"></slot>
         <div class="flex row">
@@ -171,13 +177,5 @@ export default ({
   height: 50px;
   min-height: 50px;
   max-height: 50px;
-}
-.gaps-lg {
-  padding-left: 70px;
-  padding-right: 70px;
-}
-.gaps-xl {
-  padding-left: 120px;
-  padding-right: 120px;
 }
 </style>

@@ -96,4 +96,10 @@ class StatusLabel extends \yii\db\ActiveRecord
     {
         return $this->hasOne(StatusLabelType::className(), ['id' => 'label_type_id']);
     }
+
+    public function getAdvertisement()
+    {
+        return $this->hasOne(SecondaryAdvertisement::className(), ['id' => 'secondary_advertisement_id'])
+                ->viaTable('secondary_advertisement_status_label', ['status_label_id' => 'id']);
+    }
 }

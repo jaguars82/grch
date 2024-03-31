@@ -14,7 +14,7 @@
       :bordered="xsOptions"
       side="left"
       :width="$q.screen.gt.md ? 400 : 300"
-      :breakpoint="600"
+      :breakpoint="100"
       :mini-to-overlay="xsOptions"
       :mini="miniState"
     >
@@ -27,8 +27,7 @@
 
       <div class="topoffset"></div>
       <div class="row justify-end items-center">
-        <q-btn size="sm" dense class="q-my-xs q-mr-sm lt-lg" round unelevated icon="close" @click="miniState = true"/>
-        <q-icon color="transparent" class="gt-md" size="sm" name="fake-icon" />
+        <q-btn size="sm" dense class="q-my-xs q-mr-sm" round unelevated icon="close" @click="miniState = true"/>
       </div>
       <ProfileMenu></ProfileMenu>
     </q-drawer>
@@ -38,7 +37,7 @@
       v-model="drawerRight"
       side="right"
       :width="$q.screen.gt.md ? 400 : 300"
-      :breakpoint="600"
+      :breakpoint="100"
     >
       <div class="topoffset"></div>
       <slot name="right-drawer"></slot>
@@ -46,7 +45,7 @@
 
     <q-page-container>
       <q-page
-        :class="{ 'gaps-lg': $q.screen.lg, 'gaps-xl': $q.screen.xl }"
+        :class="{ 'q-px-xl': $q.screen.lg || $q.screen.xl }"
       >
         <slot name="breadcrumbs"></slot>
         <div class="row">
@@ -118,13 +117,5 @@ export default ({
   height: 58px;
   min-height: 58px;
   max-height: 58px;
-}
-.gaps-lg {
-  padding-left: 70px;
-  padding-right: 70px;
-}
-.gaps-xl {
-  padding-left: 120px;
-  padding-right: 120px;
 }
 </style>

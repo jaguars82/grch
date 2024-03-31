@@ -7,7 +7,10 @@
         v-model="optfields.developer_select"
         :options="developerOptions"
         label="Застройщик"
+        emit-value
+        map-options
         options-dense
+        :dense="$q.screen.lt.md"
         @update:model-value="onDeveloperSelect"
       >
         <template v-slot:append>
@@ -33,7 +36,10 @@
         v-model="optfields.buildingComplex_select"
         :options="buildingComplexOptions"
         label="Жилой комплекс"
+        emit-value
+        map-options
         options-dense
+        :dense="$q.screen.lt.md"
         :disable="!buildingComplexOptions.length"
         @update:model-value="onBuildingComplexSelect"
       >
@@ -59,7 +65,10 @@
         v-model="optfields.building_select"
         :options="buildingOptions"
         label="Позиция"
+        emit-value
+        map-options
         options-dense
+        :dense="$q.screen.lt.md"
         :disable="!buildingOptions.length"
         @update:model-value="onBuildingSelect"
       >
@@ -84,7 +93,10 @@
         v-model="optfields.entrance_select"
         :options="entranceOptions"
         label="Подъезд"
+        emit-value
+        map-options
         options-dense
+        :dense="$q.screen.lt.md"
         :disable="!entranceOptions.length"
         @update:model-value="onEntranceSelect"
       >
@@ -108,8 +120,12 @@
         v-model="optfields.flat_select"
         :options="flatOptions"
         label="Квартира"
+        emit-value
+        map-options
         options-dense
+        :dense="$q.screen.lt.md"
         :disable="!flatOptions.length"
+        @update:model-value="onFlatSelect"
       >
         <template v-slot:append>
           <q-icon
@@ -127,6 +143,7 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue'
+import useEmitter from '@/composables/use-emitter'
 import axios from 'axios'
 
 export default {
@@ -206,7 +223,7 @@ export default {
       optfields.value.building_select = null
       optfields.value.entrance_select = null
       optfields.value.flat_select = null
-      axios.post(`/newbuilding-complex/get-for-developer?id=${optfields.value.developer_select.value}`)
+      axios.post(`/newbuilding-complex/get-for-developer?id=${optfields.value.developer_select}`)
       .then(function (response) {
         buildingComplexes.value = response.data
       })
@@ -229,7 +246,7 @@ export default {
       optfields.value.building_select = null
       optfields.value.entrance_select = null
       optfields.value.flat_select = null
-      axios.post(`/newbuilding/get-for-newbuilding-complex?id=${optfields.value.buildingComplex_select.value}`)
+      axios.post(`/newbuilding/get-for-newbuilding-complex?id=${optfields.value.buildingComplex_select}`)
       .then(function (response) {
         buildings.value = response.data
       })
@@ -251,7 +268,7 @@ export default {
     const onBuildingSelect = () => {
       optfields.value.entrance_select = null
       optfields.value.flat_select = null
-      axios.post(`/entrance/get-for-newbuilding?id=${optfields.value.building_select.value}`)
+      axios.post(`/entrance/get-for-newbuilding?id=${optfields.value.building_select}`)
       .then(function (response) {
         entrances.value = response.data
       })
@@ -272,7 +289,7 @@ export default {
 
     const onEntranceSelect = () => {
       optfields.value.flat_select = null
-      axios.post(`/entrance/get-flats-by-entrance?id=${optfields.value.entrance_select.value}`)
+      axios.post(`/entrance/get-flats-by-entrance?id=${optfields.value.entrance_select}`)
       .then(function (response) {
         flats.value = response.data
       })
@@ -290,6 +307,12 @@ export default {
       }
       return options
     })
+
+    const emitter = useEmitter()
+
+    const onFlatSelect = () => {
+      emitter.emit('select-object-flat', optfields.value)
+    }
 
     onMounted (() => {
       // Get developers
@@ -312,7 +335,8 @@ export default {
       onBuildingSelect,
       entranceOptions,
       onEntranceSelect,
-      flatOptions
+      flatOptions,
+      onFlatSelect
     }
 
   }

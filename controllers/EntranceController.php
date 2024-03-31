@@ -74,7 +74,7 @@ class EntranceController extends Controller
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;        
         $flats = Flat::find()
-            ->select(['number'])
+            ->select(['id', 'number', 'floor'])
             ->where(['entrance_id' => $id])
             ->andWhere(['status' => 0])
             ->orderBy(['number' => SORT_ASC])

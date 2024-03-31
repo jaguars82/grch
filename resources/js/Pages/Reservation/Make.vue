@@ -1,6 +1,9 @@
 <template>
   <div>
     <MainLayout>
+      <template v-slot:breadcrumbs>
+        <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
+      </template>
       <template v-slot:main>
         <q-card class="q-ma-md shadow-7">
           <q-card-section>
@@ -179,6 +182,7 @@
 import { ref, computed } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import MainLayout from '@/Layouts/MainLayout.vue'
+import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import Loading from "@/Components/Elements/Loading.vue"
 import FlatListItem from '@/Components/Flat/FlatListItem.vue'
 import MessageScreen from '@/Components/MessageScreen.vue'
@@ -187,6 +191,7 @@ import { userInfo } from '@/composables/shared-data'
 export default ({
   components: {
     MainLayout,
+    Breadcrumbs,
     Loading,
     FlatListItem,
     MessageScreen
@@ -198,6 +203,40 @@ export default ({
     appId: String
   },
   setup(props) {
+    const breadcrumbs = ref([
+      {
+        id: 1,
+        label: 'Главная',
+        icon: 'home',
+        url: '/',
+        data: false,
+        options: false
+      },
+      {
+        id: 2,
+        label: 'Кабинет пользователя',
+        icon: 'business_center',
+        url: '/user/profile',
+        data: false,
+        options: false
+      },
+      {
+        id: 3,
+        label: 'Заявки',
+        icon: 'real_estate_agent',
+        url: '/user/application/index',
+        data: false,
+        options: false
+      },
+      {
+        id: 4,
+        label: `Создание заявки на бронирование`,
+        icon: 'note_add',
+        url: `reservation/make?flatId=${props.flat.id}`,
+        data: false,
+        options: false
+      },
+    ])
 
     const loading = ref(false)
 
@@ -256,7 +295,7 @@ export default ({
     // error screen
     const goBackToApplication = () => Inertia.get('/reservation/make', { flatId: props.flat.id })
 
-    return { loading, user, numberString, formfields, onSubmit, onReset, goToApplication, goToProfile, goBackToApplication, closeApplication }
+    return { breadcrumbs, loading, user, numberString, formfields, onSubmit, onReset, goToApplication, goToProfile, goBackToApplication, closeApplication }
   },
 })
 </script>

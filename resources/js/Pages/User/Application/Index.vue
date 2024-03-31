@@ -18,6 +18,23 @@
               <q-card-section>
                 <SelectObject />
               </q-card-section>
+              <q-card-actions align="right">
+                <q-btn
+                  color="primary"
+                  rounded
+                  unelevated
+                  label="Создать заявку"
+                  :disable="!flatIdForNewApplication"
+                  @click="goToMakeApplication"
+                />
+                <q-btn
+                  rounded
+                  unelevated
+                  label="Отмена"
+                  icon="close"
+                  v-close-popup
+                />
+              </q-card-actions>
             </q-card>
           </q-dialog>
           
@@ -247,6 +264,19 @@ export default ({
       Inertia.post('/user/application/index', { show: showFilter.value.value }, { preserveScroll: true, preserveState: true })
     }
 
+    /** New application form */
+    const flatIdForNewApplication = ref('')
+
+    emitter.on('select-object-flat', (payload) => {
+      if ('flat_select' in payload && payload.flat_select) {
+        flatIdForNewApplication.value = payload.flat_select
+      }
+    })
+
+    const goToMakeApplication = () => {
+      Inertia.get(`/reservation/make?flatId=${flatIdForNewApplication.value}`)
+    }
+
     return {
       asUpdateDateTime,
       user,
@@ -260,7 +290,9 @@ export default ({
       onRequest,
       showOptions,
       showFilter,
-      onShowFilterChange
+      onShowFilterChange,
+      flatIdForNewApplication,
+      goToMakeApplication
     }
   },
 })

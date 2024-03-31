@@ -1,5 +1,5 @@
 <template>
-  <MainLayout :drawers="{ left: { is: false, opened: false }, right: { is: true, opened: true } }">
+  <MainLayout :drawers="{ left: { is: false, opened: false }, right: { is: true, opened: $q.platform.is.mobile ? false : true } }">
 
     <template v-slot:breadcrumbs>
       <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
@@ -357,10 +357,10 @@
                       </div>
                     </template>
 
-                    <div class="bg-grey-3 q-pa-sm rounded-borders overflow-auto">
-                      <div class="row q-pl-lg relative-position" v-for="floor of Object.keys(entrance.flats).reverse()">
-                        <div class="col absolute-left text-weight-bolder text-grey">{{ floor }}</div>
-                        <div class="col-11">
+                    <div class="bg-grey-3 q-pl-none q-py-sm q-pr-sm rounded-borders overflow-auto">
+                      <div class="row q-pl-none relative-position no-wrap w-max-content" v-for="floor of Object.keys(entrance.flats).reverse()">
+                        <div class="floor-cell q-pl-sm text-weight-bolder bg-grey-3 text-grey">{{ floor }}</div>
+                        <div>
                           <div class="row no-wrap">
                             <FlatCell v-for="flatId of Object.keys(entrance.flats[floor])" :flat="entrance.flats[floor][flatId]" :currentlyOpened="flatId == flat.id" />
                           </div>
@@ -535,8 +535,8 @@
     <template v-slot:right-drawer>
       <div class="q-pa-md">
         <p class="q-mb-xs text-h4 text-center"><span class="text-capitalize">{{ asNumberString(flat.rooms) }}</span>комнатная квартира № {{ flat.number }}</p>
-        <p class="q-mb-xs text-h6 text-center text-grey">Обновлено {{ asDateTime(flat.updated_at) }}</p>
-        <p class="q-mb-xs text-h6 text-center text-grey">{{ flat.complex.address }}</p>
+        <p class="q-mb-xs text-h5 text-center text-grey">Обновлено {{ asDateTime(flat.updated_at) }}</p>
+        <p class="q-mb-xs text-h5 text-center text-grey">{{ flat.complex.address }}</p>
         <div class="q-py-md rounded-borders bg-grey-2 relative-position">
           <q-badge v-if="flat.hasDiscount && flat.status === 0" color="orange" floating>
             Есть скидка
@@ -807,5 +807,15 @@ export default {
 .fitparent {
   height: 100%;
   max-height: 100%;
+}
+.w-max-content {
+  width: max-content;
+}
+.floor-cell {
+  width: 25px;
+  min-width: 25px;
+  position: sticky;
+  top: 0;
+  left: 0;
 }
 </style>
