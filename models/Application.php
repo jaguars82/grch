@@ -27,6 +27,16 @@ use yii\db\ActiveRecord;
  * @property string $reservation_conditions
  * @property string $admin_comment
  * @property int $is_active
+ * @property int $is_toll
+ * @property int $receipt_provided
+ * @property int $ddu_provided
+ * @property float $ddu_price
+ * @property float $ddu_cash
+ * @property float $ddu_mortgage
+ * @property float $ddu_matcap
+ * @property string $ddu_cash_paydate
+ * @property string $ddu_mortgage_paydate
+ * @property string $ddu_matcap_paydate
  * @property string $created_at
  * @property string $updated_at
  * @property string $application_number
@@ -103,9 +113,10 @@ class Application extends ActiveRecord
         return [
             [['flat_id', 'applicant_id', 'developer_id'/*, 'status'*/], 'required'],
             [['flat_id', 'applicant_id', 'developer_id', 'status'], 'integer'],
-            [['client_firstname', 'client_lastname', 'client_middlename', 'client_phone', 'client_email',  'applicant_comment', 'manager_firstname', 'manager_lastname', 'manager_middlename', 'manager_phone', 'manager_email', 'reservation_conditions', 'admin_comment', 'application_number', 'deal_success_docs'], 'string'],
+            [['client_firstname', 'client_lastname', 'client_middlename', 'client_phone', 'client_email',  'applicant_comment', 'manager_firstname', 'manager_lastname', 'manager_middlename', 'manager_phone', 'manager_email', 'reservation_conditions', 'admin_comment', 'ddu_cash_paydate', 'ddu_mortgage_paydate', 'ddu_matcap_paydate', 'application_number', 'deal_success_docs'], 'string'],
+            [['ddu_price', 'ddu_cash', 'ddu_mortgage', 'ddu_matcap'], 'double'],
             [['created_at', 'updated_at'], 'safe'],
-            [['is_active'], 'boolean'],
+            [['is_active', 'is_toll', 'receipt_provided', 'ddu_provided'], 'boolean'],
             [['flat_id'], 'exist', 'skipOnError' => true, 'targetClass' => Flat::className(), 'targetAttribute' => ['flat_id' => 'id']],
             [['developer_id'], 'exist', 'skipOnError' => true, 'targetClass' => Developer::className(), 'targetAttribute' => ['developer_id' => 'id']],
             [['applicant_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['applicant_id' => 'id']],
@@ -162,6 +173,11 @@ class Application extends ActiveRecord
     public function getFlat ()
     {
         return $this->hasOne(Flat::className(), ['id' => 'flat_id']);
+    }
+
+    public function getDocuments ()
+    {
+        return $this->hasMany(ApplicationDocument::className(), ['application_id' => 'id']); 
     }
 
     public function getHistory ()

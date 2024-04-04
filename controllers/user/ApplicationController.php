@@ -12,6 +12,7 @@ use app\models\Newbuilding;
 use app\models\Entrance;
 use app\models\Flat;
 use app\models\Application;
+use app\models\ApplicationDocument;
 use app\models\form\ApplicationForm;
 use app\models\ApplicationHistory;
 use app\models\form\ApplicationHistoryForm;
@@ -228,6 +229,7 @@ class ApplicationController extends Controller
                         $application->manager_phone =  $applicationForm['manager_phone'];
                         $application->manager_email =  $applicationForm['manager_email'];
                         $application->reservation_conditions =  $applicationForm['reservation_conditions'];
+                        $application->is_toll =  $applicationForm['is_toll'];
 
                         $application->status = 3;
                         $application->save();
@@ -297,6 +299,7 @@ class ApplicationController extends Controller
                             $application->manager_phone =  $applicationForm['manager_phone'];
                             $application->manager_email =  $applicationForm['manager_email'];
                             $application->reservation_conditions =  $applicationForm['reservation_conditions'];
+                            $application->is_toll =  $applicationForm['is_toll'];
                         }
                         
                         $application->status = 4;
@@ -349,6 +352,27 @@ class ApplicationController extends Controller
                     $transaction = \Yii::$app->db->beginTransaction();
 
                     try {
+                        if ($application->is_toll === 1) {
+                            $applicationForm->load(\Yii::$app->request->post(), '');
+
+                            $applicationForm->processRecieptFile();
+
+                            if (count($applicationForm->recieptFile)) {
+                                
+                                foreach ($applicationForm->recieptFile as $ind => $file) {
+                                    $reciept = new ApplicationDocument();
+                                    $reciept->application_id = $application->id;
+                                    $reciept->user_id = \Yii::$app->user->id;
+                                    $reciept->category = ApplicationDocument::CAT_RECIEPT;
+                                    $reciept->file = $applicationForm->recieptFilesToSave[$ind];
+                                    $reciept->name = $file['name'];
+                                    $reciept->size = $file['size'];
+                                    $reciept->filetype = $file['extension'];
+                                    $reciept->save();
+                                }
+                            }
+                        }
+
                         $application->status = 5;
                         $application->save();
 

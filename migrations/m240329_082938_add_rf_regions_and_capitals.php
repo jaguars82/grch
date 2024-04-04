@@ -122,7 +122,9 @@ class m240329_082938_add_rf_regions_and_capitals extends Migration
     {
         foreach ($this->regions as $region) {
             $this->delete('{{%city}}', ['name' => $region[1]]);
-            $this->delete('{{%region}}', ['name' => $region[0]]);
+            // the deletion of values from the region table is optional (reason: there can be tired values in othertables ('city'))
+            // uncoment the line below to execute the deletion
+            // $this->delete('{{%region}}', ['name' => $region[0]]);
         }
     }
 

@@ -116,6 +116,8 @@ class NewbuildingComplexController extends Controller
             'app\models\service\NewbuildingComplex' => [
                 'id', 'developer_id', 'name', 'latitude', 'longitude', 'logo', 'detail',
                 'address' => function ($nbc) { return $nbc->address; },
+                'documents' => function ($nbc) { return $nbc->documents; },
+                'banks' => function ($nbc) { return $nbc->banks; },
                 'newbuildings' => function ($nbc) {
                     return ArrayHelper::toArray($nbc->activeNewbuildings, [
                         'app\models\Newbuilding' => [

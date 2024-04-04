@@ -72,7 +72,7 @@ function getApplicationFormParamsByStatus (applicationStatus, userRole) {
           operation: 'take_in_work_by_agent',
           formCaption: 'Подтверждение приёма заявки в работу',
           formContent: '<p>При подтверждаении заявка приобретает статус <strong>"В работе"</strong>.</p>\
-                        <p>После завершения сделки, пожалуйста, сообщите об этом дополнительно на странице заявки.</p>',
+                        <!--<p>После завершения сделки, пожалуйста, сообщите об этом дополнительно на странице заявки.</p>-->',
           submitLabel: 'Взять в работу'
         },
         {
@@ -81,7 +81,7 @@ function getApplicationFormParamsByStatus (applicationStatus, userRole) {
           operation: 'take_in_work_by_manager',
           formCaption: 'Подтверждение приёма заявки в работу',
           formContent: '<p>При подтверждаении заявка приобретает статус <strong>"В работе"</strong>.</p>\
-                        <p>После завершения сделки, пожалуйста, сообщите об этом дополнительно на странице заявки.</p>',
+                        <!--<p>После завершения сделки, пожалуйста, сообщите об этом дополнительно на странице заявки.</p>-->',
           submitLabel: 'Взять в работу'
         },
       ],

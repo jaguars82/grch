@@ -144,7 +144,8 @@
 
               <template v-else>
 
-                <div
+                <!-- Approving reservation by developer or by manager -->
+                <template
                   v-if="formfields.operation === 'approve_reservation_by_developer' || formfields.operation === 'approve_reservation_from_developer_by_admin' && application.status == 2"
                 >
                   <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
@@ -161,7 +162,7 @@
 
                   <div class="row q-col-gutter-none" :class="{'q-py-sm': $q.screen.xs }">
                     <div class="col-12 col-sm-6" :class="{'q-py-xs': $q.screen.gt.xs, 'q-pr-none': $q.screen.xs }">
-                      <q-input outlined v-model="formfields.manager_phone" label="Телефон менеджера" />
+                      <q-input outlined v-model="formfields.manager_phone" label="Телефон менеджера" mask="# (###) ###-##-##" unmasked-value />
                     </div>
                     <div class="col-12 col-sm-6 q-pr-none" :class="{'q-py-xs': $q.screen.gt.xs }">
                       <q-input outlined v-model="formfields.manager_email" label="Email менеджера" />
@@ -173,25 +174,77 @@
                       <q-input outlined autogrow v-model="formfields.reservation_conditions" label="Условия бронирования" />
                     </div>
                   </div>
+                  
+                  <div class="row q-col-gutter-none" :class="{'q-pt-sm': $q.screen.xs }">
+                    <q-toggle
+                      v-model="formfields.is_toll"
+                      label="Платная бронь"
+                    />
+                  </div>
+                  
+                  <div v-if="formfields.is_toll" class="row q-col-gutter-none" :class="{'q-pt-sm': $q.screen.xs }">
+                    <q-banner inline-actions rounded class="q-mx-md q-mb-sm bg-orange text-white">
+                      <template v-slot:avatar>
+                        <q-icon name="report" color="white" />
+                      </template>
+                      <span class="text-h5"><span class="text-uppercase">Обратите внимание</span>: чтобы принять заявку в работу, агент должен будет предоставить квитанцию об оплате бронирования</span>
+                    </q-banner>
+                  </div>
+                </template>
 
-                </div>
-
-                <div
-                  v-if="formfields.operation === 'report_success_deal_by_agent' || formfields.operation === 'report_success_deal_by_manager'"
-                  class="q-pa-md"
+                <!-- Taking a paid application in work by an agent or a manager -->
+                <template
+                  v-if="application.is_toll === 1 && (formfields.operation === 'take_in_work_by_agent' || formfields.operation === 'take_in_work_by_manager')"
                 >
-                  <q-file
-                    v-model="formfields.deal_success_docs"
-                    label="Прикрепите документы о подтверждении сделки"
-                    outlined
-                    multiple
-                  />
-                </div>
+                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                    <div class="col-12">
+                      <q-file
+                        outlined
+                        v-model="recieptFile"
+                        label="Перетащите или загрузите документ (квитанцию) об оплате бронирования"
+                        multiple 
+                        use-chips
+                        accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, .jpg, image/*"
+                      >
+                        <template v-slot:prepend>
+                          <q-icon name="attach_file" />
+                        </template>
+                        <template v-slot:file="{ index, file }">
+                          <q-chip
+                            removable
+                            @remove="onRemoveRecieptFile(index)"
+                          >
+                            <q-avatar>
+                              <q-icon name="draft" />
+                            </q-avatar>
+                            <div class="ellipsis relative-position">
+                              {{ file.name }}
+                            </div>
+                          </q-chip>
+                        </template>
+                      </q-file>
+                    </div>
+                  </div>
+                </template>
+
+                <!-- Reporting successful deal -->
+                <template
+                  v-if="formfields.operation === 'report_success_deal_by_agent' || formfields.operation === 'report_success_deal_by_manager'"
+                >
+                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                    <q-file
+                      v-model="formfields.deal_success_docs"
+                      label="Прикрепите документы о подтверждении сделки"
+                      outlined
+                      multiple
+                    />
+                  </div>
+                </template>
 
               </template>
 
               <div class="text-right">
-                <q-btn unelevated :label="statusChangesForm.submitLabel" type="submit" color="primary"/>
+                <q-btn unelevated :label="statusChangesForm.submitLabel" :disable="!canSubmit" type="submit" color="primary"/>
               </div>
 
             </q-form>
@@ -298,6 +351,15 @@ export default {
 
     const statusChangesForm = getApplicationFormParamsByStatus(props.application.status, user.value.role)
 
+    // Reciept file(s) for paid reservation
+    const recieptFile = ref([])
+
+    const onRemoveRecieptFile = (ind) => {
+      const halfBeforeTheUnwantedElement = recieptFile.value.slice(0, ind)
+      const halfAfterTheUnwantedElement = recieptFile.value.slice(ind+1);
+      recieptFile.value = halfBeforeTheUnwantedElement.concat(halfAfterTheUnwantedElement);
+    }
+
     const formfields = ref(
       {
         operation: props.eOperation ? props.eOperation : statusChangesForm ? statusChangesForm.operation : '',
@@ -307,6 +369,8 @@ export default {
         manager_phone: '',
         manager_email: '',
         reservation_conditions: '',
+        is_toll: false,
+        recieptFile: [],
         new_object_id: null,
         deal_success_docs: null
       }
@@ -455,12 +519,28 @@ export default {
       }
       return options
     })
+
+    const canSubmit = computed(() => {
+      // if no reciept files provided
+      if (props.application.is_toll === 1 && statusChangesForm && (statusChangesForm.operation === 'take_in_work_by_agent' || statusChangesForm.operation === 'take_in_work_by_manager' ) && recieptFile.value.length < 1) {
+        return false
+      }
+      return true
+    })
     
     function onSubmit() {
       loading.value = true
+
       if (props.eOperation === 'change_object') {
         formfields.value.new_object_id = optfields.value.flat_select.value
       }
+
+      // Add reciept files to formfields
+      if (props.application.is_toll === 1 && statusChangesForm && (statusChangesForm.operation === 'take_in_work_by_agent' || statusChangesForm.operation === 'take_in_work_by_manager' )) {
+        formfields.value.recieptFile = recieptFile.value
+        console.log(formfields.value)
+      }
+
       Inertia.post(`/user/application/view?id=${props.application.id}`, formfields.value)
       Inertia.on('finish', (event) => {
         loading.value = false
@@ -470,6 +550,8 @@ export default {
     return {
       breadcrumbs,
       loading,
+      recieptFile,
+      onRemoveRecieptFile,
       formfields,
       optfields,
       statusChangesForm,
@@ -482,6 +564,7 @@ export default {
       entranceOptions,
       onEntranceSelect,
       flatOptions,
+      canSubmit,
       onSubmit
     }
   }

@@ -6,37 +6,40 @@
     <template v-slot:main>
       <RegularContentContainer title="Заявки">
         <template v-slot:content>
-
-          <q-btn class="q-mt-sm" unelevated color="primary" label="Создать заявку" icon="note_add" @click="newAppDialog = true" />
-          <q-dialog v-model="newAppDialog">
-            <q-card>
-              <q-card-section class="row items-center q-pb-none no-wrap">
-                <div class="text-h4">Укажите объект для бронирования</div>
-                <q-space />
-                <q-btn class="q-ml-md" icon="close" flat round dense v-close-popup />
-              </q-card-section>
-              <q-card-section>
-                <SelectObject />
-              </q-card-section>
-              <q-card-actions align="right">
-                <q-btn
-                  color="primary"
-                  rounded
-                  unelevated
-                  label="Создать заявку"
-                  :disable="!flatIdForNewApplication"
-                  @click="goToMakeApplication"
-                />
-                <q-btn
-                  rounded
-                  unelevated
-                  label="Отмена"
-                  icon="close"
-                  v-close-popup
-                />
-              </q-card-actions>
-            </q-card>
-          </q-dialog>
+          
+          <!-- New application (via selection an object) form -->
+          <template v-if="user.role === 'agent' || user.role === 'manager'">
+            <q-btn class="q-mt-sm" unelevated color="primary" label="Создать заявку" icon="note_add" @click="newAppDialog = true" />
+            <q-dialog v-model="newAppDialog">
+              <q-card>
+                <q-card-section class="row items-center q-pb-none no-wrap">
+                  <div class="text-h4">Укажите объект для бронирования</div>
+                  <q-space />
+                  <q-btn class="q-ml-md" icon="close" flat round dense v-close-popup />
+                </q-card-section>
+                <q-card-section>
+                  <SelectObject />
+                </q-card-section>
+                <q-card-actions align="right">
+                  <q-btn
+                    color="primary"
+                    rounded
+                    unelevated
+                    label="Создать заявку"
+                    :disable="!flatIdForNewApplication"
+                    @click="goToMakeApplication"
+                  />
+                  <q-btn
+                    rounded
+                    unelevated
+                    label="Отмена"
+                    icon="close"
+                    v-close-popup
+                  />
+                </q-card-actions>
+              </q-card>
+            </q-dialog>
+          </template>
           
           <GridTableToggle :defaultMode="appsGridView" />
 
