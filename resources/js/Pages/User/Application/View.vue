@@ -6,6 +6,8 @@
     <template v-slot:main>
       <RegularContentContainer :title="`Заявка ${application.application_number}`" :subtitle="`от ${asDateTime(application.created_at)}`">
         <template v-slot:content>
+
+          <!-- Author (application's creator) info section -->
           <h5 class="text-uppercase q-mb-xs">Автор</h5>
             <q-card class="no-shadow" bordered>
               <q-card-section>
@@ -20,6 +22,8 @@
                 </template>
             </q-card-section>
           </q-card>
+
+          <!-- Client info section -->
           <template v-if="application.client_firstname || application.client_lastname || application.client_middlename || application.client_phone || application.client_email">
             <h5 class="text-uppercase q-mb-xs q-mt-lg">Информация о клиенте</h5>
             <q-card class="no-shadow" bordered>
@@ -40,6 +44,8 @@
               </q-card-section>
             </q-card>
           </template>
+
+          <!-- Comment section -->
           <template v-if="application.applicant_comment">
             <h5 class="text-uppercase q-mb-xs q-mt-lg">Комментарий к заявке</h5>
             <q-card class="no-shadow" bordered>
@@ -48,6 +54,8 @@
               </q-card-section>
             </q-card>
           </template>
+
+          <!-- Developer representative info section -->
           <template v-if="application.manager_firstname || application.manager_lastname || application.manager_middlename || application.manager_phone || application.manager_email">
             <h5 class="text-uppercase q-mb-xs q-mt-lg">Представитель застройщика</h5>
             <q-card class="no-shadow" bordered>
@@ -68,6 +76,8 @@
               </q-card-section>
             </q-card>
           </template>
+
+          <!-- Reservation conditions section -->
           <template v-if="application.reservation_conditions">
             <h5 class="text-uppercase q-mb-xs q-mt-lg">Условия бронирования</h5>
             <q-card class="no-shadow" bordered>
@@ -83,9 +93,12 @@
               <!--<span> (последнее обновление {{ asDateTime(application.updated_at) }})</span>-->
             </q-card-section>
           </q-card>
+
           <!--<p>
             Статус: <span class="text-lowercase">{{ statusMap[application.status] }}</span>
           </p>-->
+
+            <!-- Next action (step) section -->
             <template v-if="statusChangesForm">
               <template v-if="
                 user.role === 'manager' && application.applicant_id == user.id
@@ -97,6 +110,16 @@
               <q-card class="no-shadow" bordered>
                 <q-card-section>
                   {{ statusChangesForm.operationLabel }}
+                  <!-- Optional content for different cases and conditions -->
+                  <!-- Notification to prepare receipt before take the application in work -->
+                  <tempate v-if="(statusChangesForm.operation === 'take_in_work_by_agent' || statusChangesForm.operation === 'take_in_work_by_manager') && $application.is_toll === 1">
+                    <q-banner inline-actions rounded class="q-mx-md q-mb-sm bg-orange text-white">
+                      <template v-slot:avatar>
+                        <q-icon name="report" color="white" />
+                      </template>
+                      <span class="text-h5"><span class="text-uppercase">Обратите внимание</span>: чтобы принять заявку в работу, нужно загрузить документ, подтверждающий оплату брони. Пожалуйста, подготовьте файл с документом.</span>
+                    </q-banner>
+                  </template>
                 </q-card-section>
                 <q-card-actions align="right">
                   <q-btn v-if="application.status < 3 && user.role === 'admin'" class="q-mr-xs" unelevated label="Сменить объект" @click="objectChange"></q-btn>
@@ -107,6 +130,37 @@
               </q-card>
               </template>
             </template>
+
+            <!-- Documents section -->
+            <template v-if="application.documents.amount > 0">
+              <h5 class="text-uppercase q-mb-xs q-mt-lg">Документы</h5>
+              <q-card class="no-shadow" bordered>
+                <q-card-section>
+                  <q-expansion-item
+                    v-if="application.is_toll === 1 && application.documents.reciepts.length"
+                    v-model="documentExpansions.reciept"
+                    header-class="rounded-borders"
+                    icon="receipt_long"
+                    label="Оплата брони"
+                    caption="Квитанция (платежный документ), подтверждающий оплату брони"
+                  >
+                    <q-card>
+                      <q-card-section class="q-pa-none">
+                        <div class="row q-mt-sm q-col-gutter-none">
+                          <template v-for="doc of application.documents.reciepts">
+                            <div class="col-12 col-md-6 col-lg-4">
+                              <FileDownloadable :file="doc" />
+                            </div>
+                          </template>
+                        </div>
+                      </q-card-section>
+                    </q-card>
+                  </q-expansion-item>
+                </q-card-section>
+              </q-card>
+            </template>
+
+            <!-- History section -->
             <h5 class="text-uppercase q-mb-xs q-mt-lg">История</h5>
             <q-table
               class="no-shadow"
@@ -118,6 +172,7 @@
               hide-bottom
             >
             </q-table>
+            <pre>{{ application }}</pre>
         </template>
       </RegularContentContainer>
       <FlatListItem class="q-ml-md q-mt-md" :flat="flat" />
@@ -132,6 +187,7 @@ import ProfileLayout from '@/Layouts/ProfileLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
 import FlatListItem from '@/Components/Flat/FlatListItem.vue'
+import FileDownloadable from '@/Components/File/FileDownloadListItem.vue'
 import { getApplicationFormParamsByStatus } from '@/composables/components-configurations'
 import { asDateTime } from '@/helpers/formatter'
 import { userInfo } from '@/composables/shared-data'
@@ -141,7 +197,8 @@ components: {
     ProfileLayout,
     Breadcrumbs,
     RegularContentContainer,
-    FlatListItem
+    FlatListItem,
+    FileDownloadable
   },
   props: {
     application: Array,
@@ -205,6 +262,10 @@ components: {
       return processedRows
     })
 
+    const documentExpansions = ref({
+      reciept: true
+    })
+
     const statusChangesForm = getApplicationFormParamsByStatus(props.application.status, user.value.role)
 
     const objectChange = () => {
@@ -221,7 +282,7 @@ components: {
       })
     }
 
-    return { user, breadcrumbs, asDateTime, columns, rows, statusChangesForm, objectChange }
+    return { user, breadcrumbs, asDateTime, documentExpansions, columns, rows, statusChangesForm, objectChange }
   },
 })
 </script>

@@ -26,7 +26,7 @@ class ApplicationDocument extends \yii\db\ActiveRecord
     const CAT_RECIEPT = 1;
     const CAT_DDU = 2;
 
-    public static $category = [
+    public static $docCategory = [
         self::CAT_RECIEPT => 'Квитанция за бронь',
         self::CAT_DDU => 'Договор долевого участия',
     ];

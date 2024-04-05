@@ -180,6 +180,11 @@ class Application extends ActiveRecord
         return $this->hasMany(ApplicationDocument::className(), ['application_id' => 'id']); 
     }
 
+    public function getReciepts ()
+    {
+        return $this->hasMany(ApplicationDocument::className(), ['application_id' => 'id'])->andWhere(['category' => ApplicationDocument::CAT_RECIEPT]); 
+    }
+
     public function getHistory ()
     {
         return $this->hasMany(ApplicationHistory::className(), ['application_id' => 'id']); 

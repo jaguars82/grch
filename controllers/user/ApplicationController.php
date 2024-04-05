@@ -358,6 +358,7 @@ class ApplicationController extends Controller
                             $applicationForm->processRecieptFile();
 
                             if (count($applicationForm->recieptFile)) {
+                                $application->receipt_provided = 1;
                                 
                                 foreach ($applicationForm->recieptFile as $ind => $file) {
                                     $reciept = new ApplicationDocument();
@@ -573,6 +574,10 @@ class ApplicationController extends Controller
         if(!empty($application->applicant->agency_id)) {
             $application_array['author']['agency_name'] = $application->applicant->agency->name;
         }
+        $application_array['documents'] = [
+            'amount' => count($application->documents),
+            'reciepts' => ArrayHelper::toArray($application->reciepts),
+        ];
         
         return $this->inertia('User/Application/View', [
             // 'application' => ArrayHelper::toArray($application),

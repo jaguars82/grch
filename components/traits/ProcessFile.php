@@ -50,29 +50,6 @@ trait ProcessFile
     }
     
     /**
-     * Process incoming via Inertia files
-     * 
-     * @param string $fieldName
-     * @param boolean $isSaveOriginName
-     */
-    private function processInertiaFiles($fieldName, $isSaveOriginName = false)
-    {        
-        if (!is_null($this->$fieldName)) {
-            $files = [];
-            foreach ($this->$fieldName as $file) {
-                $filename = $file['baseName'] . mt_rand() . '.' . $file['extension'];
-                $file->saveAs('uploads/' . $filename);
-                if ($isSaveOriginName) {
-                    $files[$filename] = $file['baseName'] . '.' . $file['extension'];
-                } else {
-                    $files[] = $filename;
-                }
-            }
-            $this->$fieldName = $files;
-        }
-    }
-
-    /**
      * Build array of file instances from incoming files
      */
     private function getInertiaFileInstances($fieldName)
@@ -94,7 +71,6 @@ trait ProcessFile
                 $files[$ind]['extension'] = pathinfo($file['name'], PATHINFO_EXTENSION);
             }
         }
-        //echo '<pre>'; var_dump($files); echo '</pre>'; die;
         return $files;
     }
 }

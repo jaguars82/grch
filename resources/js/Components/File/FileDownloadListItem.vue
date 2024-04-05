@@ -26,6 +26,7 @@ export default {
       switch (extension) {
         case 'doc':
         case 'docx':
+        case 'odt':
           name = 'article'
           color = 'indigo-14'
          break
@@ -33,6 +34,14 @@ export default {
           name = 'picture_as_pdf'
           color = 'red'
           break
+        case 'jpg':
+        case 'jpeg':
+        case 'gif':
+        case 'bmp':
+        case 'png':
+          name = 'image'
+          color = 'blue'
+          break  
       }
       return { name, color }
     })
