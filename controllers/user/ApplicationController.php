@@ -58,6 +58,15 @@ class ApplicationController extends Controller
     public function actionIndex()
     {
         $query = Application::find()->where(['is_active' => 1]);
+
+        /** Filter by date (creation or update) */
+        if (is_array(\Yii::$app->request->get('dateRange'))) {
+            $dateRange = \Yii::$app->request->get('dateRange');
+            $dateFrom = str_ireplace("/", "-", $dateRange['from']);
+            $dateTo = str_ireplace("/", "-", $dateRange['to']);
+            $dateField = !empty(\Yii::$app->request->get('dateParam')) ? \Yii::$app->request->get('dateParam') : 'created_at';
+            $query->andWhere(['>=', 'application.'.$dateField, $dateFrom.'  00:00:00'])->andWhere(['<=', 'application.'.$dateField, $dateTo.'  23:59:59']);
+        }
         
         if (\Yii::$app->user->identity->role === 'developer_repres') {
             $query->andWhere(['developer_id' => \Yii::$app->user->identity->developer_id]);
@@ -358,6 +367,7 @@ class ApplicationController extends Controller
                             $applicationForm->processRecieptFile();
 
                             if (count($applicationForm->recieptFile)) {
+                                
                                 $application->receipt_provided = 1;
                                 
                                 foreach ($applicationForm->recieptFile as $ind => $file) {
@@ -404,6 +414,86 @@ class ApplicationController extends Controller
                                 ->setTo($admin->email)
                                 ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
                                 ->setSubject("Агент подтвердил получение одобрения брони по заявке $application->application_number")
+                                ->setTextBody("Для просмотра подробностей перейдите на страницу заявки: https://grch.ru/user/application/view?id=$application->id")
+                                ->send(); 
+                            }
+                        }*/
+
+                    } catch (\Exception $e) {
+                        $transaction->rollBack();
+                        return $this->redirectBackWhenException($e);
+                    }
+
+                    break;
+
+                /**
+                 * Agent or manager takes application to work
+                 * If success application's status changes from 5 to 6
+                 */
+                case 'upload_ddu_by_agent':
+                case 'upload_ddu_by_manager':
+
+                    $transaction = \Yii::$app->db->beginTransaction();
+
+                    try {
+                        $applicationForm->load(\Yii::$app->request->post(), '');
+
+                        $applicationForm->processDduFile();
+
+                        if (count($applicationForm->dduFile)) {
+
+                            $application->ddu_provided = 1;
+                            
+                            foreach ($applicationForm->dduFile as $ind => $file) {
+                                $ddu = new ApplicationDocument();
+                                $ddu->application_id = $application->id;
+                                $ddu->user_id = \Yii::$app->user->id;
+                                $ddu->category = ApplicationDocument::CAT_DDU;
+                                $ddu->file = $applicationForm->dduFilesToSave[$ind];
+                                $ddu->name = $file['name'];
+                                $ddu->size = $file['size'];
+                                $ddu->filetype = $file['extension'];
+                                $ddu->save();
+                            }
+                        }
+
+                        $application->ddu_price = $applicationForm->ddu_price;
+                        $application->ddu_cash = $applicationForm->ddu_cash;
+                        $application->ddu_mortgage = $applicationForm->ddu_mortgage;
+                        $application->ddu_matcap = $applicationForm->ddu_matcap;
+                        $application->ddu_cash_paydate = $applicationForm->ddu_cash_paydate;
+                        $application->ddu_mortgage_paydate = $applicationForm->ddu_mortgage_paydate;
+                        $application->ddu_matcap_paydate = $applicationForm->ddu_matcap_paydate;
+                        $application->status = Application::STATUS_DDU_UPLOADED;
+                        $application->save();
+
+                        $applicationHistoryForm->application_id = $application->id;
+                        $applicationHistoryForm->user_id = \Yii::$app->user->id;
+                        $applicationHistoryForm->action = Application::STATUS_DDU_UPLOADED;
+                        $applicationHistoryModel = (new ApplicationHistory())->fill($applicationHistoryForm->attributes);
+                        $applicationHistoryModel->save();
+
+                        $notificationForm->initiator_id = \Yii::$app->user->id;;
+                        $notificationForm->type = 2;
+                        $notificationForm->recipient_group = 'admin';
+                        $notificationForm->topic = 'Агент загрузил Договор долевого участия по заявке '.$application->application_number.'.';
+                        $notificationForm->body = 'Для просмотра подробностей перейдите на страницу заявки';
+                        $notificationForm->action_text = 'Перейти';
+                        $notificationForm->action_url = '/user/application/view?id='.$application->id;
+                        $notificationModel = (new Notification())->fill($notificationForm->attributes);              
+                        $notificationModel->save();
+        
+                        $transaction->commit();
+
+                        /** Send email-notifications for admins */
+                        /*$admins = (new AuthAssignment())->admins;
+
+                        foreach ($admins as $admin) {
+                            if (!empty ($admin)) {
+                                \Yii::$app->mailer->compose()
+                                ->setTo($admin->email)
+                                ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
+                                ->setSubject("Агент загрузил Договор долевого участия по заявке $application->application_number")
                                 ->setTextBody("Для просмотра подробностей перейдите на страницу заявки: https://grch.ru/user/application/view?id=$application->id")
                                 ->send(); 
                             }
@@ -577,6 +667,7 @@ class ApplicationController extends Controller
         $application_array['documents'] = [
             'amount' => count($application->documents),
             'reciepts' => ArrayHelper::toArray($application->reciepts),
+            'ddus' => ArrayHelper::toArray($application->ddus),
         ];
         
         return $this->inertia('User/Application/View', [

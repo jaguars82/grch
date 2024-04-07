@@ -112,12 +112,21 @@
                   {{ statusChangesForm.operationLabel }}
                   <!-- Optional content for different cases and conditions -->
                   <!-- Notification to prepare receipt before take the application in work -->
-                  <tempate v-if="(statusChangesForm.operation === 'take_in_work_by_agent' || statusChangesForm.operation === 'take_in_work_by_manager') && $application.is_toll === 1">
-                    <q-banner inline-actions rounded class="q-mx-md q-mb-sm bg-orange text-white">
+                  <template v-if="(statusChangesForm.operation === 'take_in_work_by_agent' || statusChangesForm.operation === 'take_in_work_by_manager') && $application.is_toll === 1">
+                    <q-banner rounded class="q-mx-sm q-mt-sm bg-orange text-white">
                       <template v-slot:avatar>
                         <q-icon name="report" color="white" />
                       </template>
                       <span class="text-h5"><span class="text-uppercase">Обратите внимание</span>: чтобы принять заявку в работу, нужно загрузить документ, подтверждающий оплату брони. Пожалуйста, подготовьте файл с документом.</span>
+                    </q-banner>
+                  </template>
+                  <!-- Notification to prepare DDU file -->
+                  <template v-if="(statusChangesForm.operation === 'upload_ddu_by_agent' || statusChangesForm.operation === 'upload_ddu_by_manager')">
+                    <q-banner rounded class="q-mx-sm q-mt-sm bg-orange text-white">
+                      <template v-slot:avatar>
+                        <q-icon name="report" color="white" />
+                      </template>
+                      <span class="text-h5"><span class="text-uppercase">Обратите внимание</span>: Вам нужно будет загрузить файл(ы) Договора долевого участия. Пожалуйста, подготовьте его.</span>
                     </q-banner>
                   </template>
                 </q-card-section>
@@ -136,7 +145,9 @@
               <h5 class="text-uppercase q-mb-xs q-mt-lg">Документы</h5>
               <q-card class="no-shadow" bordered>
                 <q-card-section>
+                  <!-- Receipt file(s) for paid reservation -->
                   <q-expansion-item
+                    class="q-mb-sm"
                     v-if="application.is_toll === 1 && application.documents.reciepts.length"
                     v-model="documentExpansions.reciept"
                     header-class="rounded-borders"
@@ -148,6 +159,27 @@
                       <q-card-section class="q-pa-none">
                         <div class="row q-mt-sm q-col-gutter-none">
                           <template v-for="doc of application.documents.reciepts">
+                            <div class="col-12 col-md-6 col-lg-4">
+                              <FileDownloadable :file="doc" />
+                            </div>
+                          </template>
+                        </div>
+                      </q-card-section>
+                    </q-card>
+                  </q-expansion-item>
+                  <!-- DDU file's) -->
+                  <q-expansion-item
+                    class="q-mb-sm"
+                    v-if="application.documents.ddus.length"
+                    v-model="documentExpansions.ddu"
+                    header-class="rounded-borders"
+                    icon="assignment"
+                    label="Договор долевого участия"
+                  >
+                    <q-card>
+                      <q-card-section class="q-pa-none">
+                        <div class="row q-mt-sm q-col-gutter-none">
+                          <template v-for="doc of application.documents.ddus">
                             <div class="col-12 col-md-6 col-lg-4">
                               <FileDownloadable :file="doc" />
                             </div>
@@ -263,7 +295,8 @@ components: {
     })
 
     const documentExpansions = ref({
-      reciept: true
+      reciept: true,
+      ddu: true,
     })
 
     const statusChangesForm = getApplicationFormParamsByStatus(props.application.status, user.value.role)

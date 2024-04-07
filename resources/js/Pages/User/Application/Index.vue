@@ -43,12 +43,45 @@
           
           <GridTableToggle :defaultMode="appsGridView" />
 
-          <div v-if="user.role === 'manager'" class="row q-pt-md">
+          <div class="row q-pt-md items-center">
+            <template v-if="user.role === 'manager'">
             <div class="col-1 self-center">
              <q-icon size="md" :name="showFilter.value === 'self' ? 'person' : 'group'" />
             </div>
-            <div class="col-11">
+            <div class="col-9 col-sm-10">
               <q-select class="q-gutter-sm" outlined v-model="showFilter" :options="showOptions" label="Показывать заявки" @update:model-value="onShowFilterChange" dense options-dense />
+            </div>
+            </template>
+            <div class="col text-right">
+              <q-btn class="q-ml-sm" unelevated round icon="event" color="primary">
+                <q-popup-proxy
+                  cover
+                  transition-show="scale"
+                  transition-hide="scale"
+                >
+                  <q-date
+                    range
+                    v-model="dateRange"
+                  >
+                    <div class="row q-col-gutter-none">
+                      <div class="col-12 q-my-none q-py-none">
+                        <q-select
+                          outlined
+                          v-model="dateParam"
+                          :options="[{ label: 'созданные за период', value: 'created_at' }, { label: 'обновленные за период', value: 'updated_at' } ]"
+                          label="Показать заявки"
+                          dense
+                          options-dense
+                        />
+                      </div>
+                    </div>
+                    <div class="row items-center justify-end q-gutter-sm">
+                      <q-btn label="Закрыть" color="primary" flat v-close-popup />
+                      <q-btn label="Сбросить" color="primary" flat @click="dateRange = {}" />
+                    </div>
+                  </q-date>
+                </q-popup-proxy>
+              </q-btn>
             </div>
           </div>
 
@@ -131,7 +164,7 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import ProfileLayout from '@/Layouts/ProfileLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
@@ -203,10 +236,10 @@ export default ({
     const newAppDialog = ref(false)
 
     const columns = [
-      { name: 'application_number', required: true, align: 'left', label: 'Номер заявки', field: 'application_number', sortable: true },
-      { name: 'author', required: true, align: 'left', label: 'Автор', field: 'author', sortable: true },
-      { name: 'status', required: true, align: 'left', label: 'Статус', field: 'status', sortable: true },
-      { name: 'client_fio', align: 'left', label: 'ФИО клиента', field: 'client_fio', sortable: true },
+      { name: 'application_number', required: true, align: 'left', label: 'Номер заявки', field: 'application_number', sortable: false },
+      { name: 'author', required: true, align: 'left', label: 'Автор', field: 'author', sortable: false },
+      { name: 'status', required: true, align: 'left', label: 'Статус', field: 'status', sortable: false },
+      { name: 'client_fio', align: 'left', label: 'ФИО клиента', field: 'client_fio', sortable: false },
       { name: 'link', align: 'center', label: '', field: 'link', sortable: false },
     ]
 
@@ -264,8 +297,17 @@ export default ({
     const showFilter = ref(selectedShowOption.value)
 
     const onShowFilterChange = () => {
-      Inertia.post('/user/application/index', { show: showFilter.value.value }, { preserveScroll: true, preserveState: true })
+      Inertia.post('/user/application/index', { show: showFilter.value.value, dateRange: dateRange.value, dateParam: dateParam.value.value }, { preserveScroll: true, preserveState: true })
     }
+
+    /** Range of dates */
+    const dateRange = ref({})
+    const dateParam = ref({ label: "созданные за период", value: 'created_at' })
+
+    watch ([dateRange, dateParam], () => {
+      console.log('data range filter')
+      Inertia.get('/user/application/index', { show: showFilter.value.value, dateRange: dateRange.value, dateParam: dateParam.value.value }, { preserveScroll: true, preserveState: true })
+    })
 
     /** New application form */
     const flatIdForNewApplication = ref('')
@@ -292,6 +334,8 @@ export default ({
       pagination,
       onRequest,
       showOptions,
+      dateRange,
+      dateParam,
       showFilter,
       onShowFilterChange,
       flatIdForNewApplication,

@@ -45,6 +45,9 @@ use yii\db\ActiveRecord;
  * @property Flat $flat
  * @property Developer $developer
  * @property User $applicant
+ * @property ApplicationDocument[] $documents
+ * @property ApplicationDocument[] $reciepts
+ * @property ApplicationDocument[] $ddus
  */
 class Application extends ActiveRecord
 {
@@ -56,8 +59,10 @@ class Application extends ActiveRecord
     const STATUS_RESERV_APPROVED_BY_DEVELOPER = 3;
     const STATUS_RESERV_APPROVED_BY_ADMIN = 4;
     const STATUS_APPLICATION_IN_WORK = 5;
-    const STATUS_RESERV_CANCEL_APPLICATED = 6;
-    const STATUS_RESERV_CANCELLED_BY_ADMIN = 7;
+    const STATUS_DDU_UPLOADED = 6;
+    const STATUS_INVOICE_TO_DEVELOPER_ISSUED = 7;
+    //const STATUS_RESERV_CANCEL_APPLICATED = 6;
+    //const STATUS_RESERV_CANCELLED_BY_ADMIN = 7;
     const STATUS_APPLICATION_CANCELED_BY_ADMIN = 8;
     const STATUS_APPLICATION_APPROVAL_REQUEST = 9;
     const STATUS_APPLICATION_APPROVAL_PROCESS = 10;
@@ -71,8 +76,10 @@ class Application extends ActiveRecord
         self::STATUS_RESERV_APPROVED_BY_DEVELOPER => 'Бронирование подтверждено застройщиком',
         self::STATUS_RESERV_APPROVED_BY_ADMIN => 'Бронирование подтверждено, ожидается приём заявки в работу',
         self::STATUS_APPLICATION_IN_WORK => 'Заявка в работе',
-        self::STATUS_RESERV_CANCEL_APPLICATED => 'Заявка на отмену брони',
-        self::STATUS_RESERV_CANCELLED_BY_ADMIN => 'Бронирование прекращено',
+        self::STATUS_DDU_UPLOADED => 'ДДУ загружен, ожидается выставление счёта застройщику',
+        self::STATUS_INVOICE_TO_DEVELOPER_ISSUED => 'Ожидается оплата от застройщика',
+        //self::STATUS_RESERV_CANCEL_APPLICATED => 'Заявка на отмену брони',
+        //self::STATUS_RESERV_CANCELLED_BY_ADMIN => 'Бронирование прекращено',
         self::STATUS_APPLICATION_CANCELED_BY_ADMIN => 'Заявка прекращена',
         self::STATUS_APPLICATION_APPROVAL_REQUEST => 'Подтверждающие документы отправлены',
         self::STATUS_APPLICATION_APPROVAL_PROCESS => 'Документы получены, ожидается подтверждение и оплата',
@@ -183,6 +190,11 @@ class Application extends ActiveRecord
     public function getReciepts ()
     {
         return $this->hasMany(ApplicationDocument::className(), ['application_id' => 'id'])->andWhere(['category' => ApplicationDocument::CAT_RECIEPT]); 
+    }
+
+    public function getDdus ()
+    {
+        return $this->hasMany(ApplicationDocument::className(), ['application_id' => 'id'])->andWhere(['category' => ApplicationDocument::CAT_DDU]); 
     }
 
     public function getHistory ()

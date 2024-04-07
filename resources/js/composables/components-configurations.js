@@ -89,6 +89,25 @@ function getApplicationFormParamsByStatus (applicationStatus, userRole) {
       [
         {
           role: 'agent',
+          operationLabel: 'Загрузите Договор долевого участия и заполните информацию об оплате',
+          operation: 'upload_ddu_by_agent',
+          formCaption: 'Загрузка ДДУ',
+          formContent: '<p>После проверки информации и обработки заявки Вы сможете высатвить счет на оплату КВ.</p>\
+                        <p>Образец документа будет доступен на странице заявки.</p>',
+          submitLabel: 'Загрузить'
+        },
+        {
+          role: 'manager',
+          operationLabel: 'Загрузите Договор долевого участия и заполните информацию об оплате',
+          operation: 'upload_ddu_by_manager',
+          formCaption: 'Загрузка ДДУ',
+          formContent: '<p>После проверки информации и обработки заявки Вы сможете высатвить счет на оплату КВ.</p>\
+                        <p>Образец документа будет доступен на странице заявки.</p>',
+          submitLabel: 'Загрузить'
+        },
+        /* old workflow
+        {
+          role: 'agent',
           operationLabel: 'Подтвердите завершение сделки, загрузите документы',
           operation: 'report_success_deal_by_agent',
           formCaption: 'Подтверждение завершения сделки',
@@ -104,7 +123,19 @@ function getApplicationFormParamsByStatus (applicationStatus, userRole) {
           formContent: '<p>После отравки подтверждения информация поступит для проверки администратору площадки.</p>\
                         <p>Пожалуйста, дождитесь её окончания.</p>',
           submitLabel: 'Подтвердить'
-        },
+        },*/
+      ],
+    6:
+      [
+        {
+          role: 'admin',
+          operationLabel: 'Выставить счёт застройщику',
+          operation: 'issue_invoice_to_developer',
+          formCaption: 'Выставление счёта на оплату вознаграждения застройщику',
+          formContent: '<p>Выставляя счёт, убедитесь, что все процедуры, связанные с оплатой объекта успешно завершены.</p> \
+                        <p>После получения выплаты от застройщика, пожалуйста, подтвердите этот факт на странице заявки.</p>',
+          submitLabel: 'Выставить счёт'       
+        }          
       ],
     9:
       [

@@ -227,6 +227,113 @@
                   </div>
                 </template>
 
+                <!-- uploading DDU & pay infomation by an agent or a manager -->
+                <template
+                  v-if="formfields.operation === 'upload_ddu_by_agent' || formfields.operation === 'upload_ddu_by_manager'"
+                >
+                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                    <div class="col-12">
+                      <q-input outlined type="number" v-model.number="formfields.ddu_price" label="Стоимость объекта по ДДУ" />
+                    </div>
+                  </div>
+                  <!-- Personal money -->
+                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                    <div class="col-6">
+                      <q-input outlined type="number" v-model.number="formfields.ddu_cash" label="Собственные средства" />
+                    </div>
+                    <div class="col-6 q-pl-sm">
+                      <q-input outlined v-model="formfields.ddu_cash_paydate" label="Дата оплаты собственными средствами" readonly>
+                        <template v-slot:append>
+                          <q-icon name="event" class="cursor-pointer">
+                            <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                              <q-date v-model="formfields.ddu_cash_paydate" mask="YYYY-MM-DD">
+                                <div class="row items-center justify-end">
+                                  <q-btn v-close-popup label="Закрыть" color="primary" flat />
+                                  <q-btn label="Сбросить" color="primary" flat @click="formfields.ddu_cash_paydate = ''" />
+                                </div>
+                              </q-date>
+                            </q-popup-proxy>
+                          </q-icon>
+                        </template>
+                      </q-input>
+                    </div>
+                  </div>
+                  <!-- Mortgage money -->
+                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                    <div class="col-6">
+                      <q-input outlined type="number" v-model.number="formfields.ddu_mortgage" label="Ипотечные средства" />
+                    </div>
+                    <div class="col-6 q-pl-sm">
+                      <q-input outlined v-model="formfields.ddu_mortgage_paydate" label="Дата оплаты ипотекой" readonly>
+                        <template v-slot:append>
+                          <q-icon name="event" class="cursor-pointer">
+                            <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                              <q-date v-model="formfields.ddu_mortgage_paydate" mask="YYYY-MM-DD">
+                                <div class="row items-center justify-end">
+                                  <q-btn v-close-popup label="Закрыть" color="primary" flat />
+                                  <q-btn label="Сбросить" color="primary" flat @click="formfields.ddu_mortgage_paydate = ''" />
+                                </div>
+                              </q-date>
+                            </q-popup-proxy>
+                          </q-icon>
+                        </template>
+                      </q-input>
+                    </div>
+                  </div>
+                  <!-- Mother's capital -->
+                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                    <div class="col-6">
+                      <q-input outlined type="number" v-model.number="formfields.ddu_matcap" label="Материнский капитал" />
+                    </div>
+                    <div class="col-6 q-pl-sm">
+                      <q-input outlined v-model="formfields.ddu_matcap_paydate" label="Дата оплаты маткапиталом" readonly>
+                        <template v-slot:append>
+                          <q-icon name="event" class="cursor-pointer">
+                            <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                              <q-date v-model="formfields.ddu_matcap_paydate" mask="YYYY-MM-DD">
+                                <div class="row items-center justify-end">
+                                  <q-btn v-close-popup label="Закрыть" color="primary" flat />
+                                  <q-btn label="Сбросить" color="primary" flat @click="formfields.ddu_matcap_paydate = ''" />
+                                </div>
+                              </q-date>
+                            </q-popup-proxy>
+                          </q-icon>
+                        </template>
+                      </q-input>
+                    </div>
+                  </div>
+
+                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                    <div class="col-12">
+                      <q-file
+                        outlined
+                        v-model="dduFile"
+                        label="Перетащите или загрузите Договор долевого участия"
+                        multiple 
+                        use-chips
+                        accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, .jpg, image/*"
+                      >
+                        <template v-slot:prepend>
+                          <q-icon name="attach_file" />
+                        </template>
+                        <template v-slot:file="{ index, file }">
+                          <q-chip
+                            removable
+                            @remove="onRemoveDduFile(index)"
+                          >
+                            <q-avatar>
+                              <q-icon name="draft" />
+                            </q-avatar>
+                            <div class="ellipsis relative-position">
+                              {{ file.name }}
+                            </div>
+                          </q-chip>
+                        </template>
+                      </q-file>
+                    </div>
+                  </div>
+                </template>
+
                 <!-- Reporting successful deal -->
                 <template
                   v-if="formfields.operation === 'report_success_deal_by_agent' || formfields.operation === 'report_success_deal_by_manager'"
@@ -360,6 +467,15 @@ export default {
       recieptFile.value = halfBeforeTheUnwantedElement.concat(halfAfterTheUnwantedElement);
     }
 
+    // DDU file(s)
+    const dduFile = ref([])
+
+    const onRemoveDduFile = (ind) => {
+      const halfBeforeTheUnwantedElement = dduFile.value.slice(0, ind)
+      const halfAfterTheUnwantedElement = dduFile.value.slice(ind+1);
+      dduFile.value = halfBeforeTheUnwantedElement.concat(halfAfterTheUnwantedElement);
+    }
+
     const formfields = ref(
       {
         operation: props.eOperation ? props.eOperation : statusChangesForm ? statusChangesForm.operation : '',
@@ -371,6 +487,14 @@ export default {
         reservation_conditions: '',
         is_toll: false,
         recieptFile: [],
+        dduFile: [],
+        ddu_price: '',
+        ddu_cash: '',
+        ddu_cash_paydate: '',
+        ddu_mortgage: '',
+        ddu_mortgage_paydate: '',
+        ddu_matcap: '',
+        ddu_matcap_paydate: '',
         new_object_id: null,
         deal_success_docs: null
       }
@@ -525,6 +649,11 @@ export default {
       if (props.application.is_toll === 1 && statusChangesForm && (statusChangesForm.operation === 'take_in_work_by_agent' || statusChangesForm.operation === 'take_in_work_by_manager' ) && recieptFile.value.length < 1) {
         return false
       }
+      // if no ddu files provided
+      // if no reciept files provided
+      if (statusChangesForm && (statusChangesForm.operation === 'upload_ddu_by_agent' || statusChangesForm.operation === 'upload_ddu_by_manager' ) && dduFile.value.length < 1) {
+        return false
+      }
       return true
     })
     
@@ -538,7 +667,11 @@ export default {
       // Add reciept files to formfields
       if (props.application.is_toll === 1 && statusChangesForm && (statusChangesForm.operation === 'take_in_work_by_agent' || statusChangesForm.operation === 'take_in_work_by_manager' )) {
         formfields.value.recieptFile = recieptFile.value
-        console.log(formfields.value)
+      }
+
+      // Add DDU files to formfields
+      if (statusChangesForm && (statusChangesForm.operation === 'upload_ddu_by_agent' || statusChangesForm.operation === 'upload_ddu_by_manager' )) {
+        formfields.value.dduFile = dduFile.value
       }
 
       Inertia.post(`/user/application/view?id=${props.application.id}`, formfields.value)
@@ -552,6 +685,8 @@ export default {
       loading,
       recieptFile,
       onRemoveRecieptFile,
+      dduFile,
+      onRemoveDduFile,
       formfields,
       optfields,
       statusChangesForm,
