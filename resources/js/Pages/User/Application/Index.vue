@@ -134,8 +134,13 @@
                   </q-td>
                   <q-td key="link" :props="props">
                     <inertia-link :href="props.row.link">
-                      Подробнее
+                      Открыть
                     </inertia-link>
+                  </q-td>
+                  <q-td key="archive" :props="props">
+                    <q-btn round flat color="primary" icon="archive" @click="moveToArchive(props.row.id)">
+                      <q-tooltip :delay="1000" :offset="[0, 5]">Поместить в архив</q-tooltip>
+                    </q-btn>
                   </q-td>
                 </q-tr>
               </template>
@@ -241,6 +246,7 @@ export default ({
       { name: 'status', required: true, align: 'left', label: 'Статус', field: 'status', sortable: false },
       { name: 'client_fio', align: 'left', label: 'ФИО клиента', field: 'client_fio', sortable: false },
       { name: 'link', align: 'center', label: '', field: 'link', sortable: false },
+      { name: 'archive', align: 'center', label: '', field: 'archive', sortable: false },
     ]
 
     const rows = computed(() => {
@@ -322,6 +328,12 @@ export default ({
       Inertia.get(`/reservation/make?flatId=${flatIdForNewApplication.value}`)
     }
 
+    const moveToArchive = function(id) {
+      Inertia.post(`/user/application/index`, { operation: 'moveToArchive', id: id })
+      Inertia.on('finish', (event) => {
+      })
+    }
+
     return {
       asUpdateDateTime,
       user,
@@ -339,7 +351,8 @@ export default ({
       showFilter,
       onShowFilterChange,
       flatIdForNewApplication,
-      goToMakeApplication
+      goToMakeApplication,
+      moveToArchive
     }
   },
 })

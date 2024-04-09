@@ -76,6 +76,14 @@
               @submit="onSubmit"
               @reset="onReset"
             >
+            <!-- Message if the applicant already has an active reservation of this flat -->
+            <q-banner v-if="anotherAppExists" rounded class="q-mx-md bg-orange text-white">
+              <template v-slot:avatar>
+                <q-icon name="report" color="white" />
+              </template>
+              <span class="text-h5"><span class="text-uppercase">Обратите внимание</span>: Вы уже создавали заявку на бронирование этого объекта. Чтобы создать новую заявку, пожалуйста, удалите предыдущую.</span>
+            </q-banner>
+
             <div class="row q-py-sm q-col-gutter-none">
               <div class="col-sm-4 col-xs-12">
                 <q-input outlined v-model="formfields.client_lastname" label="Фамилия клиента" />
@@ -141,6 +149,7 @@
                 :round="$q.screen.xs"
                 :rounded="$q.screen.gt.xs"
                 :label="$q.screen.sm ? 'Отправить' : $q.screen.gt.sm ? 'Отправить заявку' : ''"
+                :disabled="anotherAppExists"
                 type="submit"
                 color="primary"
                 icon="done"
@@ -200,7 +209,8 @@ export default ({
     flat: Object,
     applicationsAmount: String,
     result: String,
-    appId: String
+    appId: String,
+    anotherAppExists: Boolean
   },
   setup(props) {
     const breadcrumbs = ref([

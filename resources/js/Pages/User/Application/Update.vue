@@ -334,6 +334,25 @@
                   </div>
                 </template>
 
+                <!-- Uploading Report-Act -->
+                <template v-if="formfields.operation === 'issue_report_act'">
+                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                    <div class="col-12">
+                      <q-file
+                        outlined
+                        v-model="reportActFile"
+                        label="Перетащите или загрузите заполненный Отчет-Акт"
+                        multiple
+                        accept="application/msword, application/pdf"
+                      >
+                        <template v-slot:prepend>
+                          <q-icon name="attach_file" />
+                        </template>
+                      </q-file>
+                    </div>
+                  </div>
+                </template>
+
                 <!-- Reporting successful deal -->
                 <template
                   v-if="formfields.operation === 'report_success_deal_by_agent' || formfields.operation === 'report_success_deal_by_manager'"
@@ -476,6 +495,9 @@ export default {
       dduFile.value = halfBeforeTheUnwantedElement.concat(halfAfterTheUnwantedElement);
     }
 
+    // report-act file
+    const reportActFile = ref([])
+
     const formfields = ref(
       {
         operation: props.eOperation ? props.eOperation : statusChangesForm ? statusChangesForm.operation : '',
@@ -488,6 +510,7 @@ export default {
         is_toll: false,
         recieptFile: [],
         dduFile: [],
+        reportActFile: [],
         ddu_price: '',
         ddu_cash: '',
         ddu_cash_paydate: '',
@@ -654,6 +677,10 @@ export default {
       if (statusChangesForm && (statusChangesForm.operation === 'upload_ddu_by_agent' || statusChangesForm.operation === 'upload_ddu_by_manager' ) && dduFile.value.length < 1) {
         return false
       }
+      // if no report-act provided
+      if (statusChangesForm && statusChangesForm.operation === 'issue_report_act' && reportActFile.value.length < 1) {
+        return false
+      }
       return true
     })
     
@@ -672,6 +699,11 @@ export default {
       // Add DDU files to formfields
       if (statusChangesForm && (statusChangesForm.operation === 'upload_ddu_by_agent' || statusChangesForm.operation === 'upload_ddu_by_manager' )) {
         formfields.value.dduFile = dduFile.value
+      }
+
+      // Add Report-Act to formfields
+      if (statusChangesForm && statusChangesForm.operation === 'issue_report_act') {
+        formfields.value.reportActFile = reportActFile.value
       }
 
       Inertia.post(`/user/application/view?id=${props.application.id}`, formfields.value)

@@ -57,6 +57,17 @@ class ApplicationController extends Controller
 
     public function actionIndex()
     {
+        if(\Yii::$app->request->isPost) {
+
+            switch(\Yii::$app->request->post('operation')) {
+                case 'moveToArchive':
+                    $applicatonToArchive = (new Application())->findOne(\Yii::$app->request->post('id'));
+                    $applicatonToArchive->is_active = 0;
+                    $applicatonToArchive->save();
+                    break;
+            }
+        }
+
         $query = Application::find()->where(['is_active' => 1]);
 
         /** Filter by date (creation or update) */
@@ -340,7 +351,7 @@ class ApplicationController extends Controller
                         ->setTo($application->applicant->email)
                         ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
                         ->setSubject('Бронь одобрена. Пожалуйста, подтвердите.')
-                        ->setTextBody("Броно по заявке $application->application_number одобрена. Подтвердите получение информации и возьмите заявку в работу: https://grch.ru/user/application/view?id=$application->id")
+                        ->setTextBody("Бронь по заявке $application->application_number одобрена. Подтвердите получение информации и возьмите заявку в работу: https://grch.ru/user/application/view?id=$application->id")
                         ->send();
 
                     } catch (\Exception $e) {
@@ -505,6 +516,140 @@ class ApplicationController extends Controller
                     }
 
                     break;
+
+                case 'issue_invoice_to_developer':
+
+                    $transaction = \Yii::$app->db->beginTransaction();
+
+                    try {
+                        $application->status = Application::STATUS_INVOICE_TO_DEVELOPER_ISSUED;
+                        $application->save();
+        
+                        $applicationHistoryForm->application_id = $application->id;
+                        $applicationHistoryForm->user_id = \Yii::$app->user->id;
+                        $applicationHistoryForm->action = Application::STATUS_INVOICE_TO_DEVELOPER_ISSUED;
+                        $applicationHistoryModel = (new ApplicationHistory())->fill($applicationHistoryForm->attributes);
+                        $applicationHistoryModel->save();
+
+                        $developerRepresentative = (new User())->getDeveloperRepresentative($application->developer_id);
+                        
+                        if(!empty($developerRepresentative)) {
+                            $notificationForm->initiator_id = \Yii::$app->user->id;
+                            $notificationForm->type = 1;
+                            $notificationForm->recipient_id = $developerRepresentative->id;
+                            $notificationForm->recipient_group = 'developer_repres';
+                            $notificationForm->topic = 'Выставлен счет на оплату вознаграждения по заявке '.$application->application_number;
+                            $notificationForm->body = 'Подтвердить оплату счёта Вы можете на странице заявки';
+                            $notificationForm->action_text = 'Перейти';
+                            $notificationForm->action_url = '/user/application/view?id='.$application->id;
+                            $notificationModel = (new Notification())->fill($notificationForm->attributes);
+                            $notificationModel->save();
+                        }
+        
+                        $transaction->commit();
+
+                        /** Send email-notifications to developer */
+                        if(!empty($developerRepresentative)) {
+                            \Yii::$app->mailer->compose()
+                            ->setTo($developerRepresentative->email)
+                            ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
+                            ->setSubject('Выставлен счет на оплату вознаграждения по заявке '.$application->application_number)
+                            ->setTextBody("Потдвердить оплату счёта Вы можете на странице заявки. Ссылка для просмотра заявки: https://grch.ru/user/application/view?id=$application->id")
+                            ->send(); 
+                        }
+
+                    } catch (\Exception $e) {
+                        $transaction->rollBack();
+                        return $this->redirectBackWhenException($e);
+                    }
+                    return $this->redirect(['view', 'id' => $application->id]);
+
+                    break;
+
+                /**
+                 * Developer reports reward payment
+                 */
+                case 'report_payment_from_developer':
+
+                    $transaction = \Yii::$app->db->beginTransaction();
+
+                    try {
+                        $application->status = Application::STATUS_COMISSION_PAY_CONFIRMED_BY_DEVELOPER;
+                        $application->save();
+
+                        $this->storeToHistory($applicationHistoryForm, $application, Application::STATUS_COMISSION_PAY_CONFIRMED_BY_DEVELOPER);
+
+                        $this->sendNotification(
+                            $notificationForm, Notification::DEVELOPER_TO_ADMINS,
+                            'Застройщик подтвердил выплату вознаграждения по заявке '.$application->application_number,
+                            'Для просмотра подробностей и подтверждения перейдите на страницу заявки',
+                            'Перейти',
+                            '/user/application/view?id='.$application->id,
+                        );
+
+                        $transaction->commit();
+
+                        /** Send email-notifications for admins */
+                        $admins = (new AuthAssignment())->admins;
+
+                        foreach ($admins as $admin) {
+                            if (!empty ($admin)) {
+                                \Yii::$app->mailer->compose()
+                                ->setTo($admin->email)
+                                ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
+                                ->setSubject("Застройщик подтвердил выплату вознаграждения по заявке $application->application_number от застройщика")
+                                ->setTextBody("Представитель застройщика подтвердил выплату вознаграждения через свой личный кабинет. Для просмотра подробностей и подтверждения перейдите на страницу заявки: https://grch.ru/user/application/view?id=$application->id")
+                                ->send(); 
+                            }
+                        }
+
+                    } catch (\Exception $e) {
+                        $transaction->rollBack();
+                        return $this->redirectBackWhenException($e);
+                    }
+                    return $this->redirect(['view', 'id' => $application->id]);
+
+                    break;
+
+                /**
+                 * Admin confirms recieving the reward payment from developer
+                 */
+                case 'confirm_payment_from_developer_by_admin':
+
+                    $transaction = \Yii::$app->db->beginTransaction();
+
+                    try {
+                        $application->status = Application::STATUS_COMISSION_PAY_CONFIRMED_BY_ADMIN;
+                        $application->save();
+
+                        $this->storeToHistory($applicationHistoryForm, $application, Application::STATUS_COMISSION_PAY_CONFIRMED_BY_ADMIN);
+
+                        $this->sendNotification(
+                            $notificationForm, Notification::ADMIN_TO_USER,
+                            'Администратор подтвердил получение вознаграждения от застройщика по заявке '.$application->application_number,
+                            'Перейдите на страницу заявки, чтобы скачать Отчет-Акт',
+                            'Перейти',
+                            '/user/application/view?id='.$application->id,
+                            $application->applicant_id
+                        );
+
+                        $transaction->commit();
+
+                        /** Send email-notification for agent or manager */
+                        \Yii::$app->mailer->compose()
+                        ->setTo($application->applicant->email)
+                        ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
+                        ->setSubject('Вознаграждение от застройщика получено. Пожалуйста, заполните Отчет-Акт')
+                        ->setTextBody("Администратор подтвердил получение вознаграждения от застройщика по заявке $application->application_number. Заполните и загрузите Отчет-Акт: https://grch.ru/user/application/view?id=$application->id")
+                        ->send();
+
+                    } catch (\Exception $e) {
+                        $transaction->rollBack();
+                        return $this->redirectBackWhenException($e);
+                    }
+                    return $this->redirect(['view', 'id' => $application->id]);
+
+                    break;
                 
                 /**
                  * Agent or maneger reports successful deal
@@ -523,7 +668,6 @@ class ApplicationController extends Controller
                         $applicationHistoryForm->user_id = \Yii::$app->user->id;
                         $applicationHistoryForm->action = Application::STATUS_APPLICATION_APPROVAL_REQUEST;
                         $applicationHistoryModel = (new ApplicationHistory())->fill($applicationHistoryForm->attributes);
-                        //echo '<pre>'; var_dump($applicationHistoryModel); echo '</pre>'; die();
                         $applicationHistoryModel->save();
 
                         $notificationForm->initiator_id = \Yii::$app->user->id;;
@@ -705,5 +849,46 @@ class ApplicationController extends Controller
                 'entranceId' => \Yii::$app->request->post('entranceId') ? \Yii::$app->request->post('entranceId') : '',
             ],
         ]);   
+    }
+
+    /** Store operation to application history */
+    private function storeToHistory($historyForm, $applicationModel, $applicationStatus)
+    {
+        $historyForm->application_id = $applicationModel->id;
+        $historyForm->user_id = \Yii::$app->user->id;
+        $historyForm->action = $applicationStatus;
+        $applicationHistoryModel = (new ApplicationHistory())->fill($historyForm->attributes);
+        $applicationHistoryModel->save();
+    }
+
+    /** Send notification */
+    private function sendNotification($notificationForm, $direction, $topic, $body, $actionText, $actionUrl, $recieptId = false)
+    {
+        $type = 0;
+        $recipient_group = '';
+        
+        switch ($direction) {
+            case Notification::DEVELOPER_TO_ADMINS:
+                $type = Notification::TYPE_GROUP;
+                $recipient_group = 'admin';
+                break;
+            case Notification::ADMIN_TO_USER:
+                $type = Notification::TYPE_INDIVIDUAL;
+                break;
+        }
+
+        $notificationForm->initiator_id = \Yii::$app->user->id;
+        $notificationForm->type = $type;
+        if ($type === 1 && !empty($recieptId)) {
+            $notificationForm->recipient_id = $recieptId;
+        } elseif ($type === 2) {
+            $notificationForm->recipient_group = $recipient_group;
+        }
+        $notificationForm->topic = $topic;
+        $notificationForm->body = $body;
+        $notificationForm->action_text = $actionText;
+        $notificationForm->action_url = $actionUrl;
+        $notificationModel = (new Notification())->fill($notificationForm->attributes);              
+        $notificationModel->save();
     }
 }

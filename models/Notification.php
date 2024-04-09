@@ -30,7 +30,19 @@ use yii\db\ActiveRecord;
 class Notification extends ActiveRecord
 {
     use FillAttributes;
-    
+
+    /** Type of notification (individual, group) */
+    const TYPE_INDIVIDUAL = 1;
+    const TYPE_GROUP = 2;
+
+    /** Chain "sender -> recipient" */
+    const ADMIN_TO_USERS = 1;
+    const ADMIN_TO_USER = 2;
+    const ADMIN_TO_DEVELOPER = 3;
+    const ADMIN_TO_DEVELOPERS = 4;
+    const USER_TO_ADMINS = 5;
+    const DEVELOPER_TO_ADMINS = 6;
+
     /**
      * {@inheritdoc}
      */

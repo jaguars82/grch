@@ -68,6 +68,8 @@ class Application extends ActiveRecord
     const STATUS_APPLICATION_APPROVAL_PROCESS = 10;
     const STATUS_APPLICATION_SUCCESS = 11;
     const STATUS_SELF_RESERVED = 12;
+    const STATUS_COMISSION_PAY_CONFIRMED_BY_DEVELOPER = 13;
+    const STATUS_COMISSION_PAY_CONFIRMED_BY_ADMIN = 14;
 
     public static $status = [
         self::STATUS_UNDEFINED => 'Статус заявки неопределён',
@@ -85,6 +87,8 @@ class Application extends ActiveRecord
         self::STATUS_APPLICATION_APPROVAL_PROCESS => 'Документы получены, ожидается подтверждение и оплата',
         self::STATUS_APPLICATION_SUCCESS => 'Сделка успешно завершена',
         self::STATUS_SELF_RESERVED => 'Самостоятельное бронирование',
+        self::STATUS_COMISSION_PAY_CONFIRMED_BY_DEVELOPER => 'Застройщик подтвердил выплату вознаграждения',
+        self::STATUS_COMISSION_PAY_CONFIRMED_BY_ADMIN => 'Администратор подтвердил получение вознаграждения от застройщика',
     ];
 
     /**
@@ -205,6 +209,15 @@ class Application extends ActiveRecord
     public function getApplicant ()
     {
         return $this->hasOne(User::className(), ['id' => 'applicant_id']);
+    }
+
+    /**
+     * Check if a user has reserved an object
+     */
+    public static function checkApplicationByUserAndFlat($userId, $flatId)
+    {
+        $existingApplcations = self::find()->where(['applicant_id' => $userId])->andWhere(['flat_id' => $flatId])->andWhere(['is_active' => 1])->all();
+        return count($existingApplcations) > 0 ? true : false;
     }
     
 }

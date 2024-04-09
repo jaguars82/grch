@@ -137,6 +137,55 @@ function getApplicationFormParamsByStatus (applicationStatus, userRole) {
           submitLabel: 'Выставить счёт'       
         }          
       ],
+    7:
+      [
+        {
+          role: 'developer_repres',
+          operationLabel: 'Подтвердить выплату вознаграждения',
+          operation: 'report_payment_from_developer',
+          formCaption: 'Подтвердите выплату вознаграждения',
+          formContent: '<p>Оплату можно подтвердить на странице заявки, по телефону <strong>+7 905 049-19-97</strong> или на почту <strong>project_manager@grvrn.ru</strong>.</p>',
+          submitLabel: 'Подтвердить'
+        },
+        {
+          role: 'admin',
+          operationLabel: 'Подтвердить получение оплаты от застройщика',
+          operation: 'confirm_payment_from_developer_by_admin',
+          formCaption: 'Подтверждение получения вознаграждения от застройщика',
+          formContent: '<p>После подтверждениия агенту будет доступен для скачивания и последующего предоставления отчет-акт.</p>',
+          submitLabel: 'Подтвердить'
+        },
+      ],
+    13:
+      [
+        {
+          role: 'admin',
+          operationLabel: 'Подтвердить получение оплаты от застройщика',
+          operation: 'confirm_payment_from_developer_by_admin',
+          formCaption: 'Подтверждение получения вознаграждения от застройщика',
+          formContent: '<p>После подтверждениия агенту будет доступен для скачивания и последующего предоставления отчет-акт.</p>',
+          submitLabel: 'Подтвердить'
+        }
+      ],
+    14:
+      [
+        {
+          role: 'agent',
+          operationLabel: 'Загрузить Отчет-Акт',
+          operation: 'issue_report_act',
+          formCaption: 'Загрузите отчет-акт',
+          formContent: '<p>После загрузки и обработки Отчета-Акта будет произведена выплата вознаграждения</p>',
+          submitLabel: 'Загрузить'
+        },
+        {
+          role: 'manager',
+          operationLabel: 'Загрузить Отчет-Акт',
+          operation: 'issue_report_act',
+          formCaption: 'Загрузите отчет-акт',
+          formContent: '<p>После загрузки и обработки Отчета-Акта будет произведена выплата вознаграждения</p>',
+          submitLabel: 'Загрузить'
+        },
+      ],
     9:
       [
         {

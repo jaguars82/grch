@@ -129,6 +129,11 @@
                       <span class="text-h5"><span class="text-uppercase">Обратите внимание</span>: Вам нужно будет загрузить файл(ы) Договора долевого участия. Пожалуйста, подготовьте его.</span>
                     </q-banner>
                   </template>
+                  <!-- Report-Act template download -->
+                  <template v-if="statusChangesForm.operation === 'issue_report_act'">
+                    <p>Скачайте файл Отчёта-Акта, расположенный ниже по ссылки, заполните его и загрузите</p>
+                    <FileDownloadable folder="/downloads/reservation" :file="{ name: 'Образец Отчета-Акта', file: 'OtchetActTemplate.docx' }" />
+                  </template>
                 </q-card-section>
                 <q-card-actions align="right">
                   <q-btn v-if="application.status < 3 && user.role === 'admin'" class="q-mr-xs" unelevated label="Сменить объект" @click="objectChange"></q-btn>
@@ -204,7 +209,6 @@
               hide-bottom
             >
             </q-table>
-            <pre>{{ application }}</pre>
         </template>
       </RegularContentContainer>
       <FlatListItem class="q-ml-md q-mt-md" :flat="flat" />

@@ -1,5 +1,5 @@
 <template>
-  <a :href="`/uploads/${file.file}`" download>
+  <a :href="folder ? `${folder}/${file.file}` : `/uploads/${file.file}`" download>
     <div
       class="flex no-wrap items-center q-pa-sm cursor-pointer rounded-borders"
       @mouseenter="focusOn"
@@ -16,7 +16,8 @@ import { computed } from 'vue'
 
 export default {
   props: {
-    file: Object
+    file: Object,
+    folder: String
   },
   setup (props) {
     const icon = computed(() => {
