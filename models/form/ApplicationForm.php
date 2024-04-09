@@ -39,6 +39,8 @@ class ApplicationForm extends Model
     public $ddu_matcap_paydate;
     public $dduFile = [];
     public $dduFilesToSave = [];
+    public $reportActFile = [];
+    public $reportActToSave = [];
     public $self_reservation;
     public $is_active;
     public $application_number;
@@ -81,6 +83,16 @@ class ApplicationForm extends Model
         $this->dduFilesToSave = UploadedFile::getInstancesByName('dduFile');
         
         $this->processFiles('dduFilesToSave');
+
+        return true;
+    }
+
+    public function processReportActFile()
+    {
+        $this->reportActFile = $this->getInertiaFileInstances('reportActFile');
+        $this->reportActToSave = UploadedFile::getInstancesByName('reportActFile');
+        
+        $this->processFiles('reportActToSave');
 
         return true;
     }

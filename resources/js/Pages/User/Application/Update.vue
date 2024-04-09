@@ -204,7 +204,7 @@
                         label="Перетащите или загрузите документ (квитанцию) об оплате бронирования"
                         multiple 
                         use-chips
-                        accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, .jpg, image/*"
+                        accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, .jpg, image/*, .doc, .docx"
                       >
                         <template v-slot:prepend>
                           <q-icon name="attach_file" />
@@ -311,7 +311,7 @@
                         label="Перетащите или загрузите Договор долевого участия"
                         multiple 
                         use-chips
-                        accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, .jpg, image/*"
+                        accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, .jpg, image/*, .doc, .docx"
                       >
                         <template v-slot:prepend>
                           <q-icon name="attach_file" />
@@ -343,10 +343,23 @@
                         v-model="reportActFile"
                         label="Перетащите или загрузите заполненный Отчет-Акт"
                         multiple
-                        accept="application/msword, application/pdf"
+                        accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, .jpg, image/*, .doc, .docx"
                       >
                         <template v-slot:prepend>
                           <q-icon name="attach_file" />
+                        </template>
+                        <template v-slot:file="{ index, file }">
+                          <q-chip
+                            removable
+                            @remove="onRemoveReportActFile(index)"
+                          >
+                            <q-avatar>
+                              <q-icon name="draft" />
+                            </q-avatar>
+                            <div class="ellipsis relative-position">
+                              {{ file.name }}
+                            </div>
+                          </q-chip>
                         </template>
                       </q-file>
                     </div>
@@ -483,7 +496,7 @@ export default {
     const onRemoveRecieptFile = (ind) => {
       const halfBeforeTheUnwantedElement = recieptFile.value.slice(0, ind)
       const halfAfterTheUnwantedElement = recieptFile.value.slice(ind+1);
-      recieptFile.value = halfBeforeTheUnwantedElement.concat(halfAfterTheUnwantedElement);
+      recieptFile.value = halfBeforeTheUnwantedElement.concat(halfAfterTheUnwantedElement)
     }
 
     // DDU file(s)
@@ -492,11 +505,17 @@ export default {
     const onRemoveDduFile = (ind) => {
       const halfBeforeTheUnwantedElement = dduFile.value.slice(0, ind)
       const halfAfterTheUnwantedElement = dduFile.value.slice(ind+1);
-      dduFile.value = halfBeforeTheUnwantedElement.concat(halfAfterTheUnwantedElement);
+      dduFile.value = halfBeforeTheUnwantedElement.concat(halfAfterTheUnwantedElement)
     }
 
     // report-act file
     const reportActFile = ref([])
+
+    const onRemoveReportActFile = (ind) => {
+      const halfBeforeTheUnwantedElement = reportActFile.value.slice(0, ind)
+      const halfAfterTheUnwantedElement = reportActFile.value.slice(ind+1);
+      reportActFile.value = halfBeforeTheUnwantedElement.concat(halfAfterTheUnwantedElement)
+    }
 
     const formfields = ref(
       {
@@ -719,6 +738,8 @@ export default {
       onRemoveRecieptFile,
       dduFile,
       onRemoveDduFile,
+      reportActFile,
+      onRemoveReportActFile,
       formfields,
       optfields,
       statusChangesForm,

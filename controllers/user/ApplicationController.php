@@ -650,9 +650,76 @@ class ApplicationController extends Controller
                     return $this->redirect(['view', 'id' => $application->id]);
 
                     break;
+
+                /***
+                 * Agent or manager reports successful deal
+                 * uploads Report-Act
+                 */
+                case 'issue_report_act':
+
+                    $transaction = \Yii::$app->db->beginTransaction();
+
+                    try {
+                        $application->status = Application::STATUS_APPLICATION_APPROVAL_REQUEST;
+
+                        $applicationForm->processReportActFile();
+
+                        if (count($applicationForm->reportActFile)) {
+
+                            $application->report_act_provided = 1;
+                            
+                            foreach ($applicationForm->reportActFile as $ind => $file) {
+                                $reportAct = new ApplicationDocument();
+                                $reportAct->application_id = $application->id;
+                                $reportAct->user_id = \Yii::$app->user->id;
+                                $reportAct->category = ApplicationDocument::CAT_REPORT_ACT;
+                                $reportAct->file = $applicationForm->reportActToSave[$ind];
+                                $reportAct->name = $file['name'];
+                                $reportAct->size = $file['size'];
+                                $reportAct->filetype = $file['extension'];
+                                $reportAct->save();
+                            }
+                        }
+
+                        $application->save();
+
+                        $this->storeToHistory($applicationHistoryForm, $application, Application::STATUS_APPLICATION_APPROVAL_REQUEST);
+
+                        $this->sendNotification(
+                            $notificationForm, Notification::USER_TO_ADMINS,
+                            'Агент загрузил Отчет-Акт по заявке '.$application->application_number,
+                            'Пожалуйста, проверьте информацию',
+                            'Перейти',
+                            '/user/application/view?id='.$application->id,
+                            $application->applicant_id
+                        );
+
+                        $transaction->commit();
+
+                        /**
+                         * Send email message to admins
+                         */
+                        /*foreach ($admins as $admin) {
+                            if (!empty ($admin)) {
+                                \Yii::$app->mailer->compose()
+                                ->setTo($application->admin->email)
+                                ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
+                                ->setSubject('Вознаграждение от застройщика получено. Пожалуйста, заполните Отчет-Акт')
+                                ->setTextBody("Агент загрузил Отчет-Акт по заявке $application->application_number. Пожалуйста, проверьте информацию: https://grch.ru/user/application/view?id=$application->id")
+                                ->send();
+                            }
+                        }*/
+
+                    } catch (\Exception $e) {
+                        $transaction->rollBack();
+                        return $this->redirectBackWhenException($e);
+                    }
+                    return $this->redirect(['view', 'id' => $application->id]);
+
+                break;
                 
                 /**
-                 * Agent or maneger reports successful deal
+                 * Agent or manager reports successful deal
                  * If success, application status changes from 5 to 9
                  */
                 case 'report_success_deal_by_agent':
@@ -764,7 +831,7 @@ class ApplicationController extends Controller
                         $flat->is_reserved = 0;
                         $flat->save();
 
-                        $application->status = 11;
+                        $application->status = Application::STATUS_APPLICATION_SUCCESS;
                         $application->save();
 
                         $applicationHistoryForm->application_id = $application->id;
@@ -777,7 +844,7 @@ class ApplicationController extends Controller
                         $notificationForm->type = 1;
                         $notificationForm->recipient_id = $application->applicant_id;
                         $notificationForm->topic = 'Информация о завершении сделки по заявке '.$application->application_number.' подтверждена.';
-                        $notificationForm->body = 'Администратор подтвердил успешное завершение сделки. Ожидается оплата. Для просмотра дополнительной информации перейдите на страницу заявки';
+                        $notificationForm->body = 'Администратор подтвердил успешное завершение сделки.';
                         $notificationForm->action_text = 'Перейти';
                         $notificationForm->action_url = '/user/application/view?id='.$application->id;
                         $notificationModel = (new Notification())->fill($notificationForm->attributes);              
@@ -790,7 +857,7 @@ class ApplicationController extends Controller
                         ->setTo($application->applicant->email)
                         ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
                         ->setSubject("Информация о завершении сделки по заявке $application->application_number подтверждена.")
-                        ->setTextBody("Администратор подтвердил успешное завершение сделки по заявке $application->application_number. Ожидается оплата. Для просмотра дополнительной информации перейдите на страницу заявки: https://grch.ru/user/application/view?id=$application->id")
+                        ->setTextBody("Администратор подтвердил успешное завершение сделки по заявке $application->application_number. Для просмотра дополнительной информации перейдите на страницу заявки: https://grch.ru/user/application/view?id=$application->id")
                         ->send();*/
 
                     } catch (\Exception $e) {
@@ -812,6 +879,7 @@ class ApplicationController extends Controller
             'amount' => count($application->documents),
             'reciepts' => ArrayHelper::toArray($application->reciepts),
             'ddus' => ArrayHelper::toArray($application->ddus),
+            'reportAct' => ArrayHelper::toArray($application->reportAct),
         ];
         
         return $this->inertia('User/Application/View', [
@@ -869,6 +937,7 @@ class ApplicationController extends Controller
         
         switch ($direction) {
             case Notification::DEVELOPER_TO_ADMINS:
+            case Notification::USER_TO_ADMINS:
                 $type = Notification::TYPE_GROUP;
                 $recipient_group = 'admin';
                 break;

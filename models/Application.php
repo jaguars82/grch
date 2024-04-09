@@ -37,6 +37,7 @@ use yii\db\ActiveRecord;
  * @property string $ddu_cash_paydate
  * @property string $ddu_mortgage_paydate
  * @property string $ddu_matcap_paydate
+ * @property int $report_act_provided
  * @property string $created_at
  * @property string $updated_at
  * @property string $application_number
@@ -48,6 +49,7 @@ use yii\db\ActiveRecord;
  * @property ApplicationDocument[] $documents
  * @property ApplicationDocument[] $reciepts
  * @property ApplicationDocument[] $ddus
+ * @property ApplicationDocument[] $reportAct
  */
 class Application extends ActiveRecord
 {
@@ -70,6 +72,7 @@ class Application extends ActiveRecord
     const STATUS_SELF_RESERVED = 12;
     const STATUS_COMISSION_PAY_CONFIRMED_BY_DEVELOPER = 13;
     const STATUS_COMISSION_PAY_CONFIRMED_BY_ADMIN = 14;
+    const STATUS_REPORT_ACT_UPLOADED = 15;
 
     public static $status = [
         self::STATUS_UNDEFINED => 'Статус заявки неопределён',
@@ -83,7 +86,7 @@ class Application extends ActiveRecord
         //self::STATUS_RESERV_CANCEL_APPLICATED => 'Заявка на отмену брони',
         //self::STATUS_RESERV_CANCELLED_BY_ADMIN => 'Бронирование прекращено',
         self::STATUS_APPLICATION_CANCELED_BY_ADMIN => 'Заявка прекращена',
-        self::STATUS_APPLICATION_APPROVAL_REQUEST => 'Подтверждающие документы отправлены',
+        self::STATUS_APPLICATION_APPROVAL_REQUEST => 'Подтверждающие документы (отчёт-акт) отправлены',
         self::STATUS_APPLICATION_APPROVAL_PROCESS => 'Документы получены, ожидается подтверждение и оплата',
         self::STATUS_APPLICATION_SUCCESS => 'Сделка успешно завершена',
         self::STATUS_SELF_RESERVED => 'Самостоятельное бронирование',
@@ -127,7 +130,7 @@ class Application extends ActiveRecord
             [['client_firstname', 'client_lastname', 'client_middlename', 'client_phone', 'client_email',  'applicant_comment', 'manager_firstname', 'manager_lastname', 'manager_middlename', 'manager_phone', 'manager_email', 'reservation_conditions', 'admin_comment', 'ddu_cash_paydate', 'ddu_mortgage_paydate', 'ddu_matcap_paydate', 'application_number', 'deal_success_docs'], 'string'],
             [['ddu_price', 'ddu_cash', 'ddu_mortgage', 'ddu_matcap'], 'double'],
             [['created_at', 'updated_at'], 'safe'],
-            [['is_active', 'is_toll', 'receipt_provided', 'ddu_provided'], 'boolean'],
+            [['is_active', 'is_toll', 'receipt_provided', 'ddu_provided', 'report_act_provided'], 'boolean'],
             [['flat_id'], 'exist', 'skipOnError' => true, 'targetClass' => Flat::className(), 'targetAttribute' => ['flat_id' => 'id']],
             [['developer_id'], 'exist', 'skipOnError' => true, 'targetClass' => Developer::className(), 'targetAttribute' => ['developer_id' => 'id']],
             [['applicant_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['applicant_id' => 'id']],
@@ -199,6 +202,11 @@ class Application extends ActiveRecord
     public function getDdus ()
     {
         return $this->hasMany(ApplicationDocument::className(), ['application_id' => 'id'])->andWhere(['category' => ApplicationDocument::CAT_DDU]); 
+    }
+
+    public function getReportAct ()
+    {
+        return $this->hasMany(ApplicationDocument::className(), ['application_id' => 'id'])->andWhere(['category' => ApplicationDocument::CAT_REPORT_ACT]); 
     }
 
     public function getHistory ()

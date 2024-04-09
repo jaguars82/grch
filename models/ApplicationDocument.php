@@ -25,10 +25,12 @@ class ApplicationDocument extends \yii\db\ActiveRecord
 {
     const CAT_RECIEPT = 1;
     const CAT_DDU = 2;
+    const CAT_REPORT_ACT = 3;
 
     public static $docCategory = [
         self::CAT_RECIEPT => 'Квитанция за бронь',
         self::CAT_DDU => 'Договор долевого участия',
+        self::CAT_REPORT_ACT => 'Отчет-акт агента',
     ];
 
     /**

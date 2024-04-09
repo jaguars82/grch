@@ -172,7 +172,7 @@
                       </q-card-section>
                     </q-card>
                   </q-expansion-item>
-                  <!-- DDU file's) -->
+                  <!-- DDU file(s) -->
                   <q-expansion-item
                     class="q-mb-sm"
                     v-if="application.documents.ddus.length"
@@ -185,6 +185,27 @@
                       <q-card-section class="q-pa-none">
                         <div class="row q-mt-sm q-col-gutter-none">
                           <template v-for="doc of application.documents.ddus">
+                            <div class="col-12 col-md-6 col-lg-4">
+                              <FileDownloadable :file="doc" />
+                            </div>
+                          </template>
+                        </div>
+                      </q-card-section>
+                    </q-card>
+                  </q-expansion-item>
+                  <!-- Report-ACT file(s) -->
+                  <q-expansion-item
+                    class="q-mb-sm"
+                    v-if="application.documents.reportAct.length"
+                    v-model="documentExpansions.reportAct"
+                    header-class="rounded-borders"
+                    icon="summarize"
+                    label="Отчет-Акт агента"
+                  >
+                    <q-card>
+                      <q-card-section class="q-pa-none">
+                        <div class="row q-mt-sm q-col-gutter-none">
+                          <template v-for="doc of application.documents.reportAct">
                             <div class="col-12 col-md-6 col-lg-4">
                               <FileDownloadable :file="doc" />
                             </div>
@@ -301,6 +322,7 @@ components: {
     const documentExpansions = ref({
       reciept: true,
       ddu: true,
+      reportAct: true,
     })
 
     const statusChangesForm = getApplicationFormParamsByStatus(props.application.status, user.value.role)
