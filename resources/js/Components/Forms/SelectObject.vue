@@ -223,7 +223,7 @@ export default {
       optfields.value.building_select = null
       optfields.value.entrance_select = null
       optfields.value.flat_select = null
-      axios.post(`/newbuilding-complex/get-for-developer?id=${optfields.value.developer_select}`)
+      axios.post(`/newbuilding-complex/get-for-developer?id=${optfields.value.developer_select}&active=false`)
       .then(function (response) {
         buildingComplexes.value = response.data
       })
@@ -289,7 +289,7 @@ export default {
 
     const onEntranceSelect = () => {
       optfields.value.flat_select = null
-      axios.post(`/entrance/get-flats-by-entrance?id=${optfields.value.entrance_select}`)
+      axios.post(`/entrance/get-flats-by-entrance?id=${optfields.value.entrance_select}&active=false`)
       .then(function (response) {
         flats.value = response.data
       })

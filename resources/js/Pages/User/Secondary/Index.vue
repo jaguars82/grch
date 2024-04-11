@@ -346,7 +346,6 @@ export default ({
     const openDeleteForm = (addId) => {
       addToDeleteId.value = addId
       deleteFormDialog.value = true
-      console.log(deleteFormDialog.value)
     }
 
     const closeDeleteDialog = () => {

@@ -11,6 +11,7 @@ use app\models\NewbuildingComplex;
 use app\models\Newbuilding;
 use app\models\Entrance;
 use app\models\Flat;
+use app\models\Agency;
 use app\models\Application;
 use app\models\ApplicationDocument;
 use app\models\form\ApplicationForm;
@@ -78,6 +79,17 @@ class ApplicationController extends Controller
             $dateField = !empty(\Yii::$app->request->get('dateParam')) ? \Yii::$app->request->get('dateParam') : 'created_at';
             $query->andWhere(['>=', 'application.'.$dateField, $dateFrom.'  00:00:00'])->andWhere(['<=', 'application.'.$dateField, $dateTo.'  23:59:59']);
         }
+
+        /** Filter by agency */
+        if (null !== \Yii::$app->request->get('agency')) {
+            $query->join('LEFT JOIN', 'user', 'user.id = applicant_id')
+                ->andWhere(['user.agency_id' => \Yii::$app->request->get('agency')]);
+        }
+        
+        /** Filter by agent */
+        if (null !== \Yii::$app->request->get('agent')) {
+            $query->andWhere(['applicant_id' => \Yii::$app->request->get('agent')]);
+        }
         
         if (\Yii::$app->user->identity->role === 'developer_repres') {
             $query->andWhere(['developer_id' => \Yii::$app->user->identity->developer_id]);
@@ -130,6 +142,14 @@ class ApplicationController extends Controller
             }
             array_push($applications_array, $application_entry);
         }
+
+        /** Opttions for agents filter */
+        if (\Yii::$app->user->identity->role === 'admin' && null !== \Yii::$app->request->get('agency')) {
+            $agents = Agency::getUsersByAgency(\Yii::$app->request->get('agency'));
+        }
+        if (\Yii::$app->user->identity->role === 'manager') {
+            $agents = Agency::getUsersByAgency(\Yii::$app->user->identity->agency_id);
+        }
                
         return $this->inertia('User/Application/Index', [
             'user' => \Yii::$app->user->identity,
@@ -139,6 +159,8 @@ class ApplicationController extends Controller
             'page' => $pagination->page,
             'psize' => $pagination->pageSize,
             'show' => isset($show) ? $show : 'self',
+            'agencies' => \Yii::$app->user->identity->role === 'admin' ? Agency::getAllAsList() : [],
+            'agents' => isset($agents) ? ArrayHelper::toArray($agents) : [],
         ]);
     }
 

@@ -70,15 +70,24 @@ class EntranceController extends Controller
      * @param integer $id mewbuilding's ID
      * @return mixed
      */
-    public function actionGetFlatsByEntrance($id)
+    public function actionGetFlatsByEntrance($id, $active = true)
     {
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;        
-        $flats = Flat::find()
-            ->select(['id', 'number', 'floor'])
-            ->where(['entrance_id' => $id])
-            ->andWhere(['status' => 0])
-            ->orderBy(['number' => SORT_ASC])
-            ->all();
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON; 
+        if ($active === true) {
+            $flats = Flat::find()
+                ->select(['id', 'number', 'floor'])
+                ->where(['entrance_id' => $id])
+                ->andWhere(['status' => 0])
+                ->orderBy(['number' => SORT_ASC])
+                ->all();            
+        } else {
+            $flats = Flat::find()
+                ->select(['id', 'number', 'floor'])
+                ->where(['entrance_id' => $id])
+                ->orderBy(['number' => SORT_ASC])
+                ->all();   
+        }
+
         
         \Yii::$app->response->data = $flats;
     }

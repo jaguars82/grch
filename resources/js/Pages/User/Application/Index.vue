@@ -43,15 +43,39 @@
           
           <GridTableToggle :defaultMode="appsGridView" />
 
-          <div class="row q-pt-md items-center">
+          <div class="row q-pt-md q-col-gutter-none items-center">
+            <!-- Manager selects if to show his own apllication or applications of agents -->
             <template v-if="user.role === 'manager'">
-            <div class="col-1 self-center">
-             <q-icon size="md" :name="showFilter.value === 'self' ? 'person' : 'group'" />
-            </div>
-            <div class="col-9 col-sm-10">
-              <q-select class="q-gutter-sm" outlined v-model="showFilter" :options="showOptions" label="Показывать заявки" @update:model-value="onShowFilterChange" dense options-dense />
+            <div :class="[showFilter.value === 'agency' ? 'col-5 col-sm-6' : 'col-10 col-sm-11']">
+              <q-select class="q-gutter-sm" outlined v-model="showFilter" :options="showOptions" label="Показывать заявки" @update:model-value="onShowFilterChange" dense options-dense>
+                <template v-slot:prepend>
+                  <q-icon :name="showFilter.value === 'self' ? 'person' : 'group'" />
+                </template>
+              </q-select>
             </div>
             </template>
+            <!-- Agency selection for admin -->
+            <template v-if="user.role === 'admin'">
+              <div class="col-5 col-sm-6">
+                <q-select class="q-gutter-sm" outlined v-model="agencyFilter" :options="agencyOptions" label="Агентство" emit-value map-options dense options-dense>
+                  <template v-slot:prepend>
+                    <q-icon name="corporate_fare" />
+                  </template>
+                </q-select>
+              </div>
+            </template>
+            <!-- Agent selection -->
+            <template v-if="user.role === 'admin' || (user.role === 'manager' && showFilter.value === 'agency')">
+              <div class="col-5">
+                <q-select class="q-gutter-sm" outlined v-model="agentFilter" :options="agentOptions" label="Сотрудник" emit-value map-options dense options-dense>
+                  <template v-slot:prepend>
+                    <q-icon name="person" />
+                  </template>
+                </q-select>
+              </div>
+            </template>
+            <!-- Agent selection for admin or manager -->
+            <!-- Date range filter -->
             <div class="col text-right">
               <q-btn class="q-ml-sm" unelevated round icon="event" color="primary">
                 <q-popup-proxy
@@ -178,6 +202,7 @@ import GridTableToggle from '@/Components/Elements/GridTableToggle.vue'
 import SelectObject from '@/Components/Forms/SelectObject.vue'
 import useEmitter from '@/composables/use-emitter'
 import { asDate, asUpdateDateTime } from '@/helpers/formatter'
+import { idNameObjToOptions, userOptionList } from '@/composables/formatted-and-processed-data'
 import { getApplicationFormParamsByStatus } from '@/composables/components-configurations'
 import { userInfo } from '@/composables/shared-data'
 
@@ -198,7 +223,9 @@ export default ({
     show: {
       type: String,
       default: 'self'
-    }
+    },
+    agencies: Array,
+    agents: Array,
   },
   setup(props) {
     const { user } = userInfo()
@@ -302,17 +329,30 @@ export default ({
 
     const showFilter = ref(selectedShowOption.value)
 
-    const onShowFilterChange = () => {
-      Inertia.post('/user/application/index', { show: showFilter.value.value, dateRange: dateRange.value, dateParam: dateParam.value.value }, { preserveScroll: true, preserveState: true })
-    }
-
     /** Range of dates */
     const dateRange = ref({})
     const dateParam = ref({ label: "созданные за период", value: 'created_at' })
 
-    watch ([dateRange, dateParam], () => {
+    /** agencies and agents filters */
+    const agencyOptions = computed(() => {
+      return idNameObjToOptions(props.agencies)
+    })
+
+    const agentOptions = computed(() => { 
+      return userOptionList(props.agents)
+    })
+
+    const agencyFilter = ref()
+
+    const agentFilter = ref()
+
+    const onShowFilterChange = () => {
+      Inertia.get('/user/application/index', { show: showFilter.value.value, dateRange: dateRange.value, dateParam: dateParam.value.value, agency: agencyFilter.value, agent: agentFilter.value }, { preserveScroll: true, preserveState: true })
+    }
+
+    watch ([dateRange, dateParam, agencyFilter, agentFilter], () => {
       console.log('data range filter')
-      Inertia.get('/user/application/index', { show: showFilter.value.value, dateRange: dateRange.value, dateParam: dateParam.value.value }, { preserveScroll: true, preserveState: true })
+      Inertia.get('/user/application/index', { show: showFilter.value.value, dateRange: dateRange.value, dateParam: dateParam.value.value, agency: agencyFilter.value, agent: agentFilter.value }, { preserveScroll: true, preserveState: true })
     })
 
     /** New application form */
@@ -350,6 +390,10 @@ export default ({
       dateParam,
       showFilter,
       onShowFilterChange,
+      agencyOptions,
+      agentOptions,
+      agencyFilter,
+      agentFilter,
       flatIdForNewApplication,
       goToMakeApplication,
       moveToArchive
