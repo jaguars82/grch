@@ -38,6 +38,8 @@ use yii\db\ActiveRecord;
  * @property string $ddu_mortgage_paydate
  * @property string $ddu_matcap_paydate
  * @property int $report_act_provided
+ * @property int $agent_docpack_provided
+ * @property int $developer_docpack_provided
  * @property string $created_at
  * @property string $updated_at
  * @property string $application_number
@@ -48,6 +50,8 @@ use yii\db\ActiveRecord;
  * @property User $applicant
  * @property ApplicationDocument[] $documents
  * @property ApplicationDocument[] $reciepts
+ * @property ApplicationDocument[] $agentDocpack
+ * @property ApplicationDocument[] $developerDocpack
  * @property ApplicationDocument[] $ddus
  * @property ApplicationDocument[] $reportAct
  */
@@ -73,6 +77,8 @@ class Application extends ActiveRecord
     const STATUS_COMISSION_PAY_CONFIRMED_BY_DEVELOPER = 13;
     const STATUS_COMISSION_PAY_CONFIRMED_BY_ADMIN = 14;
     const STATUS_REPORT_ACT_UPLOADED = 15;
+    const STATUS_APPLICATION_IN_WORK_AGENT_DOCPACK_PROVIDED = 16;
+    const STATUS_APPLICATION_IN_WORK_DEVELOPER_DOCPACK_PROVIDED = 17;
 
     public static $status = [
         self::STATUS_UNDEFINED => 'Статус заявки неопределён',
@@ -92,6 +98,8 @@ class Application extends ActiveRecord
         self::STATUS_SELF_RESERVED => 'Самостоятельное бронирование',
         self::STATUS_COMISSION_PAY_CONFIRMED_BY_DEVELOPER => 'Застройщик подтвердил выплату вознаграждения',
         self::STATUS_COMISSION_PAY_CONFIRMED_BY_ADMIN => 'Администратор подтвердил получение вознаграждения от застройщика',
+        self::STATUS_APPLICATION_IN_WORK_AGENT_DOCPACK_PROVIDED => 'Заявка в работе. Пакет документов от агента загружен.',
+        self::STATUS_APPLICATION_IN_WORK_DEVELOPER_DOCPACK_PROVIDED => 'Заявка в работе. Пакет документов от застройщика загружен.',
     ];
 
     /**
@@ -130,7 +138,7 @@ class Application extends ActiveRecord
             [['client_firstname', 'client_lastname', 'client_middlename', 'client_phone', 'client_email',  'applicant_comment', 'manager_firstname', 'manager_lastname', 'manager_middlename', 'manager_phone', 'manager_email', 'reservation_conditions', 'admin_comment', 'ddu_cash_paydate', 'ddu_mortgage_paydate', 'ddu_matcap_paydate', 'application_number', 'deal_success_docs'], 'string'],
             [['ddu_price', 'ddu_cash', 'ddu_mortgage', 'ddu_matcap'], 'double'],
             [['created_at', 'updated_at'], 'safe'],
-            [['is_active', 'is_toll', 'receipt_provided', 'ddu_provided', 'report_act_provided'], 'boolean'],
+            [['is_active', 'is_toll', 'receipt_provided', 'ddu_provided', 'report_act_provided', 'agent_docpack_provided', 'developer_docpack_provided'], 'boolean'],
             [['flat_id'], 'exist', 'skipOnError' => true, 'targetClass' => Flat::className(), 'targetAttribute' => ['flat_id' => 'id']],
             [['developer_id'], 'exist', 'skipOnError' => true, 'targetClass' => Developer::className(), 'targetAttribute' => ['developer_id' => 'id']],
             [['applicant_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['applicant_id' => 'id']],
@@ -197,6 +205,16 @@ class Application extends ActiveRecord
     public function getReciepts ()
     {
         return $this->hasMany(ApplicationDocument::className(), ['application_id' => 'id'])->andWhere(['category' => ApplicationDocument::CAT_RECIEPT]); 
+    }
+
+    public function getAgentDocpack ()
+    {
+        return $this->hasMany(ApplicationDocument::className(), ['application_id' => 'id'])->andWhere(['category' => ApplicationDocument::AGENT_DOCPACK]); 
+    }
+
+    public function getDeveloperDocpack ()
+    {
+        return $this->hasMany(ApplicationDocument::className(), ['application_id' => 'id'])->andWhere(['category' => ApplicationDocument::DEVELOPER_DOCPACK]); 
     }
 
     public function getDdus ()

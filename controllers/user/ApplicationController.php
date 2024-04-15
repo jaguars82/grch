@@ -210,7 +210,7 @@ class ApplicationController extends Controller
                     $transaction = \Yii::$app->db->beginTransaction();
 
                     try {
-                        $application->status = 2;
+                        $application->status = Application::STATUS_RESERV_AWAIT_FOR_APPROVAL;
                         $application->save();
         
                         $applicationHistoryForm->application_id = $application->id;
@@ -273,7 +273,7 @@ class ApplicationController extends Controller
                         $application->reservation_conditions =  $applicationForm['reservation_conditions'];
                         $application->is_toll =  $applicationForm['is_toll'];
 
-                        $application->status = 3;
+                        $application->status = Application::STATUS_RESERV_APPROVED_BY_DEVELOPER;
                         $application->save();
 
                         $applicationHistoryForm->application_id = $application->id;
@@ -328,7 +328,7 @@ class ApplicationController extends Controller
 
                     try {
                         $flat = Flat::findOne($application->flat_id);
-                        $flat->status = 1;
+                        $flat->status = Application::STATUS_RESERV_APPROVED_BY_ADMIN;
                         $flat->is_reserved = 1;
                         $flat->save();
                         
@@ -394,9 +394,9 @@ class ApplicationController extends Controller
                     $transaction = \Yii::$app->db->beginTransaction();
 
                     try {
-                        if ($application->is_toll === 1) {
-                            $applicationForm->load(\Yii::$app->request->post(), '');
+                        $applicationForm->load(\Yii::$app->request->post(), '');
 
+                        if ($application->is_toll === 1) {
                             $applicationForm->processRecieptFile();
 
                             if (count($applicationForm->recieptFile)) {
@@ -417,12 +417,33 @@ class ApplicationController extends Controller
                             }
                         }
 
-                        $application->status = 5;
+                        $applicationForm->processAgentDocPackFile();
+
+                        if (count($applicationForm->agentDocpack)) {
+                                
+                            $application->agent_docpack_provided = 1;
+                            
+                            foreach ($applicationForm->agentDocpack as $ind => $file) {
+                                $doc = new ApplicationDocument();
+                                $doc->application_id = $application->id;
+                                $doc->user_id = \Yii::$app->user->id;
+                                $doc->category = ApplicationDocument::AGENT_DOCPACK;
+                                $doc->file = $applicationForm->agentDocpackToSave[$ind];
+                                $doc->name = $file['name'];
+                                $doc->size = $file['size'];
+                                $doc->filetype = $file['extension'];
+                                $doc->save();
+                            }
+                        }
+
+                        $appStatus = $application->agent_docpack_provided === 1 ? Application::STATUS_APPLICATION_IN_WORK_AGENT_DOCPACK_PROVIDED : Application::STATUS_APPLICATION_IN_WORK;
+
+                        $application->status = $appStatus;
                         $application->save();
 
                         $applicationHistoryForm->application_id = $application->id;
                         $applicationHistoryForm->user_id = \Yii::$app->user->id;
-                        $applicationHistoryForm->action = Application::STATUS_APPLICATION_IN_WORK;
+                        $applicationHistoryForm->action = $appStatus;
                         $applicationHistoryModel = (new ApplicationHistory())->fill($applicationHistoryForm->attributes);
                         $applicationHistoryModel->save();
 
@@ -435,11 +456,30 @@ class ApplicationController extends Controller
                         $notificationForm->action_url = '/user/application/view?id='.$application->id;
                         $notificationModel = (new Notification())->fill($notificationForm->attributes);              
                         $notificationModel->save();
+
+                        /** Notification for developer (if agent's documents pack uploaded) */
+                        if ($application->agent_docpack_provided === 1) {
+
+                            $developerRepresentative = (new User())->getDeveloperRepresentative($application->developer_id);
+                        
+                            if(!empty($developerRepresentative)) {
+                                $notificationForm->type = 1;
+                                $notificationForm->recipient_id = $developerRepresentative->id;
+                                $notificationForm->recipient_group = 'developer_repres';
+                                $notificationForm->topic = 'Агент загрузил документы по заявке '.$application->application_number;
+                                $notificationForm->body = 'Для просмотра документов перейдите на страницу заявки';
+                                $notificationForm->action_text = 'Перейти';
+                                $notificationForm->action_url = '/user/application/view?id='.$application->id;
+                                $notificationForDeveloper = (new Notification())->fill($notificationForm->attributes);
+                                $notificationForDeveloper->save();
+                            }
+
+                        }
         
                         $transaction->commit();
 
                         /** Send email-notifications for admins */
-                        /*$admins = (new AuthAssignment())->admins;
+                        $admins = (new AuthAssignment())->admins;
 
                         foreach ($admins as $admin) {
                             if (!empty ($admin)) {
@@ -450,7 +490,19 @@ class ApplicationController extends Controller
                                 ->setTextBody("Для просмотра подробностей перейдите на страницу заявки: https://grch.ru/user/application/view?id=$application->id")
                                 ->send(); 
                             }
-                        }*/
+                        }
+
+                        /** Send email-notifications to developer */
+                        if ($application->agent_docpack_provided === 1) {
+                            if(!empty($developerRepresentative)) {
+                                \Yii::$app->mailer->compose()
+                                ->setTo($developerRepresentative->email)
+                                ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
+                                ->setSubject("Агент загрузил документы по заявке $application->application_number")
+                                ->setTextBody("Для просмотра документов перейдите на страницу заявки: https://grch.ru/user/application/view?id=$application->id")
+                                ->send(); 
+                            }
+                        }
 
                     } catch (\Exception $e) {
                         $transaction->rollBack();
@@ -460,8 +512,69 @@ class ApplicationController extends Controller
                     break;
 
                 /**
-                 * Agent or manager takes application to work
-                 * If success application's status changes from 5 to 6
+                 * Developer uploads documents pack for agent
+                 */
+                case 'upload_developer_docpack':
+                    
+                    $transaction = \Yii::$app->db->beginTransaction();
+
+                    try {
+                        $applicationForm->load(\Yii::$app->request->post(), '');
+
+                        $applicationForm->processdeveloperDocPackFile();
+
+                        if (count($applicationForm->developerDocpack)) {
+
+                            $application->developer_docpack_provided = 1;
+                            
+                            foreach ($applicationForm->developerDocpack as $ind => $file) {
+                                $doc = new ApplicationDocument();
+                                $doc->application_id = $application->id;
+                                $doc->user_id = \Yii::$app->user->id;
+                                $doc->category = ApplicationDocument::DEVELOPER_DOCPACK;
+                                $doc->file = $applicationForm->developerDocpackToSave[$ind];
+                                $doc->name = $file['name'];
+                                $doc->size = $file['size'];
+                                $doc->filetype = $file['extension'];
+                                $doc->save();
+                            }
+                        }
+
+                        if ($application->developer_docpack_provided === 1) {
+                            $application->status = Application::STATUS_APPLICATION_IN_WORK_DEVELOPER_DOCPACK_PROVIDED;
+                            $application->save();
+    
+                            $this->storeToHistory($applicationHistoryForm, $application, Application::STATUS_APPLICATION_IN_WORK_DEVELOPER_DOCPACK_PROVIDED);
+    
+                            $this->sendNotification(
+                                $notificationForm, Notification::DEVELOPER_TO_USER,
+                                'Застройщик загрузил документы по заявке '.$application->application_number,
+                                'Для просмотра документов перейдите на страницу заявки',
+                                'Перейти',
+                                '/user/application/view?id='.$application->id,
+                                $application->applicant_id
+                            );
+    
+                            $transaction->commit();
+
+                            /** Send email-notifications to agent or manager */
+                            \Yii::$app->mailer->compose()
+                            ->setTo($application->applicant->email)
+                            ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
+                            ->setSubject('Застройщик загрузил документы по заявке '.$application->application_number)
+                            ->setTextBody("Для просмотра документов перейдите на страницу заявки: https://grch.ru/user/application/view?id=$application->id")
+                            ->send();
+                        }
+
+                    } catch (\Exception $e) {
+                        $transaction->rollBack();
+                        return $this->redirectBackWhenException($e);
+                    }
+
+                    break;
+
+                /**
+                 * Agent or manager uploads DDU
                  */
                 case 'upload_ddu_by_agent':
                 case 'upload_ddu_by_manager':
@@ -900,6 +1013,8 @@ class ApplicationController extends Controller
         $application_array['documents'] = [
             'amount' => count($application->documents),
             'reciepts' => ArrayHelper::toArray($application->reciepts),
+            'agentDocpack' => ArrayHelper::toArray($application->agentDocpack),
+            'developerDocpack' => ArrayHelper::toArray($application->developerDocpack),
             'ddus' => ArrayHelper::toArray($application->ddus),
             'reportAct' => ArrayHelper::toArray($application->reportAct),
         ];
@@ -963,6 +1078,7 @@ class ApplicationController extends Controller
                 $type = Notification::TYPE_GROUP;
                 $recipient_group = 'admin';
                 break;
+            case Notification::DEVELOPER_TO_USER:
             case Notification::ADMIN_TO_USER:
                 $type = Notification::TYPE_INDIVIDUAL;
                 break;

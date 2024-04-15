@@ -30,6 +30,10 @@ class ApplicationForm extends Model
     public $is_toll;
     public $recieptFile = [];
     public $recieptFilesToSave = [];
+    public $agentDocpack = [];
+    public $agentDocpackToSave = [];
+    public $developerDocpack = [];
+    public $developerDocpackToSave = [];
     public $ddu_price;
     public $ddu_cash;
     public $ddu_mortgage;
@@ -59,6 +63,9 @@ class ApplicationForm extends Model
             [['is_active', 'is_toll', 'receipt_provided', 'ddu_provided', 'self_reservation'], 'boolean'],
             [['recieptFile'],  'file', 'skipOnEmpty' => true, 'extensions' => 'doc, docx, pdf, txt, xls, xlsx, rtf, ppt, pptx, png, jpg, gif, jpeg,', 'maxFiles' => 100],
             [['dduFile'],  'file', 'skipOnEmpty' => true, 'extensions' => 'doc, docx, pdf, txt, xls, xlsx, rtf, ppt, pptx, png, jpg, gif, jpeg,', 'maxFiles' => 100],
+            [['agentDocpack'],  'file', 'skipOnEmpty' => true, 'extensions' => 'doc, docx, pdf, txt, xls, xlsx, rtf, ppt, pptx, png, jpg, gif, jpeg,', 'maxFiles' => 100],
+            [['developerDocpack'],  'file', 'skipOnEmpty' => true, 'extensions' => 'doc, docx, pdf, txt, xls, xlsx, rtf, ppt, pptx, png, jpg, gif, jpeg,', 'maxFiles' => 100],
+            [['reportActFile'],  'file', 'skipOnEmpty' => true, 'extensions' => 'doc, docx, pdf, txt, xls, xlsx, rtf, ppt, pptx, png, jpg, gif, jpeg,', 'maxFiles' => 100],
         ];
     }
 
@@ -73,6 +80,26 @@ class ApplicationForm extends Model
         $this->recieptFilesToSave = UploadedFile::getInstancesByName('recieptFile');
         
         $this->processFiles('recieptFilesToSave');
+
+        return true;
+    }
+
+    public function processAgentDocpackFile()
+    {
+        $this->agentDocpack = $this->getInertiaFileInstances('agentDocpack');
+        $this->agentDocpackToSave = UploadedFile::getInstancesByName('agentDocpack');
+        
+        $this->processFiles('agentDocpackToSave');
+
+        return true;
+    }
+
+    public function processDeveloperDocpackFile()
+    {
+        $this->developerDocpack = $this->getInertiaFileInstances('developerDocpack');
+        $this->developerDocpackToSave = UploadedFile::getInstancesByName('developerDocpack');
+        
+        $this->processFiles('developerDocpackToSave');
 
         return true;
     }

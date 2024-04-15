@@ -112,7 +112,7 @@
                   {{ statusChangesForm.operationLabel }}
                   <!-- Optional content for different cases and conditions -->
                   <!-- Notification to prepare receipt before take the application in work -->
-                  <template v-if="(statusChangesForm.operation === 'take_in_work_by_agent' || statusChangesForm.operation === 'take_in_work_by_manager') && $application.is_toll === 1">
+                  <template v-if="(statusChangesForm.operation === 'take_in_work_by_agent' || statusChangesForm.operation === 'take_in_work_by_manager') && application.is_toll === 1">
                     <q-banner rounded class="q-mx-sm q-mt-sm bg-orange text-white">
                       <template v-slot:avatar>
                         <q-icon name="report" color="white" />
@@ -164,6 +164,48 @@
                       <q-card-section class="q-pa-none">
                         <div class="row q-mt-sm q-col-gutter-none">
                           <template v-for="doc of application.documents.reciepts">
+                            <div class="col-12 col-md-6 col-lg-4">
+                              <FileDownloadable :file="doc" />
+                            </div>
+                          </template>
+                        </div>
+                      </q-card-section>
+                    </q-card>
+                  </q-expansion-item>
+                  <!-- Agent docpack file(s) -->
+                  <q-expansion-item
+                    class="q-mb-sm"
+                    v-if="application.documents.agentDocpack.length"
+                    v-model="documentExpansions.agentDocpack"
+                    header-class="rounded-borders"
+                    icon="demography"
+                    label="Документы, загруженные агентом"
+                  >
+                    <q-card>
+                      <q-card-section class="q-pa-none">
+                        <div class="row q-mt-sm q-col-gutter-none">
+                          <template v-for="doc of application.documents.agentDocpack">
+                            <div class="col-12 col-md-6 col-lg-4">
+                              <FileDownloadable :file="doc" />
+                            </div>
+                          </template>
+                        </div>
+                      </q-card-section>
+                    </q-card>
+                  </q-expansion-item>
+                  <!-- Developer docpack file(s) -->
+                  <q-expansion-item
+                    class="q-mb-sm"
+                    v-if="application.documents.developerDocpack.length"
+                    v-model="documentExpansions.developerDocpack"
+                    header-class="rounded-borders"
+                    icon="clinical_notes"
+                    label="Документы, загруженные застройщиком"
+                  >
+                    <q-card>
+                      <q-card-section class="q-pa-none">
+                        <div class="row q-mt-sm q-col-gutter-none">
+                          <template v-for="doc of application.documents.developerDocpack">
                             <div class="col-12 col-md-6 col-lg-4">
                               <FileDownloadable :file="doc" />
                             </div>
@@ -321,6 +363,8 @@ components: {
 
     const documentExpansions = ref({
       reciept: true,
+      agentDocpack: true,
+      developerDocpack: true,
       ddu: true,
       reportAct: true,
     })

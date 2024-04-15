@@ -42,6 +42,7 @@ class Notification extends ActiveRecord
     const ADMIN_TO_DEVELOPERS = 4;
     const USER_TO_ADMINS = 5;
     const DEVELOPER_TO_ADMINS = 6;
+    const DEVELOPER_TO_USER = 7;
 
     /**
      * {@inheritdoc}

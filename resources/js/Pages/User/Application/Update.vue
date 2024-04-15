@@ -192,7 +192,42 @@
                   </div>
                 </template>
 
-                <!-- Taking a paid application in work by an agent or a manager -->
+                <!-- Uploading agent's documents pack while taking the application in work by an agent or a manager -->
+                <template
+                  v-if="formfields.operation === 'take_in_work_by_agent' || formfields.operation === 'take_in_work_by_manager'"
+                >
+                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                    <div class="col-12">
+                      <q-file
+                        outlined
+                        v-model="agentDocPack"
+                        label="Перетащите или загрузите документы, которые нужно предоставить застройщику"
+                        multiple 
+                        use-chips
+                        accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, .jpg, image/*, .doc, .docx"
+                      >
+                        <template v-slot:prepend>
+                          <q-icon name="attach_file" />
+                        </template>
+                        <template v-slot:file="{ index, file }">
+                          <q-chip
+                            removable
+                            @remove="onRemoveAgentDocPackFile(index)"
+                          >
+                            <q-avatar>
+                              <q-icon name="draft" />
+                            </q-avatar>
+                            <div class="ellipsis relative-position">
+                              {{ file.name }}
+                            </div>
+                          </q-chip>
+                        </template>
+                      </q-file>
+                    </div>
+                  </div>
+                </template>
+
+                <!-- Uploading a receipt while taking the paid application in work by an agent or a manager -->
                 <template
                   v-if="application.is_toll === 1 && (formfields.operation === 'take_in_work_by_agent' || formfields.operation === 'take_in_work_by_manager')"
                 >
@@ -213,6 +248,41 @@
                           <q-chip
                             removable
                             @remove="onRemoveRecieptFile(index)"
+                          >
+                            <q-avatar>
+                              <q-icon name="draft" />
+                            </q-avatar>
+                            <div class="ellipsis relative-position">
+                              {{ file.name }}
+                            </div>
+                          </q-chip>
+                        </template>
+                      </q-file>
+                    </div>
+                  </div>
+                </template>
+
+                <!-- uploading developer's documents pack -->
+                <template
+                  v-if="formfields.operation === 'upload_developer_docpack'"
+                >
+                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                    <div class="col-12">
+                      <q-file
+                        outlined
+                        v-model="developerDocPack"
+                        label="Перетащите или загрузите документы, которые нужно предоставить агенту"
+                        multiple 
+                        use-chips
+                        accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, .jpg, image/*, .doc, .docx"
+                      >
+                        <template v-slot:prepend>
+                          <q-icon name="attach_file" />
+                        </template>
+                        <template v-slot:file="{ index, file }">
+                          <q-chip
+                            removable
+                            @remove="onRemoveDeveloperDocPackFile(index)"
                           >
                             <q-avatar>
                               <q-icon name="draft" />
@@ -499,6 +569,24 @@ export default {
       recieptFile.value = halfBeforeTheUnwantedElement.concat(halfAfterTheUnwantedElement)
     }
 
+    // Agent's docpack file(s)
+    const agentDocPack = ref([])
+
+    const onRemoveAgentDocPackFile = (ind) => {
+      const halfBeforeTheUnwantedElement = agentDocPack.value.slice(0, ind)
+      const halfAfterTheUnwantedElement = agentDocPack.value.slice(ind+1);
+      agentDocPack.value = halfBeforeTheUnwantedElement.concat(halfAfterTheUnwantedElement)
+    }
+
+    // Developer's docpack file(s)
+    const developerDocPack = ref([])
+
+    const onRemoveDeveloperDocPackFile = (ind) => {
+      const halfBeforeTheUnwantedElement = developerDocPack.value.slice(0, ind)
+      const halfAfterTheUnwantedElement = developerDocPack.value.slice(ind+1);
+      developerDocPack.value = halfBeforeTheUnwantedElement.concat(halfAfterTheUnwantedElement)
+    }
+
     // DDU file(s)
     const dduFile = ref([])
 
@@ -529,6 +617,9 @@ export default {
         is_toll: false,
         recieptFile: [],
         dduFile: [],
+        reportActFile: [],
+        agentDocpack: [],
+        developerDocpack: [],
         reportActFile: [],
         ddu_price: '',
         ddu_cash: '',
@@ -691,8 +782,11 @@ export default {
       if (props.application.is_toll === 1 && statusChangesForm && (statusChangesForm.operation === 'take_in_work_by_agent' || statusChangesForm.operation === 'take_in_work_by_manager' ) && recieptFile.value.length < 1) {
         return false
       }
+      // if no developer's docpack files provided
+      if (statusChangesForm && statusChangesForm.operation === 'upload_developer_docpack' && developerDocPack.value.length < 1) {
+        return false
+      }
       // if no ddu files provided
-      // if no reciept files provided
       if (statusChangesForm && (statusChangesForm.operation === 'upload_ddu_by_agent' || statusChangesForm.operation === 'upload_ddu_by_manager' ) && dduFile.value.length < 1) {
         return false
       }
@@ -710,9 +804,17 @@ export default {
         formfields.value.new_object_id = optfields.value.flat_select.value
       }
 
-      // Add reciept files to formfields
-      if (props.application.is_toll === 1 && statusChangesForm && (statusChangesForm.operation === 'take_in_work_by_agent' || statusChangesForm.operation === 'take_in_work_by_manager' )) {
-        formfields.value.recieptFile = recieptFile.value
+      // Add reciept files and agent's documents pack to formfields
+      if (statusChangesForm && (statusChangesForm.operation === 'take_in_work_by_agent' || statusChangesForm.operation === 'take_in_work_by_manager' )) {
+        formfields.value.agentDocpack = agentDocPack.value
+        if (props.application.is_toll === 1) {
+          formfields.value.recieptFile = recieptFile.value
+        }
+      }
+
+      // Add developer's docpack files to formfields
+      if (statusChangesForm && statusChangesForm.operation === 'upload_developer_docpack') {
+        formfields.value.developerDocpack = developerDocPack.value
       }
 
       // Add DDU files to formfields
@@ -738,6 +840,10 @@ export default {
       onRemoveRecieptFile,
       dduFile,
       onRemoveDduFile,
+      agentDocPack,
+      onRemoveAgentDocPackFile,
+      developerDocPack,
+      onRemoveDeveloperDocPackFile,
       reportActFile,
       onRemoveReportActFile,
       formfields,

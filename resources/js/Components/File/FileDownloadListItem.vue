@@ -35,6 +35,11 @@ export default {
           name = 'picture_as_pdf'
           color = 'red'
           break
+        case 'xls':
+        case 'xlsx':
+          name = 'border_all'
+          color = 'green'
+          break
         case 'jpg':
         case 'jpeg':
         case 'gif':
