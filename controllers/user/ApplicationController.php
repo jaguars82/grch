@@ -219,12 +219,12 @@ class ApplicationController extends Controller
                         $applicationHistoryModel = (new ApplicationHistory())->fill($applicationHistoryForm->attributes);
                         $applicationHistoryModel->save();
 
-                        $developerRepresentative = (new User())->getDeveloperRepresentative($application->developer_id);
+                        $developerRepresentatives = User::getDeveloperRepresentatives($application->developer_id);
                         
-                        if(!empty($developerRepresentative)) {
+                        if(!empty($developerRepresentatives) && count($developerRepresentatives) > 0) {
                             $notificationForm->initiator_id = \Yii::$app->user->id;
                             $notificationForm->type = 1;
-                            $notificationForm->recipient_id = $developerRepresentative->id;
+                            //$notificationForm->recipient_id = $developerRepresentative->id;
                             $notificationForm->recipient_group = 'developer_repres';
                             $notificationForm->topic = 'Требуется подтверждение бронирования по заявке '.$application->application_number;
                             $notificationForm->body = 'Для подтверждения перейдите на страницу заявки';
@@ -237,13 +237,16 @@ class ApplicationController extends Controller
                         $transaction->commit();
 
                         /** Send email-notifications to developer */
-                        if(!empty($developerRepresentative)) {
-                            \Yii::$app->mailer->compose()
-                            ->setTo($developerRepresentative->email)
-                            ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
-                            ->setSubject('Поступила новая заявка на бронирование. Требуется подтверждение')
-                            ->setTextBody("Ссылка для просмотра заявки: https://grch.ru/user/application/view?id=$application->id")
-                            ->send(); 
+                        if(!empty($developerRepresentatives) && count($developerRepresentatives) > 0) {
+                            foreach ($developerRepresentatives as $developerRepresentative) {
+                                //echo '<pre>'; var_dump($developerRepresentatives); echo '</pre>'; echo PHP_EOL;
+                                \Yii::$app->mailer->compose()
+                                ->setTo($developerRepresentative->email)
+                                ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
+                                ->setSubject('Поступила новая заявка на бронирование. Требуется подтверждение')
+                                ->setTextBody("Ссылка для просмотра заявки: https://grch.ru/user/application/view?id=$application->id")
+                                ->send();
+                            }
                         }
 
                     } catch (\Exception $e) {
@@ -353,7 +356,7 @@ class ApplicationController extends Controller
                         $applicationHistoryModel = (new ApplicationHistory())->fill($applicationHistoryForm->attributes);
                         $applicationHistoryModel->save();
 
-                        $developerRepresentative = (new User())->getDeveloperRepresentative($application->developer_id);
+                        /*$developerRepresentative = (new User())->getDeveloperRepresentative($application->developer_id);*/
         
                         $notificationForm->initiator_id = \Yii::$app->user->id;
                         $notificationForm->type = 1;
@@ -460,11 +463,11 @@ class ApplicationController extends Controller
                         /** Notification for developer (if agent's documents pack uploaded) */
                         if ($application->agent_docpack_provided === 1) {
 
-                            $developerRepresentative = (new User())->getDeveloperRepresentative($application->developer_id);
+                            $developerRepresentatives = User::getDeveloperRepresentatives($application->developer_id);
                         
-                            if(!empty($developerRepresentative)) {
+                            if(!empty($developerRepresentatives) && count($developerRepresentatives) > 0) {
                                 $notificationForm->type = 1;
-                                $notificationForm->recipient_id = $developerRepresentative->id;
+                                //$notificationForm->recipient_id = $developerRepresentative->id;
                                 $notificationForm->recipient_group = 'developer_repres';
                                 $notificationForm->topic = 'Агент загрузил документы по заявке '.$application->application_number;
                                 $notificationForm->body = 'Для просмотра документов перейдите на страницу заявки';
@@ -494,13 +497,15 @@ class ApplicationController extends Controller
 
                         /** Send email-notifications to developer */
                         if ($application->agent_docpack_provided === 1) {
-                            if(!empty($developerRepresentative)) {
-                                \Yii::$app->mailer->compose()
-                                ->setTo($developerRepresentative->email)
-                                ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
-                                ->setSubject("Агент загрузил документы по заявке $application->application_number")
-                                ->setTextBody("Для просмотра документов перейдите на страницу заявки: https://grch.ru/user/application/view?id=$application->id")
-                                ->send(); 
+                            if(!empty($developerRepresentatives) && count($developerRepresentatives) > 0) {
+                                foreach ($developerRepresentatives as $developerRepresentative) {
+                                    \Yii::$app->mailer->compose()
+                                    ->setTo($developerRepresentative->email)
+                                    ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
+                                    ->setSubject("Агент загрузил документы по заявке $application->application_number")
+                                    ->setTextBody("Для просмотра документов перейдите на страницу заявки: https://grch.ru/user/application/view?id=$application->id")
+                                    ->send();
+                                }
                             }
                         }
 
@@ -666,12 +671,12 @@ class ApplicationController extends Controller
                         $applicationHistoryModel = (new ApplicationHistory())->fill($applicationHistoryForm->attributes);
                         $applicationHistoryModel->save();
 
-                        $developerRepresentative = (new User())->getDeveloperRepresentative($application->developer_id);
+                        $developerRepresentatives = User::getDeveloperRepresentatives($application->developer_id);
                         
-                        if(!empty($developerRepresentative)) {
+                        if(!empty($developerRepresentatives) && count($developerRepresentatives) > 0) {
                             $notificationForm->initiator_id = \Yii::$app->user->id;
                             $notificationForm->type = 1;
-                            $notificationForm->recipient_id = $developerRepresentative->id;
+                            //$notificationForm->recipient_id = $developerRepresentative->id;
                             $notificationForm->recipient_group = 'developer_repres';
                             $notificationForm->topic = 'Выставлен счет на оплату вознаграждения по заявке '.$application->application_number;
                             $notificationForm->body = 'Подтвердить оплату счёта Вы можете на странице заявки';
@@ -684,13 +689,15 @@ class ApplicationController extends Controller
                         $transaction->commit();
 
                         /** Send email-notifications to developer */
-                        if(!empty($developerRepresentative)) {
-                            \Yii::$app->mailer->compose()
-                            ->setTo($developerRepresentative->email)
-                            ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
-                            ->setSubject('Выставлен счет на оплату вознаграждения по заявке '.$application->application_number)
-                            ->setTextBody("Потдвердить оплату счёта Вы можете на странице заявки. Ссылка для просмотра заявки: https://grch.ru/user/application/view?id=$application->id")
-                            ->send(); 
+                        if(!empty($developerRepresentatives) && count($developerRepresentatives) > 0) {
+                            foreach ($developerRepresentatives as $developerRepresentative) {
+                                \Yii::$app->mailer->compose()
+                                ->setTo($developerRepresentative->email)
+                                ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
+                                ->setSubject('Выставлен счет на оплату вознаграждения по заявке '.$application->application_number)
+                                ->setTextBody("Потдвердить оплату счёта Вы можете на странице заявки. Ссылка для просмотра заявки: https://grch.ru/user/application/view?id=$application->id")
+                                ->send(); 
+                            }
                         }
 
                     } catch (\Exception $e) {

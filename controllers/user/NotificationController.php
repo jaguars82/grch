@@ -45,7 +45,9 @@ class NotificationController extends Controller
     {
         $query = Notification::find();
         if (\Yii::$app->user->can('admin')) {
-            $query->andWhere(['recipient_group' => 'admin']);    
+            $query->andWhere(['recipient_group' => 'admin']);
+        } elseif (\Yii::$app->user->identity->role === 'developer_repres') {
+            $query->andWhere(['recipient_group' => 'developer_repres']);
         } else {
             $query->andWhere(['recipient_id' => \Yii::$app->user->id]);
         }
@@ -83,6 +85,11 @@ class NotificationController extends Controller
         if ($notification->seen_by_recipient == 0) {
             if (\Yii::$app->user->can('admin')) {
                 if ($notification->recipient_group == 'admin') {
+                    $notification->seen_by_recipient = 1;
+                    $notification->save();
+                }
+            } elseif (\Yii::$app->user->identity->role === 'developer_repres') {
+                if ($notification->recipient_group == 'developer_repres') {
                     $notification->seen_by_recipient = 1;
                     $notification->save();
                 }

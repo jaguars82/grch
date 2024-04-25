@@ -181,7 +181,7 @@ class Application extends ActiveRecord
     public function getApplicationsByAuthor ($authorId)
     {
         return $this->find()
-            ->where(['applicant_id' => $authorId, 'is_active' => 1])
+            ->where(['applicant_id' => $authorId/*, 'is_active' => 1*/])
             ->orderBy(['created_at' => SORT_DESC]);
     }
 
