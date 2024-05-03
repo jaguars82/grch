@@ -306,76 +306,95 @@
                       <q-input outlined type="number" v-model.number="formfields.ddu_price" label="Стоимость объекта по ДДУ" />
                     </div>
                   </div>
+                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                    <p class="q-mt-sm q-mb-xs text-h5">Внесите информацию об оплате (источник средств и дата)</p>
+                  </div>
                   <!-- Personal money -->
                   <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
-                    <div class="col-6">
-                      <q-input outlined type="number" v-model.number="formfields.ddu_cash" label="Собственные средства" />
+                    <div :class="[dealCardFildsSet.personal ? 'col-1' : 'col-12']">
+                      <q-toggle v-model="dealCardFildsSet.personal" :label="dealCardFildsSet.personal ? '' : 'Собственными средствами'" />
                     </div>
-                    <div class="col-6 q-pl-sm">
-                      <q-input outlined v-model="formfields.ddu_cash_paydate" label="Дата оплаты собственными средствами" readonly>
-                        <template v-slot:append>
-                          <q-icon name="event" class="cursor-pointer">
-                            <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                              <q-date v-model="formfields.ddu_cash_paydate" mask="YYYY-MM-DD">
-                                <div class="row items-center justify-end">
-                                  <q-btn v-close-popup label="Закрыть" color="primary" flat />
-                                  <q-btn label="Сбросить" color="primary" flat @click="formfields.ddu_cash_paydate = ''" />
-                                </div>
-                              </q-date>
-                            </q-popup-proxy>
-                          </q-icon>
-                        </template>
-                      </q-input>
-                    </div>
+                    <template v-if="dealCardFildsSet.personal">
+                      <div class="col-6">
+                        <q-input outlined type="number" v-model.number="formfields.ddu_cash" label="Собственные средства" dense />
+                      </div>
+                      <div class="col-5 q-pl-sm">
+                        <q-input outlined v-model="formfields.ddu_cash_paydate" label="Дата оплаты собственными средствами" dense readonly>
+                          <template v-slot:append>
+                            <q-icon name="event" class="cursor-pointer">
+                              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                <q-date v-model="formfields.ddu_cash_paydate" mask="YYYY-MM-DD">
+                                  <div class="row items-center justify-end">
+                                    <q-btn v-close-popup label="Закрыть" color="primary" flat />
+                                    <q-btn label="Сбросить" color="primary" flat @click="formfields.ddu_cash_paydate = ''" />
+                                  </div>
+                                </q-date>
+                              </q-popup-proxy>
+                            </q-icon>
+                          </template>
+                        </q-input>
+                      </div>
+                    </template>
                   </div>
                   <!-- Mortgage money -->
                   <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
-                    <div class="col-6">
-                      <q-input outlined type="number" v-model.number="formfields.ddu_mortgage" label="Ипотечные средства" />
+                    <div :class="[dealCardFildsSet.mortgage ? 'col-1' : 'col-12']">
+                      <q-toggle v-model="dealCardFildsSet.mortgage" :label="dealCardFildsSet.mortgage ? '' : 'При помощи ипотеки'" />
                     </div>
-                    <div class="col-6 q-pl-sm">
-                      <q-input outlined v-model="formfields.ddu_mortgage_paydate" label="Дата оплаты ипотекой" readonly>
-                        <template v-slot:append>
-                          <q-icon name="event" class="cursor-pointer">
-                            <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                              <q-date v-model="formfields.ddu_mortgage_paydate" mask="YYYY-MM-DD">
-                                <div class="row items-center justify-end">
-                                  <q-btn v-close-popup label="Закрыть" color="primary" flat />
-                                  <q-btn label="Сбросить" color="primary" flat @click="formfields.ddu_mortgage_paydate = ''" />
-                                </div>
-                              </q-date>
-                            </q-popup-proxy>
-                          </q-icon>
-                        </template>
-                      </q-input>
-                    </div>
+                    <template v-if="dealCardFildsSet.mortgage">
+                      <div class="col-6">
+                        <q-input outlined type="number" v-model.number="formfields.ddu_mortgage" label="Ипотечные средства" dense />
+                      </div>
+                      <div class="col-5 q-pl-sm">
+                        <q-input outlined v-model="formfields.ddu_mortgage_paydate" label="Дата оплаты ипотекой" dense readonly>
+                          <template v-slot:append>
+                            <q-icon name="event" class="cursor-pointer">
+                              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                <q-date v-model="formfields.ddu_mortgage_paydate" mask="YYYY-MM-DD">
+                                  <div class="row items-center justify-end">
+                                    <q-btn v-close-popup label="Закрыть" color="primary" flat />
+                                    <q-btn label="Сбросить" color="primary" flat @click="formfields.ddu_mortgage_paydate = ''" />
+                                  </div>
+                                </q-date>
+                              </q-popup-proxy>
+                            </q-icon>
+                          </template>
+                        </q-input>
+                      </div>
+                    </template>
                   </div>
                   <!-- Mother's capital -->
                   <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
-                    <div class="col-6">
-                      <q-input outlined type="number" v-model.number="formfields.ddu_matcap" label="Материнский капитал" />
+                    <div :class="[dealCardFildsSet.matcap ? 'col-1' : 'col-12']">
+                      <q-toggle v-model="dealCardFildsSet.matcap" :label="dealCardFildsSet.matcap ? '' : 'Материнским капиталом'" />
                     </div>
-                    <div class="col-6 q-pl-sm">
-                      <q-input outlined v-model="formfields.ddu_matcap_paydate" label="Дата оплаты маткапиталом" readonly>
-                        <template v-slot:append>
-                          <q-icon name="event" class="cursor-pointer">
-                            <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                              <q-date v-model="formfields.ddu_matcap_paydate" mask="YYYY-MM-DD">
-                                <div class="row items-center justify-end">
-                                  <q-btn v-close-popup label="Закрыть" color="primary" flat />
-                                  <q-btn label="Сбросить" color="primary" flat @click="formfields.ddu_matcap_paydate = ''" />
-                                </div>
-                              </q-date>
-                            </q-popup-proxy>
-                          </q-icon>
-                        </template>
-                      </q-input>
-                    </div>
+                    <template v-if="dealCardFildsSet.matcap">
+                      <div class="col-6">
+                        <q-input outlined type="number" v-model.number="formfields.ddu_matcap" label="Материнский капитал" dense />
+                      </div>
+                      <div class="col-5 q-pl-sm">
+                        <q-input outlined v-model="formfields.ddu_matcap_paydate" label="Дата оплаты маткапиталом" dense readonly>
+                          <template v-slot:append>
+                            <q-icon name="event" class="cursor-pointer">
+                              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                <q-date v-model="formfields.ddu_matcap_paydate" mask="YYYY-MM-DD">
+                                  <div class="row items-center justify-end">
+                                    <q-btn v-close-popup label="Закрыть" color="primary" flat />
+                                    <q-btn label="Сбросить" color="primary" flat @click="formfields.ddu_matcap_paydate = ''" />
+                                  </div>
+                                </q-date>
+                              </q-popup-proxy>
+                            </q-icon>
+                          </template>
+                        </q-input>
+                      </div>
+                    </template>
                   </div>
 
                   <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
                     <div class="col-12">
                       <q-file
+                        class="q-my-sm"
                         outlined
                         v-model="dduFile"
                         label="Перетащите или загрузите Договор долевого участия"
@@ -596,6 +615,13 @@ export default {
       dduFile.value = halfBeforeTheUnwantedElement.concat(halfAfterTheUnwantedElement)
     }
 
+    // Deal card fields
+    const dealCardFildsSet = ref({
+      personal: false,
+      mortgage: false,
+      matcap: false
+    })
+
     // report-act file
     const reportActFile = ref([])
 
@@ -777,19 +803,37 @@ export default {
       return options
     })
 
+    /** Check if the update application form can be submitted */
     const canSubmit = computed(() => {
       // if no reciept files provided
       if (props.application.is_toll === 1 && statusChangesForm && (statusChangesForm.operation === 'take_in_work_by_agent' || statusChangesForm.operation === 'take_in_work_by_manager' ) && recieptFile.value.length < 1) {
         return false
       }
+
       // if no developer's docpack files provided
       if (statusChangesForm && statusChangesForm.operation === 'upload_developer_docpack' && developerDocPack.value.length < 1) {
         return false
       }
+
       // if no ddu files provided
       if (statusChangesForm && (statusChangesForm.operation === 'upload_ddu_by_agent' || statusChangesForm.operation === 'upload_ddu_by_manager' ) && dduFile.value.length < 1) {
         return false
       }
+
+      // if no required deal-card fields provided
+      if (statusChangesForm && (statusChangesForm.operation === 'upload_ddu_by_agent' || statusChangesForm.operation === 'upload_ddu_by_manager' )) {
+        // price field is empty
+        if (!formfields.value.ddu_price) return false
+        // all of the payment fields are empty
+        if (dealCardFildsSet.value.personal === false && dealCardFildsSet.value.mortgage === false && dealCardFildsSet.value.matcap === false) return false
+        // personal fields not filled while 'personal' flag is turned on
+        if (dealCardFildsSet.value.personal && (!formfields.value.ddu_cash || !formfields.value.ddu_cash_paydate)) return false
+        // mortgage fields not filled while 'mortgage' flag is turned on
+        if (dealCardFildsSet.value.mortgage && (!formfields.value.ddu_mortgage || !formfields.value.ddu_mortgage_paydate)) return false
+        // matcap fields not filled while 'matcap' flag is turned on
+        if (dealCardFildsSet.value.matcap && (!formfields.value.ddu_matcap || !formfields.value.ddu_matcap_paydate)) return false
+      }
+
       // if no report-act provided
       if (statusChangesForm && statusChangesForm.operation === 'issue_report_act' && reportActFile.value.length < 1) {
         return false
@@ -797,6 +841,7 @@ export default {
       return true
     })
     
+    /** Submit application update form */
     function onSubmit() {
       loading.value = true
 
@@ -817,8 +862,30 @@ export default {
         formfields.value.developerDocpack = developerDocPack.value
       }
 
-      // Add DDU files to formfields
+      // Add DDU files to formfields and clean unused (unchecked) deal-card fields
       if (statusChangesForm && (statusChangesForm.operation === 'upload_ddu_by_agent' || statusChangesForm.operation === 'upload_ddu_by_manager' )) {
+
+        // clean unused (unchecked) fields
+
+        // clean cash (personal) fields
+        if (dealCardFildsSet.value.personal === false) {
+          formfields.value.ddu_cash = ''
+          formfields.value.ddu_cash_paydate = ''
+        }
+
+        // clean mortgage fields
+        if (dealCardFildsSet.value.mortgage === false) {
+          formfields.value.ddu_mortgage = ''
+          formfields.value.ddu_mortgage_paydate = ''
+        }
+
+        // clean matcap fields
+        if (dealCardFildsSet.value.matcap === false) {
+          formfields.value.ddu_matcap = ''
+          formfields.value.ddu_matcap_paydate = ''
+        }
+
+        // add ddu files
         formfields.value.dduFile = dduFile.value
       }
 
@@ -838,6 +905,7 @@ export default {
       loading,
       recieptFile,
       onRemoveRecieptFile,
+      dealCardFildsSet,
       dduFile,
       onRemoveDduFile,
       agentDocPack,

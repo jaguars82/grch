@@ -70,7 +70,7 @@ function getApplicationFormParamsByStatus (applicationStatus, userRole) {
       operationLabel: 'Загрузите Договор долевого участия и заполните информацию об оплате',
       operation: 'upload_ddu_by_agent',
       formCaption: 'Загрузка ДДУ',
-      formContent: '<p>После проверки информации и обработки заявки Вы сможете высатвить счет на оплату КВ.</p>\
+      formContent: '<p>После проверки информации и обработки заявки Вы сможете выставить счет на оплату КВ.</p>\
       <p>Образец документа будет доступен на странице заявки.</p>',
       submitLabel: 'Загрузить'
     },
@@ -79,7 +79,7 @@ function getApplicationFormParamsByStatus (applicationStatus, userRole) {
       operationLabel: 'Загрузите Договор долевого участия и заполните информацию об оплате',
       operation: 'upload_ddu_by_manager',
       formCaption: 'Загрузка ДДУ',
-      formContent: '<p>После проверки информации и обработки заявки Вы сможете высатвить счет на оплату КВ.</p>\
+      formContent: '<p>После проверки информации и обработки заявки Вы сможете выставить счет на оплату КВ.</p>\
       <p>Образец документа будет доступен на странице заявки.</p>',
       submitLabel: 'Загрузить'
     },

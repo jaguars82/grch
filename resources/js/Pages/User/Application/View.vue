@@ -178,7 +178,7 @@
                     v-if="application.documents.agentDocpack.length"
                     v-model="documentExpansions.agentDocpack"
                     header-class="rounded-borders"
-                    icon="demography"
+                    icon="description"
                     label="Документы, загруженные агентом"
                   >
                     <q-card>
@@ -199,7 +199,7 @@
                     v-if="application.documents.developerDocpack.length"
                     v-model="documentExpansions.developerDocpack"
                     header-class="rounded-borders"
-                    icon="clinical_notes"
+                    icon="description"
                     label="Документы, загруженные застройщиком"
                   >
                     <q-card>
@@ -260,6 +260,34 @@
               </q-card>
             </template>
 
+            <!-- Deal-card section -->
+            <template v-if="application.ddu_price && ((application.ddu_cash && application.ddu_cash_paydate) || (application.ddu_mortgage && application.ddu_mortgage_paydate) || (application.ddu_matcap && application.ddu_matcap_paydate))">
+              <h5 class="text-uppercase q-mb-xs q-mt-lg">Карта сделки</h5>
+              <q-card class="no-shadow" bordered>
+                <q-card-section>
+                  <ParamPair
+                    paramName="Стоимость по ДДУ"
+                    :paramValue="application.ddu_price"
+                  />
+                  <ParamPair
+                    v-if="application.ddu_cash && application.ddu_cash_paydate"
+                    paramName="Собственные средства"
+                    :paramValue="`${application.ddu_cash}, оплачено ${application.ddu_cash_paydate}`"
+                  />
+                  <ParamPair
+                    v-if="application.ddu_mortgage && application.ddu_mortgage_paydate"
+                    paramName="Ипотека"
+                    :paramValue="`${application.ddu_mortgage}, оплачено ${application.ddu_mortgage_paydate}`"
+                  />
+                  <ParamPair
+                    v-if="application.ddu_matcap && application.ddu_matcap_paydate"
+                    paramName="Материнский капитал"
+                    :paramValue="`${application.ddu_matcap}, оплачено ${application.ddu_matcap_paydate}`"
+                  />
+                </q-card-section>
+              </q-card>
+            </template>
+
             <!-- History section -->
             <h5 class="text-uppercase q-mb-xs q-mt-lg">История</h5>
             <q-table
@@ -286,6 +314,7 @@ import ProfileLayout from '@/Layouts/ProfileLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
 import FlatListItem from '@/Components/Flat/FlatListItem.vue'
+import ParamPair from '@/Components/Elements/ParamPair.vue'
 import FileDownloadable from '@/Components/File/FileDownloadListItem.vue'
 import { getApplicationFormParamsByStatus } from '@/composables/components-configurations'
 import { asDateTime } from '@/helpers/formatter'
@@ -297,6 +326,7 @@ components: {
     Breadcrumbs,
     RegularContentContainer,
     FlatListItem,
+    ParamPair,
     FileDownloadable
   },
   props: {
