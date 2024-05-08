@@ -177,7 +177,7 @@ function getApplicationFormParamsByStatus (applicationStatus, userRole) {
     9: [operations.confirm_recieving_success_deal_info_by_admin],
     10: [operations.confirm_success_deal_by_admin],
     11: [],
-    12: []
+    12: [operations.upload_developer_docpack, operations.upload_ddu_by_agent, operations.upload_ddu_by_manager]
   }
 
   let formParams = []
