@@ -147,6 +147,7 @@ class ReservationController extends Controller
             'applicationsAmount' => (new Application)->getApplicationsByAuthor(\Yii::$app->user->id)->count(),
             'result' => \Yii::$app->request->get('res'),
             'appId' => \Yii::$app->request->get('appId'),
+            'anotherAppExists' => Application::checkApplicationByUserAndFlat(\Yii::$app->user->id, $model->id),
         ]);
     }
 }

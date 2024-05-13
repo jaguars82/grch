@@ -116,6 +116,8 @@ class NewbuildingComplexController extends Controller
             'app\models\service\NewbuildingComplex' => [
                 'id', 'developer_id', 'name', 'latitude', 'longitude', 'logo', 'detail',
                 'address' => function ($nbc) { return $nbc->address; },
+                'documents' => function ($nbc) { return $nbc->documents; },
+                'banks' => function ($nbc) { return $nbc->banks; },
                 'newbuildings' => function ($nbc) {
                     return ArrayHelper::toArray($nbc->activeNewbuildings, [
                         'app\models\Newbuilding' => [
@@ -258,13 +260,14 @@ class NewbuildingComplexController extends Controller
      * @param integer $id Developer's ID
      * @return mixed
      */
-    public function actionGetForDeveloper($id)
+    public function actionGetForDeveloper($id, $active = true)
     {
         $idies = explode(',', $id);
+
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;        
         \Yii::$app->response->data = NewbuildingComplex::find()
             ->forDeveloper($idies)
-            ->onlyActive(true)
+            ->onlyActive($active)
             ->onlyWithActiveBuildings()
             ->select(['id', 'name'])
             ->orderBy(['id' => SORT_DESC])

@@ -3,8 +3,11 @@
 namespace app\commands;
 
 use yii\console\Controller;
+use yii\db\Expression;
 use app\models\NewbuildingComplex;
 use app\models\News;
+use app\models\SecondaryAdvertisement;
+use app\models\StatusLabel;
 
 class ServiceController extends Controller
 {
@@ -40,7 +43,11 @@ class ServiceController extends Controller
 
     public function actionDisableExpiredActions() {
 
-        $actions = (new News())->actions;
+        // $actions = (new News())->actions;
+        $actions = News::find()
+            ->where(['category' => News::CATEGORY_ACTION])
+            ->andWhere(['is_archived' => 0])
+            ->all();
 
         foreach ($actions as $action) {
 
@@ -61,6 +68,23 @@ class ServiceController extends Controller
                     $action->actionData->save();
                 } 
             }
+        }
+    }
+
+    /**
+     * delete expired status labels of secondary advertisements
+     */
+    public function actionDeleteSecondaryExpiredStatuses ()
+    {
+        $expiredLabels = StatusLabel::find()
+            ->where(['has_expiration_date' => 1])
+            ->andWhere(['<', 'expires_at', new Expression('NOW()')])
+            ->all();
+
+        foreach ($expiredLabels as $label) {
+            $advertisement = $label->advertisement;
+            $advertisement->unlink('statusLabels', $label, true);
+            $label->delete();
         }
     }
 }

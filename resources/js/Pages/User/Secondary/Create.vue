@@ -1213,17 +1213,23 @@ export default {
     const streetOptions = computed(() => {
       const streets = []
       streetListRef.value.forEach(street => {
-        streets.push(street.street_name)
+        if (street.street_name) {
+          streets.push(street.street_name.trim())
+        }
       })
       return streets
     })
 
     const filterStreetList = (val, update, abort) => {
-      update(() => {
-        const needle = val.toLowerCase()
-        streetListRef.value = props.streetList.filter(elem => elem.street_name.toLowerCase().indexOf(needle) > -1)
+    update(() => {
+      const needle = val.toLowerCase()
+      streetListRef.value = props.streetList.filter(elem => {
+        if (elem.street_name) {
+          return elem.street_name.toLowerCase().indexOf(needle) > -1
+        }
       })
-    }
+    })
+  }
 
     const coords = ref([51.66109664713779, 39.20007322181243])
     

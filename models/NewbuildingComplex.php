@@ -617,29 +617,35 @@ class NewbuildingComplex extends ActiveRecord
         }
 
         if(!empty($this->city)) {
+            if(!empty($this->region)) {
+                $address .= ", "; 
+            }
             $address .= " {$this->city->name}";
         }
 
+        // street with street type
         if(!empty($this->streetType) && !empty($this->street_name)) {
+            if(!empty($this->region) || !empty($this->city)) {
+                $address .= ", "; 
+            }
             $address .= " {$this->streetType->short_name} {$this->street_name}";
         }
         
+        // building number with or wihout building type
         if(!empty($this->buildingType) && !empty($this->building_number)) {
+            if(!empty($this->city) || !empty($this->street_name)) {
+                $address .= ", "; 
+            }
             $address .= " {$this->buildingType->short_name} {$this->building_number}";
+        } elseif(!empty($this->building_number)) {
+            if(!empty($this->city) || !empty($this->street_name)) {
+                $address .= ", "; 
+            }
+            $address .= "{$this->building_number}";
         }
 
         return $address;
     }
-
-    /*public function setAddress($address)
-    {
-
-    }*/
-
-    /*public function setDistrict($district)
-    {
-
-    }*/
 
     /**
      * Getting minimum flat area

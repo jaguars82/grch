@@ -27,12 +27,18 @@ class DeveloperController extends Controller
     public function behaviors()
     {
         return [
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'get-developers' => ['POST'],
+                ],
+            ],
             'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'view'],
+                        'actions' => ['index', 'view', 'get-developers'],
                         'roles' => ['@'],
                     ],
                 ]
@@ -99,6 +105,15 @@ class DeveloperController extends Controller
             'contactDataProvider' => ArrayHelper::toArray($contactDataProvider->getModels()),
             'officeDataProvider' => ArrayHelper::toArray($officeDataProvider->getModels())
         ]);
+    }
+
+    /**
+     * Get list of developers in JSON format
+     */
+    public static function actionGetDevelopers()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;        
+        \Yii::$app->response->data = Developer::getAllAsList();
     }
 
     /**

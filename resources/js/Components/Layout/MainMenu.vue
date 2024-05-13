@@ -24,7 +24,7 @@
         </q-menu>
       </q-btn>
       <q-space />
-      <UserMenu v-if="!$q.screen.xs || ($q.screen.xs && showUserMenuOnSmallScreen)" />
+      <UserMenu v-if="$q.platform.is.mobile || (!$q.screen.xs || ($q.screen.xs && showUserMenuOnSmallScreen))" />
     </q-toolbar>
   </div>
 </template>
