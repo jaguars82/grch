@@ -56,9 +56,10 @@ class SiteController extends Controller
                     'logout' => ['post'],
                 ],
             ],
-            [
+            // Unconnent following to turn-ON logout agents & managers if logged in form another device/browser
+            /*[
                 'class' => AuthAmountFilter::className(),
-            ],
+            ],*/
             [
                 'class' => SharedDataFilter::class
             ],

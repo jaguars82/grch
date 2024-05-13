@@ -1,6 +1,9 @@
 <template>
   <div>
     <MainLayout>
+      <template v-slot:breadcrumbs>
+        <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
+      </template>
       <template v-slot:main>
         <q-card class="q-ma-md shadow-7">
           <q-card-section>
@@ -73,6 +76,14 @@
               @submit="onSubmit"
               @reset="onReset"
             >
+            <!-- Message if the applicant already has an active reservation of this flat -->
+            <q-banner v-if="anotherAppExists" rounded class="q-mx-md bg-orange text-white">
+              <template v-slot:avatar>
+                <q-icon name="report" color="white" />
+              </template>
+              <span class="text-h5"><span class="text-uppercase">Обратите внимание</span>: Вы уже создавали заявку на бронирование этого объекта. Чтобы создать новую заявку, пожалуйста, удалите предыдущую.</span>
+            </q-banner>
+
             <div class="row q-py-sm q-col-gutter-none">
               <div class="col-sm-4 col-xs-12">
                 <q-input outlined v-model="formfields.client_lastname" label="Фамилия клиента" />
@@ -138,6 +149,7 @@
                 :round="$q.screen.xs"
                 :rounded="$q.screen.gt.xs"
                 :label="$q.screen.sm ? 'Отправить' : $q.screen.gt.sm ? 'Отправить заявку' : ''"
+                :disabled="anotherAppExists"
                 type="submit"
                 color="primary"
                 icon="done"
@@ -179,6 +191,7 @@
 import { ref, computed } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import MainLayout from '@/Layouts/MainLayout.vue'
+import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import Loading from "@/Components/Elements/Loading.vue"
 import FlatListItem from '@/Components/Flat/FlatListItem.vue'
 import MessageScreen from '@/Components/MessageScreen.vue'
@@ -187,6 +200,7 @@ import { userInfo } from '@/composables/shared-data'
 export default ({
   components: {
     MainLayout,
+    Breadcrumbs,
     Loading,
     FlatListItem,
     MessageScreen
@@ -195,9 +209,44 @@ export default ({
     flat: Object,
     applicationsAmount: String,
     result: String,
-    appId: String
+    appId: String,
+    anotherAppExists: Boolean
   },
   setup(props) {
+    const breadcrumbs = ref([
+      {
+        id: 1,
+        label: 'Главная',
+        icon: 'home',
+        url: '/',
+        data: false,
+        options: false
+      },
+      {
+        id: 2,
+        label: 'Кабинет пользователя',
+        icon: 'business_center',
+        url: '/user/profile',
+        data: false,
+        options: false
+      },
+      {
+        id: 3,
+        label: 'Заявки',
+        icon: 'real_estate_agent',
+        url: '/user/application/index',
+        data: false,
+        options: false
+      },
+      {
+        id: 4,
+        label: `Создание заявки на бронирование`,
+        icon: 'note_add',
+        url: `reservation/make?flatId=${props.flat.id}`,
+        data: false,
+        options: false
+      },
+    ])
 
     const loading = ref(false)
 
@@ -256,7 +305,7 @@ export default ({
     // error screen
     const goBackToApplication = () => Inertia.get('/reservation/make', { flatId: props.flat.id })
 
-    return { loading, user, numberString, formfields, onSubmit, onReset, goToApplication, goToProfile, goBackToApplication, closeApplication }
+    return { breadcrumbs, loading, user, numberString, formfields, onSubmit, onReset, goToApplication, goToProfile, goBackToApplication, closeApplication }
   },
 })
 </script>

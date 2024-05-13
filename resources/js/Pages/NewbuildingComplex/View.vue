@@ -1,5 +1,5 @@
 <template>
-  <MainLayout :drawers="{ left: { is: false, opened: false }, right: { is: true, opened: true } }">
+  <MainLayout :drawers="{ left: { is: false, opened: false }, right: { is: true, opened: $q.platform.is.mobile ? false : true } }">
 
     <template v-slot:breadcrumbs>
       <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
@@ -43,7 +43,7 @@
           <div v-if="complex.images.length || complex.detail" class="row q-mt-md q-col-gutter-y-md">
             <div v-if="complex.images.length" class="col-12 col-lg-7">
               <q-carousel
-                :height="$q.screen.xs ? '300px' : $q.screen.gt.md ? '100%' : '400px'"
+                :height="$q.screen.xs ? '300px' : $q.screen.gt.md ? '400px' : '450px'"
                 swipeable
                 animated
                 v-model="slide"
@@ -164,10 +164,10 @@
                       </div>
                     </template>
 
-                    <div class="bg-grey-3 q-pa-sm rounded-borders overflow-auto">
-                      <div class="row q-pl-lg relative-position" v-for="floor of Object.keys(entrance.flats).reverse()">
-                        <div class="col absolute-left text-weight-bolder text-grey">{{ floor }}</div>
-                        <div class="col-11">
+                    <div class="bg-grey-3 q-pl-none q-py-sm q-pr-sm rounded-borders overflow-auto">
+                      <div class="row q-pl-none relative-position no-wrap w-max-content" v-for="floor of Object.keys(entrance.flats).reverse()">
+                        <div class="floor-cell q-pl-sm text-weight-bolder bg-grey-3 text-grey">{{ floor }}</div>
+                        <div>
                           <div class="row no-wrap">
                             <FlatCell v-for="flatId of Object.keys(entrance.flats[floor])" :flat="entrance.flats[floor][flatId]" />
                           </div>
@@ -180,6 +180,65 @@
               </q-expansion-item>
             </div>
           </template>
+        </template>
+      </RegularContentContainer>
+
+      <!-- Banks accreditation section -->
+      <RegularContentContainer v-if="complex.banks.length" class="q-mx-md  q-mt-md" title="Аккредитация банков">
+        <template v-slot:content>
+          <div class="row q-mt-sm">
+            <template v-for="bank of complex.banks">
+              <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+                <q-card
+                  class="no-shadow full-height cursor-pointer"
+                  @mouseenter="focusOn"
+                  @mouseleave="focusOff"
+                  @click="goUrl(bank.url)"
+                >
+                  <!-- Menu prototype for multiple actions for a bank -->
+                  <!--<q-menu
+                    touch-position
+                  >
+                    <q-list dense style="min-width: 100px">
+                      <q-item clickable v-close-popup>
+                        <q-item-section>Сайт банка</q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-menu>-->
+
+                  <q-card-section>
+                    <q-img
+                      class="bank-item-img"
+                      fit="scale-down"
+                      :src="bank.logo ? `/uploads/${bank.logo}` : `/img/bank.png`"
+                      :alt="bank.name"
+                    />
+                  </q-card-section>
+                  <q-card-section>
+                    <p
+                      class="text-center"
+                      :class="{ 'text-h6': $q.screen.xs, 'text-h5': $q.screen.gt.xs }"
+                    >
+                      {{ bank.name }}
+                    </p>
+                  </q-card-section>
+                </q-card>
+              </div>
+            </template>
+          </div>
+        </template>
+      </RegularContentContainer>
+
+      <!-- Documents section -->
+      <RegularContentContainer v-if="complex.documents.length" class="q-mx-md  q-mt-md" title="Документация">
+        <template v-slot:content>
+          <div class="row q-mt-sm">
+            <template v-for="doc of complex.documents">
+              <div class="col-12 col-md-6 col-lg-4">
+                <FileDownloadable :file="doc" />
+              </div>
+            </template>
+          </div>
         </template>
       </RegularContentContainer>
 
@@ -217,7 +276,6 @@
           </div>
         </template>
       </RegularContentContainer>
-      <!--<pre>{{ complex }}</pre>-->
     </template>
 
     <template v-slot:right-drawer>
@@ -354,6 +412,7 @@ import MainLayout from '@/Layouts/MainLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import Loading from '@/Components/Elements/Loading.vue'
 import ParamPair from '@/Components/Elements/ParamPair.vue'
+import FileDownloadable from '@/Components/File/FileDownloadListItem.vue'
 import FlatCell from '@/Components/Chess/FlatCell.vue'
 import FinishingCard from '@/Components/FinishingCard.vue'
 import AdvantagesBlock from '@/Components/Elements/AdvantagesBlock.vue'
@@ -372,7 +431,7 @@ export default {
     },
   },
   components: {
-    MainLayout, Breadcrumbs, Loading, ParamPair, FlatCell, FinishingCard, AdvantagesBlock, ObjectOnMap, RegularContentContainer
+    MainLayout, Breadcrumbs, Loading, FileDownloadable, ParamPair, FlatCell, FinishingCard, AdvantagesBlock, ObjectOnMap, RegularContentContainer
   },
   setup(props) {
     const breadcrumbs = ref([
@@ -426,6 +485,10 @@ export default {
       Inertia.get('/flat/view', { id: flatId })
     }
 
+    const goUrl = (url) => {
+      window.open(url, '_blank')
+    }
+
     const furnishViewer = ref(false)
 
     const furnishViewerContent = ref({})
@@ -444,6 +507,7 @@ export default {
       focusOn,
       focusOff,
       goToComplex,
+      goUrl,
       furnishViewer,
       showFurnishViewer,
       furnishViewerContent
@@ -459,12 +523,22 @@ export default {
   .complex-logo {
     max-height: 200px;
   }
-  .ocomplex-item-img {
+  .ocomplex-item-img, .bank-item-img {
     height: 90px;
   }
   .fitwindow {
     height: 100vh;
     max-height: 100vh;
     width: 100%;
+  }
+  .w-max-content {
+    width: max-content;
+  }
+  .floor-cell {
+    width: 25px;
+    min-width: 25px;
+    position: sticky;
+    top: 0;
+    left: 0;
   }
 </style>

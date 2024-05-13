@@ -106,8 +106,11 @@ class AuthController extends Controller
     {
         // remove current_auth_token from data base
         $user = User::findOne(Yii::$app->user->id);
-        $user->current_auth_token = '';
-        $user->save();
+        if (!is_null($user)) {
+            $user->current_auth_token = '';
+            $user->save();
+        }
+        
 
         Yii::$app->user->logout();
 

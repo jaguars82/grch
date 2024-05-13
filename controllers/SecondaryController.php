@@ -245,7 +245,7 @@ class SecondaryController extends Controller
             ],
             'pagination' => [
                 'count' => $pagination->totalCount,
-                'totalPages' => floor($pagination->totalCount / $pagination->pageSize),
+                'totalPages' => ceil($pagination->totalCount / $pagination->pageSize),
                 'currPage' => isset($pagination->page) ? $pagination->page + 1 : 1,
             ],
             'secondaryCategories' => SecondaryCategory::getCategoryTree(),

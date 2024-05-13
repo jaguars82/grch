@@ -36,10 +36,10 @@ if ($user !== null && $user->role !== 'developer_repres') {
             <?= Html::img(\Yii::getAlias('@web/img/icons/logo.svg'))?>
         </a>
         
-        <?= LocationSelect::widget([
+        <?php /*LocationSelect::widget([
             'cities' => City::getAllAsList(),
             'regions' => Region::find()->orderBy(['name' => SORT_ASC])->all(),
-        ]); ?>
+        ]);*/ ?>
 
         <?= Menu::widget([
             'items' => $mainMenuItems,

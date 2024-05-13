@@ -1,5 +1,5 @@
 <template>
-  <MainLayout :drawers="{ left: { is: false, opened: false }, right: { is: true, opened: true } }">
+  <MainLayout :drawers="{ left: { is: false, opened: false }, right: { is: true, opened: $q.platform.is.mobile ? false : true } }">
     <template v-slot:breadcrumbs>
       <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
     </template>
