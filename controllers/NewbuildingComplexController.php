@@ -145,7 +145,47 @@ class NewbuildingComplexController extends Controller
                                                     }
                                                 ]
                                             ]);
-                                            return ArrayHelper::map($flats, 'id', function($item) { return $item; }, 'floor');
+
+                                            // fetch flats by floor
+                                            $flatsFetchedByFloor = ArrayHelper::map($flats, 'id', function($item) { return $item; }, 'floor');
+                                            
+                                            // fetch flats on each floor according to its index if the foor is indexed properly (ignore and leave floor as is if floor is not indexed properly or not indexed)
+                                            foreach ($flatsFetchedByFloor as $floor => $flatsOnFloor) {
+                                               // passing through flats on the floor
+                                               $floorIsIndexed = true;
+                                               $listOfIndexes = array();
+                                               foreach ($flatsOnFloor as $flat) {
+                                                    if (empty($flat['index_on_floor'])) {
+                                                        $floorIsIndexed = false;
+                                                    } else {
+                                                        array_push($listOfIndexes, $flat['index_on_floor']);
+                                                    }
+                                               }
+                                               // check flat indexes on uniqueness
+                                               if(count($listOfIndexes) !== count(array_unique($listOfIndexes))) {
+                                                    $floorIsIndexed = false;
+                                               }
+                                               // check the amount of indexes fetches the amount of flats 
+                                               if(count($listOfIndexes) !== count($flatsOnFloor)) {
+                                                    $floorIsIndexed = false;
+                                               }
+
+                                               // if flats on the floor are properly indexed
+                                               if ($floorIsIndexed) {
+                                                    sort($listOfIndexes);
+
+                                                    $flatsOnFloorByIndexes = ArrayHelper::map($flatsOnFloor, 'index_on_floor', function($item) {return $item;});
+                                                    $flatsFetchedByIndex = array();
+                                                    foreach ($listOfIndexes as $index) {
+                                                        $flatItem = array_key_exists($index, $flatsOnFloorByIndexes) ? $flatsOnFloorByIndexes[$index] : 'filler';
+                                                        $flatsFetchedByIndex[$index] = $flatItem;
+                                                    }
+                                               }
+                                               $flatsFetchedByFloor[$floor] = $flatsFetchedByIndex;
+                                            }
+
+                                            // return ArrayHelper::map($flats, 'id', function($item) { return $item; }, 'floor');
+                                            return $flatsFetchedByFloor;
                                         },
                                     ]
                                 ]);

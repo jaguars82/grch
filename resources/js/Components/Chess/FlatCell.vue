@@ -1,5 +1,11 @@
 <template>
   <div
+    v-if="flat === 'filler'"
+    class="column q-ma-xs q-pa-xs rounded-borders bg-grey"
+    :class="{ 'flat-cell-sm': $q.screen.xs, 'flat-cell-md': $q.screen.gt.xs }"
+  ></div>
+  <div
+    v-else
     class="column q-ma-xs q-pa-xs cursor-pointer rounded-borders bg-white"
     :class="{ 'flat-cell-sm': $q.screen.xs, 'flat-cell-md': $q.screen.gt.xs, 'bg-blue-2': currentlyOpened }"
     @click="goToFlat(flat.id)"
@@ -34,7 +40,7 @@ import { asArea, asCurrency, asPricePerArea } from '@/helpers/formatter'
 
 export default {
   props: {
-    flat: Object,
+    flat: [Object, String],
     currentlyOpened: {
       type: Boolean,
       default: false
@@ -43,6 +49,9 @@ export default {
   setup (props) {
     const color = computed(() => {
       let color = 'grey'
+      
+      if (props.flat === 'filler') return color
+      
       switch (props.flat.status) {
         case 0:
           color = 'green'
