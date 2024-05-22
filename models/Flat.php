@@ -17,6 +17,8 @@ use app\components\flat\SvgDom;
  * @property int $newbuilding_id
  * @property int $entrance_id
  * @property int $number
+ * @property string|null $number_string
+ * @property string|null $number_appendix
  * @property string $layout
  * @property string|null $detail
  * @property float $area
@@ -141,7 +143,7 @@ class Flat extends ActiveRecord
         return [
             [['newbuilding_id', 'number', 'area', 'rooms', 'floor', 'rooms'], 'required'],
             [['newbuilding_id', 'number', 'floor', 'index_on_floor', 'status', 'discount_type'], 'integer'],
-            [['detail', 'notification', 'extra_data', 'floor_layout', 'layout_coords'], 'string'],
+            [['detail', 'number_string', 'number_appendix', 'notification', 'extra_data', 'floor_layout', 'layout_coords'], 'string'],
             [['discount', 'unit_price_cash', 'price_cash', 'unit_price_credit', 'price_credit', 'discount_amount', 'discount_price'], 'double'],
             [['is_reserved', 'is_applicated', 'area', 'azimuth', 'section', 'floor_position'], 'number'],
             [['created_at', 'updated_at', 'entrance_id'], 'safe'],

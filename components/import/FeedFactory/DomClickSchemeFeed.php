@@ -221,8 +221,11 @@ class DomClickSchemeFeed implements ImportServiceInterface
 		            $_flat = [
 		                'houseId' => $currentHouseId,
 		                'number' => (int)$flat->apartment,
+                        'number_string' => !empty($flat->number_string) ? $flat->number_string : NULL,
+                        'number_appendix' => !empty($flat->number_appendix) ? $flat->number_appendix : NULL,
 		                'section' => (int)$flat->section,
 		                'floor' => (int)$flat->floor,
+		                'index_on_floor' => !empty($flat->index_on_floor) ? (int)$flat->index_on_floor : NULL,
 		                'area' => (float)preg_replace('/[^0-9]/', '.', $flat->area),
 		                'rooms' => (int)$flat->room,
 		                'unit_price_cash' => $unitPrice,

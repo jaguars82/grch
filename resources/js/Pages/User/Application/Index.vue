@@ -162,7 +162,7 @@
                     </inertia-link>
                   </q-td>
                   <q-td key="archive" :props="props">
-                    <q-btn round flat color="primary" icon="archive" @click="moveToArchive(props.row.id)">
+                    <q-btn round flat color="primary" icon="archive" @click="moveToArchive(props.row.id)" disable>
                       <q-tooltip :delay="1000" :offset="[0, 5]">Поместить в архив</q-tooltip>
                     </q-btn>
                   </q-td>

@@ -118,7 +118,7 @@
             <div class="row q-mt-md full-width items-center justify-end">
               <FlatActionButtons
                 v-if="flat.status === 0"
-                :res="flat.developer.id != 13 && flat.is_reserved != 1 && flat.developer.hasRepresentative"
+                :res="flat.is_reserved != 1 && flat.developer.hasRepresentative"
                 :flat="{ id: flat.id, isFavorite: flat.isFavorite }"
               />
             </div>
@@ -551,7 +551,7 @@
           <FlatActionButtons
             v-if="flat.status === 0"
             :fav="false"
-            :res="flat.developer.id != 13 && flat.is_reserved != 1 && flat.developer.hasRepresentative"
+            :res="flat.is_reserved != 1 && flat.developer.hasRepresentative"
             :flat="{ id: flat.id, isFavorite: flat.isFavorite }"
           />
         </div>

@@ -343,6 +343,7 @@ class Developer extends \app\models\Developer
                     || (isset($flatData['price_credit']) && (float)$flatData['price_credit'] !== (float)$flat->price_credit)
                     || (isset($flatData['area']) && (float)$flatData['area'] !== (float)$flat->area)
                     || $flatData['status'] != $flat->status
+                    || (int)$flatData['index_on_floor'] != (int)$flat->index_on_floor
                 ) {
 
                     $status = $flat->status;
@@ -373,6 +374,18 @@ class Developer extends \app\models\Developer
 
                     $flat->composite_flat_id = $compositeFlat->id;
                 }
+
+                /*
+                // fill number string (if exists)
+                if (isset($flatData['number_string'])) {
+                    $flat->number_string = $flatData['number_string'];
+                }
+
+                // fill number appendix (if exists)
+                if (isset($flatData['number_appendix'])) {
+                    $flat->number_appendix = $flatData['number_appendix'];
+                }
+                */
 
                 if (isset($flatData['layout'])) {
                     $flat->layout = $this->downloadFile($flatData['layout'], $flat);
