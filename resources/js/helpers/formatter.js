@@ -41,6 +41,9 @@ function asFloor (floor, totalFloors) {
 function asNumberString (rooms) {
   let roomPrefix = ''
   switch (rooms) {
+    case 0:
+      roomPrefix = 'свободной планировки'
+      break
     case 1:
       roomPrefix = 'одно'
       break

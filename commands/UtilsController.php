@@ -57,8 +57,11 @@ class UtilsController extends Controller
     /**
      * Action to fill 'index_on_floor' field in 'flat' table
      * according to flat's position on the floor
+     * 
+     * var $newbuildingId - may specify a particular building to fetch indexes in
+     * var $rebuildIndexes - rewrite existing indexes (if true), fill only empty indexes (if false)
      */
-    public function actionFetchFlatIndexes($newbuildingId = 0)
+    public function actionFetchFlatIndexes($newbuildingId = 0, $rebuildIndexes = false)
     {
         if ($newbuildingId === 0) {
             $entrances = Entrance::find()->all();
@@ -81,7 +84,10 @@ class UtilsController extends Controller
             foreach ($flatsGrouppedByFloor as $floor => $floorFlats) {
                 $flatIndex = 1;
                 foreach ($floorFlats as $flat) {
-                    if ($flat->index_on_floor != $flatIndex) {
+                    if (
+                        ($rebuildIndexes === true && $flat->index_on_floor != $flatIndex)
+                        || ($rebuildIndexes === false && empty($flat->index_on_floor))
+                    ) {
                         $flat->index_on_floor = $flatIndex;
                         $flat->save();
                     }

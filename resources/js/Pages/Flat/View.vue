@@ -13,7 +13,12 @@
           <div class="row items-center justify-start">
             <div class="col-12">
               <p class="q-mt-xs q-mb-sm" :class="{ 'text-h1': $q.screen.gt.sm, 'text-h2': $q.screen.sm, 'text-h3': $q.screen.xs }">
-                <span class="text-capitalize">{{ asNumberString(flat.rooms) }}</span>комнатная квартира № {{ flat.number }}
+                <template v-if="flat.rooms == 0">
+                  <span>Квартира {{ asNumberString(flat.rooms) }}  № {{ flat.number }}</span>
+                </template>
+                <template v-else>
+                  <span class="text-capitalize">{{ asNumberString(flat.rooms) }}</span>комнатная квартира № {{ flat.number }}
+                </template>
               </p>
               <div>
                 <q-chip v-if="flat.status === 0" color="positive" class="text-white">
@@ -118,7 +123,7 @@
             <div class="row q-mt-md full-width items-center justify-end">
               <FlatActionButtons
                 v-if="flat.status === 0"
-                :res="flat.developer.id != 13 && flat.is_reserved != 1 && flat.developer.hasRepresentative"
+                :res="flat.is_reserved != 1 && flat.developer.hasRepresentative"
                 :flat="{ id: flat.id, isFavorite: flat.isFavorite }"
               />
             </div>
@@ -362,7 +367,7 @@
                         <div class="floor-cell q-pl-sm text-weight-bolder bg-grey-3 text-grey">{{ floor }}</div>
                         <div>
                           <div class="row no-wrap">
-                            <FlatCell v-for="flatId of Object.keys(entrance.flats[floor])" :flat="entrance.flats[floor][flatId]" :currentlyOpened="flatId == flat.id" />
+                            <FlatCell v-for="flatId of Object.keys(entrance.flats[floor])" :flat="entrance.flats[floor][flatId]" :currentlyOpened="entrance.flats[floor][flatId].id == flat.id" />
                           </div>
                         </div>
                       </div>
@@ -534,7 +539,14 @@
     <!-- Right Drawer -->
     <template v-slot:right-drawer>
       <div class="q-pa-md">
-        <p class="q-mb-xs text-h4 text-center"><span class="text-capitalize">{{ asNumberString(flat.rooms) }}</span>комнатная квартира № {{ flat.number }}</p>
+        <p class="q-mb-xs text-h4 text-center">
+          <template v-if="flat.rooms == 0">
+            <span>Квартира {{ asNumberString(flat.rooms) }}  № {{ flat.number }}</span>
+          </template>
+          <template v-else>
+            <span class="text-capitalize">{{ asNumberString(flat.rooms) }}</span>комнатная квартира № {{ flat.number }}
+          </template>
+        </p>
         <p class="q-mb-xs text-h5 text-center text-grey">Обновлено {{ asDateTime(flat.updated_at) }}</p>
         <p class="q-mb-xs text-h5 text-center text-grey">{{ flat.complex.address }}</p>
         <div class="q-py-md rounded-borders bg-grey-2 relative-position">
@@ -551,7 +563,7 @@
           <FlatActionButtons
             v-if="flat.status === 0"
             :fav="false"
-            :res="flat.developer.id != 13 && flat.is_reserved != 1 && flat.developer.hasRepresentative"
+            :res="flat.is_reserved != 1 && flat.developer.hasRepresentative"
             :flat="{ id: flat.id, isFavorite: flat.isFavorite }"
           />
         </div>
