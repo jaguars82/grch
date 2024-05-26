@@ -136,7 +136,7 @@ class NewbuildingComplexController extends Controller
                                         'flats' => function ($entrance) {
                                             $flats = ArrayHelper::toArray($entrance->flats, [
                                                 'app\models\Flat' => [
-                                                    'id', 'newbuilding_id', 'entrance_id', 'address', 'detail', 'area', 'rooms', 'floor', 'index_on_floor', 'price_cash', 'status', 'sold_by_application', 'is_applicated', 'is_reserved', 'created_at', 'updated_at', 'unit_price_cash', 'discount_type', 'discount', 'discount_amount', 'discount_price', 'azimuth', 'notification', /*'extra_data', */'composite_flat_id', 'section', 'number', 'layout', 'unit_price_credit', 'price_credit', 'floor_position', 'floor_layout', 'layout_coords', 'is_euro', 'is_studio',
+                                                    'id', 'newbuilding_id', 'entrance_id', 'address', 'detail', 'area', 'rooms', 'floor', 'index_on_floor', 'price_cash', 'status', 'sold_by_application', 'is_applicated', 'is_reserved', 'created_at', 'updated_at', 'unit_price_cash', 'discount_type', 'discount', 'discount_amount', 'discount_price', 'azimuth', 'notification', /*'extra_data', */'composite_flat_id', 'section', 'number', 'number_string', 'layout', 'unit_price_credit', 'price_credit', 'floor_position', 'floor_layout', 'layout_coords', 'is_euro', 'is_studio',
                                                     'has_discount' => function ($flat) {
                                                         return $flat->hasDiscount();
                                                     },
@@ -161,13 +161,24 @@ class NewbuildingComplexController extends Controller
                                                         array_push($listOfIndexes, $flat['index_on_floor']);
                                                     }
                                                }
-                                               // check flat indexes on uniqueness
-                                               if(count($listOfIndexes) !== count(array_unique($listOfIndexes))) {
-                                                    $floorIsIndexed = false;
-                                               }
+
                                                // check the amount of indexes fetches the amount of flats 
                                                if(count($listOfIndexes) !== count($flatsOnFloor)) {
                                                     $floorIsIndexed = false;
+                                               }
+
+                                               $uniqueIndexes = array_unique($listOfIndexes);
+                                               // check flat indexes on uniqueness
+                                               if(count($listOfIndexes) !== count($uniqueIndexes)) {
+                                                    $floorIsIndexed = false;
+                                               }
+
+                                               // fill indexes with epty cells (gaps)
+                                               $maxIndex = max($listOfIndexes);
+                                               for ($i = 1; $i <= $maxIndex; $i++) {
+                                                    if(!in_array($i, $listOfIndexes)) {
+                                                        array_push($listOfIndexes, $i);
+                                                    }
                                                }
 
                                                // if flats on the floor are properly indexed
@@ -180,8 +191,9 @@ class NewbuildingComplexController extends Controller
                                                         $flatItem = array_key_exists($index, $flatsOnFloorByIndexes) ? $flatsOnFloorByIndexes[$index] : 'filler';
                                                         $flatsFetchedByIndex[$index] = $flatItem;
                                                     }
+                                                    $flatsFetchedByFloor[$floor] = $flatsFetchedByIndex; 
                                                }
-                                               $flatsFetchedByFloor[$floor] = $flatsFetchedByIndex;
+                                               
                                             }
 
                                             // return ArrayHelper::map($flats, 'id', function($item) { return $item; }, 'floor');

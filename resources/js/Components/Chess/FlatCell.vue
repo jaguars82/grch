@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="flat === 'filler'"
-    class="column q-ma-xs q-pa-xs rounded-borders bg-grey"
+    class="column q-ma-xs q-pa-xs rounded-borders bg-grey-3"
     :class="{ 'flat-cell-sm': $q.screen.xs, 'flat-cell-md': $q.screen.gt.xs }"
   ></div>
   <div
@@ -18,7 +18,7 @@
       <q-badge class="gt-xs" color="orange" v-if="flat.status === 0 && flat.has_discount">
         <span>Акция</span>
       </q-badge>
-      <div class="text-grey-7">№ <span class="text-weight-bolder">{{ flat.number }}</span></div>
+      <div class="text-grey-7">№ <span v-if="flat.number_string" class="text-weight-bolder">{{ flat.number_string }}</span><span v-else class="text-weight-bolder">{{ flat.number }}</span></div>
     </div>
     <div class="q-py-sm" :class="{ 'text-bold': $q.screen.gt.xs, 'text-h6': $q.screen.xs }">
       <span v-if="flat.has_discount">{{ flat.price_range }}</span>

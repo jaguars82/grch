@@ -343,7 +343,7 @@ class Developer extends \app\models\Developer
                     || (isset($flatData['price_credit']) && (float)$flatData['price_credit'] !== (float)$flat->price_credit)
                     || (isset($flatData['area']) && (float)$flatData['area'] !== (float)$flat->area)
                     || $flatData['status'] != $flat->status
-                    || (int)$flatData['index_on_floor'] != (int)$flat->index_on_floor
+                    || (isset($flatData['index_on_floor']) && $flatData['index_on_floor'] != $flat->index_on_floor)
                 ) {
 
                     $status = $flat->status;
@@ -443,8 +443,16 @@ class Developer extends \app\models\Developer
     private function checkFlatExists($flats, $flatData)
     {
         foreach($flats as $flat) {
-            if ($flat->number == $flatData['number']
+            if (!isset($flatData['number_string'])
+                && $flat->number == $flatData['number']
                 && $flat->floor == $flatData['floor']
+            ) {
+                return $flat;
+            } elseif (array_key_exists('number_string', $flatData) // check number_string parameter
+                && !empty($flatData['number_string'])
+                && $flat->number == $flatData['number']
+                && $flat->floor == $flatData['floor']
+                && $flat->number_string == $flatData['number_string']
             ) {
                 return $flat;
             }
