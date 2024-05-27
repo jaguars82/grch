@@ -29,6 +29,16 @@ class ApplicationController extends Controller
 {
     use CustomRedirects;
 
+    // list of accountants (to send ddu and deal map)
+    private $accountants = [
+        0 => [
+            'email' => 'buh@city-vrn.com'
+        ],
+        1 => [
+            'email' => 'project_manager@grvrn.ru'
+        ],
+    ];
+
     public function behaviors()
     {
         return [
@@ -649,6 +659,51 @@ class ApplicationController extends Controller
                                 ->send(); 
                             }
                         }*/
+
+                        /** Send email-notifications for accountants */
+                        $mailBody = 'Агент загрузил Договор долевого участия по заявке <strong>'.$application->application_number.'</strong><br />';
+                        $mailBody .= '<strong><span style="text-transform: uppercase;">карта сделки</span></strong><br />';
+                        if (!empty($application->ddu_price)) {
+                            $mailBody .= 'Стоимость объекта по ДДУ: '.$application->ddu_price.' рублей<br />';
+                        }
+                        if (!empty($application->ddu_cash)) {
+                            $mailBody .= 'Собственные средства: '.$application->ddu_cash.' рублей';
+                            if (!empty($application->ddu_cash_paydate)) {
+                                $mailBody .= ', дата оплаты: '.date('d.m.Y г.', strtotime($application->ddu_cash_paydate));
+                            }
+                            $mailBody .= '<br />';
+                        }
+                        if (!empty($application->ddu_mortgage)) {
+                            $mailBody .= 'Ипотека: '.$application->ddu_mortgage.' рублей';
+                            if (!empty($application->ddu_mortgage_paydate)) {
+                                $mailBody .= ', дата оплаты: '.date('d.m.Y г.', strtotime($application->ddu_mortgage_paydate));
+                            }
+                            $mailBody .= '<br />';
+                        }
+                        if (!empty($application->ddu_matcap)) {
+                            $mailBody .= 'Материнский капитал: '.$application->ddu_matcap.' рублей';
+                            if (!empty($application->ddu_matcap_paydate)) {
+                                $mailBody .= ', дата оплаты: '.date('d.m.Y г.', strtotime($application->ddu_matcap_paydate));
+                            }
+                            $mailBody .= '<br />';
+                        }
+
+                        // attach DDU files links
+                        $mailBody .= '<strong><span style="text-transform: uppercase;">файлы ДДУ</span></strong><br />';
+                        foreach ($application->ddus as $file) {
+                            $mailBody .= '<a download href="https://grch.ru/uploads/'.$file->file.'">'.$file->name.'</a><br />';
+                        }
+
+                        foreach ($this->accountants as $accountant) {
+                            if (!empty ($accountant)) {
+                                \Yii::$app->mailer->compose()
+                                ->setTo($accountant['email'])
+                                ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
+                                ->setSubject("Загружен Договор долевого участия по заявке $application->application_number")
+                                ->setHtmlBody($mailBody)
+                                ->send(); 
+                            }
+                        }
 
                     } catch (\Exception $e) {
                         $transaction->rollBack();
