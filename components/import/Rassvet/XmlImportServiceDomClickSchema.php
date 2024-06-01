@@ -7,7 +7,7 @@ use app\components\import\ImportServiceInterface;
 use app\models\Flat;
 
 /**
- * Service for importing flat's data from xml-feed for developer "ВДК"
+ * Service for importing flat's data from xml-feed for developer "Расцвет"
  */
 class XmlImportServiceDomClickSchema implements ImportServiceInterface
 {
