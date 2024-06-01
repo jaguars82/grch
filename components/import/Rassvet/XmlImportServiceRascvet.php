@@ -9,8 +9,14 @@ use app\models\Flat;
 /**
  * Service for importing flat's data from xml-feed for developer "Расцвет"
  */
-class XmlImportServiceDomClickSchema implements ImportServiceInterface
+class XmlImportServiceRascvet implements ImportServiceInterface
 {
+    protected $status = [
+        'FREE' => Flat::STATUS_SALE,
+		'RESERVED' => Flat::STATUS_RESERVED,
+		'SOLD' => Flat::STATUS_SOLD,
+    ];
+
     /**
      * {@inheritdoc}
      */
@@ -157,15 +163,19 @@ class XmlImportServiceDomClickSchema implements ImportServiceInterface
         $floorLayoutsData = [];
         $layoutCount = 0;
 
-        if (!isset($data->complex)) {
+        //var_dump($data->feed); die;
+
+        if (!isset($data->object)) {
             throw new AppException("Нет данных о квартирах");
         }
 
 		// Парсим ЖК
-        foreach ($data->complex as $complex) {
+        foreach ($data->object as $complex) {
 
             $this->checkObjectData($complex);
             $objectName = (string)$complex->name;
+
+            if($objectName == 'АЭРО') { $objectName = 'ЖК АЭРО'; }
 
 			if (!isset($complex->buildings->building)) {
 				continue;
@@ -209,6 +219,12 @@ class XmlImportServiceDomClickSchema implements ImportServiceInterface
 
 
 				foreach ($building->flats->flat as $flat) {
+                    
+                    // skip not flats
+                    if (!isset($flat->size_type) || $flat->size_type != 'CLASSIC') {
+                        continue;
+                    }
+
 					$unitPrice = ($flat->area != 0) ? ((int)$flat->price / (float)$flat->area) : 0;
 					$layout =  $this->getFlatLayout($flat);
 
@@ -219,6 +235,8 @@ class XmlImportServiceDomClickSchema implements ImportServiceInterface
 						$section++;
 					}
 
+                    //var_dump($flat->status); die;
+
 		            $_flat = [
 		                'houseId' => $currentHouseId,
 		                'number' => (int)$flat->apartment,
@@ -228,7 +246,7 @@ class XmlImportServiceDomClickSchema implements ImportServiceInterface
 		                'rooms' => (int)$flat->room,
 		                'unit_price_cash' => $unitPrice,
 		                'price_cash' => (float)$flat->price,
-		                'status' => Flat::STATUS_SALE,
+		                'status' => !empty($flat->status) && array_key_exists((string)$flat->status[0], $this->status) ? $this->status[(string)$flat->status[0]] : Flat::STATUS_SOLD,
 						'layout' => $layout,
 		            ];
 
@@ -242,8 +260,9 @@ class XmlImportServiceDomClickSchema implements ImportServiceInterface
 		}
 
 
-
         $floorLayouts = [];
+
+        // var_dump($houses); die;
 
         return [
             'floorLayouts' => $floorLayouts,

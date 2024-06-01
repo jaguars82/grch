@@ -185,11 +185,13 @@ class FlatController extends Controller
                                                             }
 
                                                             // fill indexes with epty cells (gaps)
-                                                            $maxIndex = max($listOfIndexes);
-                                                            for ($i = 1; $i <= $maxIndex; $i++) {
+                                                            if (count($listOfIndexes) > 0) {
+                                                                $maxIndex = max($listOfIndexes);
+                                                                for ($i = 1; $i <= $maxIndex; $i++) {
                                                                     if(!in_array($i, $listOfIndexes)) {
                                                                         array_push($listOfIndexes, $i);
                                                                     }
+                                                                }
                                                             }
 
                                                             // if flats on the floor are properly indexed
