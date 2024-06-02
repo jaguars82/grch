@@ -72,8 +72,6 @@ class TariffController extends Controller
             array_push($developersArr, $developerRow);
         }
 
-        // echo '<pre>'; var_dump($developersArr); echo '</pre>'; die;
-
         return $this->inertia('Tariff/Index', [
             'model' => $model,
             'developers' => $developersArr

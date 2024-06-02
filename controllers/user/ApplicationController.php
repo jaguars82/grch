@@ -13,6 +13,7 @@ use app\models\Entrance;
 use app\models\Flat;
 use app\models\Agency;
 use app\models\Application;
+use app\models\Tariff;
 use app\models\ApplicationDocument;
 use app\models\form\ApplicationForm;
 use app\models\ApplicationHistory;
@@ -36,6 +37,9 @@ class ApplicationController extends Controller
         ],
         1 => [
             'email' => 'project_manager@grvrn.ru'
+        ],
+        2 => [
+            'email' => 'info@teacher-site.ru'
         ],
     ];
 
@@ -662,7 +666,7 @@ class ApplicationController extends Controller
 
                         /** Send email-notifications for accountants */
                         $mailBody = 'Агент загрузил Договор долевого участия по заявке <strong>'.$application->application_number.'</strong><br />';
-                        $mailBody .= '<strong><span style="text-transform: uppercase;">карта сделки</span></strong><br />';
+                        $mailBody .= '<br /><strong><span style="text-transform: uppercase;">карта сделки</span></strong><br />';
                         if (!empty($application->ddu_price)) {
                             $mailBody .= 'Стоимость объекта по ДДУ: '.$application->ddu_price.' рублей<br />';
                         }
@@ -689,11 +693,90 @@ class ApplicationController extends Controller
                         }
 
                         // attach DDU files links
-                        $mailBody .= '<strong><span style="text-transform: uppercase;">файлы ДДУ</span></strong><br />';
+                        $mailBody .= '<br /><strong><span style="text-transform: uppercase;">файлы ДДУ</span></strong><br />';
                         foreach ($application->ddus as $file) {
                             $mailBody .= '<a download href="https://grch.ru/uploads/'.$file->file.'">'.$file->name.'</a><br />';
                         }
 
+                        // Info about Agency & Agent
+                        // Agent
+                        $mailBody .= '<br /><strong><span style="text-transform: uppercase;">агент</span></strong><br />';
+                        if (!empty($application->applicant->last_name)) {
+                           $mailBody .= '<span style="text-transform: uppercase;">'.$application->applicant->last_name.' </span>'; 
+                        }
+                        if (!empty($application->applicant->first_name)) {
+                           $mailBody .= '<span>'.$application->applicant->first_name.' </span>'; 
+                        }
+                        if (!empty($application->applicant->middle_name)) {
+                           $mailBody .= '<span>'.$application->applicant->middle_name.' </span>'; 
+                        }
+                        $mailBody .= '<br />';
+                        if (!empty($application->applicant->email)) {
+                            $mailBody .= '<span>Электронная почта: '.$application->applicant->email.' </span><br />'; 
+                        }
+                        if (!empty($application->applicant->phone)) {
+                            $mailBody .= '<span>Телефон: '.$application->applicant->phone.' </span><br />'; 
+                        }
+                        // Agency
+                        $mailBody .= '<br /><strong><span style="text-transform: uppercase;">агентство</span></strong><br />';
+                        $mailBody .= '<span>'.$application->applicant->agency->name.' </span><br />';
+                        
+                        // Info about the object and the developer
+                        $format = \Yii::$app->formatter;
+                        $mailBody .= '<br /><strong><span style="text-transform: uppercase;">объект</span></strong><br />';
+                        $mailBody .= '<span>Объект: '.$application->flat->roomsTitle.' № '.$application->flat->number.', '.$format->asArea($application->flat->area).', '.$format->asFloor($application->flat->floor, $application->flat->newbuilding->total_floor).' этаж</span><br />';
+                        $mailBody .= '<span>Расположение: '.$application->flat->newbuildingComplex->name.' > '.$application->flat->newbuilding->name.' > '.$application->flat->entrance->name.'</span><br />';
+                        $mailBody .= '<span>Застройщик: '.$application->flat->newbuildingComplex->developer->name.'</span><br />';
+
+                        // Info about agent's comission
+                        $tariff = ArrayHelper::toArray(Tariff::find()->orderBy('id DESC')->one());
+                        if (array_key_exists($application->flat->newbuildingComplex->id, $tariff['tariff_table'])) {
+                            $mailBody .= '<br /><strong><span style="text-transform: uppercase;">информация о кв</span></strong><br />';
+
+                            $currentTariff = $tariff['tariff_table'][$application->flat->newbuildingComplex->id];
+
+                            if(count($currentTariff['tariffs']) > 0) {
+
+                                $numberOfTariffItems = 1;
+                                $comissionAmount = '';
+                                foreach ($currentTariff['tariffs'] as $tariffItem) {
+                                    
+                                    switch ($tariffItem['tariffType']) {
+                                        case Tariff::TYPE_PERCENT:
+                                            $comissionAmount .= $tariffItem['amountPercent'].' %';
+                                            break;
+
+                                        case Tariff::TYPE_CURRENCY:
+                                            $comissionAmount .= $tariffItem['amountCurrency'].' ₽';
+                                            break;
+
+                                        case Tariff::TYPE_CUSTOM:
+                                            $comissionAmount .= $tariffItem['amountCustom'];
+                                            break;
+
+                                        default:
+                                            $comissionAmount .= 'нет данных';
+                                    }
+
+                                    $mailBody .= '<span>'.$numberOfTariffItems.'. Размер комиссии: '.$comissionAmount.'</span>';
+
+                                    if (!empty($tariffItem['annotation'])) {
+                                        $mailBody .= '<span>; условия, примечания: '.$tariffItem['annotation'].'</span>';
+                                    }
+                                    $mailBody .= '<br />';
+
+                                    $numberOfTariffItems++;
+                                }
+
+                                if (!empty($currentTariff['termsOfPayment'])) {
+                                    $mailBody .= '<span>Сроки оплаты: '.$currentTariff['termsOfPayment'].'</span><br />';
+                                }
+                            } else {
+                                $mailBody .= '<span>нет информации</span>';
+                            }
+                        }
+
+                        // sending emails to accountant(s)
                         foreach ($this->accountants as $accountant) {
                             if (!empty ($accountant)) {
                                 \Yii::$app->mailer->compose()
