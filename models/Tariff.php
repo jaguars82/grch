@@ -22,7 +22,11 @@ class Tariff extends ActiveRecord
 {
  
     use FillAttributes;
-    
+
+    const TYPE_PERCENT = 'percent';
+    const TYPE_CURRENCY = 'currency';
+    const TYPE_CUSTOM = 'custom';
+  
     /**
      * {@inheritdoc}
      */
