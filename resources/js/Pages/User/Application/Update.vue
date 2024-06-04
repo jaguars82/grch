@@ -303,7 +303,7 @@
                 >
                   <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
                     <div class="col-12">
-                      <q-input outlined type="number" v-model.number="formfields.ddu_price" label="Стоимость объекта по ДДУ" />
+                      <q-input outlined type="number" step="0.01" v-model.number="formfields.ddu_price" label="Стоимость объекта по ДДУ" />
                     </div>
                   </div>
                   <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
@@ -316,7 +316,7 @@
                     </div>
                     <template v-if="dealCardFildsSet.personal">
                       <div class="col-6">
-                        <q-input outlined type="number" v-model.number="formfields.ddu_cash" label="Собственные средства" dense />
+                        <q-input outlined type="number" step="0.01" v-model.number="formfields.ddu_cash" label="Собственные средства" dense />
                       </div>
                       <div class="col-5 q-pl-sm">
                         <q-input outlined v-model="formfields.ddu_cash_paydate" label="Дата оплаты собственными средствами" dense readonly>
@@ -343,7 +343,7 @@
                     </div>
                     <template v-if="dealCardFildsSet.mortgage">
                       <div class="col-6">
-                        <q-input outlined type="number" v-model.number="formfields.ddu_mortgage" label="Ипотечные средства" dense />
+                        <q-input outlined type="number" step="0.01" v-model.number="formfields.ddu_mortgage" label="Ипотечные средства" dense />
                       </div>
                       <div class="col-5 q-pl-sm">
                         <q-input outlined v-model="formfields.ddu_mortgage_paydate" label="Дата оплаты ипотекой" dense readonly>
@@ -370,7 +370,7 @@
                     </div>
                     <template v-if="dealCardFildsSet.matcap">
                       <div class="col-6">
-                        <q-input outlined type="number" v-model.number="formfields.ddu_matcap" label="Материнский капитал" dense />
+                        <q-input outlined type="number" step="0.01" v-model.number="formfields.ddu_matcap" label="Материнский капитал" dense />
                       </div>
                       <div class="col-5 q-pl-sm">
                         <q-input outlined v-model="formfields.ddu_matcap_paydate" label="Дата оплаты маткапиталом" dense readonly>
