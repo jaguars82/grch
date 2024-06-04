@@ -31,7 +31,7 @@ class TariffController extends Controller
                     [
                         'allow' => true,
                         'actions' => ['index'],
-                        'roles' => ['@'],
+                        'roles' => ['admin', 'agent', 'manager'],
                     ],
                 ]
             ],
