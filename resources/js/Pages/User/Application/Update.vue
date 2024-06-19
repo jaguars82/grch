@@ -430,7 +430,7 @@
                       <q-file
                         outlined
                         v-model="reportActFile"
-                        label="Перетащите или загрузите заполненный Отчет-Акт"
+                        label="Перетащите или загрузите заполненный Отчет-Акт и Счет"
                         multiple
                         accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, .jpg, image/*, .doc, .docx"
                       >

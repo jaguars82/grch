@@ -131,8 +131,9 @@
                   </template>
                   <!-- Report-Act template download -->
                   <template v-if="statusChangesForm.operation === 'issue_report_act'">
-                    <p>Скачайте файл Отчёта-Акта, расположенный ниже по ссылки, заполните его и загрузите</p>
+                    <p>Скачайте по ссылкам ниже файлы образцов Отчёта-Акта и Счёта, заполните их и загрузите</p>
                     <FileDownloadable folder="/downloads/reservation" :file="{ name: 'Образец Отчета-Акта', file: 'OtchetActTemplate.docx' }" />
+                    <FileDownloadable folder="/downloads/reservation" :file="{ name: 'Образец Счета', file: 'BillTemplate.xlsx' }" />
                   </template>
                 </q-card-section>
                 <q-card-actions align="right">
