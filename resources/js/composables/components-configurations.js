@@ -128,18 +128,18 @@ function getApplicationFormParamsByStatus (applicationStatus, userRole) {
     },
     issue_report_act_by_agent: {
       role: 'agent',
-      operationLabel: 'Загрузить Отчет-Акт',
+      operationLabel: 'Загрузить Отчет-Акт и Счет',
       operation: 'issue_report_act',
-      formCaption: 'Загрузите отчет-акт',
-      formContent: '<p>После загрузки и обработки Отчета-Акта будет произведена выплата вознаграждения</p>',
+      formCaption: 'Загрузите отчет-акт и счет',
+      formContent: '<p>После загрузки и обработки Отчета-Акта и Счета будет произведена выплата вознаграждения</p>',
       submitLabel: 'Загрузить'
     },
     issue_report_act_by_manager: {
       role: 'manager',
-      operationLabel: 'Загрузить Отчет-Акт',
+      operationLabel: 'Загрузить Отчет-Акт и Счет',
       operation: 'issue_report_act',
-      formCaption: 'Загрузите отчет-акт',
-      formContent: '<p>После загрузки и обработки Отчета-Акта будет произведена выплата вознаграждения</p>',
+      formCaption: 'Загрузите отчет-акт и счет',
+      formContent: '<p>После загрузки и обработки Отчета-Акта и Счета будет произведена выплата вознаграждения</p>',
       submitLabel: 'Загрузить'
     },
     confirm_recieving_success_deal_info_by_admin: {

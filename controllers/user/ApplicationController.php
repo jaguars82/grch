@@ -933,7 +933,7 @@ class ApplicationController extends Controller
 
                 /***
                  * Agent or manager reports successful deal
-                 * uploads Report-Act
+                 * uploads Report-Act and Bill
                  */
                 case 'issue_report_act':
 
@@ -989,6 +989,58 @@ class ApplicationController extends Controller
                                 ->send();
                             }
                         }*/
+
+                        
+                        /** Send email-notifications for accountants */
+                        $mailBody = 'Агент загрузил Отчет-Акт и Счет по заявке <strong>'.$application->application_number.'</strong><br />';
+                        
+                        // attach Report & Bill files links
+                        $mailBody .= '<br /><strong><span style="text-transform: uppercase;">файлы, загруженные агентом</span></strong><br />';
+                        foreach ($application->reportAct as $file) {
+                            $mailBody .= '<a download href="https://grch.ru/uploads/'.$file->file.'">'.$file->name.'</a><br />';
+                        }
+
+                        // Info about Agency & Agent
+                        // Agent
+                        $mailBody .= '<br /><strong><span style="text-transform: uppercase;">агент</span></strong><br />';
+                        if (!empty($application->applicant->last_name)) {
+                           $mailBody .= '<span style="text-transform: uppercase;">'.$application->applicant->last_name.' </span>'; 
+                        }
+                        if (!empty($application->applicant->first_name)) {
+                           $mailBody .= '<span>'.$application->applicant->first_name.' </span>'; 
+                        }
+                        if (!empty($application->applicant->middle_name)) {
+                           $mailBody .= '<span>'.$application->applicant->middle_name.' </span>'; 
+                        }
+                        $mailBody .= '<br />';
+                        if (!empty($application->applicant->email)) {
+                            $mailBody .= '<span>Электронная почта: '.$application->applicant->email.' </span><br />'; 
+                        }
+                        if (!empty($application->applicant->phone)) {
+                            $mailBody .= '<span>Телефон: '.$application->applicant->phone.' </span><br />'; 
+                        }
+                        // Agency
+                        $mailBody .= '<br /><strong><span style="text-transform: uppercase;">агентство</span></strong><br />';
+                        $mailBody .= '<span>'.$application->applicant->agency->name.' </span><br />';
+                        
+                        // Info about the object and the developer
+                        $format = \Yii::$app->formatter;
+                        $mailBody .= '<br /><strong><span style="text-transform: uppercase;">объект</span></strong><br />';
+                        $mailBody .= '<span>Объект: '.$application->flat->roomsTitle.' № '.$application->flat->number.', '.$format->asArea($application->flat->area).', '.$format->asFloor($application->flat->floor, $application->flat->newbuilding->total_floor).' этаж</span><br />';
+                        $mailBody .= '<span>Расположение: '.$application->flat->newbuildingComplex->name.' > '.$application->flat->newbuilding->name.' > '.$application->flat->entrance->name.'</span><br />';
+                        $mailBody .= '<span>Застройщик: '.$application->flat->newbuildingComplex->developer->name.'</span><br />';
+
+                        // sending emails to accountant(s)
+                        foreach ($this->accountants as $accountant) {
+                            if (!empty ($accountant)) {
+                                \Yii::$app->mailer->compose()
+                                ->setTo($accountant['email'])
+                                ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
+                                ->setSubject("Загружены файлы Отчета-Акта/Счета по заявке $application->application_number")
+                                ->setHtmlBody($mailBody)
+                                ->send(); 
+                            }
+                        }
 
                     } catch (\Exception $e) {
                         $transaction->rollBack();
