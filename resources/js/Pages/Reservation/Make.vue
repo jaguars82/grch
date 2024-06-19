@@ -131,13 +131,24 @@
               </div>
             </div>
 
-            <div class="row q-col-gutter-none">
+            <div v-if="formfields.self_reservation" class="row q-col-gutter-none">
               <div class="col q-mr-md">
-                <q-banner v-if="formfields.self_reservation" inline-actions rounded class="q-mx-md bg-orange text-white">
+                <q-banner inline-actions rounded class="q-mx-md bg-orange text-white">
                   <template v-slot:avatar>
                     <q-icon name="report" color="white" />
                   </template>
                   <span class="text-h5"><span class="text-uppercase">Обратите внимание</span>: при выборе этой опции Вы осуществляете действия по бронированию объекта самостоятельно, без помощи агрегатора</span>
+                </q-banner>
+              </div>
+            </div>
+
+            <div v-if="formfields.self_reservation" class="row q-col-gutter-none q-mt-sm">
+              <div class="col q-mr-md">
+                <q-banner inline-actions rounded class="q-mx-md bg-red-2 text-red">
+                  <template v-slot:avatar>
+                    <q-icon name="report" color="red" />
+                  </template>
+                  <span class="text-h5 text-uppercase">Сделку у застройщика заводить от ГРЧ</span>
                 </q-banner>
               </div>
             </div>
