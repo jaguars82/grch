@@ -73,11 +73,11 @@ class NewbuildingComplexSearch extends NewbuildingComplex
         // show for all developers
         } else {
             $developers = Developer::find()->whereNewbuildingComplexesExist()
-                    ->onlyWithActiveFlats($this->only_active)
-                    ->andFilterWhere(['developer.id' => $this->developer_id])
-                    ->andFilterWhere(['like', 'newbuilding_complex.name', $this->name])
-                    ->orderBy(['sort' => SORT_ASC])
-                    ->all();           
+                ->onlyWithActiveFlats($this->only_active)
+                ->andFilterWhere(['developer.id' => $this->developer_id])
+                ->andFilterWhere(['like', 'newbuilding_complex.name', $this->name])
+                ->orderBy(['sort' => SORT_ASC])
+                ->all();           
         }
 
                 

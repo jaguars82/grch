@@ -49,6 +49,7 @@ class DeveloperQuery extends ActiveQuery
     public function whereNewbuildingComplexesExist()
     {
         return $this->join('LEFT JOIN', 'newbuilding_complex', 'developer.id = newbuilding_complex.developer_id')
+			->where(['newbuilding_complex.active' => 1])
             ->groupBy('developer.id')
             ->having('count(newbuilding_complex.developer_id) > 0');
     }
