@@ -102,6 +102,7 @@
             <template v-if="statusChangesForm">
               <template v-if="
                 user.role === 'manager' && application.applicant_id == user.id
+                || user.role === 'manager' && application.author.agency_id == user.agency_id
                 || user.role === 'agent' && application.applicant_id == user.id
                 || user.role === 'developer_repres' && application.developer_id == user.developer_id
                 || user.role === 'admin'
@@ -331,9 +332,9 @@ components: {
     FileDownloadable
   },
   props: {
-    application: Array,
+    application: Object,
     applicationHistory: Array,
-    statusMap: Array,
+    statusMap: Object,
     flat: Object
   },
   setup(props) {

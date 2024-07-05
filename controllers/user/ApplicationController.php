@@ -1229,6 +1229,11 @@ class ApplicationController extends Controller
     {
         $application = Application::findOne($id);
         $applicationArr = ArrayHelper::toArray($application);
+        $applicationArr['author'] = ArrayHelper::toArray($application->applicant);
+        $applicationArr['author']['roleLabel'] = $application->applicant->roleLabel;
+        if(!empty($application->applicant->agency_id)) {
+            $applicationArr['author']['agency_name'] = $application->applicant->agency->name;
+        }
         $applicationArr['flat'] = ArrayHelper::toArray($application->flat);
         $applicationArr['flat']['entrance'] = ArrayHelper::toArray($application->flat->entrance);
         $applicationArr['flat']['newbuilding'] = ArrayHelper::toArray($application->flat->newbuilding);
