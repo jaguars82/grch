@@ -136,6 +136,7 @@
                     <template v-if="props.row.expectedAction">
                       <template v-if="
                         user.role === 'manager' && props.row.applicant_id == user.id
+                        || user.role === 'manager' && props.row.agency_id == user.agency_id
                         || user.role === 'agent' && props.row.applicant_id == user.id
                         || user.role === 'developer_repres' && props.row.developer_id == user.developer_id
                         || user.role === 'admin'
@@ -216,7 +217,7 @@ export default ({
   },
   props: {
     applications: Array,
-    statusMap: Array,
+    statusMap: Object,
     totalRows: String,
     page: Number,
     psize: Number,
@@ -283,6 +284,7 @@ export default ({
           id: row.id,
           author: `${row.author.last_name} ${row.author.first_name}`,
           author_phone: row.author.phone,
+          agency_id: row.author.agency_id,
           agency: row.author.agency_name,
           role: row.author.roleLabel,
           application_number: row.application_number,

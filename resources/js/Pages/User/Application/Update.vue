@@ -7,476 +7,487 @@
       <RegularContentContainer :title="eOperation === 'change_object'? 'Изменить объект для бронирования' : statusChangesForm.formCaption">
         <template v-slot:content>
           <Loading v-if="loading" />
-          <div v-else>
-            <div class="q-my-lg" v-if="eOperation === 'change_object'" >
-              <p>Укажите новый объект</p>
-            </div>
-            <div class="q-my-lg" v-else v-html="statusChangesForm.formContent"></div>
-            <q-form
-              @submit="onSubmit"
-            >
-              <input type="hidden" v-model="formfields.operation" />
-
-              <div v-if="eOperation === 'change_object' && application.status < 3" class="row q-col-gutter-none">
-
-                <div class="col-12 col-sm-6 q-py-xs" :class="{'q-pr-none': $q.screen.xs }">
-                  <q-select
-                    outlined
-                    v-model="optfields.developer_select"
-                    :options="developerOptions"
-                    label="Застройщик"
-                    options-dense
-                    @update:model-value="onDeveloperSelect"
-                  >
-                    <template v-slot:append>
-                      <q-icon
-                        v-if="optfields.developer_select !== null"
-                        class="cursor-pointer"
-                        name="clear"
-                        @click.stop.prevent="() => { 
-                          optfields.developer_select = null
-                          optfields.buildingComplex_select = null
-                          optfields.building_select = null
-                          optfields.entrance_select = null
-                          optfields.flat_select = null
-                        }"
-                      />
-                    </template>
-                  </q-select>
-                </div>
-
-                <div class="col-12 col-sm-6 q-py-xs q-pr-none">
-                  <q-select
-                    outlined
-                    v-model="optfields.buildingComplex_select"
-                    :options="buildingComplexOptions"
-                    label="Жилой комплекс"
-                    options-dense
-                    :disable="!buildingComplexOptions.length"
-                    @update:model-value="onBuildingComplexSelect"
-                  >
-                    <template v-slot:append>
-                      <q-icon
-                        v-if="optfields.buildingComplex_select !== null"
-                        class="cursor-pointer"
-                        name="clear"
-                        @click.stop.prevent="() => { 
-                          optfields.buildingComplex_select = null
-                          optfields.building_select = null
-                          optfields.entrance_select = null
-                          optfields.flat_select = null
-                        }"
-                      />
-                    </template>
-                  </q-select>
-                </div>
-
-                <div class="col-12 col-sm-4 q-py-xs" :class="{'q-pr-none': $q.screen.xs }">
-                  <q-select
-                    outlined
-                    v-model="optfields.building_select"
-                    :options="buildingOptions"
-                    label="Позиция"
-                    options-dense
-                    :disable="!buildingOptions.length"
-                    @update:model-value="onBuildingSelect"
-                  >
-                    <template v-slot:append>
-                      <q-icon
-                        v-if="optfields.building_select !== null"
-                        class="cursor-pointer"
-                        name="clear"
-                        @click.stop.prevent="() => { 
-                          optfields.building_select = null
-                          optfields.entrance_select = null
-                          optfields.flat_select = null
-                        }"
-                      />
-                    </template>
-                  </q-select>
-                </div>
-
-                <div class="col-12 col-sm-4 q-py-xs" :class="{'q-pr-none': $q.screen.xs }">
-                  <q-select
-                    outlined
-                    v-model="optfields.entrance_select"
-                    :options="entranceOptions"
-                    label="Подъезд"
-                    options-dense
-                    :disable="!entranceOptions.length"
-                    @update:model-value="onEntranceSelect"
-                  >
-                    <template v-slot:append>
-                      <q-icon
-                        v-if="optfields.entrance_select !== null"
-                        class="cursor-pointer"
-                        name="clear"
-                        @click.stop.prevent="() => { 
-                          optfields.entrance_select = null
-                          optfields.flat_select = null
-                        }"
-                      />
-                    </template>
-                  </q-select>
-                </div>
-
-                <div class="col-12 col-sm-4 q-py-xs q-pr-none">
-                  <q-select
-                    outlined
-                    v-model="optfields.flat_select"
-                    :options="flatOptions"
-                    label="Квартира"
-                    options-dense
-                    :disable="!flatOptions.length"
-                  >
-                    <template v-slot:append>
-                      <q-icon
-                        v-if="optfields.flat_select !== null"
-                        class="cursor-pointer"
-                        name="clear"
-                        @click.stop.prevent="optfields.flat_select = null"
-                      />
-                    </template>
-                  </q-select>
-                </div>
-
+          <template v-else>
+            <template v-if="
+              user.role === 'manager' && application.applicant_id == user.id
+              || user.role === 'manager' && application.author.agency_id == user.agency_id
+              || user.role === 'agent' && application.applicant_id == user.id
+              || user.role === 'developer_repres' && application.developer_id == user.developer_id
+              || user.role === 'admin'
+            ">
+              <div class="q-my-lg" v-if="eOperation === 'change_object'" >
+                <p>Укажите новый объект</p>
               </div>
+              <div class="q-my-lg" v-else v-html="statusChangesForm.formContent"></div>
+              <q-form
+                @submit="onSubmit"
+              >
+                <input type="hidden" v-model="formfields.operation" />
 
-              <template v-else>
+                <div v-if="eOperation === 'change_object' && application.status < 3" class="row q-col-gutter-none">
 
-                <!-- Approving reservation by developer or by manager -->
-                <template
-                  v-if="formfields.operation === 'approve_reservation_by_developer' || formfields.operation === 'approve_reservation_from_developer_by_admin' && application.status == 2"
-                >
-                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
-                    <div class="col-12 col-sm-4" :class="{'q-py-xs': $q.screen.gt.xs, 'q-pr-none': $q.screen.xs }">
-                      <q-input outlined v-model="formfields.manager_lastname" label="Фамилия менеджера" />
-                    </div>
-                    <div class="col-12 col-sm-4" :class="{'q-py-xs': $q.screen.gt.xs, 'q-pr-none': $q.screen.xs }">
-                      <q-input outlined v-model="formfields.manager_firstname" label="Имя менеджера" />
-                    </div>
-                    <div class="col-12 col-sm-4 q-pr-none" :class="{'q-py-xs': $q.screen.gt.xs }">
-                      <q-input outlined v-model="formfields.manager_middlename" label="Отчество менеджера" />
-                    </div>
-                  </div>
-
-                  <div class="row q-col-gutter-none" :class="{'q-py-sm': $q.screen.xs }">
-                    <div class="col-12 col-sm-6" :class="{'q-py-xs': $q.screen.gt.xs, 'q-pr-none': $q.screen.xs }">
-                      <q-input outlined v-model="formfields.manager_phone" label="Телефон менеджера" mask="# (###) ###-##-##" unmasked-value />
-                    </div>
-                    <div class="col-12 col-sm-6 q-pr-none" :class="{'q-py-xs': $q.screen.gt.xs }">
-                      <q-input outlined v-model="formfields.manager_email" label="Email менеджера" />
-                    </div>
-                  </div>
-
-                  <div class="row q-col-gutter-none" :class="{'q-pt-sm': $q.screen.xs }">
-                    <div class="col" :class="{'q-py-xs': $q.screen.gt.xs }">
-                      <q-input outlined autogrow v-model="formfields.reservation_conditions" label="Условия бронирования" />
-                    </div>
-                  </div>
-                  
-                  <div class="row q-col-gutter-none" :class="{'q-pt-sm': $q.screen.xs }">
-                    <q-toggle
-                      v-model="formfields.is_toll"
-                      label="Платная бронь"
-                    />
-                  </div>
-                  
-                  <div v-if="formfields.is_toll" class="row q-col-gutter-none" :class="{'q-pt-sm': $q.screen.xs }">
-                    <q-banner inline-actions rounded class="q-mx-md q-mb-sm bg-orange text-white">
-                      <template v-slot:avatar>
-                        <q-icon name="report" color="white" />
-                      </template>
-                      <span class="text-h5"><span class="text-uppercase">Обратите внимание</span>: чтобы принять заявку в работу, агент должен будет предоставить квитанцию об оплате бронирования</span>
-                    </q-banner>
-                  </div>
-                </template>
-
-                <!-- Uploading agent's documents pack while taking the application in work by an agent or a manager -->
-                <template
-                  v-if="formfields.operation === 'take_in_work_by_agent' || formfields.operation === 'take_in_work_by_manager'"
-                >
-                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
-                    <div class="col-12">
-                      <q-file
-                        outlined
-                        v-model="agentDocPack"
-                        label="Перетащите или загрузите документы, которые нужно предоставить застройщику"
-                        multiple 
-                        use-chips
-                        accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, .jpg, image/*, .doc, .docx"
-                      >
-                        <template v-slot:prepend>
-                          <q-icon name="attach_file" />
-                        </template>
-                        <template v-slot:file="{ index, file }">
-                          <q-chip
-                            removable
-                            @remove="onRemoveAgentDocPackFile(index)"
-                          >
-                            <q-avatar>
-                              <q-icon name="draft" />
-                            </q-avatar>
-                            <div class="ellipsis relative-position">
-                              {{ file.name }}
-                            </div>
-                          </q-chip>
-                        </template>
-                      </q-file>
-                    </div>
-                  </div>
-                </template>
-
-                <!-- Uploading a receipt while taking the paid application in work by an agent or a manager -->
-                <template
-                  v-if="application.is_toll === 1 && (formfields.operation === 'take_in_work_by_agent' || formfields.operation === 'take_in_work_by_manager')"
-                >
-                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
-                    <div class="col-12">
-                      <q-file
-                        outlined
-                        v-model="recieptFile"
-                        label="Перетащите или загрузите документ (квитанцию) об оплате бронирования"
-                        multiple 
-                        use-chips
-                        accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, .jpg, image/*, .doc, .docx"
-                      >
-                        <template v-slot:prepend>
-                          <q-icon name="attach_file" />
-                        </template>
-                        <template v-slot:file="{ index, file }">
-                          <q-chip
-                            removable
-                            @remove="onRemoveRecieptFile(index)"
-                          >
-                            <q-avatar>
-                              <q-icon name="draft" />
-                            </q-avatar>
-                            <div class="ellipsis relative-position">
-                              {{ file.name }}
-                            </div>
-                          </q-chip>
-                        </template>
-                      </q-file>
-                    </div>
-                  </div>
-                </template>
-
-                <!-- uploading developer's documents pack -->
-                <template
-                  v-if="formfields.operation === 'upload_developer_docpack'"
-                >
-                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
-                    <div class="col-12">
-                      <q-file
-                        outlined
-                        v-model="developerDocPack"
-                        label="Перетащите или загрузите документы, которые нужно предоставить агенту"
-                        multiple 
-                        use-chips
-                        accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, .jpg, image/*, .doc, .docx"
-                      >
-                        <template v-slot:prepend>
-                          <q-icon name="attach_file" />
-                        </template>
-                        <template v-slot:file="{ index, file }">
-                          <q-chip
-                            removable
-                            @remove="onRemoveDeveloperDocPackFile(index)"
-                          >
-                            <q-avatar>
-                              <q-icon name="draft" />
-                            </q-avatar>
-                            <div class="ellipsis relative-position">
-                              {{ file.name }}
-                            </div>
-                          </q-chip>
-                        </template>
-                      </q-file>
-                    </div>
-                  </div>
-                </template>
-
-                <!-- uploading DDU & pay infomation by an agent or a manager -->
-                <template
-                  v-if="formfields.operation === 'upload_ddu_by_agent' || formfields.operation === 'upload_ddu_by_manager'"
-                >
-                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
-                    <div class="col-12">
-                      <q-input outlined type="number" step="0.01" v-model.number="formfields.ddu_price" label="Стоимость объекта по ДДУ" />
-                    </div>
-                  </div>
-                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
-                    <p class="q-mt-sm q-mb-xs text-h5">Внесите информацию об оплате (источник средств и дата)</p>
-                  </div>
-                  <!-- Personal money -->
-                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
-                    <div :class="[dealCardFildsSet.personal ? 'col-1' : 'col-12']">
-                      <q-toggle v-model="dealCardFildsSet.personal" :label="dealCardFildsSet.personal ? '' : 'Собственными средствами'" />
-                    </div>
-                    <template v-if="dealCardFildsSet.personal">
-                      <div class="col-6">
-                        <q-input outlined type="number" step="0.01" v-model.number="formfields.ddu_cash" label="Собственные средства" dense />
-                      </div>
-                      <div class="col-5 q-pl-sm">
-                        <q-input outlined v-model="formfields.ddu_cash_paydate" label="Дата оплаты собственными средствами" dense readonly>
-                          <template v-slot:append>
-                            <q-icon name="event" class="cursor-pointer">
-                              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                                <q-date v-model="formfields.ddu_cash_paydate" mask="YYYY-MM-DD">
-                                  <div class="row items-center justify-end">
-                                    <q-btn v-close-popup label="Закрыть" color="primary" flat />
-                                    <q-btn label="Сбросить" color="primary" flat @click="formfields.ddu_cash_paydate = ''" />
-                                  </div>
-                                </q-date>
-                              </q-popup-proxy>
-                            </q-icon>
-                          </template>
-                        </q-input>
-                      </div>
-                    </template>
-                  </div>
-                  <!-- Mortgage money -->
-                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
-                    <div :class="[dealCardFildsSet.mortgage ? 'col-1' : 'col-12']">
-                      <q-toggle v-model="dealCardFildsSet.mortgage" :label="dealCardFildsSet.mortgage ? '' : 'При помощи ипотеки'" />
-                    </div>
-                    <template v-if="dealCardFildsSet.mortgage">
-                      <div class="col-6">
-                        <q-input outlined type="number" step="0.01" v-model.number="formfields.ddu_mortgage" label="Ипотечные средства" dense />
-                      </div>
-                      <div class="col-5 q-pl-sm">
-                        <q-input outlined v-model="formfields.ddu_mortgage_paydate" label="Дата оплаты ипотекой" dense readonly>
-                          <template v-slot:append>
-                            <q-icon name="event" class="cursor-pointer">
-                              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                                <q-date v-model="formfields.ddu_mortgage_paydate" mask="YYYY-MM-DD">
-                                  <div class="row items-center justify-end">
-                                    <q-btn v-close-popup label="Закрыть" color="primary" flat />
-                                    <q-btn label="Сбросить" color="primary" flat @click="formfields.ddu_mortgage_paydate = ''" />
-                                  </div>
-                                </q-date>
-                              </q-popup-proxy>
-                            </q-icon>
-                          </template>
-                        </q-input>
-                      </div>
-                    </template>
-                  </div>
-                  <!-- Mother's capital -->
-                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
-                    <div :class="[dealCardFildsSet.matcap ? 'col-1' : 'col-12']">
-                      <q-toggle v-model="dealCardFildsSet.matcap" :label="dealCardFildsSet.matcap ? '' : 'Материнским капиталом'" />
-                    </div>
-                    <template v-if="dealCardFildsSet.matcap">
-                      <div class="col-6">
-                        <q-input outlined type="number" step="0.01" v-model.number="formfields.ddu_matcap" label="Материнский капитал" dense />
-                      </div>
-                      <div class="col-5 q-pl-sm">
-                        <q-input outlined v-model="formfields.ddu_matcap_paydate" label="Дата оплаты маткапиталом" dense readonly>
-                          <template v-slot:append>
-                            <q-icon name="event" class="cursor-pointer">
-                              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                                <q-date v-model="formfields.ddu_matcap_paydate" mask="YYYY-MM-DD">
-                                  <div class="row items-center justify-end">
-                                    <q-btn v-close-popup label="Закрыть" color="primary" flat />
-                                    <q-btn label="Сбросить" color="primary" flat @click="formfields.ddu_matcap_paydate = ''" />
-                                  </div>
-                                </q-date>
-                              </q-popup-proxy>
-                            </q-icon>
-                          </template>
-                        </q-input>
-                      </div>
-                    </template>
-                  </div>
-
-                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
-                    <div class="col-12">
-                      <q-file
-                        class="q-my-sm"
-                        outlined
-                        v-model="dduFile"
-                        label="Перетащите или загрузите Договор долевого участия"
-                        multiple 
-                        use-chips
-                        accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, .jpg, image/*, .doc, .docx"
-                      >
-                        <template v-slot:prepend>
-                          <q-icon name="attach_file" />
-                        </template>
-                        <template v-slot:file="{ index, file }">
-                          <q-chip
-                            removable
-                            @remove="onRemoveDduFile(index)"
-                          >
-                            <q-avatar>
-                              <q-icon name="draft" />
-                            </q-avatar>
-                            <div class="ellipsis relative-position">
-                              {{ file.name }}
-                            </div>
-                          </q-chip>
-                        </template>
-                      </q-file>
-                    </div>
-                  </div>
-                </template>
-
-                <!-- Uploading Report-Act -->
-                <template v-if="formfields.operation === 'issue_report_act'">
-                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
-                    <div class="col-12">
-                      <q-file
-                        outlined
-                        v-model="reportActFile"
-                        label="Перетащите или загрузите заполненный Отчет-Акт и Счет"
-                        multiple
-                        accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, .jpg, image/*, .doc, .docx"
-                      >
-                        <template v-slot:prepend>
-                          <q-icon name="attach_file" />
-                        </template>
-                        <template v-slot:file="{ index, file }">
-                          <q-chip
-                            removable
-                            @remove="onRemoveReportActFile(index)"
-                          >
-                            <q-avatar>
-                              <q-icon name="draft" />
-                            </q-avatar>
-                            <div class="ellipsis relative-position">
-                              {{ file.name }}
-                            </div>
-                          </q-chip>
-                        </template>
-                      </q-file>
-                    </div>
-                  </div>
-                </template>
-
-                <!-- Reporting successful deal -->
-                <template
-                  v-if="formfields.operation === 'report_success_deal_by_agent' || formfields.operation === 'report_success_deal_by_manager'"
-                >
-                  <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
-                    <q-file
-                      v-model="formfields.deal_success_docs"
-                      label="Прикрепите документы о подтверждении сделки"
+                  <div class="col-12 col-sm-6 q-py-xs" :class="{'q-pr-none': $q.screen.xs }">
+                    <q-select
                       outlined
-                      multiple
-                    />
+                      v-model="optfields.developer_select"
+                      :options="developerOptions"
+                      label="Застройщик"
+                      options-dense
+                      @update:model-value="onDeveloperSelect"
+                    >
+                      <template v-slot:append>
+                        <q-icon
+                          v-if="optfields.developer_select !== null"
+                          class="cursor-pointer"
+                          name="clear"
+                          @click.stop.prevent="() => { 
+                            optfields.developer_select = null
+                            optfields.buildingComplex_select = null
+                            optfields.building_select = null
+                            optfields.entrance_select = null
+                            optfields.flat_select = null
+                          }"
+                        />
+                      </template>
+                    </q-select>
                   </div>
+
+                  <div class="col-12 col-sm-6 q-py-xs q-pr-none">
+                    <q-select
+                      outlined
+                      v-model="optfields.buildingComplex_select"
+                      :options="buildingComplexOptions"
+                      label="Жилой комплекс"
+                      options-dense
+                      :disable="!buildingComplexOptions.length"
+                      @update:model-value="onBuildingComplexSelect"
+                    >
+                      <template v-slot:append>
+                        <q-icon
+                          v-if="optfields.buildingComplex_select !== null"
+                          class="cursor-pointer"
+                          name="clear"
+                          @click.stop.prevent="() => { 
+                            optfields.buildingComplex_select = null
+                            optfields.building_select = null
+                            optfields.entrance_select = null
+                            optfields.flat_select = null
+                          }"
+                        />
+                      </template>
+                    </q-select>
+                  </div>
+
+                  <div class="col-12 col-sm-4 q-py-xs" :class="{'q-pr-none': $q.screen.xs }">
+                    <q-select
+                      outlined
+                      v-model="optfields.building_select"
+                      :options="buildingOptions"
+                      label="Позиция"
+                      options-dense
+                      :disable="!buildingOptions.length"
+                      @update:model-value="onBuildingSelect"
+                    >
+                      <template v-slot:append>
+                        <q-icon
+                          v-if="optfields.building_select !== null"
+                          class="cursor-pointer"
+                          name="clear"
+                          @click.stop.prevent="() => { 
+                            optfields.building_select = null
+                            optfields.entrance_select = null
+                            optfields.flat_select = null
+                          }"
+                        />
+                      </template>
+                    </q-select>
+                  </div>
+
+                  <div class="col-12 col-sm-4 q-py-xs" :class="{'q-pr-none': $q.screen.xs }">
+                    <q-select
+                      outlined
+                      v-model="optfields.entrance_select"
+                      :options="entranceOptions"
+                      label="Подъезд"
+                      options-dense
+                      :disable="!entranceOptions.length"
+                      @update:model-value="onEntranceSelect"
+                    >
+                      <template v-slot:append>
+                        <q-icon
+                          v-if="optfields.entrance_select !== null"
+                          class="cursor-pointer"
+                          name="clear"
+                          @click.stop.prevent="() => { 
+                            optfields.entrance_select = null
+                            optfields.flat_select = null
+                          }"
+                        />
+                      </template>
+                    </q-select>
+                  </div>
+
+                  <div class="col-12 col-sm-4 q-py-xs q-pr-none">
+                    <q-select
+                      outlined
+                      v-model="optfields.flat_select"
+                      :options="flatOptions"
+                      label="Квартира"
+                      options-dense
+                      :disable="!flatOptions.length"
+                    >
+                      <template v-slot:append>
+                        <q-icon
+                          v-if="optfields.flat_select !== null"
+                          class="cursor-pointer"
+                          name="clear"
+                          @click.stop.prevent="optfields.flat_select = null"
+                        />
+                      </template>
+                    </q-select>
+                  </div>
+
+                </div>
+
+                <template v-else>
+
+                  <!-- Approving reservation by developer or by manager -->
+                  <template
+                    v-if="formfields.operation === 'approve_reservation_by_developer' || formfields.operation === 'approve_reservation_from_developer_by_admin' && application.status == 2"
+                  >
+                    <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                      <div class="col-12 col-sm-4" :class="{'q-py-xs': $q.screen.gt.xs, 'q-pr-none': $q.screen.xs }">
+                        <q-input outlined v-model="formfields.manager_lastname" label="Фамилия менеджера" />
+                      </div>
+                      <div class="col-12 col-sm-4" :class="{'q-py-xs': $q.screen.gt.xs, 'q-pr-none': $q.screen.xs }">
+                        <q-input outlined v-model="formfields.manager_firstname" label="Имя менеджера" />
+                      </div>
+                      <div class="col-12 col-sm-4 q-pr-none" :class="{'q-py-xs': $q.screen.gt.xs }">
+                        <q-input outlined v-model="formfields.manager_middlename" label="Отчество менеджера" />
+                      </div>
+                    </div>
+
+                    <div class="row q-col-gutter-none" :class="{'q-py-sm': $q.screen.xs }">
+                      <div class="col-12 col-sm-6" :class="{'q-py-xs': $q.screen.gt.xs, 'q-pr-none': $q.screen.xs }">
+                        <q-input outlined v-model="formfields.manager_phone" label="Телефон менеджера" mask="# (###) ###-##-##" unmasked-value />
+                      </div>
+                      <div class="col-12 col-sm-6 q-pr-none" :class="{'q-py-xs': $q.screen.gt.xs }">
+                        <q-input outlined v-model="formfields.manager_email" label="Email менеджера" />
+                      </div>
+                    </div>
+
+                    <div class="row q-col-gutter-none" :class="{'q-pt-sm': $q.screen.xs }">
+                      <div class="col" :class="{'q-py-xs': $q.screen.gt.xs }">
+                        <q-input outlined autogrow v-model="formfields.reservation_conditions" label="Условия бронирования" />
+                      </div>
+                    </div>
+                    
+                    <div class="row q-col-gutter-none" :class="{'q-pt-sm': $q.screen.xs }">
+                      <q-toggle
+                        v-model="formfields.is_toll"
+                        label="Платная бронь"
+                      />
+                    </div>
+                    
+                    <div v-if="formfields.is_toll" class="row q-col-gutter-none" :class="{'q-pt-sm': $q.screen.xs }">
+                      <q-banner inline-actions rounded class="q-mx-md q-mb-sm bg-orange text-white">
+                        <template v-slot:avatar>
+                          <q-icon name="report" color="white" />
+                        </template>
+                        <span class="text-h5"><span class="text-uppercase">Обратите внимание</span>: чтобы принять заявку в работу, агент должен будет предоставить квитанцию об оплате бронирования</span>
+                      </q-banner>
+                    </div>
+                  </template>
+
+                  <!-- Uploading agent's documents pack while taking the application in work by an agent or a manager -->
+                  <template
+                    v-if="formfields.operation === 'take_in_work_by_agent' || formfields.operation === 'take_in_work_by_manager'"
+                  >
+                    <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                      <div class="col-12">
+                        <q-file
+                          outlined
+                          v-model="agentDocPack"
+                          label="Перетащите или загрузите документы, которые нужно предоставить застройщику"
+                          multiple 
+                          use-chips
+                          accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, .jpg, image/*, .doc, .docx"
+                        >
+                          <template v-slot:prepend>
+                            <q-icon name="attach_file" />
+                          </template>
+                          <template v-slot:file="{ index, file }">
+                            <q-chip
+                              removable
+                              @remove="onRemoveAgentDocPackFile(index)"
+                            >
+                              <q-avatar>
+                                <q-icon name="draft" />
+                              </q-avatar>
+                              <div class="ellipsis relative-position">
+                                {{ file.name }}
+                              </div>
+                            </q-chip>
+                          </template>
+                        </q-file>
+                      </div>
+                    </div>
+                  </template>
+
+                  <!-- Uploading a receipt while taking the paid application in work by an agent or a manager -->
+                  <template
+                    v-if="application.is_toll === 1 && (formfields.operation === 'take_in_work_by_agent' || formfields.operation === 'take_in_work_by_manager')"
+                  >
+                    <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                      <div class="col-12">
+                        <q-file
+                          outlined
+                          v-model="recieptFile"
+                          label="Перетащите или загрузите документ (квитанцию) об оплате бронирования"
+                          multiple 
+                          use-chips
+                          accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, .jpg, image/*, .doc, .docx"
+                        >
+                          <template v-slot:prepend>
+                            <q-icon name="attach_file" />
+                          </template>
+                          <template v-slot:file="{ index, file }">
+                            <q-chip
+                              removable
+                              @remove="onRemoveRecieptFile(index)"
+                            >
+                              <q-avatar>
+                                <q-icon name="draft" />
+                              </q-avatar>
+                              <div class="ellipsis relative-position">
+                                {{ file.name }}
+                              </div>
+                            </q-chip>
+                          </template>
+                        </q-file>
+                      </div>
+                    </div>
+                  </template>
+
+                  <!-- uploading developer's documents pack -->
+                  <template
+                    v-if="formfields.operation === 'upload_developer_docpack'"
+                  >
+                    <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                      <div class="col-12">
+                        <q-file
+                          outlined
+                          v-model="developerDocPack"
+                          label="Перетащите или загрузите документы, которые нужно предоставить агенту"
+                          multiple 
+                          use-chips
+                          accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, .jpg, image/*, .doc, .docx"
+                        >
+                          <template v-slot:prepend>
+                            <q-icon name="attach_file" />
+                          </template>
+                          <template v-slot:file="{ index, file }">
+                            <q-chip
+                              removable
+                              @remove="onRemoveDeveloperDocPackFile(index)"
+                            >
+                              <q-avatar>
+                                <q-icon name="draft" />
+                              </q-avatar>
+                              <div class="ellipsis relative-position">
+                                {{ file.name }}
+                              </div>
+                            </q-chip>
+                          </template>
+                        </q-file>
+                      </div>
+                    </div>
+                  </template>
+
+                  <!-- uploading DDU & pay infomation by an agent or a manager -->
+                  <template
+                    v-if="formfields.operation === 'upload_ddu_by_agent' || formfields.operation === 'upload_ddu_by_manager'"
+                  >
+                    <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                      <div class="col-12">
+                        <q-input outlined type="number" step="0.01" v-model.number="formfields.ddu_price" label="Стоимость объекта по ДДУ" />
+                      </div>
+                    </div>
+                    <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                      <p class="q-mt-sm q-mb-xs text-h5">Внесите информацию об оплате (источник средств и дата)</p>
+                    </div>
+                    <!-- Personal money -->
+                    <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                      <div :class="[dealCardFildsSet.personal ? 'col-1' : 'col-12']">
+                        <q-toggle v-model="dealCardFildsSet.personal" :label="dealCardFildsSet.personal ? '' : 'Собственными средствами'" />
+                      </div>
+                      <template v-if="dealCardFildsSet.personal">
+                        <div class="col-6">
+                          <q-input outlined type="number" step="0.01" v-model.number="formfields.ddu_cash" label="Собственные средства" dense />
+                        </div>
+                        <div class="col-5 q-pl-sm">
+                          <q-input outlined v-model="formfields.ddu_cash_paydate" label="Дата оплаты собственными средствами" dense readonly>
+                            <template v-slot:append>
+                              <q-icon name="event" class="cursor-pointer">
+                                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                  <q-date v-model="formfields.ddu_cash_paydate" mask="YYYY-MM-DD">
+                                    <div class="row items-center justify-end">
+                                      <q-btn v-close-popup label="Закрыть" color="primary" flat />
+                                      <q-btn label="Сбросить" color="primary" flat @click="formfields.ddu_cash_paydate = ''" />
+                                    </div>
+                                  </q-date>
+                                </q-popup-proxy>
+                              </q-icon>
+                            </template>
+                          </q-input>
+                        </div>
+                      </template>
+                    </div>
+                    <!-- Mortgage money -->
+                    <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                      <div :class="[dealCardFildsSet.mortgage ? 'col-1' : 'col-12']">
+                        <q-toggle v-model="dealCardFildsSet.mortgage" :label="dealCardFildsSet.mortgage ? '' : 'При помощи ипотеки'" />
+                      </div>
+                      <template v-if="dealCardFildsSet.mortgage">
+                        <div class="col-6">
+                          <q-input outlined type="number" step="0.01" v-model.number="formfields.ddu_mortgage" label="Ипотечные средства" dense />
+                        </div>
+                        <div class="col-5 q-pl-sm">
+                          <q-input outlined v-model="formfields.ddu_mortgage_paydate" label="Дата оплаты ипотекой" dense readonly>
+                            <template v-slot:append>
+                              <q-icon name="event" class="cursor-pointer">
+                                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                  <q-date v-model="formfields.ddu_mortgage_paydate" mask="YYYY-MM-DD">
+                                    <div class="row items-center justify-end">
+                                      <q-btn v-close-popup label="Закрыть" color="primary" flat />
+                                      <q-btn label="Сбросить" color="primary" flat @click="formfields.ddu_mortgage_paydate = ''" />
+                                    </div>
+                                  </q-date>
+                                </q-popup-proxy>
+                              </q-icon>
+                            </template>
+                          </q-input>
+                        </div>
+                      </template>
+                    </div>
+                    <!-- Mother's capital -->
+                    <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                      <div :class="[dealCardFildsSet.matcap ? 'col-1' : 'col-12']">
+                        <q-toggle v-model="dealCardFildsSet.matcap" :label="dealCardFildsSet.matcap ? '' : 'Материнским капиталом'" />
+                      </div>
+                      <template v-if="dealCardFildsSet.matcap">
+                        <div class="col-6">
+                          <q-input outlined type="number" step="0.01" v-model.number="formfields.ddu_matcap" label="Материнский капитал" dense />
+                        </div>
+                        <div class="col-5 q-pl-sm">
+                          <q-input outlined v-model="formfields.ddu_matcap_paydate" label="Дата оплаты маткапиталом" dense readonly>
+                            <template v-slot:append>
+                              <q-icon name="event" class="cursor-pointer">
+                                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                  <q-date v-model="formfields.ddu_matcap_paydate" mask="YYYY-MM-DD">
+                                    <div class="row items-center justify-end">
+                                      <q-btn v-close-popup label="Закрыть" color="primary" flat />
+                                      <q-btn label="Сбросить" color="primary" flat @click="formfields.ddu_matcap_paydate = ''" />
+                                    </div>
+                                  </q-date>
+                                </q-popup-proxy>
+                              </q-icon>
+                            </template>
+                          </q-input>
+                        </div>
+                      </template>
+                    </div>
+
+                    <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                      <div class="col-12">
+                        <q-file
+                          class="q-my-sm"
+                          outlined
+                          v-model="dduFile"
+                          label="Перетащите или загрузите Договор долевого участия"
+                          multiple 
+                          use-chips
+                          accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, .jpg, image/*, .doc, .docx"
+                        >
+                          <template v-slot:prepend>
+                            <q-icon name="attach_file" />
+                          </template>
+                          <template v-slot:file="{ index, file }">
+                            <q-chip
+                              removable
+                              @remove="onRemoveDduFile(index)"
+                            >
+                              <q-avatar>
+                                <q-icon name="draft" />
+                              </q-avatar>
+                              <div class="ellipsis relative-position">
+                                {{ file.name }}
+                              </div>
+                            </q-chip>
+                          </template>
+                        </q-file>
+                      </div>
+                    </div>
+                  </template>
+
+                  <!-- Uploading Report-Act -->
+                  <template v-if="formfields.operation === 'issue_report_act'">
+                    <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                      <div class="col-12">
+                        <q-file
+                          outlined
+                          v-model="reportActFile"
+                          label="Перетащите или загрузите заполненный Отчет-Акт и Счет"
+                          multiple
+                          accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, .jpg, image/*, .doc, .docx"
+                        >
+                          <template v-slot:prepend>
+                            <q-icon name="attach_file" />
+                          </template>
+                          <template v-slot:file="{ index, file }">
+                            <q-chip
+                              removable
+                              @remove="onRemoveReportActFile(index)"
+                            >
+                              <q-avatar>
+                                <q-icon name="draft" />
+                              </q-avatar>
+                              <div class="ellipsis relative-position">
+                                {{ file.name }}
+                              </div>
+                            </q-chip>
+                          </template>
+                        </q-file>
+                      </div>
+                    </div>
+                  </template>
+
+                  <!-- Reporting successful deal -->
+                  <template
+                    v-if="formfields.operation === 'report_success_deal_by_agent' || formfields.operation === 'report_success_deal_by_manager'"
+                  >
+                    <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                      <q-file
+                        v-model="formfields.deal_success_docs"
+                        label="Прикрепите документы о подтверждении сделки"
+                        outlined
+                        multiple
+                      />
+                    </div>
+                  </template>
+
                 </template>
 
-              </template>
+                <div class="text-right">
+                  <q-btn unelevated :label="statusChangesForm.submitLabel" :disable="!canSubmit" type="submit" color="primary"/>
+                </div>
 
-              <div class="text-right">
-                <q-btn unelevated :label="statusChangesForm.submitLabel" :disable="!canSubmit" type="submit" color="primary"/>
-              </div>
-
-            </q-form>
-          </div>
+              </q-form>
+            </template>
+            <template v-else>
+              <p>У Вас нет полномочий для проведения этой операции с заявкой.</p>
+            </template>
+          </template>
         </template>
       </RegularContentContainer>
     </template>
@@ -502,7 +513,7 @@ export default {
   },
   props: {
     application: Object,
-    statusMap: Array,
+    statusMap: Object,
     eOperation: {
       type: String,
       default: ''
@@ -902,6 +913,7 @@ export default {
 
     return {
       breadcrumbs,
+      user,
       loading,
       recieptFile,
       onRemoveRecieptFile,
