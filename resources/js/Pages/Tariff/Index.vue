@@ -21,8 +21,9 @@
                 <tr>
                   <th class="text-center zk-col">Жилой комплекс</th>
                   <th class="text-center amount-col">Размер вознаграждения</th>
-                  <th class="text-center info-col">Условия</th>
-                  <th class="text-center terms-col">Сроки выплаты вознаграждения</th>
+                  <th class="text-center" :class="[developer.in_statistics ? 'info-col-sm' : 'info-col']">Условия</th>
+                  <th v-if="developer.in_statistics" class="text-center deals-col">Сделок в текущем месяце</th>
+                  <th class="text-center" :class="[developer.in_statistics ? 'terms-col-sm' : 'terms-col']">Сроки выплаты вознаграждения</th>
                 </tr>
                 <tr v-for="complex of developer.complexes" :key="complex.id">
                   <td class="zk-col">{{ complex.name }}</td>
@@ -33,13 +34,17 @@
                       <span v-else-if="tariff.tariffType === 'custom'">{{ tariff.amountCustom }}</span>
                     </div>
                   </td>
-                  <td class="info-col">
+                  <td :class="[developer.in_statistics ? 'info-col-sm' : 'info-col']">
                     <div class="ellipsis" v-for="(tariff, i) of complex.tariffs" :key="i">
                       <span v-if="tariff.annotation">{{ tariff.annotation }}</span>
                       <span v-else>&nbsp;</span>
                     </div>
                   </td>
-                  <td class="terms-col">{{ complex.termsOfPayment }}</td>
+                  <td v-if="developer.in_statistics" class="deals-col">{{ complex.complexMonthDeals }}</td>
+                  <td :class="[developer.in_statistics ? 'terms-col-sm' : 'terms-col']">{{ complex.termsOfPayment }}</td>
+                </tr>
+                <tr v-if="developer.in_statistics">
+                  <td colspan="5" class="resume-deals-col">Всего сделок в текущем месяце: {{ developer.developerMonthDeals }}</td>
                 </tr>
               </table>
             </q-expansion-item>
@@ -116,9 +121,30 @@ export default {
   max-width: 300px;
 }
 
+.tarifftable .info-col-sm {
+  width: 35%;
+  max-width: 250px;
+}
+
 .tarifftable .terms-col {
   width: 30%;
   max-width: 30%;
+}
+
+.tarifftable .terms-col-sm {
+  width: 25%;
+  max-width: 25%;
+}
+
+.tarifftable .deals-col {
+  width: 10%;
+  max-width: 10%;
+}
+
+.tarifftable .resume-deals-col {
+  width: 100%;
+  max-width: 100%;
+  font-weight: 600;
 }
 
 table td, table th {

@@ -13,6 +13,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property json $tariff_table
+ * @property json $developers_in_statistics
  * @property string $changes
  * @property string|null $created_at
  * @property string|null $updated_at
@@ -59,7 +60,7 @@ class Tariff extends ActiveRecord
     {
         return [
             [['changes'], 'string'],
-            [['tariff_table', 'created_at', 'updated_at'], 'safe'],
+            [['tariff_table', 'developers_in_statistics', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -71,6 +72,7 @@ class Tariff extends ActiveRecord
         return [
             'id' => 'ID',
             'tariff_table' => 'Тарифная таблица',
+            'developers_in_statistics' => 'Показывать статистику для застройщиков',
             'changes' => 'Изменения',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
