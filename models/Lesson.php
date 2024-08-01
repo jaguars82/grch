@@ -25,6 +25,14 @@ use Yii;
  */
 class Lesson extends \yii\db\ActiveRecord
 {
+    const HOSTING_YOUTUBE = 1;
+    const HOSTING_LOCAL = 10;
+
+    public static $videohosting = [
+        self::HOSTING_YOUTUBE => 'YouTube',
+        self::HOSTING_LOCAL => 'Локальный сервер',
+    ]; 
+
     /**
      * {@inheritdoc}
      */
