@@ -66,6 +66,15 @@ export default {
       },
       {
         id: 2,
+        label: 'Обучение',
+        icon: 'school',
+        url: '/tutorial',
+        data: false,
+        options: false,
+        roles: ['admin', 'agent', 'manager']
+      },
+      {
+        id: 3,
         label: 'Админ-панель',
         icon: 'settings',
         url: '/admin/index',
@@ -74,7 +83,7 @@ export default {
         roles: ['admin']
       },
       {
-        id: 3,
+        id: 4,
         label: 'Избранное',
         icon: 'bookmark_border',
         url: '/favorite',
@@ -82,7 +91,7 @@ export default {
         options: false
       },
       {
-        id: 4,
+        id: 5,
         label: 'Выход',
         icon: 'logout',
         url: '/auth/logout',
