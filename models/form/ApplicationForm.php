@@ -28,6 +28,10 @@ class ApplicationForm extends Model
     public $reservation_conditions;
     public $admin_comment;
     public $is_toll;
+    public $book_payment_provided;
+    public $book_payment_amount;
+    public $book_payment_way;
+    public $book_payment_date;
     public $recieptFile = [];
     public $recieptFilesToSave = [];
     public $agentDocpack = [];
@@ -57,10 +61,10 @@ class ApplicationForm extends Model
     {
         return [
             [['flat_id', 'applicant_id', 'developer_id'/*, 'status'*/], 'required'],
-            [['flat_id', 'developer_id', 'applicant_id', 'status'], 'integer'],
-            [['ddu_price', 'ddu_cash', 'ddu_mortgage', 'ddu_matcap'], 'double'],
-            [['client_firstname', 'client_lastname', 'client_middlename', 'client_phone', 'client_email',  'applicant_comment', 'manager_firstname', 'manager_lastname', 'manager_middlename', 'manager_phone', 'manager_email', 'reservation_conditions', 'admin_comment', 'ddu_cash_paydate', 'ddu_mortgage_paydate', 'ddu_matcap_paydate', 'application_number', 'deal_success_docs'], 'string'],
-            [['is_active', 'is_toll', 'receipt_provided', 'ddu_provided', 'self_reservation'], 'boolean'],
+            [['flat_id', 'developer_id', 'applicant_id', 'book_payment_way', 'status'], 'integer'],
+            [['book_payment_amount', 'ddu_price', 'ddu_cash', 'ddu_mortgage', 'ddu_matcap'], 'double'],
+            [['client_firstname', 'client_lastname', 'client_middlename', 'client_phone', 'client_email',  'applicant_comment', 'manager_firstname', 'manager_lastname', 'manager_middlename', 'manager_phone', 'manager_email', 'reservation_conditions', 'admin_comment', 'book_payment_date', 'ddu_cash_paydate', 'ddu_mortgage_paydate', 'ddu_matcap_paydate', 'application_number', 'deal_success_docs'], 'string'],
+            [['is_active', 'is_toll', 'book_payment_provided', 'receipt_provided', 'ddu_provided', 'self_reservation'], 'boolean'],
             [['recieptFile'],  'file', 'skipOnEmpty' => true, 'extensions' => 'doc, docx, pdf, txt, xls, xlsx, rtf, ppt, pptx, png, jpg, gif, jpeg,', 'maxFiles' => 100],
             [['dduFile'],  'file', 'skipOnEmpty' => true, 'extensions' => 'doc, docx, pdf, txt, xls, xlsx, rtf, ppt, pptx, png, jpg, gif, jpeg,', 'maxFiles' => 100],
             [['agentDocpack'],  'file', 'skipOnEmpty' => true, 'extensions' => 'doc, docx, pdf, txt, xls, xlsx, rtf, ppt, pptx, png, jpg, gif, jpeg,', 'maxFiles' => 100],
