@@ -50,8 +50,32 @@ class TutorialController extends Controller
     {
         $lesson = Lesson::findOne($id);
 
+        $lesson->video_source = $this->convertYouTubeUrl( $lesson->video_source);
+
         return $this->inertia('Tutorial/View', [
             'lesson' => ArrayHelper::toArray($lesson),
         ]);
+    }
+
+    private function convertYouTubeUrl($url) 
+    {
+        // Разбираем URL
+        $parsedUrl = parse_url($url);
+    
+        // Проверяем наличие параметров
+        if (!isset($parsedUrl['query'])) {
+            return $url;
+        }
+    
+        // Разбираем параметры URL
+        parse_str($parsedUrl['query'], $queryParams);
+    
+        // Извлекаем идентификатор видео
+        if (isset($queryParams['v'])) {
+            $videoId = $queryParams['v'];
+            return "https://www.youtube.com/embed/{$videoId}";
+        } else {
+            return $url;
+        }
     }
 }
