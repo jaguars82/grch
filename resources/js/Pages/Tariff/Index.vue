@@ -9,7 +9,7 @@
           <h3 class="text-center">Таблица тарифов</h3>
         </q-card-section>
         <q-card-section>
-          <div v-for="developer of developers" :key="developer.id">
+          <div v-for="(developer, devIndex) of developers" :key="developer.id">
             <q-expansion-item
               v-if="developer.complexes.length"
               class="q-mb-md"
@@ -25,7 +25,7 @@
                   <th v-if="developer.in_statistics" class="text-center deals-col">Сделок в текущем месяце</th>
                   <th class="text-center" :class="[developer.in_statistics ? 'terms-col-sm' : 'terms-col']">Сроки выплаты вознаграждения</th>
                 </tr>
-                <tr v-for="complex of developer.complexes" :key="complex.id">
+                <tr v-for="(complex, complexIndex) of developer.complexes" :key="complex.id">
                   <td class="zk-col">{{ complex.name }}</td>
                   <td class="amount-col text-center">
                     <div v-for="(tariff, i) of complex.tariffs" :key="i">
@@ -35,12 +35,12 @@
                     </div>
                   </td>
                   <td :class="[developer.in_statistics ? 'info-col-sm' : 'info-col']">
-                    <div class="ellipsis" v-for="(tariff, i) of complex.tariffs" :key="i">
+                    <div class="ellipsis" v-for="(tariff, i) of complex.tariffs" :key="i" ref="annotationContainers">
                       <span v-if="tariff.annotation">{{ tariff.annotation }}</span>
                       <span v-else>&nbsp;</span>
                     </div>
                   </td>
-                  <td v-if="developer.in_statistics" class="deals-col">{{ complex.complexMonthDeals }}</td>
+                  <td v-if="developer.in_statistics" class="deals-col text-center">{{ complex.complexMonthDeals > 0 ? complex.complexMonthDeals : '-' }}</td>
                   <td :class="[developer.in_statistics ? 'terms-col-sm' : 'terms-col']">{{ complex.termsOfPayment }}</td>
                 </tr>
                 <tr v-if="developer.in_statistics">
@@ -65,8 +65,8 @@ import Loading from "@/Components/Elements/Loading.vue"
 export default {
   props: {
     model: {
-      type: Array,
-      derfault: []
+      type: Object,
+      derfault: {}
     },
     developers: {
       type: Array,

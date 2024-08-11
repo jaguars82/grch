@@ -50,6 +50,8 @@ use yii\db\ActiveRecord;
  * @property string $deal_success_docs
  * 
  * @property Flat $flat
+ * @property Newbuilding $developer
+ * @property NewbuildingComplex $developer
  * @property Developer $developer
  * @property User $applicant
  * @property ApplicationDocument[] $documents
@@ -84,8 +86,8 @@ class Application extends ActiveRecord
     const STATUS_APPLICATION_IN_WORK_AGENT_DOCPACK_PROVIDED = 16;
     const STATUS_APPLICATION_IN_WORK_DEVELOPER_DOCPACK_PROVIDED = 17;
 
-    const BOOKING_PAYMENT_BILL = 1;
-    const BOOKING_PAYMENT_CASH = 2;
+    const BOOK_PAYMENT_BILL = 1;
+    const BOOK_PAYMENT_CASH = 2;
 
     public static $status = [
         self::STATUS_UNDEFINED => 'Статус заявки неопределён',
@@ -110,8 +112,8 @@ class Application extends ActiveRecord
     ];
 
     public static $bookPayment = [
-        self::BOOKING_PAYMENT_BILL => 'Счёт',
-        self::BOOKING_PAYMENT_CASH => 'Касса',
+        self::BOOK_PAYMENT_BILL => 'Счет',
+        self::BOOK_PAYMENT_CASH => 'Касса',
     ];
 
     /**
@@ -207,6 +209,21 @@ class Application extends ActiveRecord
     public function getFlat ()
     {
         return $this->hasOne(Flat::className(), ['id' => 'flat_id']);
+    }
+
+    public function getNewbuilding ()
+    {
+        return $this->hasOne(Newbuilding::className(), ['id' => 'newbuilding_id'])->via('flat');
+    }
+
+    public function getNewbuildingComplex ()
+    {
+        return $this->hasOne(NewbuildingComplex::className(), ['id' => 'newbuilding_complex_id'])->via('newbuilding');
+    }
+
+    public function getDeveloper ()
+    {
+        return $this->hasOne(Developer::className(), ['id' => 'developer_id']);
     }
 
     public function getDocuments ()
