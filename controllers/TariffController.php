@@ -81,10 +81,40 @@ class TariffController extends Controller
                     // count deals (ifthe developer isin statistics)
                     if ($developerInStatistics) {
                         $applications = Application::find()
-                            ->where(['developer_id' => $developer['id']])
-                            ->andWhere("MONTH(`ddu_cash_paydate`) = MONTH(NOW()) AND YEAR(`ddu_cash_paydate`) = YEAR(NOW())")
+                            ->where(['developer_id' => $developer->id])
+                            ->andWhere([
+                                'or',
+                                [
+                                    'and',
+                                    ['=', 'DATE_FORMAT(ddu_cash_paydate, "%Y-%m")', date('Y-m')],
+                                ],
+                                [
+                                    'and',
+                                    ['=', 'DATE_FORMAT(ddu_mortgage_paydate, "%Y-%m")', date('Y-m')],
+                                ],
+                                [
+                                    'and',
+                                    ['=', 'DATE_FORMAT(ddu_matcap_paydate, "%Y-%m")', date('Y-m')],
+                                ]
+                                /*[
+                                    'and',
+                                    'MONTH(ddu_cash_paydate) = MONTH(NOW())',
+                                    'YEAR(ddu_cash_paydate) = YEAR(NOW())'
+                                ],
+                                [
+                                    'and',
+                                    'MONTH(ddu_mortgage_paydate) = MONTH(NOW())',
+                                    'YEAR(ddu_mortgage_paydate) = YEAR(NOW())'
+                                ],
+                                [
+                                    'and',
+                                    'MONTH(ddu_matcap_paydate) = MONTH(NOW())',
+                                    'YEAR(ddu_matcap_paydate) = YEAR(NOW())'
+                                ]*/
+                            ])
+                            /*->andWhere("MONTH(`ddu_cash_paydate`) = MONTH(NOW()) AND YEAR(`ddu_cash_paydate`) = YEAR(NOW())")
                             ->orWhere("MONTH(`ddu_mortgage_paydate`) = MONTH(NOW()) AND YEAR(`ddu_mortgage_paydate`) = YEAR(NOW())")
-                            ->orWhere("MONTH(`ddu_matcap_paydate`) = MONTH(NOW()) AND YEAR(`ddu_matcap_paydate`) = YEAR(NOW())")
+                            ->orWhere("MONTH(`ddu_matcap_paydate`) = MONTH(NOW()) AND YEAR(`ddu_matcap_paydate`) = YEAR(NOW())")*/
                             ->all();
 
                         foreach ($applications as $application) {
@@ -96,7 +126,7 @@ class TariffController extends Controller
                                 return $dateTimestamp1 < $dateTimestamp2 ? -1: 1;
                             });
 
-                            $maxPayDate = $appPayDates[count($date_arr) - 1];
+                            $maxPayDate = $appPayDates[count($appPayDates) - 1];
 
                             if (date('m', strtotime($maxPayDate)) == date('m')) {
                                 $complexMonthDeals++;

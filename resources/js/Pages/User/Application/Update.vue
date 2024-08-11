@@ -313,9 +313,57 @@
                         <q-input outlined type="number" step="0.01" v-model.number="formfields.ddu_price" label="Стоимость объекта по ДДУ" />
                       </div>
                     </div>
+
+                    <!-- Booking payment information -->
+                    <template v-if="application.flat.developer.id === 15">
+                      <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                        <p class="q-mt-sm q-mb-xs text-h5">Внесите информацию об оплате бронирования (способ оплаты и дата)</p>
+                      </div>
+                      <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
+                        <div :class="[formfields.book_payment_provided ? 'col-1' : 'col-12']">
+                          <q-toggle v-model="formfields.book_payment_provided" :label="formfields.book_payment_provided ? '' : 'Бронирование оплачено'" />
+                        </div>
+                        <template v-if="formfields.book_payment_provided">
+                          <div class="col-3">
+                            <q-input outlined type="number" step="0.01" v-model.number="formfields.book_payment_amount" label="Сумма оплаты брони" dense readonly />
+                          </div>
+                          <div class="col-3 q-pl-sm">
+                            <q-select 
+                              outlined
+                              v-model="formfields.book_payment_way"
+                              :options="bookPaymentOptions"
+                              label="Способ оплаты"
+                              dense
+                              emit-value
+                              map-options
+                              options-dense
+                            />
+                          </div>
+                          <div class="col-5 q-pl-sm">
+                            <q-input outlined v-model="formfields.book_payment_date" label="Дата оплаты бронирования" dense readonly>
+                              <template v-slot:append>
+                                <q-icon name="event" class="cursor-pointer">
+                                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                    <q-date v-model="formfields.book_payment_date" mask="YYYY-MM-DD">
+                                      <div class="row items-center justify-end">
+                                        <q-btn v-close-popup label="Закрыть" color="primary" flat />
+                                        <q-btn label="Сбросить" color="primary" flat @click="formfields.book_payment_date = ''" />
+                                      </div>
+                                    </q-date>
+                                  </q-popup-proxy>
+                                </q-icon>
+                              </template>
+                            </q-input>
+                          </div>
+                        </template>
+                      </div>
+                    </template>
+
+                    <!-- Deal map -->
                     <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
-                      <p class="q-mt-sm q-mb-xs text-h5">Внесите информацию об оплате (источник средств и дата)</p>
+                      <p class="q-mt-sm q-mb-xs text-h5">Внесите информацию об оплате объекта (источник средств и дата)</p>
                     </div>
+                    
                     <!-- Personal money -->
                     <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
                       <div :class="[dealCardFildsSet.personal ? 'col-1' : 'col-12']">
@@ -503,6 +551,8 @@ import RegularContentContainer from '@/Components/Layout/RegularContentContainer
 import Loading from "@/Components/Elements/Loading.vue"
 import { getApplicationFormParamsByStatus } from '@/composables/components-configurations'
 import { userInfo } from '@/composables/shared-data'
+import { idNameObjToOptions } from '@/composables/formatted-and-processed-data'
+
  
 export default {
   components: {
@@ -514,6 +564,7 @@ export default {
   props: {
     application: Object,
     statusMap: Object,
+    bookPayment: Object,
     eOperation: {
       type: String,
       default: ''
@@ -590,6 +641,10 @@ export default {
 
     const statusChangesForm = getApplicationFormParamsByStatus(props.application.status, user.value.role)
 
+    const bookPaymentOptions = computed(() => {
+      return idNameObjToOptions(props.bookPayment)
+    })
+
     // Reciept file(s) for paid reservation
     const recieptFile = ref([])
 
@@ -630,7 +685,7 @@ export default {
     const dealCardFildsSet = ref({
       personal: false,
       mortgage: false,
-      matcap: false
+      matcap: false,
     })
 
     // report-act file
@@ -652,6 +707,10 @@ export default {
         manager_email: '',
         reservation_conditions: '',
         is_toll: false,
+        book_payment_provided: false,
+        book_payment_amount: 75000,
+        book_payment_way: '',
+        book_payment_date: '',
         recieptFile: [],
         dduFile: [],
         reportActFile: [],
@@ -837,6 +896,8 @@ export default {
         if (!formfields.value.ddu_price) return false
         // all of the payment fields are empty
         if (dealCardFildsSet.value.personal === false && dealCardFildsSet.value.mortgage === false && dealCardFildsSet.value.matcap === false) return false
+        // book payment fields not filled while 'bookPayment' flag is turned on
+        if (formfields.value.book_payment_provided && (!formfields.value.book_payment_amount || !formfields.value.book_payment_way || !formfields.value.book_payment_date)) return false
         // personal fields not filled while 'personal' flag is turned on
         if (dealCardFildsSet.value.personal && (!formfields.value.ddu_cash || !formfields.value.ddu_cash_paydate)) return false
         // mortgage fields not filled while 'mortgage' flag is turned on
@@ -878,6 +939,13 @@ export default {
 
         // clean unused (unchecked) fields
 
+        // clean book payment fields
+        if (formfields.value.book_payment_provided === false) {
+          formfields.value.book_payment_amount = ''
+          formfields.value.book_payment_way = ''
+          formfields.value.book_payment_date = ''
+        }
+
         // clean cash (personal) fields
         if (dealCardFildsSet.value.personal === false) {
           formfields.value.ddu_cash = ''
@@ -915,6 +983,7 @@ export default {
       breadcrumbs,
       user,
       loading,
+      bookPaymentOptions,
       recieptFile,
       onRemoveRecieptFile,
       dealCardFildsSet,

@@ -262,6 +262,27 @@
               </q-card>
             </template>
 
+            <!-- Book payment section -->
+            <template v-if="application.book_payment_provided && application.book_payment_amount && application.book_payment_way && application.book_payment_date">
+              <h5 class="text-uppercase q-mb-xs q-mt-lg">Информаци об оплате брони</h5>
+              <q-card class="no-shadow" bordered>
+                <q-card-section>
+                  <ParamPair
+                    paramName="Внесено за оплату брони"
+                    :paramValue="application.book_payment_amount"
+                  />
+                  <ParamPair
+                    paramName="Способ олптаы"
+                    :paramValue="bookPayment[application.book_payment_way]"
+                  />
+                  <ParamPair
+                    paramName="Дата оплаты"
+                    :paramValue="application.book_payment_date"
+                  />
+                </q-card-section>
+              </q-card>
+            </template>
+
             <!-- Deal-card section -->
             <template v-if="application.ddu_price && ((application.ddu_cash && application.ddu_cash_paydate) || (application.ddu_mortgage && application.ddu_mortgage_paydate) || (application.ddu_matcap && application.ddu_matcap_paydate))">
               <h5 class="text-uppercase q-mb-xs q-mt-lg">Карта сделки</h5>
@@ -335,6 +356,7 @@ components: {
     application: Object,
     applicationHistory: Array,
     statusMap: Object,
+    bookPayment: Object,
     flat: Object
   },
   setup(props) {

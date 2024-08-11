@@ -28,6 +28,10 @@ use yii\db\ActiveRecord;
  * @property string $admin_comment
  * @property int $is_active
  * @property int $is_toll
+ * @property int $book_payment_provided
+ * @property float $book_payment_amount
+ * @property int $book_payment_way
+ * @property string $book_payment_date
  * @property int $receipt_provided
  * @property int $ddu_provided
  * @property float $ddu_price
@@ -46,6 +50,8 @@ use yii\db\ActiveRecord;
  * @property string $deal_success_docs
  * 
  * @property Flat $flat
+ * @property Newbuilding $developer
+ * @property NewbuildingComplex $developer
  * @property Developer $developer
  * @property User $applicant
  * @property ApplicationDocument[] $documents
@@ -80,6 +86,9 @@ class Application extends ActiveRecord
     const STATUS_APPLICATION_IN_WORK_AGENT_DOCPACK_PROVIDED = 16;
     const STATUS_APPLICATION_IN_WORK_DEVELOPER_DOCPACK_PROVIDED = 17;
 
+    const BOOK_PAYMENT_BILL = 1;
+    const BOOK_PAYMENT_CASH = 2;
+
     public static $status = [
         self::STATUS_UNDEFINED => 'Статус заявки неопределён',
         self::STATUS_RESERV_APPLICATED => 'Заявка на бронирование подана',
@@ -100,6 +109,11 @@ class Application extends ActiveRecord
         self::STATUS_COMISSION_PAY_CONFIRMED_BY_ADMIN => 'Администратор подтвердил получение вознаграждения от застройщика',
         self::STATUS_APPLICATION_IN_WORK_AGENT_DOCPACK_PROVIDED => 'Заявка в работе. Пакет документов от агента загружен.',
         self::STATUS_APPLICATION_IN_WORK_DEVELOPER_DOCPACK_PROVIDED => 'Заявка в работе. Пакет документов от застройщика загружен.',
+    ];
+
+    public static $bookPayment = [
+        self::BOOK_PAYMENT_BILL => 'Счет',
+        self::BOOK_PAYMENT_CASH => 'Касса',
     ];
 
     /**
@@ -134,11 +148,11 @@ class Application extends ActiveRecord
     {
         return [
             [['flat_id', 'applicant_id', 'developer_id'/*, 'status'*/], 'required'],
-            [['flat_id', 'applicant_id', 'developer_id', 'status'], 'integer'],
-            [['client_firstname', 'client_lastname', 'client_middlename', 'client_phone', 'client_email',  'applicant_comment', 'manager_firstname', 'manager_lastname', 'manager_middlename', 'manager_phone', 'manager_email', 'reservation_conditions', 'admin_comment', 'ddu_cash_paydate', 'ddu_mortgage_paydate', 'ddu_matcap_paydate', 'application_number', 'deal_success_docs'], 'string'],
-            [['ddu_price', 'ddu_cash', 'ddu_mortgage', 'ddu_matcap'], 'double'],
+            [['flat_id', 'applicant_id', 'developer_id', 'status', 'book_payment_way'], 'integer'],
+            [['client_firstname', 'client_lastname', 'client_middlename', 'client_phone', 'client_email',  'applicant_comment', 'manager_firstname', 'manager_lastname', 'manager_middlename', 'manager_phone', 'manager_email', 'reservation_conditions', 'admin_comment', 'book_payment_date', 'ddu_cash_paydate', 'ddu_mortgage_paydate', 'ddu_matcap_paydate', 'application_number', 'deal_success_docs'], 'string'],
+            [['book_payment_amount', 'ddu_price', 'ddu_cash', 'ddu_mortgage', 'ddu_matcap'], 'double'],
             [['created_at', 'updated_at'], 'safe'],
-            [['is_active', 'is_toll', 'receipt_provided', 'ddu_provided', 'report_act_provided', 'agent_docpack_provided', 'developer_docpack_provided'], 'boolean'],
+            [['is_active', 'is_toll', 'book_payment_provided', 'receipt_provided', 'ddu_provided', 'report_act_provided', 'agent_docpack_provided', 'developer_docpack_provided'], 'boolean'],
             [['flat_id'], 'exist', 'skipOnError' => true, 'targetClass' => Flat::className(), 'targetAttribute' => ['flat_id' => 'id']],
             [['developer_id'], 'exist', 'skipOnError' => true, 'targetClass' => Developer::className(), 'targetAttribute' => ['developer_id' => 'id']],
             [['applicant_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['applicant_id' => 'id']],
@@ -195,6 +209,21 @@ class Application extends ActiveRecord
     public function getFlat ()
     {
         return $this->hasOne(Flat::className(), ['id' => 'flat_id']);
+    }
+
+    public function getNewbuilding ()
+    {
+        return $this->hasOne(Newbuilding::className(), ['id' => 'newbuilding_id'])->via('flat');
+    }
+
+    public function getNewbuildingComplex ()
+    {
+        return $this->hasOne(NewbuildingComplex::className(), ['id' => 'newbuilding_complex_id'])->via('newbuilding');
+    }
+
+    public function getDeveloper ()
+    {
+        return $this->hasOne(Developer::className(), ['id' => 'developer_id']);
     }
 
     public function getDocuments ()

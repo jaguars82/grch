@@ -622,6 +622,11 @@ class ApplicationController extends Controller
                             }
                         }
 
+                        /*$application->fill($applicationForm->attributes);*/
+                        $application->book_payment_provided = $applicationForm->book_payment_provided;
+                        $application->book_payment_amount = $applicationForm->book_payment_amount;
+                        $application->book_payment_way = $applicationForm->book_payment_way;
+                        $application->book_payment_date = $applicationForm->book_payment_date;
                         $application->ddu_price = $applicationForm->ddu_price;
                         $application->ddu_cash = $applicationForm->ddu_cash;
                         $application->ddu_mortgage = $applicationForm->ddu_mortgage;
@@ -666,6 +671,23 @@ class ApplicationController extends Controller
 
                         /** Send email-notifications for accountants */
                         $mailBody = 'Агент загрузил Договор долевого участия по заявке <strong>'.$application->application_number.'</strong><br />';
+
+                        // Booking payment
+                        if ($application->book_payment_provided) {
+                            $mailBody .= '<br /><strong><span style="text-transform: uppercase;">Информация об оплате за бронь</span></strong><br />';
+                            if (!empty($application->book_payment_amount)) {
+                                $mailBody .= 'Внесено за оплату брони: '.$application->book_payment_amount.' рублей';
+                                if (!empty($application->book_payment_way)) {
+                                    $mailBody .= ', способ оплаты: '.Application::$bookPayment[$application->book_payment_way];
+                                }
+                                if (!empty($application->book_payment_date)) {
+                                    $mailBody .= ', дата оплаты: '.date('d.m.Y г.', strtotime($application->book_payment_date));
+                                }
+                                $mailBody .= '<br />';
+                            }
+                        }
+
+                        // Deal map
                         $mailBody .= '<br /><strong><span style="text-transform: uppercase;">карта сделки</span></strong><br />';
                         if (!empty($application->ddu_price)) {
                             $mailBody .= 'Стоимость объекта по ДДУ: '.$application->ddu_price.' рублей<br />';
@@ -1221,6 +1243,7 @@ class ApplicationController extends Controller
             'application' => $application_array,
             'applicationHistory' => ArrayHelper::toArray($application->history),
             'statusMap' => Application::$status,
+            'bookPayment' => Application::$bookPayment,
             'flat' => $flat,
         ]);
     }
@@ -1243,6 +1266,7 @@ class ApplicationController extends Controller
         return $this->inertia('User/Application/Update', [
             'application' => $applicationArr,
             'statusMap' => Application::$status,
+            'bookPayment' => Application::$bookPayment,
             'eOperation' => \Yii::$app->request->post('eOperation') ? \Yii::$app->request->post('eOperation') : '',
             'developers' => \Yii::$app->request->post('eOperation') === 'change_object' ? Developer::getAllAsList() : [],
             'buildingComplexes' => \Yii::$app->request->post('developerId') ? NewbuildingComplex::find()->where(['developer_id' => \Yii::$app->request->post('developerId')])->select(['id', 'name'])->asArray()->all() : [],
