@@ -10,8 +10,15 @@
           <h4 v-if="lesson.subtitle">{{ lesson.subtutle }}</h4>
           <p v-if="lesson.description">{{ lesson.description }}</p>
 
-          <iframe width="560" height="315" :src="lesson.video_source" :title="lesson.title" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          <!-- YouTube video -->
+          <iframe v-if="lesson.videohosting_type === 1" width="560" height="315" :src="lesson.video_source" :title="lesson.title" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
+          <!-- RuTube video -->
+          <iframe v-if="lesson.videohosting_type === 2" width="720" height="405" :src="lesson.video_source" frameBorder="0" allow="clipboard-write; autoplay" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+
+          <!-- VK-Video video -->
+          <iframe v-if="lesson.videohosting_type === 3" :src="lesson.video_source" width="853" height="480" allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock;" frameborder="0" allowfullscreen></iframe>
+          
           <!--<div>
             <q-video
               :src="lesson.video_source"
