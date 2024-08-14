@@ -315,7 +315,7 @@
                     </div>
 
                     <!-- Booking payment information -->
-                    <template v-if="application.flat.developer.id === 15">
+                    <template v-if="application.flat.developer.id === 13">
                       <div class="row q-col-gutter-none" :class="{'q-pb-sm': $q.screen.xs }">
                         <p class="q-mt-sm q-mb-xs text-h5">Внесите информацию об оплате бронирования (способ оплаты и дата)</p>
                       </div>

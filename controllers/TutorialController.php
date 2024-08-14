@@ -90,15 +90,12 @@ class TutorialController extends Controller
     }
 
     private function convertRutubeLink($url) {
-        // Проверяем, что URL содержит rutube.ru/video/
-        if (strpos($url, 'rutube.ru/video/') !== false) {
-            // Извлекаем ID видео из ссылки
-            $videoId = substr($url, strrpos($url, '/') + 1);
-    
-            // Формируем новую ссылку для встроенного видео
-            return "https://rutube.ru/play/embed/{$videoId}/";
+        if (preg_match('/rutube\.ru\/video\/([a-zA-Z0-9]+)/', $url, $matches)) {
+            // Извлекаем ID видео из URL
+            $videoId = $matches[1];
+            // Формируем ссылку для вставки
+            return "https://rutube.ru/play/embed/$videoId/";
         } else {
-            // Если URL не соответствует ожидаемому формату, возвращаем оригинальный URL
             return $url;
         }
     }
@@ -121,7 +118,6 @@ class TutorialController extends Controller
             }
         }
         
-        // Если ссылка не соответствует формату, возвращаем оригинал
         return $url;
     }
 }
