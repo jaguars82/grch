@@ -35,7 +35,6 @@
       </q-card>
     </template>
   </MainLayout>
-  <pre>{{ lessons }}</pre>
 </template>
 
 <script>
