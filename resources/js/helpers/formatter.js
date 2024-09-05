@@ -6,7 +6,7 @@ function asArea (area) {
 function asCurrency (amount, fractionDigits = false) {
   const fractionOption = fractionDigits ?  { minimumFractionDigits: 2 } : { maximumFractionDigits: 0 }
   const formattedAmount = new Intl.NumberFormat('ru-RU', fractionOption).format(amount);
-	return amount > 0 ? `${formattedAmount} ₽` : 'стоимость не указана'
+	return amount > 0 ? `${formattedAmount} ₽` : '-'
 }
 
 function asDate (rawDate) {
