@@ -164,7 +164,8 @@
                       </div>
                     </template>
 
-                    <div class="bg-grey-3 q-pl-none q-py-sm q-pr-sm rounded-borders overflow-auto">
+                    <div class="bg-grey-3 q-pl-none q-py-sm q-pr-sm rounded-borders overflow-auto relative-position">
+                      <ChessLegend :statusLabels="flatStatuses" :existingStatuses="entrance.flatStatuses" />
                       <div class="row q-pl-none relative-position no-wrap w-max-content" v-for="floor of Object.keys(entrance.flats).reverse()">
                         <div class="floor-cell q-pl-sm text-weight-bolder bg-grey-3 text-grey">{{ floor }}</div>
                         <div>
@@ -413,6 +414,7 @@ import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import Loading from '@/Components/Elements/Loading.vue'
 import ParamPair from '@/Components/Elements/ParamPair.vue'
 import FileDownloadable from '@/Components/File/FileDownloadListItem.vue'
+import ChessLegend from '@/Components/Chess/ChessLegend.vue'
 import FlatCell from '@/Components/Chess/FlatCell.vue'
 import FinishingCard from '@/Components/FinishingCard.vue'
 import AdvantagesBlock from '@/Components/Elements/AdvantagesBlock.vue'
@@ -421,6 +423,7 @@ import RegularContentContainer from '@/Components/Layout/RegularContentContainer
 
 export default {
   props: {
+    flatStatuses: Object,
     complex: {
       type: Object,
       derfault: {}
@@ -431,7 +434,7 @@ export default {
     },
   },
   components: {
-    MainLayout, Breadcrumbs, Loading, FileDownloadable, ParamPair, FlatCell, FinishingCard, AdvantagesBlock, ObjectOnMap, RegularContentContainer
+    MainLayout, Breadcrumbs, Loading, FileDownloadable, ParamPair, ChessLegend, FlatCell, FinishingCard, AdvantagesBlock, ObjectOnMap, RegularContentContainer
   },
   setup(props) {
     const breadcrumbs = ref([

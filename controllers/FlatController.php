@@ -91,6 +91,7 @@ class FlatController extends Controller
         ]);*/
 
         return $this->inertia('Flat/View', [
+            'flatStatuses' => Flat::$status,
             'flat' => ArrayHelper::toArray($model, [
                 'app\models\service\Flat' => [
                     'id', 'newbuilding_id', 'entrance_id', 'address', 'detail', 'area', 'rooms', 'floor', 'index_on_floor', 'price_cash', 'status', 'sold_by_application', 'is_applicated', 'is_reserved', 'created_at', 'updated_at', 'unit_price_cash', 'discount_type', 'discount', 'discount_amount', 'discount_price', 'azimuth', 'notification', 'extra_data', 'composite_flat_id', 'section', 'number', 'layout', 'unit_price_credit', 'price_credit', 'floor_position', 'floor_layout', 'layout_coords', 'is_euro', 'is_studio',
@@ -145,6 +146,16 @@ class FlatController extends Controller
                                                         'aviableFlats' => function ($entrance) { return $entrance->getActiveFlats()->count(); },
                                                         'reservedFlats' => function ($entrance) { return $entrance->getReservedFlats()->count(); },
                                                         'deadlineString' => function ($entrance) { return (is_null($entrance->deadline) ? 'нет данных' : strtotime(date("Y-m-d")) > strtotime($entrance->deadline)) ? 'подъезд сдан' : \Yii::$app->formatter->asQuarterAndYearDate($entrance->deadline); },
+                                                        'flatStatuses' => function ($entrance) {
+                                                            $statuses = $entrance->getFlats()
+                                                                ->select('status')
+                                                                ->distinct()
+                                                                ->column();
+                
+                                                            sort($statuses);
+                                                            
+                                                            return $statuses;
+                                                        },
                                                         'flats' => function ($entrance) {
                                                             $flats = ArrayHelper::toArray($entrance->flats, [
                                                                 'app\models\Flat' => [

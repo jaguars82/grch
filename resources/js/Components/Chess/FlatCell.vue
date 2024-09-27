@@ -37,6 +37,7 @@
 import { ref, computed } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { asArea, asCurrency, asPricePerArea } from '@/helpers/formatter'
+import { flatStatusColors } from '@/composables/model-configurations'
 
 export default {
   props: {
@@ -52,17 +53,8 @@ export default {
       
       if (props.flat === 'filler') return color
       
-      switch (props.flat.status) {
-        case 0:
-          color = 'green'
-          break
-        case 1:
-          color = 'orange'
-          break
-        case 2:
-          color = 'red'
-          break
-      }
+      color = flatStatusColors[props.flat.status]
+
       return color
     })
     

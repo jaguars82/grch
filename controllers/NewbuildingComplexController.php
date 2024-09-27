@@ -8,6 +8,7 @@ use app\components\SharedDataFilter;
 use app\models\Bank;
 use app\models\Developer;
 use app\models\Newbuilding;
+use app\models\Flat;
 use app\models\Document;
 use app\models\form\NewbuildingComplexForm;
 use app\models\form\ProjectDeclarationForm;
@@ -133,6 +134,16 @@ class NewbuildingComplexController extends Controller
                                         'aviableFlats' => function ($entrance) { return $entrance->getActiveFlats()->count(); },
                                         'reservedFlats' => function ($entrance) { return $entrance->getReservedFlats()->count(); },
                                         'deadlineString' => function ($entrance) { return (is_null($entrance->deadline) ? 'нет данных' : strtotime(date("Y-m-d")) > strtotime($entrance->deadline)) ? 'подъезд сдан' : \Yii::$app->formatter->asQuarterAndYearDate($entrance->deadline); },
+                                        'flatStatuses' => function ($entrance) {
+                                            $statuses = $entrance->getFlats()
+                                                ->select('status')
+                                                ->distinct()
+                                                ->column();
+
+                                            sort($statuses);
+                                            
+                                            return $statuses;
+                                        },
                                         'flats' => function ($entrance) {
                                             $flats = ArrayHelper::toArray($entrance->flats, [
                                                 'app\models\Flat' => [
@@ -278,6 +289,7 @@ class NewbuildingComplexController extends Controller
         ]);
 
         return $this->inertia('NewbuildingComplex/View', [
+            'flatStatuses' => Flat::$status,
             'complex' => $complex,
             'otherNC' => ArrayHelper::toArray($newbuildingComplexesDataProvider->getModels()),
         ]);

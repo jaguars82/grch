@@ -11,6 +11,11 @@ use app\models\Flat;
  */
 class XmlImportService implements ImportServiceInterface
 {
+    protected $status = [
+        'Свободна' => Flat::STATUS_SALE,
+		'Закрыта' => Flat::STATUS_UNAVAILABLE,
+    ];
+
     /**
      * {@inheritdoc}
      */
@@ -249,12 +254,12 @@ class XmlImportService implements ImportServiceInterface
 		                'rooms' => $room,
 		                'unit_price_cash' => $unitPrice,
 		                'price_cash' => (float)$flat->price,
-		                'status' => Flat::STATUS_SALE,
+		                'status' => array_key_exists((string)$flat->status, $this->status) ? $this->status[(string)$flat->status] : Flat::STATUS_SALE,
 						'layout' => $layout,
                         'is_studio' => $studio,
 		            ];
 
-					$flats[$currentFlatId] = $_flat;
+                    $flats[$currentFlatId] = $_flat;
 		            $flatsByNumber[$currentObjectId][$currentHouseId][(int)$flat->apartment][] = $currentFlatId;
 		            $currentFlatId++;
 
@@ -262,7 +267,6 @@ class XmlImportService implements ImportServiceInterface
 				}
 			}
 		}
-
 
 
         $floorLayouts = [];
