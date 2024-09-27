@@ -363,6 +363,7 @@
                     </template>
 
                     <div class="bg-grey-3 q-pl-none q-py-sm q-pr-sm rounded-borders overflow-auto">
+                      <ChessLegend :statusLabels="flatStatuses" :existingStatuses="entrance.flatStatuses" />
                       <div class="row q-pl-none relative-position no-wrap w-max-content" v-for="floor of Object.keys(entrance.flats).reverse()">
                         <div class="floor-cell q-pl-sm text-weight-bolder bg-grey-3 text-grey">{{ floor }}</div>
                         <div>
@@ -636,6 +637,7 @@ import FlatActionButtons from '@/Components/Flat/FlatActionButtons/FlatActionBut
 import ParamPair from '@/Components/Elements/ParamPair.vue'
 import Compass from '@/Components/Svg/Compass.vue'
 import FloorLayoutForAFlat from '@/Components/Svg/FloorLayoutForAFlat.vue'
+import ChessLegend from '@/Components/Chess/ChessLegend.vue'
 import FlatCell from '@/Components/Chess/FlatCell.vue'
 import FinishingCard from '@/Components/FinishingCard.vue'
 import ObjectOnMap from '@/Components/Map/ObjectOnMap.vue'
@@ -645,6 +647,7 @@ import useEmitter from '@/composables/use-emitter'
 
 export default {
   props: {
+    flatStatuses: Object,
     flat: {
       type: Object,
       derfault: {}
@@ -655,7 +658,7 @@ export default {
     },
   },
   components: {
-    MainLayout, Breadcrumbs, Loading, ParamPair, FlatActionButtons, Compass, FloorLayoutForAFlat, FlatCell, FinishingCard, ObjectOnMap, AdvantagesBlock, RegularContentContainer
+    MainLayout, Breadcrumbs, Loading, ParamPair, FlatActionButtons, Compass, FloorLayoutForAFlat, ChessLegend, FlatCell, FinishingCard, ObjectOnMap, AdvantagesBlock, RegularContentContainer
   },
   setup(props) {
     const breadcrumbs = ref([

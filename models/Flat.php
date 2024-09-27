@@ -65,6 +65,7 @@ class Flat extends ActiveRecord
     const STATUS_SALE = 0;
     const STATUS_RESERVED = 1;
     const STATUS_SOLD = 2;
+    const STATUS_UNAVAILABLE = 3;
 
     const APPLICATED_NONE = 0;
     const APPLICATED_AGREGATOR = 1;
@@ -74,6 +75,7 @@ class Flat extends ActiveRecord
         self::STATUS_SALE => 'Продаётся',
         self::STATUS_SOLD => 'Продана',
         self::STATUS_RESERVED => 'Бронь',
+        self::STATUS_UNAVAILABLE => 'Недоступна',
     ];
 
     public static $applicationStatus = [
