@@ -13,8 +13,8 @@
     @mouseleave="focusOff"
   >
     <div class="row justify-between">
-      <q-badge :color="color">{{ flat.rooms }}
-      </q-badge>
+      <q-badge v-if="flat.is_commercial == 1" :color="color">К</q-badge>
+      <q-badge v-else :color="color">{{ flat.rooms }}</q-badge>
       <q-badge class="gt-xs" color="orange" v-if="flat.status === 0 && flat.has_discount">
         <span>Акция</span>
       </q-badge>

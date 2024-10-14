@@ -43,6 +43,7 @@ use app\components\flat\SvgDom;
  * @property string $updated_at
  * @property string $extra_data
  * @property int $composite_flat_id
+ * @property boolean $is_commercial
  *
  * @property News[] $actions
  * @property News[] $activeActions
@@ -150,7 +151,7 @@ class Flat extends ActiveRecord
             [['is_reserved', 'is_applicated', 'area', 'azimuth', 'section', 'floor_position'], 'number'],
             [['created_at', 'updated_at', 'entrance_id'], 'safe'],
             [['newbuilding_id'], 'exist', 'skipOnError' => true, 'targetClass' => Newbuilding::className(), 'targetAttribute' => ['newbuilding_id' => 'id']],
-            [['sold_by_application', 'is_euro', 'is_studio'], 'boolean'],
+            [['sold_by_application', 'is_euro', 'is_studio', 'is_commercial'], 'boolean'],
         ];
     }
 

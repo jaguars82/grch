@@ -82,19 +82,12 @@ class FlatController extends Controller
             'sort' => ['attributes' => ['id'], 'defaultOrder' => ['id' => SORT_DESC]],
         ]);
 
-        /*return $this->render('view', [
-            'model' => $model,
-            'floorLayoutImage' => !is_null($model->floorLayoutSvg) ? $model->floorLayoutSvg : NULL,
-            'flatDataProvider' => $flatDataProvider,
-            'contactDataProvider' => $contactDataProvider,
-            'newbuildingComplexDataProvider' => $newbuildingComplexDataProvider,
-        ]);*/
-
+        
         return $this->inertia('Flat/View', [
             'flatStatuses' => Flat::$status,
             'flat' => ArrayHelper::toArray($model, [
                 'app\models\service\Flat' => [
-                    'id', 'newbuilding_id', 'entrance_id', 'address', 'detail', 'area', 'rooms', 'floor', 'index_on_floor', 'price_cash', 'status', 'sold_by_application', 'is_applicated', 'is_reserved', 'created_at', 'updated_at', 'unit_price_cash', 'discount_type', 'discount', 'discount_amount', 'discount_price', 'azimuth', 'notification', 'extra_data', 'composite_flat_id', 'section', 'number', 'layout', 'unit_price_credit', 'price_credit', 'floor_position', 'floor_layout', 'layout_coords', 'is_euro', 'is_studio',
+                    'id', 'newbuilding_id', 'entrance_id', 'address', 'detail', 'area', 'rooms', 'floor', 'index_on_floor', 'price_cash', 'status', 'sold_by_application', 'is_applicated', 'is_reserved', 'created_at', 'updated_at', 'unit_price_cash', 'discount_type', 'discount', 'discount_amount', 'discount_price', 'azimuth', 'notification', 'extra_data', 'composite_flat_id', 'section', 'number', 'layout', 'unit_price_credit', 'price_credit', 'floor_position', 'floor_layout', 'layout_coords', 'is_euro', 'is_studio', 'is_commercial',
                     'isFavorite' => function ($flat) { return $flat->isFavorite() > 0; },
                     'hasDiscount' => function ($flat) { return $flat->hasDiscount(); },
                     'allDiscounts' => function ($flat) { return $flat->allCashPricesWithDiscount; },
