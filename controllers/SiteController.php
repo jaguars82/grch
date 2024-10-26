@@ -216,7 +216,8 @@ class SiteController extends Controller
             ]),
             'agencyDataProvider' => ArrayHelper::toArray($agencyDataProvider->getModels()),
             'bankDataProvider' => ArrayHelper::toArray($bankDataProvider->getModels()),
-            'districts' => ArrayHelper::toArray(District::getAllForLocationAsList()),
+            'regions' => Region::getWithNewbuildingComplexesAsList(),
+            // 'districts' => ArrayHelper::toArray(District::getAllForLocationAsList()),
             'developers' => ArrayHelper::toArray(Developer::getAllAsList()),
             'newbuildingComplexes' => $searchModel->newbuildingComplexes
         ]);

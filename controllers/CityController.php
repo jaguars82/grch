@@ -1,6 +1,6 @@
 <?php
 
-namespace app\controllers\admin;
+namespace app\controllers;
 
 use Yii;
 use app\models\City;
@@ -39,12 +39,7 @@ class CityController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'create', 'update', 'delete'],
-                        'roles' => ['admin'],
-                    ],
-                    [
-                        'allow' => true,
-                        'actions' => ['get-for-city'],
+                        'actions' => ['get-for-region', 'get-for-city'],
                         'roles' => ['@'],
                     ],
                 ]
@@ -56,76 +51,48 @@ class CityController extends Controller
     }
 
     /**
-     * Lists all City models.
+     * Getting cities for given region.
+     * 
+     * @param integer $id Region ID
      * @return mixed
      */
-    public function actionIndex()
+    public function actionGetForRegion($id, $withNewbuildingComplexes = true)
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => City::find(),
-        ]);
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;        
+        
+        $query = City::find();
 
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-
-    /**
-     * Creates a new City model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        $model = new City();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirectWithSuccess(['index'], 'Город успешно добавлен');
+        if ($withNewbuildingComplexes) {
+            $query->innerJoin('newbuilding_complex', 'newbuilding_complex.city_id = city.id');
         }
 
-        return $this->render('create', [
-            'model' => $model,
-        ]);
-    }
+        $cities = $query
+            ->where(['city.region_id' => $id])
+            ->select(['city.id', 'city.name', 'is_region_center'])
+            ->orderBy(['city.name' => SORT_DESC])
+            ->asArray()
+            ->all();
 
-    /**
-     * Updates an existing City model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
+        $regionCenter = [];
+        $sattlements = [];
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirectWithSuccess(['index'], 'Город успешно обновлен');
+        foreach ($cities as $city) {
+            if ($city['is_region_center'] == 1) {
+                array_push($regionCenter, $city);
+            } else {
+                array_push($sattlements, $city);
+            }
         }
 
-        return $this->render('update', [
-            'model' => $model,
-        ]);
-    }
+        $result = count($regionCenter) > 0 ? array_merge($regionCenter, $sattlements) : $sattlements;
 
-    /**
-     * Deletes an existing City model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirectWithSuccess(['index'], 'Город удален');
+        \Yii::$app->response->data = $result;
     }
 
     /**
      * Getting district for given city.
      * 
-     * @param integer $id Developer's ID
+     * @param integer $id
      * @return mixed
      */
     public function actionGetForCity($id)

@@ -6,7 +6,8 @@ use app\models\Flat;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 use yii\db\Expression;
-use app\components\CityLocation;
+use app\components\RegionLocation;
+// use app\components\CityLocation;
 use app\models\District;
 
 /**
@@ -72,13 +73,13 @@ class AdvancedFlatSearch extends Flat
     public function scenarios()
     {
         $commonFields = [
-            'roomsCount', 'developer', 'newbuilding_complex', 'district', 'priceFrom',
+            'roomsCount', 'developer', 'newbuilding_complex', 'region_id', 'city_id', 'district', 'priceFrom',
             'priceTo', 'areaFrom', 'areaTo', 'address', 'flatType', 'priceType',
             'totalFloorFrom', 'totalFloorTo'
         ];
         return [
             self::SCENARIO_DEFAULT => array_merge($commonFields, [
-                'floorFrom', 'floorTo', 'region_id', 'city_id', 'street_name', 
+                'floorFrom', 'floorTo', 'street_name', 
                 'material', 'update_date', 'newbuilding_status', 'deadlineYear'
             ]),
             self::SCENARIO_SIMPLE => $commonFields,
@@ -357,7 +358,20 @@ class AdvancedFlatSearch extends Flat
     protected function fillAttributes($params, $isReturnFalseWhenNoData)
     {
         $form = (new \ReflectionClass($this))->getShortName();
-        $selectedCity = CityLocation::get();
+        
+        $selectedRegion = RegionLocation::get();
+
+        if (!isset($params[$form])) {
+            if(is_null($selectedRegion)) {
+                return false;
+            } else {
+                $this->region_id = $selectedRegion->id;
+                
+                return true;
+            }
+        }
+
+        /*$selectedCity = CityLocation::get();
 
         if (!isset($params[$form])) {
             if(is_null($selectedCity)) {
@@ -368,7 +382,7 @@ class AdvancedFlatSearch extends Flat
                  
                 return true;
             }
-        }
+        }*/
 
         if ($isReturnFalseWhenNoData
             && (isset($params[$form]['developer']) && empty($params[$form]['developer']))
@@ -401,13 +415,13 @@ class AdvancedFlatSearch extends Flat
 
         if (isset($params[$form]['city_id'])) {
             $this->city_id = $params[$form]['city_id'];
-        } else {
+        } /*else {
             $this->city_id = $selectedCity->id;
 
             if(is_null($this->region_id)) {
                 $this->region_id = $selectedCity->region->id;
             }
-        }
+        }*/
 
         if (isset($params[$form]['district'])) {
             $this->district = $params[$form]['district'];

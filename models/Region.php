@@ -40,7 +40,7 @@ class Region extends \yii\db\ActiveRecord
     public static function getAllAsList()
     {
         $result = self::find()
-            ->orderBy(['id' => SORT_DESC])
+            ->orderBy(['name' => SORT_DESC])
             ->indexBy('id')
             ->asArray()
             ->all();
@@ -49,6 +49,29 @@ class Region extends \yii\db\ActiveRecord
         
         foreach ($result as $key => $region) {
             $regions[$key] = $region['name'];
+        }
+        
+        return $regions;
+    }
+
+    /**
+     * Get regions with newbuilding complexes in array form
+     * 
+     * @return array
+     */
+    public static function getWithNewbuildingComplexesAsList()
+    {
+        $result = self::find()
+        ->innerJoin('newbuilding_complex', 'newbuilding_complex.region_id = region.id')
+        ->orderBy(['region.name' => SORT_DESC])
+        ->indexBy('region.id')
+        ->asArray()
+        ->all();
+        
+        $regions = [];
+        
+        foreach ($result as $key => $region) {
+            $regions[$region['id']] = $region['name'];
         }
         
         return $regions;
