@@ -330,15 +330,29 @@ class NewbuildingComplexController extends Controller
     {
         $idies = explode(',', $id);
 
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;        
-        \Yii::$app->response->data = NewbuildingComplex::find()
-            ->forDeveloper($idies)
+        $query = NewbuildingComplex::find()->forDeveloper($idies);
+
+        if (!empty(\Yii::$app->request->post('city_id'))) {
+            $query->andWhere(['city_id' => \Yii::$app->request->post('city_id')]);
+
+            if (!empty(\Yii::$app->request->post('district_id'))) {
+                $query->andWhere(['district_id' => \Yii::$app->request->post('district_id')]);
+            }
+        }
+
+        if (!empty(\Yii::$app->request->post('region_id')) && empty(\Yii::$app->request->post('city_id'))) {
+            $query->andWhere(['region_id' => \Yii::$app->request->post('region_id')]);
+        }
+
+        $query
             ->onlyActive($active)
             ->onlyWithActiveBuildings()
             ->select(['id', 'name'])
-            ->orderBy(['id' => SORT_DESC])
-            ->asArray()
-            ->all();
+            ->orderBy(['name' => SORT_ASC])
+            ->asArray();
+        
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        \Yii::$app->response->data = $query->all();
     }
 
     /**

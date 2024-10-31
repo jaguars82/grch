@@ -18,7 +18,20 @@
             <div class="row q-col-gutter-none">
               <!-- Sattlement (city, town etc.) -->
               <div class="col-12 col-sm-4 col-md-2 no-padding">
-                <q-select square outlined v-model="citySelect" :options="cityOptions" label="Населенный пункт" class="search-input" @update:model-value="onCitySelect" emit-value map-options options-dense :dense="$q.screen.lt.md">
+                <q-select
+                  square
+                  outlined
+                  v-model="citySelect"
+                  :options="cityOptions"
+                  label="Населенный пункт"
+                  class="search-input"
+                  :class="{ 'rounded-left': true, 'rounded-right': $q.screen.xs }"
+                  @update:model-value="onCitySelect"
+                  emit-value
+                  map-options
+                  options-dense
+                  dense
+                >
                   <template v-slot:option="scope">
                     <q-item v-bind="scope.itemProps">
                       <q-item-section>
@@ -32,12 +45,36 @@
               </div>
               <!-- District of the sattlement -->
               <div class="col-12 col-sm-4 col-md-2 no-padding">
-                <q-select square outlined v-model="districtSelect" :options="districtOptions" label="Район" class="search-input" multiple use-chips emit-value map-options options-dense :dense="$q.screen.lt.md">
+                <q-select
+                  square
+                  outlined
+                  v-model="districtSelect"
+                  :options="districtOptions"
+                  label="Район"
+                  class="search-input"
+                  :class="{ 'rounded-left': $q.screen.xs, 'rounded-right': $q.screen.xs }"
+                  multiple
+                  use-chips
+                  emit-value
+                  map-options
+                  options-dense
+                  dense
+                >
                 </q-select>
               </div>
               <!-- Amount of rooms and flat type (standart/euro/studio) -->
               <div class="col-12 col-sm-4 col-md-2 no-padding" style="cursor: pointer !important;">
-                <q-input square outlined readonly v-model="roomsSelect" @click="showRoomsPopup = true" label="Комнат" class="search-input" :dense="$q.screen.lt.md">
+                <q-input
+                  square
+                  outlined
+                  readonly
+                  v-model="roomsSelect"
+                  @click="showRoomsPopup = true"
+                  label="Комнат"
+                  class="search-input"
+                  :class="{ 'rounded-left': $q.screen.xs, 'rounded-right': $q.screen.xs || $q.screen.sm }"
+                  dense
+                >
                   <template v-slot:append>
                     <q-icon name="edit_note" class="cursor-pointer">
                       <q-popup-proxy
@@ -61,15 +98,54 @@
               </div>
               <!-- Developer -->
               <div class="col-12 col-sm-4 col-md-2 no-padding">
-                <q-select square outlined v-model="developerSelect" :options="developerOptions" label="Застройщик" class="search-input" @update:model-value="onDeveloperSelect" multiple use-chips emit-value map-options options-dense :dense="$q.screen.lt.md" />
+                <q-select
+                  square
+                  outlined
+                  v-model="developerSelect"
+                  :options="developerOptions"
+                  label="Застройщик"
+                  class="search-input"
+                  :class="{ 'rounded-left': $q.screen.xs || $q.screen.sm, 'rounded-right': $q.screen.xs }"
+                  @update:model-value="onDeveloperSelect"
+                  multiple
+                  use-chips
+                  emit-value
+                  map-options
+                  options-dense
+                  dense
+                />
               </div>
               <!-- Newbuilding Complex -->
               <div class="col-12 col-sm-4 col-md-2 no-padding">
-                <q-select square outlined v-model="newbuildingComplexesSelect" :options="newbuildingComplexesOptions" label="Жилой комплекс" class="search-input" multiple use-chips emit-value map-options options-dense :dense="$q.screen.lt.md" />
+                <q-select
+                  square
+                  outlined
+                  v-model="newbuildingComplexesSelect"
+                  :options="newbuildingComplexesOptions"
+                  label="Жилой комплекс"
+                  class="search-input"
+                  :class="{ 'rounded-left': $q.screen.xs, 'rounded-right': $q.screen.xs }"
+                  multiple
+                  use-chips
+                  emit-value
+                  map-options
+                  options-dense
+                  dense
+                />
               </div>
               <!-- Price -->
               <div class="col-12 col-sm-4 col-md-2 no-padding cursor-pointer">
-                <q-input square outlined readonly v-model="priceLabel" @click="showPricePopup = true" label="Цена" class="search-input" :dense="$q.screen.lt.md">
+                <q-input
+                  square
+                  outlined
+                  readonly
+                  v-model="priceLabel"
+                  @click="showPricePopup = true"
+                  label="Цена"
+                  class="search-input"
+                  :class = "{ 'rounded-left': $q.screen.xs, 'rounded-right': true }"
+                  dense
+                >
                   <template v-slot:append>
                     <q-icon name="tune" class="cursor-pointer">
                       <q-popup-proxy
@@ -98,7 +174,7 @@
             </div>
           </div>
           <!-- Form action buttons -->
-          <div class="col-2" :class="{ 'col-2': $q.screen.gt.xs, 'col-12': $q.screen.xs, 'text-right': $q.screen.xs, 'q-mt-sm': $q.screen.xs }">
+          <div class="col-2 self-start" :class="{ 'col-2': $q.screen.gt.xs, 'col-12': $q.screen.xs, 'text-right': $q.screen.xs, 'q-mt-sm': $q.screen.xs }">
             <q-btn color="primary" :size="$q.screen.sm ? 'sm' : 'md'" class="text-white q-ml-sm q-mr-xs" unelevated round icon="search" @click="search" />
             <q-btn color="white" :size="$q.screen.sm ? 'sm' : 'md'" class="text-grey-7" unelevated round icon="pin_drop" @click="mapSearch" />
           </div>
@@ -202,10 +278,11 @@
 
 
 <script>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch, watchEffect } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { asDateTime } from '@/helpers/formatter'
 import { stripHtml } from '@/helpers/utils'
+import { idNameObjToOptions } from '@/composables/formatted-and-processed-data'
 import axios from 'axios'
 import MainLayout from '@/Layouts/MainLayout.vue'
 import RegionSelector from '@/Components/Elements/RegionSelector.vue'
@@ -279,13 +356,71 @@ export default {
     const showRoomsPopup = ref(false)
 
     const developerSelect = ref(null)
-    const developerOptions =  computed(() => {
+    const refrashedDevelopers = ref(null)
+    const developerOptions = ref(idNameObjToOptions(props.developers))
+
+    watchEffect(() => {
+      developerOptions.value = refrashedDevelopers.value
+        ? idNameObjToOptions(refrashedDevelopers.value)
+        : idNameObjToOptions(props.developers)
+    })
+
+    const isLoadingDevelopers = ref(false)
+    
+    const fetchDevelopers = async (cityId = null, regionId = null, districtId = null) => {
+      
+      if (Array.isArray(districtId) && districtId.length === 0) {
+        districtId = null;
+      }
+
+      let action, argumentName, locationId;
+
+      if (districtId) {
+        action = 'get-developers-for-city-district';
+        argumentName = 'district_id';
+        locationId = districtId;
+      } else if (cityId) {
+        action = 'get-developers-for-city';
+        argumentName = 'city_id';
+        locationId = cityId;
+      } else {
+        action = 'get-developers-for-region';
+        argumentName = 'region_id';
+        locationId = regionId;
+      }
+
+      isLoadingDevelopers.value = true; // set the flag of loading developers
+
+      try {
+        const response = await axios.post(`/developer/${action}`, { [argumentName]: locationId });
+        
+        developerOptions.value = idNameObjToOptions(response.data)
+        
+        await nextTick()
+
+      } catch (error) {
+        console.error("Error loading developers:", error);
+      } finally {
+        isLoadingDevelopers.value = false // reset the loading flag
+      }
+    }
+
+    // Developers on citySelect/regionSelect/districtSelect change
+    watch([citySelect, regionSelect, districtSelect], ([newCityId, newRegionId, newDistrictId]) => {
+
+      developerSelect.value = null
+      newbuildingComplexesSelect.value = null
+
+      fetchDevelopers(newCityId, newRegionId, newDistrictId)
+    })
+
+    /*const developerOptions =  computed(() => {
       const options = []
       Object.keys(props.developers).forEach(developerId => {
         options.push({ label: props.developers[developerId], value: developerId })
       })
       return options
-    })
+    })*/
 
     const onDeveloperSelect = () => {
       axios.post('/newbuilding-complex/get-for-developer?id=' + developerSelect.value)
@@ -404,6 +539,9 @@ export default {
 .search-input .q-field__native {
   cursor: pointer !important;
 }
+.search-input.q-field--outlined .q-field__control:before {
+  border-style: none;
+}
 </style>
 
 <style scoped>
@@ -431,6 +569,14 @@ export default {
 .search-input {
   background-color: rgba(255,255,255,.7);
   /*cursor: pointer !important;*/
+}
+.rounded-left {
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+.rounded-right {
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
 }
 .popup-controls-container {
   width: 300px;

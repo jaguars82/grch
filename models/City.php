@@ -77,6 +77,37 @@ class City extends \yii\db\ActiveRecord
     }
 
     /**
+     * Get cities in a given region with newbuilding complexes in array form
+     * 
+     * @return array
+     */
+    public static function getForRegionWithNewbuildingComplexesAsList($regionId)
+    {
+        $cities = self::find()
+        ->innerJoin('newbuilding_complex', 'newbuilding_complex.city_id = city.id')
+        ->select(['city.id', 'city.name', 'is_region_center'])
+        ->where(['newbuilding_complex.region_id' => $regionId])
+        ->orderBy(['city.name' => SORT_ASC])
+        ->asArray()
+        ->all();
+        
+        $regionCenter = [];
+        $sattlements = [];
+
+        foreach ($cities as $city) {
+            if ($city['is_region_center'] == 1) {
+                array_push($regionCenter, $city);
+            } else {
+                array_push($sattlements, $city);
+            }
+        }
+
+        $result = count($regionCenter) > 0 ? array_merge($regionCenter, $sattlements) : $sattlements;
+        
+        return $result;
+    }
+
+    /**
      * {@inheritdoc}
      * 
      * @return NewbuildingComplexQuery the active query used by this AR class.

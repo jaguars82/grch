@@ -137,6 +137,79 @@ class Developer extends \yii\db\ActiveRecord
     }
 
     /**
+     * Get all developers with buildings in a specified region in array form
+     * 
+     * @return array
+     */
+    public static function getAllForRegionAsList($regionId)
+    {
+        $result = self::find()
+            ->innerJoin('newbuilding_complex', 'newbuilding_complex.developer_id = developer.id')
+            ->innerJoin('region', 'newbuilding_complex.region_id = region.id')
+            ->where(['newbuilding_complex.region_id' => $regionId])
+            ->orderBy(['developer.name' => SORT_ASC])
+            ->asArray()
+            ->all();
+        
+        $developers = [];
+        
+        foreach ($result as $key => $developer) {
+            $developers[$developer['id']] = $developer['name'];
+        }
+        
+        return $developers;
+    }
+
+    /**
+     * Get all developers with buildings in a specified city in array form
+     * 
+     * @return array
+     */
+    public static function getAllForCityAsList($cityId)
+    {
+        $result = self::find()
+            ->innerJoin('newbuilding_complex', 'newbuilding_complex.developer_id = developer.id')
+            ->innerJoin('city', 'newbuilding_complex.city_id = city.id')
+            ->where(['newbuilding_complex.city_id' => $cityId])
+            ->orderBy(['developer.name' => SORT_ASC])
+            //->indexBy('developer.id')
+            ->asArray()
+            ->all();
+        
+        $developers = [];
+        
+        foreach ($result as $key => $developer) {
+            $developers[$developer['id']] = $developer['name'];
+        }
+        
+        return $developers;
+    }
+
+    /**
+     * Get all developers with buildings in a specified district of a city in array form
+     * 
+     * @return array
+     */
+    public static function getAllForCityDistrictAsList($districtId)
+    {
+        $result = self::find()
+            ->innerJoin('newbuilding_complex', 'newbuilding_complex.developer_id = developer.id')
+            ->innerJoin('district', 'newbuilding_complex.district_id = district.id')
+            ->where(['newbuilding_complex.district_id' => $districtId])
+            ->orderBy(['developer.name' => SORT_ASC])
+            ->asArray()
+            ->all();
+        
+        $developers = [];
+        
+        foreach ($result as $key => $developer) {
+            $developers[$developer['id']] = $developer['name'];
+        }
+        
+        return $developers;
+    }
+
+    /**
      * Get the number of actions for developer
      *
      * @return integer

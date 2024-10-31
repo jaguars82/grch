@@ -118,7 +118,7 @@ export default {
       model.value = { min: null, max: null }
     }
     const emitter = useEmitter()
-    watch (model, () => emitter.emit('price-changed', model.value))
+    watch (model, () => { emitter.emit('price-changed', model.value) }, { deep: true })
     watch (toggleModel, () => emitter.emit('price-type-changed', toggleModel.value))
     return { model, toggleModel, resetModel }
   }

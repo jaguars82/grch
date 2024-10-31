@@ -31,6 +31,9 @@ class DeveloperController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'get-developers' => ['POST'],
+                    'get-developers-for-region' => ['POST'],
+                    'get-developers-for-city' => ['POST'],
+                    'get-developers-for-city-district' => ['POST'],
                 ],
             ],
             'access' => [
@@ -38,7 +41,7 @@ class DeveloperController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'view', 'get-developers'],
+                        'actions' => ['index', 'view', 'get-developers', 'get-developers-for-region', 'get-developers-for-city', 'get-developers-for-city-district'],
                         'roles' => ['@'],
                     ],
                 ]
@@ -114,6 +117,33 @@ class DeveloperController extends Controller
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;        
         \Yii::$app->response->data = Developer::getAllAsList();
+    }
+
+    /**
+     * Get list of developers for a given region in JSON format
+     */
+    public static function actionGetDevelopersForRegion()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;        
+        \Yii::$app->response->data = Developer::getAllForRegionAsList(\Yii::$app->request->post('region_id'));
+    }
+
+    /**
+     * Get list of developers for a given city in JSON format
+     */
+    public static function actionGetDevelopersForCity()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;        
+        \Yii::$app->response->data = Developer::getAllForCityAsList(\Yii::$app->request->post('city_id'));
+    }
+
+    /**
+     * Get list of developers for a given district of a city in JSON format
+     */
+    public static function actionGetDevelopersForCityDistrict()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;        
+        \Yii::$app->response->data = Developer::getAllForCityDistrictAsList(\Yii::$app->request->post('district_id'));
     }
 
     /**

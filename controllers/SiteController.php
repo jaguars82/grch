@@ -36,7 +36,7 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'search', 'map', 'logout'],
+                'only' => ['index', 'pre-search', 'search', 'map', 'logout'],
                 'rules' => [
                     [
                         'actions' => ['logout'],
@@ -45,7 +45,7 @@ class SiteController extends Controller
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['index', 'search', 'map'],
+                        'actions' => ['index', 'pre-search', 'search', 'map'],
                         'roles' => ['@'],
                     ],
                 ],
@@ -54,6 +54,7 @@ class SiteController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'logout' => ['post'],
+                    'pre-search' => ['post']
                 ],
             ],
             // Unconnent following to turn-ON logout agents & managers if logged in form another device/browser
@@ -222,6 +223,20 @@ class SiteController extends Controller
             'newbuildingComplexes' => $searchModel->newbuildingComplexes
         ]);
     }
+
+    /**
+     * Advanced flat search result precount
+     */
+    public function actionPreSearch()
+    {       
+        $queryParams = \Yii::$app->request->post();
+        
+        $searchModel = new AdvancedFlatSearch();
+        $dataProvider = $searchModel->search($queryParams);
+
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        \Yii::$app->response->data = $dataProvider->getTotalCount();
+    }
     
     /**
      * Advanced flat search
@@ -249,7 +264,7 @@ class SiteController extends Controller
             ],
         ]);
         
-        $cities = !is_null($searchModel->region_id) ? City::find()->forRegion($searchModel->region_id)->asArray()->all() : [];
+        $cities = !is_null($searchModel->region_id) ? City::getForRegionWithNewbuildingComplexesAsList($searchModel->region_id) : [];
         if(!empty($cities)) {
             $cities = ArrayHelper::map($cities, 'id', 'name');
         }
@@ -299,10 +314,10 @@ class SiteController extends Controller
             ],
             'newsDataProvider' => ArrayHelper::toArray($newsDataProvider->getModels()),
             'itemsCount' => $searchModel->itemsCount,
-            'regions' => Region::getAllAsList(),
+            'regions' => Region::getWithNewbuildingComplexesAsList(),
             'cities' => $cities,
             'districts' => $districts,
-            'developers' => Developer::getAllAsList(),
+            'developers' => !empty($searchModel->city_id) ? Developer::getAllForCityAsList($searchModel->city_id) : (!empty($searchModel->region_id) ? Developer::getAllForRegionAsList($searchModel->region_id) : Developer::getAllAsList()),
             'newbuildingComplexes' => $searchModel->newbuildingComplexes,
             'positionArray' => $searchModel->positionArray,
             'materials' => Newbuilding::getAllMaterialsAsList(),
@@ -405,7 +420,7 @@ class SiteController extends Controller
             'materials' => Newbuilding::getAllMaterialsAsList(),
             'cities' => $cities,
             'districts' => $districts,
-            'regions' => Region::getAllAsList(),
+            'regions' => Region::getWithNewbuildingComplexesAsList(),
             'deadlineYears' => Newbuilding::getAllDeadlineYears(),
             'selectedCity' => ArrayHelper::toArray($selectedCity),
             'rangeEdges' => [
