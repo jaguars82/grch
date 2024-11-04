@@ -278,7 +278,7 @@
 
 
 <script>
-import { ref, computed, onMounted, watch, watchEffect } from 'vue'
+import { ref, computed, onMounted, watch, watchEffect, nextTick } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { asDateTime } from '@/helpers/formatter'
 import { stripHtml } from '@/helpers/utils'
@@ -344,6 +344,7 @@ export default {
     })
 
     const onCitySelect = () => {
+      districtSelect.value = null
       axios.post('/city/get-for-city?id=' + citySelect.value)
       .then(function (response) {
         districtsOfCity.value = response.data
@@ -423,7 +424,7 @@ export default {
     })*/
 
     const onDeveloperSelect = () => {
-      axios.post('/newbuilding-complex/get-for-developer?id=' + developerSelect.value)
+      axios.post('/newbuilding-complex/get-for-developer?id=' + developerSelect.value, { region_id: regionSelect.value, city_id: citySelect.value, district_id: districtSelect.value })
       .then(function (response) {
         newbuildingComplexesForDevelopers.value = response.data
       })

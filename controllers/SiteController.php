@@ -382,7 +382,7 @@ class SiteController extends Controller
             return;
         }*/
 
-        $cities = !is_null($searchModel->region_id) ? City::find()->forRegion($searchModel->region_id)->asArray()->all() : [];
+        $cities = !is_null($searchModel->region_id) ? City::getForRegionWithNewbuildingComplexesAsList($searchModel->region_id) : [];
         if(!empty($cities)) {
             $cities = ArrayHelper::map($cities, 'id', 'name');
         }
@@ -394,10 +394,16 @@ class SiteController extends Controller
 
         
         $queryParams = \Yii::$app->request->queryParams;
-        $selectedCityId = isset($queryParams['city']) && !empty($queryParams['city']) ? $queryParams['city'] : NULL;
+        $selectedCityId = isset($queryParams['MapFlatSearch']['city_id']) && !empty($queryParams['MapFlatSearch']['city_id']) ? $queryParams['MapFlatSearch']['city_id'] : NULL;
         if(is_null($selectedCityId)) {
-            $selectedCityId = (\Yii::$app->request->cookies->has('selected-city-' . \Yii::$app->user->id)) ? 
-                                    \Yii::$app->request->cookies->get('selected-city-' . \Yii::$app->user->id) : 1;
+            $selectedCityId = /*(\Yii::$app->request->cookies->has('selected-city-' . \Yii::$app->user->id)) ? 
+                                    \Yii::$app->request->cookies->get('selected-city-' . \Yii::$app->user->id) : 1;*/
+								isset($searchModel->region_id) 
+								? Region::getCapitalId($searchModel->region_id)
+								: (\Yii::$app->request->cookies->has('selected-city-' . \Yii::$app->user->id)
+									? \Yii::$app->request->cookies->get('selected-city-' . \Yii::$app->user->id)
+									: 1);
+
         }
         $selectedCity = City::findOne($selectedCityId);
 
@@ -414,7 +420,7 @@ class SiteController extends Controller
             //'searchModel' => $searchModel,
             'searchModel' => $queryParams,
             'complexes' => ArrayHelper::toArray($result), 
-            'developers' => Developer::getAllAsList(),
+            'developers' => !empty($searchModel->city_id) ? Developer::getAllForCityAsList($searchModel->city_id) : (!empty($searchModel->region_id) ? Developer::getAllForRegionAsList($searchModel->region_id) : Developer::getAllAsList()),
             'newbuildingComplexes' => $searchModel->newbuildingComplexes,
             'positionArray' => ArrayHelper::toArray($searchModel->positionArray),
             'materials' => Newbuilding::getAllMaterialsAsList(),

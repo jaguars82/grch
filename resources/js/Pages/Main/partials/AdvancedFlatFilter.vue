@@ -452,13 +452,13 @@ export default {
 
     // Emit an event on filteres change
     const emitChanges = async () => {
-      await nextTick(); // await finishing all reactive processes
+      await nextTick() // await finishing all reactive processes
       emitter.emit('flat-filter-changed', filterState.value)
     }
 
     /* Return filters to initial values if user closes filter confirmation dialog */
     emitter.on('close-filter-change-dialog', payload => {
-      Inertia.get(`/site/${payload}`, { AdvancedFlatSearch: props.searchModel }, { /*preserveState: true,*/ preserveScroll: true })
+      Inertia.get(`/site/${payload.action}`, { [payload.searchType]: props.searchModel }, { /*preserveState: true,*/ preserveScroll: true })
     })
 
     return {

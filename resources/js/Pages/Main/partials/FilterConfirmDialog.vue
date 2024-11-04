@@ -63,6 +63,10 @@ export default {
       type: String,
       default: 'search'
     },
+    searchType: {
+      type: String,
+      default: 'AdvancedFlatSearch'
+    }
   },
   emits: ['confirm', 'close'],
   setup(props) {
@@ -97,12 +101,12 @@ export default {
     })
 
     const onConfirmNewSearch = () => {
-      Inertia.get(`/site/${props.action}`, { AdvancedFlatSearch: filterValues.value }, { preserveState: true })
+      Inertia.get(`/site/${props.action}`, { [props.searchType]: filterValues.value }, { preserveState: true })
       isVisible.value = false
     }
 
     const onCloseFilterDialog = () => {
-      emitter.emit('close-filter-change-dialog', props.action)
+      emitter.emit('close-filter-change-dialog', { action: props.action, searchType: props.searchType })
     }
 
     return { isVisible, offset, newSearchPrecount, onConfirmNewSearch, onCloseFilterDialog };

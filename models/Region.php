@@ -63,11 +63,12 @@ class Region extends \yii\db\ActiveRecord
     {
         $result = self::find()
         ->innerJoin('newbuilding_complex', 'newbuilding_complex.region_id = region.id')
+        ->where(['<>', 'newbuilding_complex.region_id', 'NULL'])
         ->orderBy(['region.name' => SORT_DESC])
-        ->indexBy('region.id')
+        //->indexBy('region.id')
         ->asArray()
         ->all();
-        
+                
         $regions = [];
         
         foreach ($result as $key => $region) {
@@ -115,6 +116,15 @@ class Region extends \yii\db\ActiveRecord
     public function getRegionDistricts()
     {
         return $this->hasMany(RegionDistrict::className(), ['region_id' => 'id'])->orderBy(['name' => SORT_ASC]);
+    }
+
+    /**
+     * Returns Id of regional capital by given region Id
+     */
+    public static function getCapitalId($regionId)
+    {
+        $capital = City::findOne(['region_id' => $regionId, 'is_region_center' => 1]);
+        return $capital->id;
     }
 
     /**
