@@ -1,48 +1,54 @@
 <template>
   <MainLayout :gutters="false" :drawers="{ left: { is: false, opened: false }, right: { is: true, opened: true } }">
     <template v-slot:main>
-      <YandexMap
-        :settings="yaMapsSettings"
-        :coordinates="initCoords"
-        :options="{ autoFitToViewport: 'always' }"
-        :zoom="12"
-      >
-        <template v-if="complexes.length">
-          <YandexClusterer>
-            <YandexMarker
-              v-for="complex of complexes"
-              :marker-id="complex.id"
-              type="Point"
-              :coordinates="[complex.longitude, complex.latitude]"
-            >
-              <template #component>
-                <p class="q-px-md q-my-xs text-h5">{{ complex.name }}</p>
-                <p class="q-my-xs"><span class="q-px-md text-grey">подходящих объектов: </span><span class="text-bold">{{ complex.flats.length }}</span></p>
-                <q-virtual-scroll
-                  style="max-height: 300px;"
-                  :items="complex.flats"
-                  separator
-                  v-slot="{ item, index }"
-                >
-                  <q-item
-                    :key="item.id"
-                    dense
+      <template v-if="complexes !== undefined">
+        <YandexMap
+          :settings="yaMapsSettings"
+          :coordinates="initCoords"
+          :options="{ autoFitToViewport: 'always' }"
+          :zoom="12"
+        >
+          <template v-if="complexes.length">
+            <YandexClusterer>
+              <YandexMarker
+                v-for="complex of complexes"
+                :key="complex.id"
+                :marker-id="complex.id"
+                type="Point"
+                :coordinates="[complex.longitude, complex.latitude]"
+              >
+                <template #component>
+                  <p class="q-px-md q-my-xs text-h5">{{ complex.name }}</p>
+                  <p class="q-my-xs"><span class="q-px-md text-grey">подходящих объектов: </span><span class="text-bold">{{ complex.flats.length }}</span></p>
+                  <q-virtual-scroll
+                    style="max-height: 300px;"
+                    :items="complex.flats"
+                    separator
+                    v-slot="{ item, index }"
                   >
-                    <q-item-section>
-                      <q-item-label>
-                        Квартира №{{ item.number }}
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </q-virtual-scroll>
-              </template>
-            </YandexMarker>
-          </YandexClusterer>
-        </template>
-      </YandexMap>
+                    <q-item
+                      :key="item.id"
+                      dense
+                    >
+                      <q-item-section>
+                        <q-item-label>
+                          Квартира №{{ item.number }}
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-virtual-scroll>
+                </template>
+              </YandexMarker>
+            </YandexClusterer>
+          </template>
+        </YandexMap>
+      </template>
+      <Loading v-else />
     </template>
 
     <template v-slot:right-drawer>
+      <FilterConfirmDialog action="map" searchType="MapFlatSearch" />
+
       <div class="q-pa-md">
         <AdvancedFlatFilter
           :searchModel="searchModel.MapFlatSearch"
@@ -58,22 +64,23 @@
         />
       </div>
     </template>
-
   </MainLayout>
 </template>
 
 <script>
 import { ref, computed } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
-import useEmitter from '@/composables/use-emitter'
+// import useEmitter from '@/composables/use-emitter'
 import MainLayout from '@/Layouts/MainLayout.vue'
+import Loading from "@/Components/Elements/Loading.vue"
 import { yaMapsSettings } from '@/configurations/custom-configs'
 import { YandexMap, YandexMarker, YandexClusterer } from 'vue-yandex-maps'
 import AdvancedFlatFilter from '@/Pages/Main/partials/AdvancedFlatFilter.vue'
+import FilterConfirmDialog from '@/Pages/Main/partials/FilterConfirmDialog.vue'
 
 export default {
   components: {
-    MainLayout, YandexMap, YandexMarker, YandexClusterer, AdvancedFlatFilter
+    MainLayout, Loading, YandexMap, YandexMarker, YandexClusterer, AdvancedFlatFilter, FilterConfirmDialog
   },
   props: {
     searchModel: {
@@ -134,10 +141,11 @@ export default {
       return [longitude, latitude]
     })
 
-    const emitter = useEmitter()
+    // Old variant of search: emmidiatly on filter change
+    /*const emitter = useEmitter()
     emitter.on('flat-filter-changed', payload => {
       Inertia.get('/site/map', { MapFlatSearch: payload, city: payload.city_id }, { preserveState: true })
-    })
+    })*/
 
     return {
       yaMapsSettings,

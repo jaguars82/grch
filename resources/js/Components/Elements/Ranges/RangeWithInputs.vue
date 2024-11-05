@@ -89,7 +89,7 @@
         } else {
           console.log('range component needs the "name" prop to be provided to emit the "change" event')
         }
-      })
+      }, { deep: true })
 
       return { rangeValue }
     }

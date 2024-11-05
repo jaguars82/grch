@@ -257,6 +257,7 @@ class XmlImportService implements ImportServiceInterface
 		                'status' => array_key_exists((string)$flat->status, $this->status) ? $this->status[(string)$flat->status] : Flat::STATUS_SALE,
 						'layout' => $layout,
                         'is_studio' => $studio,
+                        'is_commercial' => preg_match("/кп$/", $flat->apartment) ? 1 : 0,
 		            ];
 
                     $flats[$currentFlatId] = $_flat;

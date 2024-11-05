@@ -5,6 +5,7 @@
     </template>
 
     <template v-slot:main>
+      <!-- List of Objects -->
       <FlatListItem
         v-for="flat of dataProvider"
         class="q-mx-md q-mt-md"
@@ -21,6 +22,8 @@
     </template>
 
     <template v-slot:right-drawer>
+      <FilterConfirmDialog />
+
       <div class="q-pa-md">
         <AdvancedFlatFilter
           :searchModel="searchModel.AdvancedFlatSearch"
@@ -43,12 +46,13 @@
 <script>
 import { ref, computed } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
-import useEmitter from '@/composables/use-emitter'
+// import useEmitter from '@/composables/use-emitter'
 import MainLayout from '@/Layouts/MainLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import Loading from '@/Components/Elements/Loading.vue'
 import FlatListItem from '@/Components/Flat/FlatListItem.vue'
 import AdvancedFlatFilter from '@/Pages/Main/partials/AdvancedFlatFilter.vue'
+import FilterConfirmDialog from '@/Pages/Main/partials/FilterConfirmDialog.vue'
 
 export default {
   props: {
@@ -107,7 +111,7 @@ export default {
     rangeEdges: Object,
   },
   components: {
-    MainLayout, Breadcrumbs, Loading, FlatListItem, AdvancedFlatFilter
+    MainLayout, Breadcrumbs, Loading, FlatListItem, AdvancedFlatFilter, FilterConfirmDialog
   },
   setup(props) {
 
@@ -136,12 +140,20 @@ export default {
       Inertia.get('/site/search', { 'list-page': page, AdvancedFlatSearch: props.searchModel.AdvancedFlatSearch }/*, { preserveState: true }*/)
     }
 
-    const emitter = useEmitter()
-    emitter.on('flat-filter-changed', payload => {
-      Inertia.get('/site/search', { AdvancedFlatSearch: payload }, { preserveState: true })
-    })
+    // Old variant of search: emmidiatly on filter change
+    /*const emitter = useEmitter()
+    emitter.on('flat-filter-changed', payload => {      
+      axios.post('/site/pre-search', { AdvancedFlatSearch: payload })
+      .then(function (response) {
+        newSearchPrecount.value = response.data
+        console.log(newSearchPrecount.value)
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+    })*/
 
-    return { breadcrumbs, currentPage, goToPage  }
+    return { breadcrumbs, currentPage, goToPage }
   }
 }
 </script>

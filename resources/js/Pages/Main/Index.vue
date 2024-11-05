@@ -10,17 +10,79 @@
       >-->
         <!-- Search form -->
         <div class="row justify-center q-my-lg" :class="{ 'width-98': $q.screen.lt.md, 'width-80': $q.screen.gt.sm, 'items-center': $q.screen.gt.sm }">
+          <div class="col-12">
+            <!-- Region Selector -->
+            <RegionSelector :regions="regions" />
+          </div>
           <div :class="{ 'col-12': $q.screen.xs, 'col-10': $q.screen.gt.xs }">
             <div class="row q-col-gutter-none">
+              <!-- Sattlement (city, town etc.) -->
               <div class="col-12 col-sm-4 col-md-2 no-padding">
-                <q-select square outlined v-model="districtSelect" :options="districtOptions" label="Район" class="search-input" multiple use-chips emit-value map-options options-dense :dense="$q.screen.lt.md">
+                <q-select
+                  square
+                  outlined
+                  v-model="citySelect"
+                  :options="cityOptions"
+                  label="Населенный пункт"
+                  class="search-input"
+                  :class="{ 'rounded-left': true, 'rounded-right': $q.screen.xs }"
+                  @update:model-value="onCitySelect"
+                  emit-value
+                  map-options
+                  options-dense
+                  dense
+                >
+                  <template v-slot:option="scope">
+                    <q-item v-bind="scope.itemProps">
+                      <q-item-section>
+                        <span :class="{'text-bold': scope.opt.regionCenter == 1}">
+                          {{ scope.opt.label }}
+                        </span>
+                      </q-item-section>
+                    </q-item>
+                  </template>
                 </q-select>
               </div>
+              <!-- District of the sattlement -->
               <div class="col-12 col-sm-4 col-md-2 no-padding">
-                <q-input square outlined readonly v-model="roomsSelect" label="Количество комнат" class="search-input" :dense="$q.screen.lt.md">
+                <q-select
+                  square
+                  outlined
+                  v-model="districtSelect"
+                  :options="districtOptions"
+                  label="Район"
+                  class="search-input"
+                  :class="{ 'rounded-left': $q.screen.xs, 'rounded-right': $q.screen.xs }"
+                  multiple
+                  use-chips
+                  emit-value
+                  map-options
+                  options-dense
+                  dense
+                >
+                </q-select>
+              </div>
+              <!-- Amount of rooms and flat type (standart/euro/studio) -->
+              <div class="col-12 col-sm-4 col-md-2 no-padding" style="cursor: pointer !important;">
+                <q-input
+                  square
+                  outlined
+                  readonly
+                  v-model="roomsSelect"
+                  @click="showRoomsPopup = true"
+                  label="Комнат"
+                  class="search-input"
+                  :class="{ 'rounded-left': $q.screen.xs, 'rounded-right': $q.screen.xs || $q.screen.sm }"
+                  dense
+                >
                   <template v-slot:append>
                     <q-icon name="edit_note" class="cursor-pointer">
-                      <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                      <q-popup-proxy
+                        v-model="showRoomsPopup"
+                        cover
+                        transition-show="scale"
+                        transition-hide="scale"
+                      >
                         <q-card>
                           <q-card-section>
                             <RoomsAmountButtons :roomsAmount="roomsSelect" />
@@ -34,17 +96,64 @@
                   </template>
                 </q-input>
               </div>
-              <div class="col-12 col-sm-4 col-md-3 no-padding">
-                <q-select square outlined v-model="developerSelect" :options="developerOptions" label="Застройщик" class="search-input" @update:model-value="onDeveloperSelect" multiple use-chips emit-value map-options options-dense :dense="$q.screen.lt.md" />
+              <!-- Developer -->
+              <div class="col-12 col-sm-4 col-md-2 no-padding">
+                <q-select
+                  square
+                  outlined
+                  v-model="developerSelect"
+                  :options="developerOptions"
+                  label="Застройщик"
+                  class="search-input"
+                  :class="{ 'rounded-left': $q.screen.xs || $q.screen.sm, 'rounded-right': $q.screen.xs }"
+                  @update:model-value="onDeveloperSelect"
+                  multiple
+                  use-chips
+                  emit-value
+                  map-options
+                  options-dense
+                  dense
+                />
               </div>
-              <div class="col-12 col-sm-6 col-md-3 no-padding">
-                <q-select square outlined v-model="newbuildingComplexesSelect" :options="newbuildingComplexesOptions" label="Жилой комплекс" class="search-input" multiple use-chips emit-value map-options options-dense :dense="$q.screen.lt.md" />
+              <!-- Newbuilding Complex -->
+              <div class="col-12 col-sm-4 col-md-2 no-padding">
+                <q-select
+                  square
+                  outlined
+                  v-model="newbuildingComplexesSelect"
+                  :options="newbuildingComplexesOptions"
+                  label="Жилой комплекс"
+                  class="search-input"
+                  :class="{ 'rounded-left': $q.screen.xs, 'rounded-right': $q.screen.xs }"
+                  multiple
+                  use-chips
+                  emit-value
+                  map-options
+                  options-dense
+                  dense
+                />
               </div>
-              <div class="col-12 col-sm-6 col-md-2 no-padding">
-                <q-input square outlined readonly v-model="model" label="Цена" class="search-input" :dense="$q.screen.lt.md">
+              <!-- Price -->
+              <div class="col-12 col-sm-4 col-md-2 no-padding cursor-pointer">
+                <q-input
+                  square
+                  outlined
+                  readonly
+                  v-model="priceLabel"
+                  @click="showPricePopup = true"
+                  label="Цена"
+                  class="search-input"
+                  :class = "{ 'rounded-left': $q.screen.xs, 'rounded-right': true }"
+                  dense
+                >
                   <template v-slot:append>
                     <q-icon name="tune" class="cursor-pointer">
-                      <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                      <q-popup-proxy
+                        v-model="showPricePopup"
+                        cover
+                        transition-show="scale"
+                        transition-hide="scale"
+                      >
                         <q-card class="popup-controls-container">
                           <q-card-section>
                             <PriceRangeWithToggler
@@ -64,7 +173,8 @@
               </div>
             </div>
           </div>
-          <div class="col-2" :class="{ 'col-2': $q.screen.gt.xs, 'col-12': $q.screen.xs, 'text-right': $q.screen.xs, 'q-mt-sm': $q.screen.xs }">
+          <!-- Form action buttons -->
+          <div class="col-2 self-start" :class="{ 'col-2': $q.screen.gt.xs, 'col-12': $q.screen.xs, 'text-right': $q.screen.xs, 'q-mt-sm': $q.screen.xs }">
             <q-btn color="primary" :size="$q.screen.sm ? 'sm' : 'md'" class="text-white q-ml-sm q-mr-xs" unelevated round icon="search" @click="search" />
             <q-btn color="white" :size="$q.screen.sm ? 'sm' : 'md'" class="text-grey-7" unelevated round icon="pin_drop" @click="mapSearch" />
           </div>
@@ -168,12 +278,14 @@
 
 
 <script>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch, watchEffect, nextTick } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { asDateTime } from '@/helpers/formatter'
 import { stripHtml } from '@/helpers/utils'
+import { idNameObjToOptions } from '@/composables/formatted-and-processed-data'
 import axios from 'axios'
 import MainLayout from '@/Layouts/MainLayout.vue'
+import RegionSelector from '@/Components/Elements/RegionSelector.vue'
 import RoomsAmountButtons from '@/Components/Elements/RoomsAmountButtons.vue'
 import useEmitter from '@/composables/use-emitter'
 import FlatTypeToggler from '@/Components/Elements/FlatTypeToggler.vue'
@@ -193,34 +305,126 @@ export default {
     developerDataProvider: Array,
     agencyDataProvider: Array,
     bankDataProvider: Array,
-    districts: Object,
+    regions: Object,
+    // districts: Object,
     developers: Object,
     newbuildingComplexes: Object
   },
-  components: { MainLayout, RoomsAmountButtons, FlatTypeToggler, PriceRangeWithToggler, DeveloperResumeCard },
+  components: { MainLayout, RegionSelector, RoomsAmountButtons, FlatTypeToggler, PriceRangeWithToggler, DeveloperResumeCard },
   setup(props) {
     const emitter = useEmitter()
 
-    const districtSelect = ref(null)
-    const districtOptions = computed(() => {
+    const regionSelect = ref(null)
+
+    const citiesForRegion = ref(null)
+    const citySelect = ref(null)
+    const cityOptions = computed(() => {
       const options = []
-      Object.keys(props.districts).forEach(districtId => {
-        options.push({ label: props.districts[districtId], value: districtId })
-      })
+      if (citiesForRegion.value) {
+        citiesForRegion.value.forEach(city => {
+          options.push({ label: city.name, value: city.id, regionCenter: city.is_region_center })
+        })
+      }
       return options
     })
 
+    const districtsOfCity = ref(null)
+    const districtSelect = ref(null)
+    const districtOptions = computed(() => {
+      const options = []
+      /*Object.keys(props.districts).forEach(districtId => {
+        options.push({ label: props.districts[districtId], value: districtId })
+      })*/
+      if (districtsOfCity.value) {
+        districtsOfCity.value.forEach(district => {
+          options.push({ label: district.name, value: district.id })
+        })
+      }
+      return options
+    })
+
+    const onCitySelect = () => {
+      districtSelect.value = null
+      axios.post('/city/get-for-city?id=' + citySelect.value)
+      .then(function (response) {
+        districtsOfCity.value = response.data
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+    }
+
+    const showRoomsPopup = ref(false)
+
     const developerSelect = ref(null)
-    const developerOptions =  computed(() => {
+    const refrashedDevelopers = ref(null)
+    const developerOptions = ref(idNameObjToOptions(props.developers))
+
+    watchEffect(() => {
+      developerOptions.value = refrashedDevelopers.value
+        ? idNameObjToOptions(refrashedDevelopers.value)
+        : idNameObjToOptions(props.developers)
+    })
+
+    const isLoadingDevelopers = ref(false)
+    
+    const fetchDevelopers = async (cityId = null, regionId = null, districtId = null) => {
+      
+      if (Array.isArray(districtId) && districtId.length === 0) {
+        districtId = null;
+      }
+
+      let action, argumentName, locationId;
+
+      if (districtId) {
+        action = 'get-developers-for-city-district';
+        argumentName = 'district_id';
+        locationId = districtId;
+      } else if (cityId) {
+        action = 'get-developers-for-city';
+        argumentName = 'city_id';
+        locationId = cityId;
+      } else {
+        action = 'get-developers-for-region';
+        argumentName = 'region_id';
+        locationId = regionId;
+      }
+
+      isLoadingDevelopers.value = true; // set the flag of loading developers
+
+      try {
+        const response = await axios.post(`/developer/${action}`, { [argumentName]: locationId });
+        
+        developerOptions.value = idNameObjToOptions(response.data)
+        
+        await nextTick()
+
+      } catch (error) {
+        console.error("Error loading developers:", error);
+      } finally {
+        isLoadingDevelopers.value = false // reset the loading flag
+      }
+    }
+
+    // Developers on citySelect/regionSelect/districtSelect change
+    watch([citySelect, regionSelect, districtSelect], ([newCityId, newRegionId, newDistrictId]) => {
+
+      developerSelect.value = null
+      newbuildingComplexesSelect.value = null
+
+      fetchDevelopers(newCityId, newRegionId, newDistrictId)
+    })
+
+    /*const developerOptions =  computed(() => {
       const options = []
       Object.keys(props.developers).forEach(developerId => {
         options.push({ label: props.developers[developerId], value: developerId })
       })
       return options
-    })
+    })*/
 
     const onDeveloperSelect = () => {
-      axios.post('/newbuilding-complex/get-for-developer?id=' + developerSelect.value)
+      axios.post('/newbuilding-complex/get-for-developer?id=' + developerSelect.value, { region_id: regionSelect.value, city_id: citySelect.value, district_id: districtSelect.value })
       .then(function (response) {
         newbuildingComplexesForDevelopers.value = response.data
       })
@@ -241,6 +445,17 @@ export default {
       return options
     })
 
+    emitter.on('region-changed', (payload) => {
+      regionSelect.value = payload
+      axios.post('/city/get-for-region?id=' + payload)
+      .then(function (response) {
+        citiesForRegion.value = response.data
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+    })
+
     const roomsSelect = ref([])
     emitter.on('rooms-amont-changed', (payload) => {
       roomsSelect.value = payload
@@ -251,8 +466,11 @@ export default {
       flatTypeSelect.value = payload
     })
 
+    const showPricePopup = ref(false)
+    const priceLabel = ref('')
     const priceRangeSelect = ref({ min: null, max: null })
     emitter.on('price-changed', (payload) => {
+      priceLabel.value = `${payload.min} - ${payload.max}`
       priceRangeSelect.value = payload
     })
 
@@ -263,6 +481,8 @@ export default {
 
     const collectSearchFilter = () => {
       return {
+        region_id: regionSelect.value,
+        city_id: citySelect.value,
         district: districtSelect.value,
         roomsCount: roomsSelect.value,
         flatType: flatTypeSelect.value ? flatTypeSelect.value : '0',
@@ -292,13 +512,19 @@ export default {
       stripHtml,
       newsSlide,
       goToNews,
+      citySelect,
+      cityOptions,
       districtSelect,
       districtOptions,
+      onCitySelect,
+      showRoomsPopup,
       developerSelect,
       developerOptions,
       onDeveloperSelect,
       roomsSelect,
       flatTypeSelect,
+      showPricePopup,
+      priceLabel,
       priceRangeSelect,
       priceTypeSelect,
       newbuildingComplexesSelect,
@@ -309,6 +535,15 @@ export default {
   },
 }
 </script>
+
+<style>
+.search-input .q-field__native {
+  cursor: pointer !important;
+}
+.search-input.q-field--outlined .q-field__control:before {
+  border-style: none;
+}
+</style>
 
 <style scoped>
 .row.justify-between::before, .row.justify-between::after {
@@ -334,6 +569,15 @@ export default {
 }
 .search-input {
   background-color: rgba(255,255,255,.7);
+  /*cursor: pointer !important;*/
+}
+.rounded-left {
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+.rounded-right {
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
 }
 .popup-controls-container {
   width: 300px;

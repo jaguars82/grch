@@ -344,6 +344,7 @@ class Developer extends \app\models\Developer
                     || (isset($flatData['area']) && (float)$flatData['area'] !== (float)$flat->area)
                     || $flatData['status'] != $flat->status
                     || (isset($flatData['index_on_floor']) && $flatData['index_on_floor'] != $flat->index_on_floor)
+                    || (isset($flatData['is_commercial']) && $flatData['is_commercial'] != $flat->is_commercial)
                 ) {
 
                     $status = $flat->status;

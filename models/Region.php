@@ -40,7 +40,7 @@ class Region extends \yii\db\ActiveRecord
     public static function getAllAsList()
     {
         $result = self::find()
-            ->orderBy(['id' => SORT_DESC])
+            ->orderBy(['name' => SORT_DESC])
             ->indexBy('id')
             ->asArray()
             ->all();
@@ -49,6 +49,30 @@ class Region extends \yii\db\ActiveRecord
         
         foreach ($result as $key => $region) {
             $regions[$key] = $region['name'];
+        }
+        
+        return $regions;
+    }
+
+    /**
+     * Get regions with newbuilding complexes in array form
+     * 
+     * @return array
+     */
+    public static function getWithNewbuildingComplexesAsList()
+    {
+        $result = self::find()
+        ->innerJoin('newbuilding_complex', 'newbuilding_complex.region_id = region.id')
+        ->where(['<>', 'newbuilding_complex.region_id', 'NULL'])
+        ->orderBy(['region.name' => SORT_DESC])
+        //->indexBy('region.id')
+        ->asArray()
+        ->all();
+                
+        $regions = [];
+        
+        foreach ($result as $key => $region) {
+            $regions[$region['id']] = $region['name'];
         }
         
         return $regions;
@@ -92,6 +116,15 @@ class Region extends \yii\db\ActiveRecord
     public function getRegionDistricts()
     {
         return $this->hasMany(RegionDistrict::className(), ['region_id' => 'id'])->orderBy(['name' => SORT_ASC]);
+    }
+
+    /**
+     * Returns Id of regional capital by given region Id
+     */
+    public static function getCapitalId($regionId)
+    {
+        $capital = City::findOne(['region_id' => $regionId, 'is_region_center' => 1]);
+        return $capital->id;
     }
 
     /**
