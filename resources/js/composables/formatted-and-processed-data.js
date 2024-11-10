@@ -1,11 +1,20 @@
 /** LISTS OF OPTIONS (in format of array of {label, value} objects) */
 
-/** convert oject of { id: name } to option list */
+/** convert oject of { id: name, id2: name2, etc.. } to option list { label, value } */
 const idNameObjToOptions = (idNameObject) => {
   const options = []
   const idies = Object.keys(idNameObject)
   idies.forEach(id => {
     options.push({ label: idNameObject[id], value: id })
+  })
+  return options
+}
+
+/** convert array of objects [ { id1, name1 }, { id2, name2 } ] to option list { label, value } */
+const idNameArrayToOptions = (idNameArray) => {
+  const options = []
+  idNameArray.forEach(item => {
+    options.push({ label: item.name, value: item.id })
   })
   return options
 }
@@ -73,6 +82,7 @@ const getValueOfAnOption = (option) => {
 
 export {
   idNameObjToOptions,
+  idNameArrayToOptions,
   secondaryCategoryOptionList,
   userOptionList,
   selectOneFromOptionsList,

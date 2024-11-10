@@ -12,6 +12,8 @@ use Yii;
  */
 class Region extends \yii\db\ActiveRecord
 {
+    const DEFAULT_REGION = 1;
+    
     /**
      * {@inheritdoc}
      */

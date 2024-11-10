@@ -61,6 +61,7 @@
           :material="materials"
           :deadlineYears="deadlineYears"
           :rangeEdges="rangeEdges"
+          :forCurrentRegion="forCurrentRegion"
         />
       </div>
     </template>
@@ -128,6 +129,7 @@ export default {
       default: {}
     },
     rangeEdges: Object,
+    forCurrentRegion: Object,
   },
   setup (props) {
 

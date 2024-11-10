@@ -471,7 +471,7 @@ class NewbuildingComplex extends ActiveRecord
     }
 
 
-    public function getVirtualbuildings()
+    /*public function getVirtualbuildings()
     {
         if (!empty($this->virtual_structure)) {
 
@@ -488,25 +488,18 @@ class NewbuildingComplex extends ActiveRecord
                     array_push($db_entrances, $dbEntrance);
                     $activeFlats += $dbEntrance->getActiveFlats()->count();
                     $reservedFlats += $dbEntrance->getReservedFlats()->count();
-                    //echo '<pre>'; var_dump($dbEntrance); echo '</pre>';
                 }
-                //echo '<pre>'; var_dump($position->entrance_idies); echo '</pre>'; die();
                 $position->db_entrances = $db_entrances;
                 $position->available_flats = $activeFlats + $reservedFlats;
                 $position->active_flats = $activeFlats;
                 $position->reserved_flats = $reservedFlats;
             }
-
-            /*foreach ($structure as $position) {
-
-            }*/
-
             return $structure;
 
         } else {
             return false;
         }
-    }
+    }*/
 	
 	
     /**
@@ -714,4 +707,20 @@ class NewbuildingComplex extends ActiveRecord
         
         return $materials;
     }
+
+    /**
+     * Get a list of newbuilding complexes in a given region in array form
+     * 
+     * @return array
+     */
+    public static function getForRegionAsList($regionId)
+    {
+        return self::find()
+        ->select(['id', 'name'])
+        ->where(['region_id' => $regionId])
+        ->andWhere(['active' => 1])
+        ->orderBy(['name' => SORT_ASC])
+        ->asArray()
+        ->all();
+    }  
 }

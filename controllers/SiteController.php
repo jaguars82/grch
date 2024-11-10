@@ -97,6 +97,10 @@ class SiteController extends Controller
         
         $searchModel = new AdvancedFlatSearch();
         $searchModel->scenario = AdvancedFlatSearch::SCENARIO_SIMPLE;
+        
+        if(is_null($searchModel->region_id)) {
+            $searchModel->region_id = Region::DEFAULT_REGION;
+        }
 
         $newsList = News::find()->onlyActual()->orderBy(['created_at' => SORT_DESC])->all();
 
@@ -220,7 +224,12 @@ class SiteController extends Controller
             'regions' => Region::getWithNewbuildingComplexesAsList(),
             // 'districts' => ArrayHelper::toArray(District::getAllForLocationAsList()),
             'developers' => ArrayHelper::toArray(Developer::getAllAsList()),
-            'newbuildingComplexes' => $searchModel->newbuildingComplexes
+            'newbuildingComplexes' => $searchModel->newbuildingComplexes,
+            'forCurrentRegion' => [
+                'districts' => District::getForRegionWithNewbuildingComplexesAsList($searchModel->region_id),
+                'developers' => Developer::getAllForRegionAsList($searchModel->region_id),
+                'newbuildingComplexes' => NewbuildingComplex::getForRegionAsList($searchModel->region_id),
+            ]
         ]);
     }
 
@@ -343,6 +352,11 @@ class SiteController extends Controller
                     'min' => Newbuilding::getMinFloorBuilding(),
                     'max' => Newbuilding::getMaxFloorBuilding(),
                 ],
+            ],
+            'forCurrentRegion' => [
+                'districts' => District::getForRegionWithNewbuildingComplexesAsList($searchModel->region_id),
+                'developers' => Developer::getAllForRegionAsList($searchModel->region_id),
+                'newbuildingComplexes' => NewbuildingComplex::getForRegionAsList($searchModel->region_id),
             ]
         ]);
     }
@@ -450,8 +464,12 @@ class SiteController extends Controller
                     'min' => Newbuilding::getMinFloorBuilding(),
                     'max' => Newbuilding::getMaxFloorBuilding(),
                 ],
+            ],
+            'forCurrentRegion' => [
+                'districts' => District::getForRegionWithNewbuildingComplexesAsList($searchModel->region_id),
+                'developers' => Developer::getAllForRegionAsList($searchModel->region_id),
+                'newbuildingComplexes' => NewbuildingComplex::getForRegionAsList($searchModel->region_id),
             ]
-
         ]);
     }
 }

@@ -6,17 +6,16 @@
     </div>
     <div :class="{ 'col-12': $q.screen.xs, 'col-10': $q.screen.gt.xs }">
 
-
-      <!-- Newbuilding Complex, Developer, Location combined selector -->
       <div class="row q-col-gutter-none">
-        <div class="col-12 col-sm-10 col-md-8 no-padding">
+        <!-- Newbuilding Complex, Developer, Location combined selector -->
+        <div class="col-12 col-md-8 no-padding">
           <q-input
             square
             outlined
             v-model="comboFieldValue"
-            label="ЖК, застройщик, город, район, улица"
+            label="ЖК, застройщик, населённый пункт, район"
             class="search-input combo-field"
-            :class="{ 'rounded-left': $q.screen.xs, 'rounded-right': $q.screen.xs || $q.screen.sm }"
+            :class="{ 'rounded-left': true, 'rounded-right': $q.screen.xs || $q.screen.sm }"
             dense
             @update:model-value="onComboFieldChange"
           >
@@ -31,7 +30,17 @@
             transition-show="scale"
             transition-hide="scale"
           >
-            <div>Подсказки</div>
+            <q-list v-if="csMatchingVariants">
+              <q-item v-for="item of csMatchingVariants" clickable v-ripple @click="addVariantToSelection(item)">
+                <q-item-section top avatar>
+                  <q-avatar :color="item.color" text-color="white" :icon="item.icon" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{ item.label }}</q-item-label>
+                  <q-item-label caption lines="1">{{ item.name }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
           </q-menu>
 
           <!-- Combined field current selections -->
@@ -60,12 +69,9 @@
             </q-chip>
           </template>
         </div>
-      </div>
 
-
-      <div class="row q-col-gutter-none">
         <!-- Sattlement (city, town etc.) -->
-        <div class="col-12 col-sm-4 col-md-2 no-padding">
+        <div v-if="false" class="col-12 col-sm-4 col-md-2 no-padding">
           <q-select
             square
             outlined
@@ -74,7 +80,6 @@
             label="Населенный пункт"
             class="search-input"
             :class="{ 'rounded-left': true, 'rounded-right': $q.screen.xs }"
-            @update:model-value="onCitySelect"
             emit-value
             map-options
             options-dense
@@ -92,7 +97,7 @@
           </q-select>
         </div>
         <!-- District of the sattlement -->
-        <div class="col-12 col-sm-4 col-md-2 no-padding">
+        <div v-if="false" class="col-12 col-sm-4 col-md-2 no-padding">
           <q-select
             square
             outlined
@@ -111,7 +116,7 @@
           </q-select>
         </div>
         <!-- Amount of rooms and flat type (standart/euro/studio) -->
-        <div class="col-12 col-sm-4 col-md-2 no-padding" style="cursor: pointer !important;">
+        <div class="col-12 col-md-2 no-padding" style="cursor: pointer !important;">
           <q-input
             square
             outlined
@@ -120,7 +125,7 @@
             @click="showRoomsPopup = true"
             label="Комнат"
             class="search-input"
-            :class="{ 'rounded-left': $q.screen.xs, 'rounded-right': $q.screen.xs || $q.screen.sm }"
+            :class="{ 'rounded-left': $q.screen.lt.md, 'rounded-right': $q.screen.xs || $q.screen.sm }"
             dense
           >
             <template v-slot:append>
@@ -145,7 +150,7 @@
           </q-input>
         </div>
         <!-- Developer -->
-        <div class="col-12 col-sm-4 col-md-2 no-padding">
+        <div v-if="false" class="col-12 col-sm-4 col-md-2 no-padding">
           <q-select
             square
             outlined
@@ -163,7 +168,7 @@
           />
         </div>
         <!-- Newbuilding Complex -->
-        <div class="col-12 col-sm-4 col-md-2 no-padding">
+        <div v-if="false" class="col-12 col-sm-4 col-md-2 no-padding">
           <q-select
             square
             outlined
@@ -181,7 +186,7 @@
           />
         </div>
         <!-- Price -->
-        <div class="col-12 col-sm-4 col-md-2 no-padding cursor-pointer">
+        <div class="col-12 col-md-2 no-padding cursor-pointer">
           <q-input
             square
             outlined
@@ -190,7 +195,7 @@
             @click="showPricePopup = true"
             label="Цена"
             class="search-input"
-            :class = "{ 'rounded-left': $q.screen.xs, 'rounded-right': true }"
+            :class = "{ 'rounded-left': $q.screen.lt.md, 'rounded-right': true }"
             dense
           >
             <template v-slot:append>
@@ -230,7 +235,7 @@
 
 <script>
 import { ref, computed, onMounted, watch, watchEffect, nextTick } from 'vue'
-import { idNameObjToOptions } from '@/composables/formatted-and-processed-data'
+import { idNameObjToOptions, idNameArrayToOptions } from '@/composables/formatted-and-processed-data'
 import { Inertia } from '@inertiajs/inertia'
 import axios from 'axios'
 import RegionSelector from '@/Components/Elements/RegionSelector.vue'
@@ -244,7 +249,8 @@ export default {
     initialFilterParams: Object,
     regions: Object,
     developers: Object,
-    newbuildingComplexes: Object
+    newbuildingComplexes: Object,
+    forCurrentRegion: Object
   },
   components: { RegionSelector, RoomsAmountButtons, FlatTypeToggler, PriceRangeWithToggler },
   setup(props) {
@@ -279,7 +285,18 @@ export default {
       return options
     })
 
-    const onCitySelect = () => {
+    watch (citySelect, (newVal) => {
+      districtSelect.value = null
+      axios.post('/city/get-for-city?id=' + newVal)
+      .then(function (response) {
+        districtsOfCity.value = response.data
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+    })
+
+    /*const onCitySelect = () => {
       districtSelect.value = null
       axios.post('/city/get-for-city?id=' + citySelect.value)
       .then(function (response) {
@@ -288,7 +305,7 @@ export default {
       .catch(function (error) {
         console.log(error)
       })
-    }
+    }*/
 
     const showRoomsPopup = ref(false)
 
@@ -387,6 +404,8 @@ export default {
     watch(
       newbuildingComplexesOptions,
       (newOptions) => {
+        if (newbuildingComplexesSelect.value === null || !newbuildingComplexesSelect.value.length) return
+
         const validValues = newOptions.map(option => option.value)
         newbuildingComplexesSelect.value = newbuildingComplexesSelect.value.filter(value => validValues.includes(value))
       },
@@ -431,11 +450,162 @@ export default {
     const comboFieldValue = ref(null)
     const showComboFieldPopup = ref(false)
 
+    /** Sets of variants for each category (field) */
+    // method to fetch otions to the set of variants for a given category
+    const fetchToVariants = (options, category) => {
+      const categoryParams = {
+        city: {
+          category: 'city',
+          name: 'Населённый пункт',
+          icon: 'near_me',
+          color: 'primary'
+        },
+        district: {
+          category: 'district',
+          name: 'Район города',
+          icon: 'home_work',
+          color: 'grey-8'
+        },
+        developer: {
+          category: 'developer',
+          name: 'Застройщик',
+          icon: 'engineering',
+          color: 'orange-9'
+        },
+        newbuildingComplex: {
+          category: 'newbuildingComplex',
+          name: 'ЖК',
+          icon: 'location_city',
+          color: 'positive'
+        },
+      }
+
+      const variants = []
+
+      options.forEach(item => {
+        variants.push({ 
+          label: item.label,
+          value: item.value,
+          category: categoryParams[category].category, 
+          name: categoryParams[category].name, 
+          icon: categoryParams[category].icon, 
+          color: categoryParams[category].color, 
+        })
+      })
+
+      return variants
+    }
+
+    // City
+    const csCityVariants = computed(() => { return fetchToVariants(cityOptions.value, 'city') })
+
+    // District (of the city)
+    const csDistrictVariants = computed(() => {
+      let variants = []
+
+      if (citySelect.value !== null && citySelect.value !== undefined && citySelect.value.length) {
+        variants = districtOptions.value.length ? fetchToVariants(districtOptions.value, 'district') : []
+      } else {
+        // fetch variants if no city selected
+        variants = fetchToVariants(idNameArrayToOptions(props.forCurrentRegion.districts), 'district')
+      }
+
+      return variants
+    })
+
+    // Developer
+    const csDeveloperVariants = computed(() => {
+      let variants = []
+
+      if (developerOptions.value !== null && developerOptions.value !== undefined && developerOptions.value.length) {
+        variants = fetchToVariants(developerOptions.value, 'developer')
+      } else {
+        variants = fetchToVariants(idNameArrayToOptions(props.forCurrentRegion.developers), 'developer')
+      }
+
+      return variants
+    })
+
+    // Newbuilding Complex
+    const csNewbuildingComplexVariants = computed(() => {
+      let variants = []
+
+      if (newbuildingComplexesOptions.value !== null && newbuildingComplexesOptions.value !== undefined && newbuildingComplexesOptions.value.length) {
+        variants = fetchToVariants(newbuildingComplexesOptions.value, 'newbuildingComplex')
+      } else {
+        variants = fetchToVariants(idNameArrayToOptions(props.forCurrentRegion.newbuildingComplexes), 'newbuildingComplex')
+      }
+
+      return variants
+    })
+
+    // Combine all the variants in one set
+    const csAllVariants = computed(() => {
+      const allVariants =  [
+        ...csCityVariants.value,
+        ...csDistrictVariants.value,
+        ...csDeveloperVariants.value,
+        ...csNewbuildingComplexVariants.value,
+      ]
+      return allVariants
+    })
+
+    // All the variant that matches combined field value
+    const csMatchingVariants = computed(() => {
+      if (comboFieldValue.value === null || !comboFieldValue.value.length) return 
+      const matchingVariants = csAllVariants.value.filter(variant => {
+        return variant.label.toLowerCase().includes(comboFieldValue.value.toLowerCase())
+      })
+      return matchingVariants
+    })
+
+    /** Show variants on combo-field value change */
     const onComboFieldChange = () => {
+      if (
+        csMatchingVariants.value === undefined
+        || csMatchingVariants.value === null
+        || !csMatchingVariants.value.length
+        || comboFieldValue.value === undefined
+        || comboFieldValue.value === null
+        || !comboFieldValue.value.length
+      ) {
+        showComboFieldPopup.value = false 
+        return 
+      }
+
       showComboFieldPopup.value = true
     }
 
-    /** Combofield selected values */
+    /** Add a variant to a selection (according to the category) */
+    const addVariantToSelection = (item) => {
+      switch (item.category) {
+        case 'city':
+          citySelect.value = item.value
+        case 'district':
+          if (districtSelect.value === null) {
+            districtSelect.value = [item.value]
+          } else if (!districtSelect.value.includes(item.value)) {
+            districtSelect.value.push(item.value)
+          }
+        case 'developer':
+          if (developerSelect.value === null) {
+            developerSelect.value = [item.value]
+          } else if (!developerSelect.value.includes(item.value)) {
+            developerSelect.value.push(item.value)
+          }
+        case 'newbuildingComplex':
+          if (newbuildingComplexesSelect.value === null) {
+            newbuildingComplexesSelect.value = [item.value]
+          } else if (!newbuildingComplexesSelect.value.includes(item.value)) {
+            newbuildingComplexesSelect.value.push(item.value)
+          }
+      }
+
+      comboFieldValue.value = null
+      showComboFieldPopup.value = false
+    }
+
+    /** Combo-field selected values */
     const cfSelectedCity = computed(() => {
       return cityOptions.value.filter((option) => {
         return option.value == citySelect.value
@@ -447,9 +617,16 @@ export default {
 
       if (districtSelect.value === null || !districtSelect.value.length) return items
 
-      items = districtOptions.value.filter((option) => {
-        return districtSelect.value.includes(option.value)
-      })
+      if (districtOptions.value !== null && districtOptions.value.length) {
+        items = districtOptions.value.filter((option) => {
+          return districtSelect.value.includes(option.value)
+        })
+      } else {
+        const forRegionOptions = idNameArrayToOptions(props.forCurrentRegion.districts)
+        items = forRegionOptions.filter((option) => {
+          return districtSelect.value.includes(option.value)
+        })
+      }
 
       return items
     })
@@ -466,9 +643,16 @@ export default {
 
       if (developerSelect.value === null || !developerSelect.value.length) return items
 
-      items = developerOptions.value.filter((option) => {
-        return developerSelect.value.includes(option.value)
-      })
+      if (developerOptions.value !== null && developerOptions.value.length) {
+        items = developerOptions.value.filter((option) => {
+          return developerSelect.value.includes(option.value)
+        })
+      } else {
+        const forRegionOptions = idNameArrayToOptions(props.forCurrentRegion.developers)
+        items = forRegionOptions.filter((option) => {
+          return developerSelect.value.includes(option.value)
+        })
+      }
 
       return items
     })
@@ -485,9 +669,16 @@ export default {
 
       if (newbuildingComplexesSelect.value === null || !newbuildingComplexesSelect.value.length) return items
 
-      items = newbuildingComplexesOptions.value.filter((option) => {
-        return newbuildingComplexesSelect.value.includes(option.value)
-      })
+      if (newbuildingComplexesOptions.value !== null && newbuildingComplexesOptions.value.length) {
+        items = newbuildingComplexesOptions.value.filter((option) => {
+          return newbuildingComplexesSelect.value.includes(option.value)
+        })
+      } else {
+        const forRegionOptions = idNameArrayToOptions(props.forCurrentRegion.newbuildingComplexes)
+        items = forRegionOptions.filter((option) => {
+          return newbuildingComplexesSelect.value.includes(option.value)
+        })
+      }
 
       return items
     })
@@ -527,7 +718,7 @@ export default {
       cityOptions,
       districtSelect,
       districtOptions,
-      onCitySelect,
+      //onCitySelect,
       showRoomsPopup,
       developerSelect,
       developerOptions,
@@ -543,6 +734,8 @@ export default {
       comboFieldValue,
       showComboFieldPopup,
       onComboFieldChange,
+      csMatchingVariants,
+      addVariantToSelection,
       cfSelectedCity,
       cfSelectedDistrict,
       removeItemFromDistrictSelection,

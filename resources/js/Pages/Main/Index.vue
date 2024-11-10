@@ -14,6 +14,7 @@
           :regions="regions"
           :developers="developers"
           :newbuildingComplexes="newbuildingComplexes"
+          :forCurrentRegion="forCurrentRegion"
         />
         <!-- Info cards -->
         <div class="row" :class="{ 'width-98': $q.screen.lt.md, 'width-80': $q.screen.gt.sm }">
@@ -137,7 +138,8 @@ export default {
     regions: Object,
     // districts: Object,
     developers: Object,
-    newbuildingComplexes: Object
+    newbuildingComplexes: Object,
+    forCurrentRegion: Object
   },
   components: { MainLayout, MainFlatFilter, DeveloperResumeCard },
   setup(props) {
