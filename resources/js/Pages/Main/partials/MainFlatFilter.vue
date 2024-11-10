@@ -5,6 +5,64 @@
       <RegionSelector :regions="regions" />
     </div>
     <div :class="{ 'col-12': $q.screen.xs, 'col-10': $q.screen.gt.xs }">
+
+
+      <!-- Newbuilding Complex, Developer, Location combined selector -->
+      <div class="row q-col-gutter-none">
+        <div class="col-12 col-sm-10 col-md-8 no-padding">
+          <q-input
+            square
+            outlined
+            v-model="comboFieldValue"
+            label="ЖК, застройщик, город, район, улица"
+            class="search-input combo-field"
+            :class="{ 'rounded-left': $q.screen.xs, 'rounded-right': $q.screen.xs || $q.screen.sm }"
+            dense
+            @update:model-value="onComboFieldChange"
+          >
+          </q-input>
+
+          <!-- A list of variants to select -->
+          <q-menu
+            target=".combo-field"
+            no-parent-event
+            no-focus
+            v-model="showComboFieldPopup"
+            transition-show="scale"
+            transition-hide="scale"
+          >
+            <div>Подсказки</div>
+          </q-menu>
+
+          <!-- Combined field current selections -->
+          <!-- City -->
+          <template v-if="cfSelectedCity.length">
+            <q-chip v-for="city of cfSelectedCity" size="sm" class="q-mt-none cf-chip" outline color="primary" icon="near_me" removable @remove="citySelect = null">
+              {{ city.label }}
+            </q-chip>
+          </template>
+          <!-- District (of a city or a settlement) -->
+          <template v-if="cfSelectedDistrict.length">
+            <q-chip v-for="district of cfSelectedDistrict" size="sm" class="q-mt-none cf-chip" outline color="grey-8" icon="home_work" removable @remove="removeItemFromDistrictSelection(district.value)">
+              {{ district.label }}
+            </q-chip>
+          </template>
+          <!-- Developer -->
+          <template v-if="cfSelectedDeveloper.length">
+            <q-chip v-for="developer of cfSelectedDeveloper" size="sm" class="q-mt-none cf-chip" outline color="orange-9" icon="engineering" removable @remove="removeItemFromDeveloperSelection(developer.value)">
+              {{ developer.label }}
+            </q-chip>
+          </template>
+          <!-- Newbuilding Complex -->
+          <template v-if="cfSelectedNewbuildingComplex.length">
+            <q-chip v-for="complex of cfSelectedNewbuildingComplex" size="sm" class="q-mt-none cf-chip" outline color="positive" icon="location_city" removable @remove="removeItemFromNewbuildingComplexSelection(complex.value)">
+              {{ complex.label }}
+            </q-chip>
+          </template>
+        </div>
+      </div>
+
+
       <div class="row q-col-gutter-none">
         <!-- Sattlement (city, town etc.) -->
         <div class="col-12 col-sm-4 col-md-2 no-padding">
@@ -96,7 +154,6 @@
             label="Застройщик"
             class="search-input"
             :class="{ 'rounded-left': $q.screen.xs || $q.screen.sm, 'rounded-right': $q.screen.xs }"
-            @update:model-value="onDeveloperSelect"
             multiple
             use-chips
             emit-value
@@ -292,9 +349,9 @@ export default {
       newbuildingComplexesSelect.value = null
 
       fetchDevelopers(newCityId, newRegionId, newDistrictId)
-    })
+    }, { deep: true })
 
-    const onDeveloperSelect = () => {
+    /*const onDeveloperSelect = () => {
       axios.post('/newbuilding-complex/get-for-developer?id=' + developerSelect.value, { region_id: regionSelect.value, city_id: citySelect.value, district_id: districtSelect.value })
       .then(function (response) {
         newbuildingComplexesForDevelopers.value = response.data
@@ -302,7 +359,17 @@ export default {
       .catch(function (error) {
         console.log(error)
       })
-    }
+    }*/
+
+    watch (developerSelect, (newVal) => {
+      axios.post('/newbuilding-complex/get-for-developer?id=' + newVal, { region_id: regionSelect.value, city_id: citySelect.value, district_id: districtSelect.value })
+      .then(function (response) {
+        newbuildingComplexesForDevelopers.value = response.data
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+    }, { deep: true })
 
     const newbuildingComplexesForDevelopers = ref(null)
     const newbuildingComplexesSelect = ref(null)
@@ -315,6 +382,16 @@ export default {
       }
       return options
     })
+
+    // remove excess positions from selected newbuilding complexes
+    watch(
+      newbuildingComplexesOptions,
+      (newOptions) => {
+        const validValues = newOptions.map(option => option.value)
+        newbuildingComplexesSelect.value = newbuildingComplexesSelect.value.filter(value => validValues.includes(value))
+      },
+      { deep: true }
+    )
 
     emitter.on('region-changed', (payload) => {
       regionSelect.value = payload
@@ -350,6 +427,78 @@ export default {
       priceTypeSelect.value = payload
     })
 
+    /** Combo Field Logic */
+    const comboFieldValue = ref(null)
+    const showComboFieldPopup = ref(false)
+
+    const onComboFieldChange = () => {
+      showComboFieldPopup.value = true
+    }
+
+    /** Combofield selected values */
+    const cfSelectedCity = computed(() => {
+      return cityOptions.value.filter((option) => {
+        return option.value == citySelect.value
+      })
+    })
+
+    const cfSelectedDistrict = computed(() => {
+      let items = []
+
+      if (districtSelect.value === null || !districtSelect.value.length) return items
+
+      items = districtOptions.value.filter((option) => {
+        return districtSelect.value.includes(option.value)
+      })
+
+      return items
+    })
+
+    const removeItemFromDistrictSelection = (itemId) => {
+      const itemIndex = districtSelect.value.indexOf(itemId)
+      if (itemIndex !== -1) {
+        districtSelect.value.splice(itemIndex, 1)
+      }
+    }
+
+    const cfSelectedDeveloper = computed(() => {
+      let items = []
+
+      if (developerSelect.value === null || !developerSelect.value.length) return items
+
+      items = developerOptions.value.filter((option) => {
+        return developerSelect.value.includes(option.value)
+      })
+
+      return items
+    })
+
+    const removeItemFromDeveloperSelection = (itemId) => {
+      const itemIndex = developerSelect.value.indexOf(itemId)
+      if (itemIndex !== -1) {
+        developerSelect.value.splice(itemIndex, 1)
+      }
+    }
+
+    const cfSelectedNewbuildingComplex = computed(() => {
+      let items = []
+
+      if (newbuildingComplexesSelect.value === null || !newbuildingComplexesSelect.value.length) return items
+
+      items = newbuildingComplexesOptions.value.filter((option) => {
+        return newbuildingComplexesSelect.value.includes(option.value)
+      })
+
+      return items
+    })
+
+    const removeItemFromNewbuildingComplexSelection = (itemId) => {
+      const itemIndex = newbuildingComplexesSelect.value.indexOf(itemId)
+      if (itemIndex !== -1) {
+        newbuildingComplexesSelect.value.splice(itemIndex, 1)
+      }
+    }
+
     const collectSearchFilter = () => {
       return {
         region_id: regionSelect.value,
@@ -382,7 +531,7 @@ export default {
       showRoomsPopup,
       developerSelect,
       developerOptions,
-      onDeveloperSelect,
+      //onDeveloperSelect,
       roomsSelect,
       flatTypeSelect,
       showPricePopup,
@@ -391,6 +540,16 @@ export default {
       priceTypeSelect,
       newbuildingComplexesSelect,
       newbuildingComplexesOptions,
+      comboFieldValue,
+      showComboFieldPopup,
+      onComboFieldChange,
+      cfSelectedCity,
+      cfSelectedDistrict,
+      removeItemFromDistrictSelection,
+      cfSelectedDeveloper,
+      removeItemFromDeveloperSelection,
+      cfSelectedNewbuildingComplex,
+      removeItemFromNewbuildingComplexSelection,
       search,
       mapSearch,
     }
@@ -408,8 +567,8 @@ export default {
 </style>
 
 <style scoped>
-.search-input {
-  background-color: rgba(255,255,255,.7);
+.search-input, .cf-chip {
+  background-color: rgba(255,255,255,.7) !important;
 }
 .rounded-left {
   border-top-left-radius: 20px;
