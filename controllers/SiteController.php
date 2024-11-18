@@ -226,6 +226,7 @@ class SiteController extends Controller
             'developers' => ArrayHelper::toArray(Developer::getAllAsList()),
             'newbuildingComplexes' => $searchModel->newbuildingComplexes,
             'forCurrentRegion' => [
+                'regionId' => $searchModel->region_id,
                 'districts' => District::getForRegionWithNewbuildingComplexesAsList($searchModel->region_id),
                 'developers' => Developer::getAllForRegionAsList($searchModel->region_id),
                 'newbuildingComplexes' => NewbuildingComplex::getForRegionAsList($searchModel->region_id),

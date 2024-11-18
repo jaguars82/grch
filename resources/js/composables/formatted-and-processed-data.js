@@ -80,6 +80,89 @@ const getValueOfAnOption = (option) => {
   return value
 }
 
+
+/** OPTIONS FOR SMART SEARCH-FIELD AND COMBINED SEARCH FIELD */
+// method to fetch options to the set of variants for a given category
+const fetchToVariants = (options, category) => {
+  const categoryParams = {
+    city: {
+      category: 'city',
+      name: 'Населённый пункт',
+      icon: 'near_me',
+      color: 'primary'
+    },
+    district: {
+      category: 'district',
+      name: 'Район города',
+      icon: 'home_work',
+      color: 'grey-8'
+    },
+    developer: {
+      category: 'developer',
+      name: 'Застройщик',
+      icon: 'engineering',
+      color: 'orange-9'
+    },
+    newbuildingComplex: {
+      category: 'newbuildingComplex',
+      name: 'ЖК',
+      icon: 'location_city',
+      color: 'positive'
+    },
+    rooms: {
+      category: 'rooms',
+      name: 'Количество комнат',
+      icon: 'dashboard',
+      color: 'accent'
+    },
+    floor: {
+      category: 'floor',
+      name: 'Этаж',
+      //icon: 'horizontal_split',
+      icon: 'table_rows',
+      color: 'light-blue-9'
+    },
+    floorFrom: {
+      category: 'floorFrom',
+      name: 'Минимальный этаж',
+      icon: 'table_rows',
+      color: 'light-blue-9'
+    },
+    floorTo: {
+      category: 'floorTo',
+      name: 'Максимальный этаж',
+      icon: 'table_rows',
+      color: 'light-blue-9'
+    },
+  }
+
+  const variants = []
+
+  options.forEach(item => {
+    const itemObject = {
+      label: item.label,
+      value: item.value,
+      category: categoryParams[category].category, 
+      name: categoryParams[category].name, 
+      icon: categoryParams[category].icon, 
+      color: categoryParams[category].color,
+    }
+    
+    if (item.hasOwnProperty('aliases')) {
+      itemObject.aliases = item.aliases
+    }
+    
+    if (item.hasOwnProperty('compare')) {
+      itemObject.compare = item.compare
+    }
+
+    variants.push(itemObject)
+  })
+
+  return variants
+}
+
+
 export {
   idNameObjToOptions,
   idNameArrayToOptions,
@@ -87,5 +170,6 @@ export {
   userOptionList,
   selectOneFromOptionsList,
   selectMultipleFromOptionsList,
-  getValueOfAnOption
+  getValueOfAnOption,
+  fetchToVariants
 }
