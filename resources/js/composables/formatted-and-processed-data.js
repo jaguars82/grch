@@ -134,6 +134,42 @@ const fetchToVariants = (options, category) => {
       icon: 'table_rows',
       color: 'light-blue-9'
     },
+    totalFloorFrom: {
+      category: 'totalFloorFrom',
+      name: 'Минимальная этажность здания',
+      icon: 'table_rows',
+      color: 'light-blue-9'
+    },
+    totalFloorTo: {
+      category: 'totalFloorTo',
+      name: 'Максимальная этажность здания',
+      icon: 'table_rows',
+      color: 'light-blue-9'
+    },
+    priceFrom: {
+      category: 'priceFrom',
+      name: 'Минимальная стоимость',
+      icon: 'currency_ruble',
+      color: 'teal-8'
+    },
+    priceTo: {
+      category: 'priceTo',
+      name: 'Максимальная стоимость',
+      icon: 'currency_ruble',
+      color: 'teal-8'
+    },
+    areaFrom: {
+      category: 'areaFrom',
+      name: 'Минимальная площадь',
+      icon: 'crop_square',
+      color: 'brown-8'
+    },
+    areaTo: {
+      category: 'areaTo',
+      name: 'Максимальная площадь',
+      icon: 'crop_square',
+      color: 'brown-8'
+    },
   }
 
   const variants = []
@@ -162,6 +198,118 @@ const fetchToVariants = (options, category) => {
   return variants
 }
 
+// Convert number to price options (in millions)
+const numberToMillionsPriceOptions = (inputNumber, labelPrefix='from') => {
+  
+  const prefix = labelPrefix === 'from' ? 'от' : 'до'
+  
+  const results = []
+  
+  if (inputNumber >= 1 && inputNumber <= 9) {
+    // For Single digit Numbers
+    results.push({ 
+      value: inputNumber * 1_000_000,
+      label: `${prefix} ${inputNumber} млн. ₽`,
+      aliases: [inputNumber],
+      compare: 'fromStart',
+    })
+  } else if (inputNumber >= 10 && inputNumber <= 99) {
+    // For Double digit Numbers
+    results.push({ 
+      value: inputNumber * 100_000,
+      label: `${prefix} ${(inputNumber * 0.1).toFixed(1)} млн. ₽`,
+      aliases: [inputNumber],
+      compare: 'fromStart',
+    })
+    results.push({ 
+      value: inputNumber * 1_000_000,
+      label: `${prefix} ${inputNumber} млн. ₽`,
+      aliases: [inputNumber],
+      compare: 'fromStart',
+    })
+  } else if (inputNumber > 99) {
+    // For Numbers greater then 99
+    const firstThreeDigits = Math.floor(inputNumber / Math.pow(10, Math.floor(Math.log10(inputNumber)) - 2))
+    results.push({ 
+      value: firstThreeDigits * 10_000,
+      label: `${prefix} ${(firstThreeDigits * 0.01).toFixed(2)} млн. ₽`,
+      aliases: [inputNumber],
+      compare: 'fromStart',
+    })
+    results.push({ 
+      value: firstThreeDigits * 100_000,
+      label: `${prefix} ${(firstThreeDigits * 0.1).toFixed(1)} млн. ₽`,
+      aliases: [inputNumber],
+      compare: 'fromStart',
+    })
+  }
+
+  return results
+}
+
+// Convert number to area options (in square meters)
+const numberToAreaOptions = (inputNumber, labelPrefix = 'from') => {
+
+  const prefix = labelPrefix === 'from' ? 'от' : 'до'
+  
+  const results = []
+
+  if (inputNumber >= 1 && inputNumber <= 9) {
+    // For single-digit numbers
+    results.push({
+      value: inputNumber,
+      label: `${prefix} ${inputNumber} м²`,
+      aliases: [inputNumber],
+      compare: 'fromStart',
+    })
+    results.push({
+      value: inputNumber * 10,
+      label: `${prefix} ${inputNumber * 10} м²`,
+      aliases: [inputNumber],
+      compare: 'fromStart',
+    })
+  } else if (inputNumber >= 10 && inputNumber <= 99) {
+    // For double-digit numbers
+    results.push({
+      value: inputNumber,
+      label: `${prefix} ${inputNumber} м²`,
+      aliases: [inputNumber],
+      compare: 'fromStart',
+    })
+    results.push({
+      value: inputNumber * 10,
+      label: `${prefix} ${inputNumber * 10} м²`,
+      aliases: [inputNumber],
+      compare: 'fromStart',
+    })
+  } else if (inputNumber > 99) {
+    // For triple-digit and larger numbers (only first three digits are considered)
+    const firstThreeDigits = Math.floor(inputNumber / Math.pow(10, Math.floor(Math.log10(inputNumber)) - 2))
+
+    results.push({
+      value: firstThreeDigits * 0.1,
+      label: `${prefix} ${(firstThreeDigits * 0.1).toFixed(1)} м²`,
+      aliases: [inputNumber],
+      compare: 'fromStart',
+    })
+    results.push({
+      value: firstThreeDigits,
+      label: `${prefix} ${firstThreeDigits} м²`,
+      aliases: [inputNumber],
+      compare: 'fromStart',
+    })
+    results.push({
+      value: firstThreeDigits * 10,
+      label: `${prefix} ${firstThreeDigits * 10} м²`,
+      aliases: [inputNumber],
+      compare: 'fromStart',
+    })
+  }
+
+  return results
+}
+
+
 
 export {
   idNameObjToOptions,
@@ -171,5 +319,7 @@ export {
   selectOneFromOptionsList,
   selectMultipleFromOptionsList,
   getValueOfAnOption,
-  fetchToVariants
+  fetchToVariants,
+  numberToMillionsPriceOptions,
+  numberToAreaOptions
 }

@@ -167,7 +167,7 @@ const floorAliases = (type = 'floor') => {
           `<${genitive}`,
         ]
       }
-      case 'totalFloorsFrom': {
+      case 'totalFloorFrom': {
         return [
           ...commonAliases,
           `этажность${floor}`,
@@ -182,7 +182,7 @@ const floorAliases = (type = 'floor') => {
           `>${genitive}`,
         ]
       }
-      case 'totalFloorsTo': {
+      case 'totalFloorTo': {
         return [
           ...commonAliases,
           `этажность${floor}`,
@@ -210,16 +210,16 @@ const floorAliases = (type = 'floor') => {
         return `не ниже ${floor} этажа`
       case 'floorTo':
         return `не выше ${floor} этажа`
-      case 'totalFloorsFrom':
+      case 'totalFloorFrom':
         return `не менее ${floor} этажей`
-      case 'totalFloorsTo':
+      case 'totalFloorTo':
         return `не более ${floor} этажей`
       default:
         return ''
     }
   }
 
-  for (let floor = 1; floor <= 50; floor++) {
+  for (let floor = 1; floor <= 25; floor++) {
     const textNumeral = textNumerals[floor - 1]
     if (!textNumeral) continue
 

@@ -91,13 +91,51 @@
         {{ item.label }}
       </q-chip>
     </template>
-
+    <!-- totalFloorFrom -->
+    <template v-if="selectedTotalFloorFrom.length">
+      <q-chip v-for="item of selectedTotalFloorFrom" size="sm" class="q-mt-none cf-chip" outline :color="item.color" :icon="item.icon" removable @remove="removeItemFromTotalFloorFromSelection(item)">
+        {{ item.label }}
+      </q-chip>
+    </template>
+    <!-- totalFloorTo -->
+    <template v-if="selectedTotalFloorTo.length">
+      <q-chip v-for="item of selectedTotalFloorTo" size="sm" class="q-mt-none cf-chip" outline :color="item.color" :icon="item.icon" removable @remove="removeItemFromTotalFloorToSelection(item)">
+        {{ item.label }}
+      </q-chip>
+    </template>
+    <!-- priceFrom -->
+    <template v-if="selectedPriceFrom && selectedPriceFrom.length">
+      <q-chip v-for="item of selectedPriceFrom" size="sm" class="q-mt-none cf-chip" outline :color="item.color" :icon="item.icon" removable @remove="removeItemFromPriceFromSelection(item)">
+        {{ item.label }}
+      </q-chip>
+    </template>
+    <!-- priceTo -->
+    <template v-if="selectedPriceTo && selectedPriceTo.length">
+      <q-chip v-for="item of selectedPriceTo" size="sm" class="q-mt-none cf-chip" outline :color="item.color" :icon="item.icon" removable @remove="removeItemFromPriceToSelection(item)">
+        {{ item.label }}
+      </q-chip>
+    </template>
+    <!-- areaFrom -->
+    <template v-if="selectedAreaFrom && selectedAreaFrom.length">
+      <q-chip v-for="item of selectedAreaFrom" size="sm" class="q-mt-none cf-chip" outline :color="item.color" :icon="item.icon" removable @remove="removeItemFromAreaFromSelection(item)">
+        {{ item.label }}
+      </q-chip>
+    </template>
+    <!-- areaTo -->
+    <template v-if="selectedAreaTo && selectedAreaTo.length">
+      <q-chip v-for="item of selectedAreaTo" size="sm" class="q-mt-none cf-chip" outline :color="item.color" :icon="item.icon" removable @remove="removeItemFromAreaToSelection(item)">
+        {{ item.label }}
+      </q-chip>
+    </template>
   </div>
+  <!--<pre>price from vars {{ priceFromVariants }}</pre>-->
+  <!--<pre>sel price from {{ selectedPriceFrom }}</pre>-->
+  <!--<pre>match vars {{ matchingVariants }}</pre>-->
 </template>
 
 <script>
 import { ref, computed, watch, nextTick, onMounted } from 'vue'
-import { idNameArrayToOptions, idNameObjToOptions, fetchToVariants } from '@/composables/formatted-and-processed-data'
+import { idNameArrayToOptions, idNameObjToOptions, numberToMillionsPriceOptions, numberToAreaOptions, fetchToVariants } from '@/composables/formatted-and-processed-data'
 import { roomAliases, floorAliases } from '@/composables/dictionaries-and-maps'
 import useEmitter from '@/composables/use-emitter'
 import axios from 'axios'
@@ -209,7 +247,7 @@ export default {
     }
 
     /** Filter Logic */
-    const showVariantsPopup = ref(false)
+    //const showVariantsPopup = ref(false)
 
     const regionSelect = ref(null)
 
@@ -231,6 +269,11 @@ export default {
 
     const floorSelect = ref(null)
     const floorRangeSelect = ref({ min: null, max: null })
+    const totalFloorRangeSelect = ref({ min: null, max: null })
+
+    const priceRangeSelect = ref({ min: null, max: null })
+    
+    const areaRangeSelect = ref({ min: null, max: null })
 
     /** Sets of variants for each category (field) */
     // City
@@ -343,6 +386,83 @@ export default {
       return variants
     })
 
+    const totalFloorFromVariants = computed(() => {
+      let variants = []
+      const options = floorAliases('totalFloorFrom')
+      variants = fetchToVariants(options, 'totalFloorFrom')
+      return variants
+    })
+
+    const totalFloorToVariants = computed(() => {
+      let variants = []
+      const options = floorAliases('totalFloorTo')
+      variants = fetchToVariants(options, 'totalFloorTo')
+      return variants
+    })
+
+    const priceFromVariants = ref([])
+    watch(currentWord, async (newVal) => {
+      // Generate options based on the currentWord
+      const options = numberToMillionsPriceOptions(currentWord.value)
+      // Fetch new variants based on the options
+      const variants = fetchToVariants(options, 'priceFrom')
+      if (variants.length) {
+        // Use the reusable function to update priceToVariants
+        updateReactiveArray(priceFromVariants, variants)
+      }
+    })
+
+    const priceToVariants = ref([])
+    watch(currentWord, async (newVal) => {
+      // Generate options based on the currentWord
+      const options = numberToMillionsPriceOptions(currentWord.value, 'to')
+      // Fetch new variants based on the options
+      const variants = fetchToVariants(options, 'priceTo')
+      if (variants.length) {
+        // Use the reusable function to update priceToVariants
+        updateReactiveArray(priceToVariants, variants)
+      }
+    })
+
+    const areaFromVariants = ref([])
+    watch(currentWord, async (newVal) => {
+      // Generate options based on the currentWord
+      const options = numberToAreaOptions(currentWord.value)
+      // Fetch new variants based on the options
+      const variants = fetchToVariants(options, 'areaFrom')
+      if (variants.length) {
+        // Use the reusable function to update priceToVariants
+        updateReactiveArray(areaFromVariants, variants)
+      }
+    })
+
+    const areaToVariants = ref([])
+    watch(currentWord, async (newVal) => {
+      // Generate options based on the currentWord
+      const options = numberToAreaOptions(currentWord.value, 'to')
+      // Fetch new variants based on the options
+      const variants = fetchToVariants(options, 'areaTo')
+      if (variants.length) {
+        // Use the reusable function to update priceToVariants
+        updateReactiveArray(areaToVariants, variants)
+      }
+    })
+
+    // Method to update variants for dynamically generated options
+    const updateReactiveArray = (reactiveArray, newVariants) => {
+      // Update existing objects if value matches
+      const updatedArray = reactiveArray.value.map((existing) => {
+        const match = newVariants.find((el) => el.value === existing.value)
+        return match ? match : existing
+      })
+      // Add new objects that are not yet in the array
+      const newObjects = newVariants.filter((el) => {
+        return !reactiveArray.value.some((f) => f.value === el.value)
+      })
+      // Merge updated and new objects
+      reactiveArray.value = [...updatedArray, ...newObjects]
+    }
+
     // Developers on citySelect/regionSelect/districtSelect change
     watch([citySelect, regionSelect, districtSelect], ([newCityId, newRegionId, newDistrictId]) => {
 
@@ -375,6 +495,12 @@ export default {
         ...floorVariants.value,
         ...floorFromVariants.value,
         ...floorToVariants.value,
+        ...totalFloorFromVariants.value,
+        ...totalFloorToVariants.value,
+        ...priceFromVariants.value,
+        ...priceToVariants.value,
+        ...areaFromVariants.value,
+        ...areaToVariants.value,
       ]
       return variants
     })
@@ -397,8 +523,7 @@ export default {
           } else {
             return variant.aliases.some(alias => alias.toLowerCase().includes(currentWord.value.toLowerCase()))
           }
-        // no aliases, compare only with the label
-        } else {
+        }  else {
           return variant.label.toLowerCase().includes(currentWord.value.toLowerCase())
         }
       })
@@ -406,7 +531,7 @@ export default {
     })
 
     /** Show variants on current word change */
-    watch(currentWord, (newVal) => {
+    /*watch(currentWord, (newVal) => {
       if (
         matchingVariants.value === undefined
         || matchingVariants.value === null
@@ -420,31 +545,46 @@ export default {
       }
 
       showVariantsPopup.value = true
+    })*/
+
+    const showVariantsPopup = computed(() => {
+      if (
+        matchingVariants.value === undefined
+        || matchingVariants.value === null
+        || !matchingVariants.value.length
+        || currentWord.value === undefined
+        || currentWord.value === null
+        || !currentWord.value.length
+      ) {
+        return false
+      } else { 
+        return true
+      }
     })
 
     /** Function to replace currently editing word with recognized value */
     const replaceCurrentWord = (newWord) => {
-      const cursorPosition = textarea.value.selectionStart // Позиция курсора в тексте
+      const cursorPosition = textarea.value.selectionStart // Position of the caret
       const beforeCursor = text.value.slice(0, cursorPosition)
       const afterCursor = text.value.slice(cursorPosition)
 
-      // Определяем начальную позицию редактируемого слова
-      const wordStart = beforeCursor.lastIndexOf(' ') + 1;
-      const start = wordStart > 0 ? wordStart : 0;
+      // The beginning of currently editing
+      const wordStart = beforeCursor.lastIndexOf(' ') + 1
+      const start = wordStart > 0 ? wordStart : 0
 
-      // Определяем конечную позицию редактируемого слова
-      const nextSpaceIndex = afterCursor.indexOf(' ');
+      // The ending of currently editing word
+      const nextSpaceIndex = afterCursor.indexOf(' ')
       const end =
-        nextSpaceIndex !== -1 ? cursorPosition + nextSpaceIndex : text.value.length;
+        nextSpaceIndex !== -1 ? cursorPosition + nextSpaceIndex : text.value.length
 
-      // Заменяем редактируемое слово
+      // Replacing the editing word
       const updatedText =
         text.value.slice(0, start) +
         newWord +
-        text.value.slice(end);
+        text.value.slice(end)
 
-      // Обновляем текст
-      text.value = updatedText;
+      // Renew the text
+      text.value = updatedText
     }
     
     /** Add a variant to a selection (according to the category) */
@@ -489,6 +629,24 @@ export default {
           break
         case 'floorTo':
           floorRangeSelect.value.max = item.value
+          break
+        case 'totalFloorFrom':
+          totalFloorRangeSelect.value.min = item.value
+          break
+        case 'totalFloorTo':
+          totalFloorRangeSelect.value.max = item.value
+          break
+        case 'priceFrom':
+          priceRangeSelect.value.min = item.value
+          break
+        case 'priceTo':
+          priceRangeSelect.value.max = item.value
+          break
+        case 'areaFrom':
+          areaRangeSelect.value.min = item.value
+          break
+        case 'areaTo':
+          areaRangeSelect.value.max = item.value
           break
       }
 
@@ -584,6 +742,48 @@ export default {
       RemoveItemFromHighlightPatterns(item.label)
     }
 
+    // Remove totalFloorFrom from selection
+    const removeItemFromTotalFloorFromSelection = (item) => {
+      totalFloorRangeSelect.value.min = null
+      RemoveItemFromQueryInput(item.label)
+      RemoveItemFromHighlightPatterns(item.label)
+    }
+
+    // Remove totalFloorTo from selection
+    const removeItemFromTotalFloorToSelection = (item) => {
+      totalFloorRangeSelect.value.max = null
+      RemoveItemFromQueryInput(item.label)
+      RemoveItemFromHighlightPatterns(item.label)
+    }
+
+    // Remove priceFrom from selection
+    const removeItemFromPriceFromSelection = (item) => {
+      priceRangeSelect.value.min = null
+      RemoveItemFromQueryInput(item.label)
+      RemoveItemFromHighlightPatterns(item.label)
+    }
+
+    // Remove priceTo from selection
+    const removeItemFromPriceToSelection = (item) => {
+      priceRangeSelect.value.max = null
+      RemoveItemFromQueryInput(item.label)
+      RemoveItemFromHighlightPatterns(item.label)
+    }
+
+    // Remove areaFrom from selection
+    const removeItemFromAreaFromSelection = (item) => {
+      areaRangeSelect.value.min = null
+      RemoveItemFromQueryInput(item.label)
+      RemoveItemFromHighlightPatterns(item.label)
+    }
+
+    // Remove areaTo from selection
+    const removeItemFromAreaToSelection = (item) => {
+      areaRangeSelect.value.max = null
+      RemoveItemFromQueryInput(item.label)
+      RemoveItemFromHighlightPatterns(item.label)
+    }
+
     /** Selected values */
     // City
     const selectedCity = computed(() => {
@@ -665,6 +865,53 @@ export default {
       })
     })
 
+    // totalFloorFrom
+    const selectedTotalFloorFrom = computed(() => {
+      return totalFloorFromVariants.value.filter((option) => {
+        return option.value == totalFloorRangeSelect.value.min
+      })
+    })
+
+    // tatalFloorTo
+    const selectedTotalFloorTo = computed(() => {
+      return totalFloorToVariants.value.filter((option) => {
+        return option.value == totalFloorRangeSelect.value.max
+      })
+    })
+
+    // priceFrom
+    const selectedPriceFrom = computed(() => {
+      if (priceFromVariants.value === null) return
+      return priceFromVariants.value.filter((option) => {
+        return option.value == priceRangeSelect.value.min
+      })
+    })
+
+    // priceTo
+    const selectedPriceTo = computed(() => {
+      if (priceToVariants.value === null) return
+      return priceToVariants.value.filter((option) => {
+        return option.value == priceRangeSelect.value.max
+      })
+    })
+
+    // areaFrom
+    const selectedAreaFrom = computed(() => {
+      if (areaFromVariants.value === null) return
+      return areaFromVariants.value.filter((option) => {
+        return option.value == areaRangeSelect.value.min
+      })
+    })
+
+    // areaTo
+    const selectedAreaTo = computed(() => {
+      if (areaToVariants.value === null) return
+      return areaToVariants.value.filter((option) => {
+        return option.value == areaRangeSelect.value.max
+      })
+    })
+
+
     const renewCitiesRorRegion = (regionId) => {
       regionSelect.value = regionId
       axios.post('/city/get-for-region?id=' + regionId)
@@ -707,15 +954,15 @@ export default {
         //deadlineYear: deadlineYearSelect.value,
         roomsCount: roomsSelect.value ? roomsSelect.value : [],
         //flatType: flatTypeSelect.value ? flatTypeSelect.value : '0',
-        //priceFrom: priceRangeSelect.value.min ? priceRangeSelect.value.min : "",
-        //priceTo: priceRangeSelect.value.max ? priceRangeSelect.value.max : "",
+        priceFrom: priceRangeSelect.value.min ? priceRangeSelect.value.min : "",
+        priceTo: priceRangeSelect.value.max ? priceRangeSelect.value.max : "",
         //priceType: priceTypeSelect.value ? priceTypeSelect.value : '0',
-        //areaFrom: areaRangeSelect.value.min ? areaRangeSelect.value.min : "",
-        //areaTo: areaRangeSelect.value.max ? areaRangeSelect.value.max : "",
+        areaFrom: areaRangeSelect.value.min ? areaRangeSelect.value.min : "",
+        areaTo: areaRangeSelect.value.max ? areaRangeSelect.value.max : "",
         floorFrom: floorSelect.value ? floorSelect.value : (floorRangeSelect.value.min ? floorRangeSelect.value.min : ""),
         floorTo: floorSelect.value ? floorSelect.value : (floorRangeSelect.value.max ? floorRangeSelect.value.max : ""),
-        //totalFloorFrom: totalFloorRangeSelect.value.min ? totalFloorRangeSelect.value.min : "",
-        //totalFloorTo: totalFloorRangeSelect.value.max ? totalFloorRangeSelect.value.max : "",
+        totalFloorFrom: totalFloorRangeSelect.value.min ? totalFloorRangeSelect.value.min : "",
+        totalFloorTo: totalFloorRangeSelect.value.max ? totalFloorRangeSelect.value.max : "",
         //newbuilding_status: newbuildingStatusSelect.value ? 1 : ""
       }
     })
@@ -743,6 +990,12 @@ export default {
       selectedFloor,
       selectedFloorFrom,
       selectedFloorTo,
+      selectedTotalFloorFrom,
+      selectedTotalFloorTo,
+      selectedPriceFrom,
+      selectedPriceTo,
+      selectedAreaFrom,
+      selectedAreaTo,
       addVariantToSelection,
       removeItemFromCitySelection,
       removeItemFromDistrictSelection,
@@ -752,6 +1005,12 @@ export default {
       removeItemFromFloorSelection,
       removeItemFromFloorFromSelection,
       removeItemFromFloorToSelection,
+      removeItemFromTotalFloorFromSelection,
+      removeItemFromTotalFloorToSelection,
+      removeItemFromPriceFromSelection,
+      removeItemFromPriceToSelection,
+      removeItemFromAreaFromSelection,
+      removeItemFromAreaToSelection,
     }
   },
 }
