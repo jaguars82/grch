@@ -97,4 +97,27 @@ class District extends \yii\db\ActiveRecord
             ->andWhere(['like', 'name', '%'.$name.'%', false])
             ->one();
     }
+
+    /**
+     * Get cities in a given region with newbuilding complexes in array form
+     * 
+     * @return array
+     */
+    public static function getForRegionWithNewbuildingComplexesAsList($regionId)
+    {
+        $districts = self::find()
+        ->alias('d')
+        ->joinWith('city c')
+        //->innerJoin('region r', 'c.region_id = r.id')
+        ->innerJoin('newbuilding_complex nbc', 'nbc.district_id = d.id')
+        ->select(['d.id', 'd.name'])
+        ->where(['c.region_id' => $regionId])
+        ->andWhere(['nbc.active' => 1])
+        ->orderBy(['d.name' => SORT_ASC])
+        ->asArray()
+        ->all();
+        
+        return $districts;
+    }
+
 }

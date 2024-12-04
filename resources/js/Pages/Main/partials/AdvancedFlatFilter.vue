@@ -131,7 +131,7 @@ import FlatTypeToggler from '@/Components/Elements/FlatTypeToggler.vue'
 import PriceRangeWithToggler from '@/Components/Elements/Ranges/PriceRangeWithToggler.vue'
 import RangeWithInputs from '@/Components/Elements/Ranges/RangeWithInputs.vue'
 import useEmitter from '@/composables/use-emitter'
-import { idNameObjToOptions, selectOneFromOptionsList, selectMultipleFromOptionsList, getValueOfAnOption } from '@/composables/formatted-and-processed-data'
+import { idNameObjToOptions, idNameArrayToOptions, selectOneFromOptionsList, selectMultipleFromOptionsList, getValueOfAnOption } from '@/composables/formatted-and-processed-data'
 
 export default {
   props: {
@@ -145,6 +145,7 @@ export default {
     material: Object,
     deadlineYears: Object,
     rangeEdges: Object,
+    forCurrentRegion: Object
   },
   components: {
     RoomsAmountButtons,
@@ -196,7 +197,7 @@ export default {
           })
         })
       } else {
-        options = idNameObjToOptions(props.districts)
+        options = props.districts.length ? idNameObjToOptions(props.districts) : idNameArrayToOptions(props.forCurrentRegion.districts)
       }
       return options
     })
@@ -240,7 +241,7 @@ export default {
           })
         })
       } else {
-        options = idNameObjToOptions(props.newbuildingComplexes)
+        options = props.districts.newbuildingComplexes ? idNameObjToOptions(props.newbuildingComplexes) : idNameArrayToOptions(props.forCurrentRegion.newbuildingComplexes)
       }
       return options
     })
@@ -282,7 +283,7 @@ export default {
       emitChanges()
     })
 
-    /** Type of flat */
+    /** Type of a flat */
     const flatTypeSelect = ref(props.searchModel.flatType)
     emitter.on('flat-type-changed', (payload) => {
       flatTypeSelect.value = payload

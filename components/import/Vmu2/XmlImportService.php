@@ -127,25 +127,38 @@ class XmlImportService implements ImportServiceInterface
         $complexBuildingMap = [
             'ЖД на Сакко и Ванцетти' => ['ул.Сакко и Ванцетти,82'],
             'Микрорайон Боровое' => [
+                'ул.Федора Тютчева, д.93/5 (поз.11)',
+                'ул.Сельская, д.2М (поз.13)',
+                'ул.Сельская, 2м, поз.14',
                 'ул.Сельская, 2з, поз.19, 1 этап',
                 'ул.Сельская, 2з, поз.19, 2 этап',
-                'ул.Сельская, 2В, поз.26',
-                'ул.Сельская, 2м, поз.14',
+                'ул.Сельская, 2з, поз.19, 3 этап',
+                'ул.Федора Тютчева, д.95М (поз.22)',
+                'ул.Сельская, д.2Ф (поз.23)',
                 'ул.Сельская, 2В, поз.25',
+                'ул.Сельская, 2В, поз.26',
                 'ул.Ф.Тютчева, поз.29, этап 1',
+                'ул.Ф.Тютчева, поз.29, этап 2',
+                'ул.Ф.Тютчева, поз.29, этап 3',
+                'ул.Ф.Тютчева, поз.30, этап 1',
+                'ул.Ф.Тютчева, поз.30, этап 2',
+                'ул.Ф.Тютчева, поз.30, этап 3',
             ],
             'ЖК Лето' => ['г.Воронеж, ул.Рокоссовского, 47, поз.3']
         ];
 
         /**
          * A map of building aliases
-         * We use it in case we want to join several 'Позиция'-nodes from tthe feed into one building
+         * We use it in case we want to join several 'Позиция'-nodes from the feed into one building
          * Each key of the array - is the real name of 'Позиция' as it mentioned in the feed file
          * Its corresponding value - is the building name we should use (instead of real name)
-         * Both the key and the value must contain in $complexBuildingMap as members of array of buildings of the same Newbuilding Complex
+         * Both the key and the value must contain in $complexBuildingMap as the members of the array of buildings of the same Newbuilding Complex
          */
         $buildingAliasesMap = [
             'ул.Сельская, 2з, поз.19, 2 этап' => 'ул.Сельская, 2з, поз.19, 1 этап',
+            'ул.Сельская, 2з, поз.19, 3 этап' => 'ул.Сельская, 2з, поз.19, 1 этап',
+            'ул.Ф.Тютчева, поз.29, этап 2' => 'ул.Ф.Тютчева, поз.29, этап 1',
+            'ул.Ф.Тютчева, поз.29, этап 3' => 'ул.Ф.Тютчева, поз.29, этап 1',
         ];
 
         $flats = [];

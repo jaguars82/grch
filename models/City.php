@@ -87,6 +87,7 @@ class City extends \yii\db\ActiveRecord
         ->innerJoin('newbuilding_complex', 'newbuilding_complex.city_id = city.id')
         ->select(['city.id', 'city.name', 'is_region_center'])
         ->where(['newbuilding_complex.region_id' => $regionId])
+        ->andWhere(['newbuilding_complex.active' => 1])
         ->orderBy(['city.name' => SORT_ASC])
         ->asArray()
         ->all();

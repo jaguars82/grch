@@ -29,11 +29,71 @@ class MapFlatSearch extends AdvancedFlatSearch
             ->all();
         
         foreach ($queryResult as $item) {
+            if (!array_key_exists($item->newbuildingComplex->id, $result)) {
+                $result[$item->newbuildingComplex->id] = [];
+            } else { continue; }
+
+            /** Calculate some params for Newbuildingcomplex */
+            // Price Range
+            //if(!array_key_exists('priceRange', $result[$item->newbuildingComplex->id])) {
+                $prices = ['min' => 0, 'max' => 0];
+                $minPrice = $item->newbuildingComplex->minFlatPrice;
+                if ($minPrice > 0) $prices['min'] = round($minPrice);
+                $maxPrice = $item->newbuildingComplex->maxFlatPrice;
+                if ($maxPrice > 0) $prices['max'] = round($maxPrice);
+                $priceRange = \Yii::$app->formatter->asCurrencyRange($prices['min'], $prices['max']);
+            //}
+
+            // Flats by Room
+            //if(!array_key_exists('flats_by_room', $result[$item->newbuildingComplex->id])) {
+                $pricesByRoom = [];
+                // add values for apartments with a sertain amount of rooms
+                $roomsAmount = [1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5];
+                foreach ($roomsAmount as $roomind => $roomval) {
+                    $roomItem = $roomind.'Room';
+                    $$roomItem = false;
+                    if (!is_null($item->newbuildingComplex->getMinFlatPriceForRooms($roomval)) && !is_null($item->newbuildingComplex->getMaxFlatPriceForRooms($roomval))) {
+                        $$roomItem = [
+                            'search_url' => '/site/search?AdvancedFlatSearch[roomsCount][0]='.$roomval.'&AdvancedFlatSearch[flatType]='.AdvancedFlatSearch::FLAT_TYPE_STANDARD.'&AdvancedFlatSearch[newbuilding_complex][]='.$item->newbuildingComplex->id.'&AdvancedFlatSearch[developer][]='.$item->newbuildingComplex->developer->id,
+                            'label' => $roomval.' - комнатные',
+                            'price' => \Yii::$app->formatter->asCurrencyRange(round($item->newbuildingComplex->getMinFlatPriceForRooms($roomval)), round($item->newbuildingComplex->getMaxFlatPriceForRooms($roomval)), 'руб.')
+                        ];
+                    }
+                    array_push($pricesByRoom, $$roomItem);
+                }
+            //}
+
             $result[$item->newbuildingComplex->id]['id'] = $item->newbuildingComplex->id;
             $result[$item->newbuildingComplex->id]['name'] = $item->newbuildingComplex->name;
+            //if(!array_key_exists('address', $result[$item->newbuildingComplex->id])) {
+                $result[$item->newbuildingComplex->id]['address'] = $item->newbuildingComplex->address;
+            //}
             $result[$item->newbuildingComplex->id]['latitude'] = $item->newbuildingComplex->latitude;
             $result[$item->newbuildingComplex->id]['longitude'] = $item->newbuildingComplex->longitude;
-            $result[$item->newbuildingComplex->id]['flats'][] = $item;
+            //if(!array_key_exists('logo', $result[$item->newbuildingComplex->id])) {
+                $result[$item->newbuildingComplex->id]['logo'] = $item->newbuildingComplex->logo;
+            //}
+            //if(!array_key_exists('images', $result[$item->newbuildingComplex->id])) {
+                $result[$item->newbuildingComplex->id]['images'] = $item->newbuildingComplex->images;
+            //}
+            //if(!array_key_exists('areaRange', $result[$item->newbuildingComplex->id])) {
+                $result[$item->newbuildingComplex->id]['areaRange'] = \Yii::$app->formatter->asAreaRange($item->newbuildingComplex->minFlatArea, $item->newbuildingComplex->maxFlatArea);
+            //}
+            //if(!array_key_exists('priceRange', $result[$item->newbuildingComplex->id])) {
+                $result[$item->newbuildingComplex->id]['priceRange'] = $priceRange;
+            //}
+            //if(!array_key_exists('freeFlats', $result[$item->newbuildingComplex->id])) {
+                $result[$item->newbuildingComplex->id]['freeFlats'] = \Yii::$app->formatter->asPercent($item->newbuildingComplex->freeFlats);
+            //}
+            //if(!array_key_exists('flats_by_room', $result[$item->newbuildingComplex->id])) {
+                $result[$item->newbuildingComplex->id]['flats_by_room'] = $pricesByRoom;
+            //}
+            //if(!array_key_exists('nearestDeadline', $result[$item->newbuildingComplex->id])) {
+                $result[$item->newbuildingComplex->id]['nearestDeadline'] = !is_null($item->newbuildingComplex->nearestDeadline) ? \Yii::$app->formatter->asQuarterAndYearDate($item->newbuildingComplex->nearestDeadline) : 'нет данных';
+            //}
+            // comment flats because now we don't use them on Map Search page
+            // But may be we'll use it later (e.x. for calculating the amount of found objects (flats))
+            // $result[$item->newbuildingComplex->id]['flats'][] = $item;
         }
 
         return count($result) > 0 ? array_values($result) : [];
