@@ -41,26 +41,30 @@
           </div>
           <!-- Complex description and images -->
           <div v-if="complex.images.length || complex.detail" class="row q-mt-md q-col-gutter-y-md">
-            <div v-if="complex.images.length" class="col-12 col-lg-7">
-              <q-carousel
-                :height="$q.screen.xs ? '300px' : $q.screen.gt.md ? '400px' : '450px'"
-                swipeable
-                animated
-                v-model="slide"
-                arrows
-                thumbnails
-                infinite
-              >
-                <q-carousel-slide
-                  v-for="image of complex.images"
-                  :key="image.id"
-                  :name="image.id"
-                  :img-src="`/uploads/${image.file}`"
-                  @click="onImageClick(image)"
-                />
-              </q-carousel>
+            <div class="col-12">
+              <div class="float-left" :class="{ 'full-width': $q.screen.lt.lg || !complex.detail, 'decreased-width': $q.screen.gt.md && complex.detail, 'q-pr-md': $q.screen.gt.md && complex.detail }">
+                <q-carousel
+                  v-if="complex.images.length"
+                  :height="$q.screen.xs ? '300px' : $q.screen.gt.md ? '400px' : '450px'"
+                  swipeable
+                  animated
+                  v-model="slide"
+                  arrows
+                  thumbnails
+                  infinite
+                >
+                  <q-carousel-slide
+                    v-for="image of complex.images"
+                    :key="image.id"
+                    :name="image.id"
+                    :img-src="`/uploads/${image.file}`"
+                    @click="onImageClick(image)"
+                  />
+                </q-carousel>
+              </div>
+              <div v-if="$q.screen.gt.md && complex.detail" v-html="complex.detail"></div>
             </div>
-            <div v-if="complex.detail" class="col-12 col-lg-5" v-html="complex.detail"></div>
+            <div v-if="$q.screen.lt.lg && complex.detail" class="col-12" v-html="complex.detail"></div>
           </div>
         </template>
       </RegularContentContainer>
@@ -543,5 +547,8 @@ export default {
     position: sticky;
     top: 0;
     left: 0;
+  }
+  .decreased-width {
+    width: 60%;
   }
 </style>

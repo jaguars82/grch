@@ -14,7 +14,7 @@
         unchecked-icon="tune"
       />
     </div>
-    <div :class="{ 'col-12': $q.screen.xs, 'col-10': $q.screen.gt.xs }">
+    <div :class="{ 'col-12': $q.screen.xs, 'col-9': $q.screen.sm, 'col-10': $q.screen.gt.sm }">
       <!-- Smart Search field -->
       <SmartSearchField v-if="smartFieldOn" :defaultSetsOfVariantForRegion="forCurrentRegion" />
       <!-- Filter fields -->
@@ -240,7 +240,7 @@
       </template>
     </div>
     <!-- Form action buttons -->
-    <div class="col-2 self-start" :class="{ 'col-2': $q.screen.gt.xs, 'col-12': $q.screen.xs, 'text-right': $q.screen.xs, 'q-mt-sm': $q.screen.xs }">
+    <div class="col-2 self-start" :class="{ 'col-2': $q.screen.gt.sm, 'col-3': $q.screen.sm, 'col-12': $q.screen.xs, 'text-right': $q.screen.xs, 'q-mt-sm': $q.screen.xs }">
       <!--<q-btn color="primary" :size="$q.screen.sm ? 'sm' : 'md'" class="text-white q-ml-sm q-mr-xs" unelevated round icon="search" @click="search" />
       <q-btn color="white" :size="$q.screen.sm ? 'sm' : 'md'" class="text-grey-7" unelevated round icon="pin_drop" @click="mapSearch" />-->
       <MainFilterConfirmPanel :formState="formState" />
