@@ -6,7 +6,7 @@
     </div>
     <div class="col-12">
       <q-toggle
-        size="sm"
+        size="md"
         v-model="smartFieldOn"
         checked-icon="hub"
         color="primary"
@@ -755,13 +755,12 @@ export default {
 .search-input, .cf-chip {
   background-color: rgba(255,255,255,.7) !important;
 }
-.rounded-left {
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
+.rounded-left, ::v-deep(.rounded-left .q-field__control) {
+  border-top-left-radius: 20px !important;
+  border-bottom-left-radius: 20px !important;
 }
-.rounded-right {
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
+.rounded-right, ::v-deep(.rounded-right .q-field__control) {
+  border-top-right-radius: 20px !important;
+  border-bottom-right-radius: 20px !important;
 }
 </style>
-

@@ -7,10 +7,10 @@
     @mouseenter="highlightLink"
     @mouseleave="unHighlightLink"
   >
-    <div class="col-5 q-py-sm" :class="{ 'q-pl-sm': link.length, 'text-grey': !link.length }">
+    <div class="col-5" :class="{ 'q-pl-sm': link.length, 'text-grey': !link.length, 'q-py-xs': dense, 'q-py-sm': !dense }">
       <span :class="{ 'text-blue-9': link.length }">{{ paramName }}:</span>
     </div>
-    <div class="col-7 text-right q-py-sm text-bold" :class="{ 'q-pr-sm': link.length }">
+    <div class="col-7 text-right text-bold" :class="{ 'q-pr-sm': link.length, 'q-py-xs': dense, 'q-py-sm': !dense  }">
       <span v-if="!customContentProvided" :class="{ 'text-blue-9': link.length }">{{ Array.isArray(paramValue) ? paramValue.join(', ') : paramValue }}</span>
       <slot name="customValue"></slot>
     </div>
@@ -33,6 +33,10 @@ export default {
     },
     link: {
       type: [String, Boolean],
+      default: false
+    },
+    dense: {
+      type: Boolean,
       default: false
     }
   },

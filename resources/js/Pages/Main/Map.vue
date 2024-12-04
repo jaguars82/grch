@@ -7,6 +7,7 @@
           :coordinates="initCoords"
           :options="{ autoFitToViewport: 'always' }"
           :zoom="12"
+          @balloonopen="adjustBaloonHeight"
         >
           <template v-if="complexes.length">
             <YandexClusterer>
@@ -18,27 +19,28 @@
                 :coordinates="[complex.longitude, complex.latitude]"
               >
                 <template #component>
-                  <q-img :src="complex.images.length ? `/uploads/${complex.images[0].file}` : '/img/newbuilding-complex.png'" />
+                  <q-img class="baloon-complex-image" :src="complex.images.length ? `/uploads/${complex.images[0].file}` : '/img/newbuilding-complex.png'" />
                   <div class="row">
                     <div class="col-10">
                       <p class="q-my-xs text-h4">{{ complex.name }}</p>
                     </div>
                     <div class="col-2">
-                      <q-img :fit="scale-down" class="baloon-complex-logo" :src="`/uploads/${complex.logo}`" />
+                      <q-img fit="scale-down" class="baloon-complex-logo" :src="`/uploads/${complex.logo}`" />
                     </div>
                   </div>
-                  <p v-if="complex.address" class="text-grey-8">{{ complex.address }}</p>
-                  <p>Сдача: {{ complex.nearestDeadline }}</p>
-                  <div class="q-pr-sm">
+                  <p v-if="complex.address" class="q-mb-sm text-grey-8 text-ellipsis">{{ complex.address }}</p>
+                  <p class="q-mb-sm">Сдача: {{ complex.nearestDeadline }}</p>
+                  <div class="q-mb-sm">
                     <ParamPair
                       v-for="priceByFlat of complex.flats_by_room"
                       :paramName="priceByFlat.label"
                       :paramValue="priceByFlat.price"
                       :link="priceByFlat.search_url"
+                      :dense="true"
                     />
                   </div>
-                  <div class="q-mt-md text-center">
-                    <q-btn unelevated color="orange" @click="goToComplex(complex.id)">Перейти к ЖК</q-btn>
+                  <div class="q-mt-sm text-center">
+                    <q-btn size="sm" unelevated color="orange" @click="goToComplex(complex.id)">Перейти к ЖК</q-btn>
                   </div>
                   <!--
                   <p class="q-px-md q-my-xs text-h5">{{ complex.name }}</p>
@@ -172,6 +174,10 @@ export default {
       Inertia.get('/newbuilding-complex/view', {id: complexId})
     }
 
+    const adjustBaloonHeight = () => {
+      console.log('adjusting HEIGHT')
+    }
+
     // Old variant of search: emmidiatly on filter change
     /*const emitter = useEmitter()
     emitter.on('flat-filter-changed', payload => {
@@ -181,7 +187,8 @@ export default {
     return {
       yaMapsSettings,
       initCoords,
-      goToComplex
+      goToComplex,
+      adjustBaloonHeight
     }
   }
 }
@@ -195,11 +202,19 @@ export default {
 }
 .yandex-balloon {
   width: 300px;
-  min-height: 500px;
+  min-height: 400px;
 }
 </style>
 
 <style scoped>
+.text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.baloon-complex-image {
+  height: 150px;
+}
 .baloon-complex-logo {
   height: 30px;
 }

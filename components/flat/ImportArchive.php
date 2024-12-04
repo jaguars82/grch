@@ -100,13 +100,14 @@ class ImportArchive extends Component
                         $flats = Flat::find()
                             ->where([
                                 'newbuilding_id' => $newbuilding->id, 
-                                'section' => $section, 
+                                'section' => (int)$section, 
                                 //'area' => floatval($area),
-                                //'rooms' => $layoutInfo['roomsCount'],
+                                'rooms' => (int)$layoutInfo['roomsCount'],
                             ])
-                            ->andWhere(['>=', 'floor', $floorRange[0]])
-                            ->andWhere(['<=', 'floor', $floorRange[1]])
-                            ->andWhere(['like', 'area', $layoutInfo['area']])
+                            ->andWhere(['>=', 'floor', (int)$floorRange[0]])
+                            ->andWhere(['<=', 'floor', (int)$floorRange[1]])
+                            //->andWhere(['like', 'area', $layoutInfo['area']])
+                            ->andWhere(['between', 'area', (float)$layoutInfo['area'] - 0.01, (float)$layoutInfo['area'] + 0.01])
                             ->all();
 
                         if($flats == null) {
@@ -181,13 +182,14 @@ class ImportArchive extends Component
                         $flats = Flat::find()
                             ->where([
                                 'newbuilding_id' => $this->newbuilding->id, 
-                                'section' => $sectionNum, 
+                                'section' => (int)$sectionNum, 
                                 //'area' => floatval($area),
-                                //'rooms' => $roomsCount
+                                'rooms' => (int)$roomsCount
                             ])
-                            ->andWhere(['>=', 'floor', $floorRange[0]])
-                            ->andWhere(['<=', 'floor', $floorRange[1]])
-                            ->andWhere(['like', 'area', $area])
+                            ->andWhere(['>=', 'floor', (int)$floorRange[0]])
+                            ->andWhere(['<=', 'floor', (int)$floorRange[1]])
+                            //->andWhere(['like', 'area', $area])
+                            ->andWhere(['between', 'area', (float)$area - 0.01, (float)$area + 0.01])
                             ->orderBy(['number' => SORT_ASC])
                             ->all();
 
