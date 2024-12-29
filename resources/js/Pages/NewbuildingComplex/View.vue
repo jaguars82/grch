@@ -12,7 +12,7 @@
         <template v-slot:content>
           <!-- Complex title (name and location) -->
           <div class="row items-start justify-between">
-            <div class="col-10 col-sm-12">
+            <div class="col-10 col-sm-12 col-lg-10 col-xl-10">
               <p class="q-mb-sm" :class="{ 'text-h1': $q.screen.gt.sm, 'text-h2': $q.screen.sm, 'text-h3': $q.screen.xs }">{{ complex.name }}</p>
               <p v-if="complex.address"
                 class="q-mt-xs text-grey"
@@ -21,12 +21,12 @@
                 {{ complex.address }}
               </p>
             </div>
-            <div class="col-2 lt-sm">
+            <div class="col-2" v-if="$q.screen.lt.sm || $q.screen.gt.md">
               <img :src="complex.logo ? `/uploads/${complex.logo}` : `/img/newbuilding-complex.png`" :alt="complex.name" />
             </div>
           </div>
           <!-- Prices by flat type and complex logo -->
-          <div class="row justify-between items-center">
+          <div v-if="$q.screen.lt.lg" class="row justify-between items-center">
             <div class="col-12 col-sm-7">
               <ParamPair
                 v-for="priceByFlat of complex.flats_by_room"
@@ -42,7 +42,7 @@
           <!-- Complex description and images -->
           <div v-if="complex.images.length || complex.detail" class="row q-mt-md q-col-gutter-y-md">
             <div class="col-12">
-              <div class="float-left" :class="{ 'full-width': $q.screen.lt.lg || !complex.detail, 'decreased-width': $q.screen.gt.md && complex.detail, 'q-pr-md': $q.screen.gt.md && complex.detail }">
+              <div class="float-left" :class="{ 'full-width': $q.screen.lt.lg, 'decreased-width': $q.screen.gt.md, 'q-pr-md': $q.screen.gt.md && complex.detail }">
                 <q-carousel
                   v-if="complex.images.length"
                   :height="$q.screen.xs ? '300px' : $q.screen.gt.md ? '400px' : '450px'"
@@ -62,9 +62,17 @@
                   />
                 </q-carousel>
               </div>
-              <div v-if="$q.screen.gt.md && complex.detail" v-html="complex.detail"></div>
+              <!--<div v-if="$q.screen.gt.md && complex.detail" v-html="complex.detail"></div>-->
+              <div v-if="$q.screen.gt.md">
+                <ParamPair
+                v-for="priceByFlat of complex.flats_by_room"
+                :paramName="priceByFlat.label"
+                :paramValue="priceByFlat.price"
+                :link="priceByFlat.search_url"
+                />
+              </div>
             </div>
-            <div v-if="$q.screen.lt.lg && complex.detail" class="col-12" v-html="complex.detail"></div>
+            <div v-if="complex.detail" class="col-12" v-html="complex.detail"></div>
           </div>
         </template>
       </RegularContentContainer>
