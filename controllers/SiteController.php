@@ -102,7 +102,7 @@ class SiteController extends Controller
             $searchModel->region_id = Region::DEFAULT_REGION;
         }
 
-        $newsList = News::find()->onlyActual()->orderBy(['created_at' => SORT_DESC])->all();
+        $newsList = News::find()->onlyActual()->orderBy(['created_at' => SORT_DESC])->limit(5)->all();
 
         /* $newsDataProvider = new ActiveDataProvider([
             'query' => News::find()->onlyNews()->onlyActual()->limit(4),

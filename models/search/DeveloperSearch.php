@@ -46,7 +46,7 @@ class DeveloperSearch extends Developer
             $query = Developer::find()->where(['id' => \Yii::$app->user->identity->developer_id]);
         } else {
             // show for all developers
-            $query = Developer::find();
+            $query = Developer::find()->whereNewbuildingComplexesExist();
         }
         
         $dataProvider = new ActiveDataProvider([
