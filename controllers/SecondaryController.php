@@ -204,6 +204,7 @@ class SecondaryController extends Controller
 
         return $this->inertia('Secondary/Index', [
             'user' => \Yii::$app->user->identity,
+            'flash' => \Yii::$app->session->getAllFlashes(),
             'advertisements' => $advertisementsArr,
             'ranges' => [
                 'price' => [
@@ -260,19 +261,29 @@ class SecondaryController extends Controller
     public function actionView($id)
     {
         $advertisement = SecondaryAdvertisement::findOne($id);
-
+    
+        // Convert the advertisement object to an array
         $advertisementArr = ArrayHelper::toArray($advertisement);
-
+    
+        // Convert related data to arrays
         $advertisementArr['agency'] = ArrayHelper::toArray($advertisement->agency);
         $advertisementArr['secondary_room'] = ArrayHelper::toArray($advertisement->secondaryRooms);
         $advertisementArr['author_DB'] = !empty($advertisement->author_id) ? ArrayHelper::toArray($advertisement->author) : '';
-            
+    
+        // Decode 'detail' field in all the objects in the advertisement
+        foreach ($advertisementArr['secondary_room'] as &$room) {
+            if (isset($room['detail'])) {
+                $room['detail'] = str_replace('&nbsp;', ' ', html_entity_decode($room['detail'], ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+            }
+        }
+        unset($room); // break the link to avoid possimble mistakes
+    
         /**
-         * Add information about room params from data base
+         * Add info about some parameters of the secondary room from DB
          */
-        foreach($advertisement->secondaryRooms as $key => $room) {
+        foreach ($advertisement->secondaryRooms as $key => $room) {
             $params = [
-                'category' => 'secondaryCategory', // category (e.g. 'flat', 'house' etc.)
+                'category' => 'secondaryCategory',
                 'property_type' => 'secondaryPropertyType',
                 'building_series' => 'secondaryBuildingSeries',
                 'newbuilding_complex' => 'newbuildingComplex',
@@ -287,19 +298,16 @@ class SecondaryController extends Controller
                 'district' => 'district',
                 'street_type' => 'streetType',
             ];
-
+    
             foreach ($params as $param => $className) {
-                if (!empty($room[$param.'_id'])) {
-                    $advertisementArr['secondary_room'][$key][$param.'_DB'] = ArrayHelper::toArray($room[$className]);
+                if (!empty($room->{$param . '_id'}) && isset($room->{$className})) {
+                    $advertisementArr['secondary_room'][$key][$param . '_DB'] = ArrayHelper::toArray($room->{$className});
                 }
             }
-
+    
             $advertisementArr['secondary_room'][$key]['images'] = ArrayHelper::toArray($room->images);
-
         }
-
-        //echo '<pre>'; var_dump($advertisementArr); echo '</pre>'; die;
-
+    
         return $this->inertia('Secondary/View', [
             'user' => \Yii::$app->user->identity,
             'advertisement' => $advertisementArr,

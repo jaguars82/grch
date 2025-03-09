@@ -44,7 +44,13 @@
             <div class="row q-col-gutter-none">
 
               <div class="col-md-4 col-sm-6 col-xs-12 q-py-xs">
-                <q-input outlined type="number" v-model.number="formfields.price" label="Цена (руб.)*" />
+                <q-input
+                  outlined
+                  type="number"
+                  v-model.number="formfields.price"
+                  @update:model-value="formatPriceInput"
+                  label="Цена (руб.)*"
+                />
               </div>
 
               <div :class="[formfields.rooms_select !== null && formfields.rooms_select.value == '5+' ? 'col-md-3' : 'col-md-5', 'col-sm-6', 'col-xs-12', 'q-py-xs']">
@@ -683,8 +689,9 @@
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
+import { useQuasar } from 'quasar'
 import MainLayout from '@/Layouts/MainLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import Loading from "@/Components/Elements/Loading.vue"
@@ -700,6 +707,7 @@ export default {
     MainLayout, RegularContentContainer, Breadcrumbs, TrippleStateLabel, Loading, YandexMap, YandexMarker
   },
   props: {
+    flash: Object,
     secondaryCategories: {
       type: Object,
     },
@@ -769,6 +777,18 @@ export default {
     }
   },
   setup (props) {
+
+    const $q = useQuasar()
+
+    onMounted(() => {
+      if (props.flash?.error) {
+        $q.notify({
+          type: 'negative',
+          message: props.flash.error,
+          position: 'top',
+        })
+      }
+    })
 
     const { user } = userInfo()
 
@@ -860,6 +880,12 @@ export default {
       latitude: null,
       images: []
     })
+
+    const formatPriceInput = (value) => {
+      const stringValue = String(value || '')
+      const digitsOnly = stringValue.replace(/\D/g, '')
+      formfields.value.price = Number(digitsOnly.slice(0, 10))
+    }
 
     const manualInputFlags = ref({
       developer: false,
@@ -1284,7 +1310,7 @@ export default {
 
     const canSendForm = computed(() => {
       let result = true
-      const requiredFields = ['dealType', 'category', 'detail', 'price', 'rooms_select', 'area', 'floor', 'total_floors', 'balcony_amount', 'loggia_amount']
+      const requiredFields = ['agency_id', 'dealType', 'category', 'detail', 'price', 'rooms_select', 'area', 'floor', 'total_floors', 'balcony_amount', 'loggia_amount']
       requiredFields.forEach(field => {
         if (formfields.value[field] === null) result = false
       })
@@ -1377,6 +1403,7 @@ export default {
       onMarkerMove,
       adressByCoords,
       formfields,
+      formatPriceInput,
       manualInputFlags,
       canSendForm,
       onSubmit,
