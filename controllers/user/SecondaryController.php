@@ -81,17 +81,44 @@ class SecondaryController extends Controller
                 $advertisementForm->creation_date = $now;
                 $advertisementForm->last_update_date = $now;
                 $advertisementModel = (new SecondaryAdvertisement())->fill($advertisementForm->attributes);
-                $advertisementModel->save();
+                //$advertisementModel->save();
+                if (!$advertisementModel->save()) {
+                    
+                    throw new \Exception('Ошибка сохранения объявления');
+                    
+                    // TOFIX Delete (or comment) 4 lines below after testing
+                    \Yii::error($advertisementModel->errors, 'save-advertisement');
+                    //echo '<pre>'; var_dump(\Yii::$app->request->post()); echo '</pre>';
+                    var_dump($advertisementModel->errors);
+                    echo '<pre>'; var_dump($advertisementModel); echo '</pre>';
+                    die;
+                }
 
                 $roomForm->load(\Yii::$app->request->post(), '');
                 $roomForm->advertisement_id = $advertisementModel->id;
                 $roomForm->process();
                 $roomModel = (new SecondaryRoom())->fill($roomForm->attributes);
+                
                 if(!$roomModel->validate()){
-                   // echo '<pre>'; var_dump($roomModel->errors); echo '</pre>'; die;
-                   echo 'ошибки при валидации объявления';
+                    throw new \Exception('Ошибка валидации объекта');
+                   
+                    // TOFIX delete (or comment) 4 lines below after testing
+                   echo 'ошибки при валидации объявления (объекта)';
+                   \Yii::error($roomModel->errors, 'validation');
+                    echo '<pre>'; var_dump($roomModel->errors); echo '</pre>';
+                    echo '<pre>'; var_dump($roomModel); echo '</pre>';
+                    die;
                 }
-                $roomModel->save();
+
+                if (!$roomModel->save()) {
+                    throw new \Exception('Ошибка сохранения объекта продажи');
+                    
+                    // TOFIX Delete (or comment) 4 lines below after testing
+                    \Yii::error($roomModel->errors, 'save-secondaryRoom');
+                    var_dump($roomModel->errors);
+                    echo '<pre>'; var_dump($roomModel); echo '</pre>';
+                    die;
+                }
                 
                 if (count($roomForm->images)) {
                     foreach ($roomForm->images as $image) {
@@ -105,17 +132,25 @@ class SecondaryController extends Controller
                 
                 $transaction->commit();
 
+                // Set success flash-message
+                \Yii::$app->session->setFlash('success', 'Объявление успешно создано!');
+
                 return $this->redirect('/secondary/index');
                 //echo '<pre>'; var_dump($roomForm); echo '</pre>'; die; 
 
             } catch (\Exception $e) {
                 $transaction->rollBack();
+
+                // Set error flash-message
+                \Yii::$app->session->setFlash('error', $e->getMessage());
+
                 return $this->redirectBackWhenException($e);
             }
         }
         
         return $this->inertia('User/Secondary/Create', [
             'user' => \Yii::$app->user->identity,
+            'flash' => \Yii::$app->session->getAllFlashes(),
             'secondaryCategories' => SecondaryCategory::getCategoryTree(),
             'buildingMaterials' => BuildingMaterial::getMaterialList(),
             'renovations' => SecondaryRenovation::getRenovationList(),
@@ -143,15 +178,23 @@ class SecondaryController extends Controller
         }
 
         if (\Yii::$app->request->isPost) {
+            // Assign filters for all post operations
+            if (null !== \Yii::$app->request->post('agency') && !empty(\Yii::$app->request->post('agency'))) {
+                $agents = Agency::getUsersByAgency(\Yii::$app->request->post('agency'));
+            }
+            $agencyFilter = \Yii::$app->request->post('agency') !== null && !empty(\Yii::$app->request->post('agency')) ? \Yii::$app->request->post('agency') : null;
+            $agentFilter = \Yii::$app->request->post('agent') !== null && !empty(\Yii::$app->request->post('agent')) ? \Yii::$app->request->post('agent') : null;
+            $categoryFilter = \Yii::$app->request->post('category') !== null && !empty(\Yii::$app->request->post('category')) ? \Yii::$app->request->post('category') : null;
+
             switch (\Yii::$app->request->post('operation')) {
-                case 'filterAdds':
+                /*case 'filterAdds':
                     if (null !== \Yii::$app->request->post('agency') && !empty(\Yii::$app->request->post('agency'))) {
                         $agents = Agency::getUsersByAgency(\Yii::$app->request->post('agency'));
                     }
                     $agencyFilter = \Yii::$app->request->post('agency') !== null && !empty(\Yii::$app->request->post('agency')) ? \Yii::$app->request->post('agency') : null;
                     $agentFilter = \Yii::$app->request->post('agent') !== null && !empty(\Yii::$app->request->post('agent')) ? \Yii::$app->request->post('agent') : null;
                     $categoryFilter = \Yii::$app->request->post('category') !== null && !empty(\Yii::$app->request->post('category')) ? \Yii::$app->request->post('category') : null;
-                    break;
+                    break;*/
                 case 'setStatus': 
                     try {
                         $transaction = \Yii::$app->db->beginTransaction();
@@ -287,6 +330,7 @@ class SecondaryController extends Controller
 
         return $this->inertia('User/Secondary/Index', [
             'user' => \Yii::$app->user->identity,
+            'flash' => \Yii::$app->session->getAllFlashes(),
             'secondaryCategories' => SecondaryCategory::getCategoryTree(),
             'agencies' => \Yii::$app->user->identity->role === 'admin' ? Agency::getAllAsList() : [],
             'agents' => isset($agents) ? ArrayHelper::toArray($agents) : [],

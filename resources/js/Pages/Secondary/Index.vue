@@ -35,7 +35,7 @@
     </template>
 
     <template v-slot:right-drawer>
-      <div class="row justify-center q-my-sm q-px-sm">
+      <div v-if="user.agency_id" class="row justify-center q-my-sm q-px-sm">
         <q-btn color="primary" unelevated label="Добавить объявление" icon="post_add" @click="goToCreateAdd" />
       </div>
       <SecondaryFilter
@@ -53,8 +53,10 @@
 </template>
   
 <script>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
+import { useQuasar } from 'quasar'
+import { userInfo } from '@/composables/shared-data'
 import MainLayout from '@/Layouts/MainLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import Loading from "@/Components/Elements/Loading.vue"
@@ -64,6 +66,7 @@ import useEmitter from '@/composables/use-emitter'
   
 export default {
   props: {
+    flash: Object,
     advertisements: {
       type: Array,
       default: []
@@ -101,6 +104,19 @@ export default {
     MainLayout, Breadcrumbs, Loading, SecondaryRoomListItem, SecondaryFilter
   },
   setup(props) {
+    const $q = useQuasar();
+
+    onMounted(() => {
+      if (props.flash?.success) {
+        $q.notify({
+          type: 'positive',
+          message: props.flash.success,
+          position: 'top',
+        })
+      }
+    })
+
+    const { user } = userInfo()
 
     const currentPage = ref(props.pagination.currPage)
 
@@ -231,10 +247,10 @@ export default {
     emitter.on('secondary-filter-changed', (e) => filterSecondaryRooms(e))
 
     const goToCreateAdd = () => {
-      Inertia.get('user/secondary/create')
+      Inertia.get('/user/secondary/create')
     }
 
-    return { breadcrumbs, currentPage, filterFields, goToPage, goToCreateAdd }
+    return { user, breadcrumbs, currentPage, filterFields, goToPage, goToCreateAdd }
   }
 }
 </script>

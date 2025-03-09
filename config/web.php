@@ -8,6 +8,7 @@ $config = [
     'id' => 'basic',
     'name' => 'ГРЧ',
     'language' => 'ru-RU',
+    'timeZone' => 'Europe/Moscow',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['inertia'],
     'layout' => 'new',
@@ -99,7 +100,7 @@ if (YII_ENV_DEV) {
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
         // uncomment the following to add your IP if you are not connecting from localhost.
-        'allowedIPs' => ['127.0.0.1', '::1', '95.32.*.*'],
+        'allowedIPs' => ['127.0.0.1', '::1', '95.32.*.*', '188.235.*.*'],
         //'allowedIPs' => ['*'],
     ];
 

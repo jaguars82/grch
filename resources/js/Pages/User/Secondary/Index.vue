@@ -283,89 +283,7 @@ export default ({
     const onRequest = (e) => {
       Inertia.get(`/user/secondary/index`, { page: e.pagination.page, psize: e.pagination.rowsPerPage, agency: filters.value.agency !== null ? filters.value.agency.value : '', agent: filters.value.agent !== null ? filters.value.agent.value : '', category: filters.value.category !== null ? filters.value.category.value : '', }, { preserveScroll: true })
     }
-
-    const statusOptions = computed(() => {
-      const options = []
-      props.labelTypes.forEach(labelType => {
-        options.push({ label: labelType.name, value:labelType.id })
-      })
-      return options
-    })
-
-    function dateOptions(d) {
-      return d >= date.formatDate(Date.now(), 'YYYY/MM/DD')
-    }
-
-    const statusLabelForm = ref({
-      status: '',
-      statusTermFlag: false,
-      date: null
-    })
-
-    const clearStatusLabelForm = () => {
-      statusLabelForm.value = {
-        status: '',
-        statusTermFlag: false,
-        date: null
-      }
-    }
     
-    const canSaveAddStatus = computed(() => {
-      let result = false
-      if (!statusLabelForm.value.status) result = true
-      if (statusLabelForm.value.statusTermFlag && !statusLabelForm.value.date) result = true
-      return result
-    })
-
-    const saveAddStatus = (addId) => {
-      const fields = {
-        operation: 'setStatus',
-        secondary_advertisement_id: addId,
-        label_type_id: statusLabelForm.value.status.value,
-        has_expiration_date: statusLabelForm.value.statusTermFlag,
-        expires_at: statusLabelForm.value.date
-      }
-      Inertia.post('/user/secondary/index', fields, { preserveScroll: true })
-      Inertia.on('finish', (e) => {
-        clearStatusLabelForm()
-      })
-    }
-
-    const unsetStatus = (addId, statusId) => {
-      const fields = {
-        operation: 'unsetStatus',
-        secondary_advertisement_id: addId,
-        status_label_id: statusId
-      }
-      Inertia.post('/user/secondary/index', fields, { preserveScroll: true })
-    }
-
-    const deleteFormDialog = ref(false)
-    const addToDeleteId = ref(null)
-
-    const openDeleteForm = (addId) => {
-      addToDeleteId.value = addId
-      deleteFormDialog.value = true
-    }
-
-    const closeDeleteDialog = () => {
-      addToDeleteId.value = null
-      deleteFormDialog.value = false
-    }
-
-    const deleteAdd = () => {
-      const fields = {
-        operation: 'deleteAdd',
-        id: addToDeleteId.value
-      }
-      closeDeleteDialog()
-      Inertia.post('/user/secondary/index', fields)
-    }
-
-    const createAdd = () => {
-      Inertia.get('/user/secondary/create')
-    }
-
     const agencyOptions = computed(() => {
       return idNameObjToOptions(props.agencies)
     })
@@ -433,6 +351,97 @@ export default ({
       filters.value.agency = null
       filters.value.agent = null
       filters.value.category = null
+    }
+
+    const statusOptions = computed(() => {
+      const options = []
+      props.labelTypes.forEach(labelType => {
+        options.push({ label: labelType.name, value:labelType.id })
+      })
+      return options
+    })
+
+    function dateOptions(d) {
+      return d >= date.formatDate(Date.now(), 'YYYY/MM/DD')
+    }
+
+    const statusLabelForm = ref({
+      status: '',
+      statusTermFlag: false,
+      date: null
+    })
+
+    const clearStatusLabelForm = () => {
+      statusLabelForm.value = {
+        status: '',
+        statusTermFlag: false,
+        date: null
+      }
+    }
+    
+    const canSaveAddStatus = computed(() => {
+      let result = false
+      if (!statusLabelForm.value.status) result = true
+      if (statusLabelForm.value.statusTermFlag && !statusLabelForm.value.date) result = true
+      return result
+    })
+
+    const saveAddStatus = (addId) => {
+      const fields = {
+        operation: 'setStatus',
+        secondary_advertisement_id: addId,
+        label_type_id: statusLabelForm.value.status.value,
+        has_expiration_date: statusLabelForm.value.statusTermFlag,
+        expires_at: statusLabelForm.value.date,
+        agency: filters.value.agency !== null ? filters.value.agency.value : null,
+        agent: filters.value.agent !== null ? filters.value.agent.value : null,
+        category: filters.value.category !== null ? filters.value.category.value : null,
+      }
+      Inertia.post('/user/secondary/index', fields, { preserveScroll: true })
+      Inertia.on('finish', (e) => {
+        clearStatusLabelForm()
+      })
+    }
+
+    const unsetStatus = (addId, statusId) => {
+      const fields = {
+        operation: 'unsetStatus',
+        secondary_advertisement_id: addId,
+        status_label_id: statusId,
+        agency: filters.value.agency !== null ? filters.value.agency.value : null,
+        agent: filters.value.agent !== null ? filters.value.agent.value : null,
+        category: filters.value.category !== null ? filters.value.category.value : null,
+      }
+      Inertia.post('/user/secondary/index', fields, { preserveScroll: true })
+    }
+
+    const deleteFormDialog = ref(false)
+    const addToDeleteId = ref(null)
+
+    const openDeleteForm = (addId) => {
+      addToDeleteId.value = addId
+      deleteFormDialog.value = true
+    }
+
+    const closeDeleteDialog = () => {
+      addToDeleteId.value = null
+      deleteFormDialog.value = false
+    }
+
+    const deleteAdd = () => {
+      const fields = {
+        operation: 'deleteAdd',
+        id: addToDeleteId.value,
+        agency: filters.value.agency !== null ? filters.value.agency.value : null,
+        agent: filters.value.agent !== null ? filters.value.agent.value : null,
+        category: filters.value.category !== null ? filters.value.category.value : null,
+      }
+      closeDeleteDialog()
+      Inertia.post('/user/secondary/index', fields)
+    }
+
+    const createAdd = () => {
+      Inertia.get('/user/secondary/create')
     }
 
     return { 
