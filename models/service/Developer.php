@@ -5,6 +5,8 @@ namespace app\models\service;
 use app\components\exceptions\AppException;
 use app\models\Import;
 use app\models\CompositeFlat;
+use app\models\PriceChange;
+use app\models\AreaChange;
 use app\models\Flat;
 use app\models\FloorLayout;
 use app\models\Newbuilding;
@@ -594,6 +596,7 @@ class Developer extends \app\models\Developer
             if (!isset($flatData['number_string'])
                 && $flat->number == $flatData['number']
                 && $flat->floor == $flatData['floor']
+                && $flat->rooms == $flatData['rooms'] // add the chek of rooms amount (for some developers have equal numbers for different flats on the same floor)
             ) {
                 return $flat;
             } elseif (array_key_exists('number_string', $flatData) // check number_string parameter
