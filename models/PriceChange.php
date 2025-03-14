@@ -20,9 +20,10 @@ class PriceChange extends ActiveRecord
             [['flat_id'], 'required'],
             [['flat_id'], 'integer'],
             [['price_cash', 'unit_price_cash', 'price_credit', 'unit_price_credit'], 'number'],
-            [['area_snapshot'], 'number'],
+            [['area_snapshot', 'movement'], 'number'],
             [['price_updated_at'], 'safe'],
             [['is_initial'], 'boolean'],
+            ['movement', 'default', 'value' => 0],
             [['flat_id'], 'exist', 'targetClass' => Flat::class, 'targetAttribute' => 'id'],
         ];
     }

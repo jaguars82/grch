@@ -19,9 +19,10 @@ class AreaChange extends ActiveRecord
         return [
             [['flat_id'], 'required'],
             [['flat_id'], 'integer'],
-            [['area'], 'number'],
+            [['area', 'movement'], 'number'],
             [['price_updated_at'], 'safe'],
             [['is_initial'], 'boolean'],
+            ['movement', 'default', 'value' => 0],
             [['flat_id'], 'exist', 'targetClass' => Flat::class, 'targetAttribute' => 'id'],
         ];
     }
