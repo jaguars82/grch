@@ -22,6 +22,7 @@ class m250309_142353_add_price_change_and_area_change_tables extends Migration
             'unit_price_credit' => $this->decimal(12,2)->defaultValue(null),
             'area_snapshot' => $this->float(10,2)->defaultValue(null),
             'is_initial' => $this->boolean()->defaultValue(false)->comment('indicates, if this is the first entry for current flat'),
+            'movement' => $this->tinyInteger(1)->notNull()->defaultValue(0),
             'price_updated_at' => $this->timestamp()->defaultExpression('CURRENT_TIMESTAMP'),
         ]);
 
@@ -31,6 +32,7 @@ class m250309_142353_add_price_change_and_area_change_tables extends Migration
             'flat_id' => $this->integer()->notNull(),
             'area' => $this->float(10,2)->defaultValue(null),
             'is_initial' => $this->boolean()->defaultValue(false)->comment('indicates, if this is the first entry for current flat'),
+            'movement' => $this->tinyInteger(1)->notNull()->defaultValue(0),
             'area_updated_at' => $this->timestamp()->defaultExpression('CURRENT_TIMESTAMP'),
         ]);
 

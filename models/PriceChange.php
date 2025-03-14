@@ -5,6 +5,10 @@ use yii\db\ActiveRecord;
 
 class PriceChange extends ActiveRecord
 {
+    const NO_MOVEMENT = 0;
+    const MOVEMENT_UP = 1;
+    const MOVEMENT_DOWN = 2;
+
     public static function tableName()
     {
         return '{{%price_change}}';
