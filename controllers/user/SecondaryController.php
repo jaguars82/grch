@@ -87,11 +87,11 @@ class SecondaryController extends Controller
                     throw new \Exception('Ошибка сохранения объявления');
                     
                     // TOFIX Delete (or comment) 4 lines below after testing
-                    \Yii::error($advertisementModel->errors, 'save-advertisement');
+                    /*\Yii::error($advertisementModel->errors, 'save-advertisement');
                     //echo '<pre>'; var_dump(\Yii::$app->request->post()); echo '</pre>';
                     var_dump($advertisementModel->errors);
                     echo '<pre>'; var_dump($advertisementModel); echo '</pre>';
-                    die;
+                    die;*/
                 }
 
                 $roomForm->load(\Yii::$app->request->post(), '');
@@ -103,21 +103,21 @@ class SecondaryController extends Controller
                     throw new \Exception('Ошибка валидации объекта');
                    
                     // TOFIX delete (or comment) 4 lines below after testing
-                   echo 'ошибки при валидации объявления (объекта)';
-                   \Yii::error($roomModel->errors, 'validation');
+                    /*echo 'ошибки при валидации объявления (объекта)';
+                    \Yii::error($roomModel->errors, 'validation');
                     echo '<pre>'; var_dump($roomModel->errors); echo '</pre>';
                     echo '<pre>'; var_dump($roomModel); echo '</pre>';
-                    die;
+                    die;*/
                 }
 
                 if (!$roomModel->save()) {
                     throw new \Exception('Ошибка сохранения объекта продажи');
                     
                     // TOFIX Delete (or comment) 4 lines below after testing
-                    \Yii::error($roomModel->errors, 'save-secondaryRoom');
+                    /*\Yii::error($roomModel->errors, 'save-secondaryRoom');
                     var_dump($roomModel->errors);
                     echo '<pre>'; var_dump($roomModel); echo '</pre>';
-                    die;
+                    die;*/
                 }
                 
                 if (count($roomForm->images)) {
@@ -136,7 +136,6 @@ class SecondaryController extends Controller
                 \Yii::$app->session->setFlash('success', 'Объявление успешно создано!');
 
                 return $this->redirect('/secondary/index');
-                //echo '<pre>'; var_dump($roomForm); echo '</pre>'; die; 
 
             } catch (\Exception $e) {
                 $transaction->rollBack();

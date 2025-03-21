@@ -49,11 +49,12 @@
                 <span v-else>
                   {{ asCurrency(flat.price_cash) }}
                 </span>
+                <PriceChangeIndicator v-if="flat.status === 0 && flat.priceChange.length > 1" :data="flat.priceChange" :size="$q.screen.gt.sm ? 'xl' : 'md'" />
               </p>
               <!-- Prices with discount (if any) -->
               <q-expansion-item
                 header-class="rounded-borders q-px-xs"
-                v-if="flat.allDiscounts.length"
+                v-if="flat.status === 0 && flat.allDiscounts.length"
                 v-model="discountListExpanded"
                 icon="price_change"
                 label="Варианты стоимости"
@@ -274,6 +275,13 @@
         </template>
       </RegularContentContainer>
 
+      <!-- Price change chart section -->
+      <RegularContentContainer v-if="flat.priceChange.length > 1" class="q-mt-md q-mx-md" title="Изменение цены">
+        <template v-slot:content>
+          <PriceChangeChart :data="flat.priceChange" />
+        </template>
+      </RegularContentContainer>
+
       <!-- Chesses section -->
       <RegularContentContainer v-if="true" class="q-mt-md q-mx-md" title="Шахматки/позиции">
         <template v-slot:content>
@@ -333,9 +341,11 @@
                   <q-expansion-item
                     class="q-my-sm"
                     v-for="entrance of building.entrances"
+                    :key="entrance.id"
                     :default-opened="entrance.id === flat.entrance_id"
                     dense
                     dense-toggle
+                    @before-show="loadFlats(entrance.id)"
                   >
                     <template v-slot:header>
                       <div class="row items-center full-width">
@@ -362,7 +372,21 @@
                       </div>
                     </template>
 
-                    <div class="bg-grey-3 q-pl-none q-py-sm q-pr-sm rounded-borders overflow-auto">
+                    <div v-if="flatsData[entrance.id]" class="bg-grey-3 q-pl-none q-py-sm q-pr-sm rounded-borders overflow-auto relative-position">
+                      <ChessLegend :statusLabels="flatStatuses" :existingStatuses="entrance.flatStatuses" />
+                      <div class="row q-pl-none relative-position no-wrap w-max-content" v-for="floor of Object.keys(flatsData[entrance.id]).reverse()" :key="floor">
+                        <div class="floor-cell q-pl-sm text-weight-bolder bg-grey-3 text-grey">{{ floor }}</div>
+                        <div>
+                          <div class="row no-wrap">
+                            <FlatCell v-for="flatId of Object.keys(flatsData[entrance.id][floor])" :key="flatId" :flat="flatsData[entrance.id][floor][flatId]" :currentlyOpened="flatsData[entrance.id][floor][flatId].id == flat.id" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div v-else class="text-grey q-pa-md">Загрузка данных...</div>
+
+                    <!--<div class="bg-grey-3 q-pl-none q-py-sm q-pr-sm rounded-borders overflow-auto">
                       <ChessLegend :statusLabels="flatStatuses" :existingStatuses="entrance.flatStatuses" />
                       <div class="row q-pl-none relative-position no-wrap w-max-content" v-for="floor of Object.keys(entrance.flats).reverse()">
                         <div class="floor-cell q-pl-sm text-weight-bolder bg-grey-3 text-grey">{{ floor }}</div>
@@ -372,7 +396,7 @@
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </div>-->
                     
                   </q-expansion-item>
                 </template>
@@ -557,6 +581,7 @@
           <p class="q-mb-xs text-h3 text-bold text-blue-8 text-center">
             <span v-if="flat.hasDiscount && flat.priceRange && flat.status === 0">{{ flat.priceRange }}</span>
             <span v-else>{{ asCurrency(flat.price_cash) }}</span>
+            <PriceChangeIndicator v-if="flat.status === 0 && flat.priceChange.length > 1" :data="flat.priceChange" />
           </p>
         </div>
 
@@ -627,14 +652,17 @@
 </template>
   
 <script>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
+import axios from 'axios'
 import { asArea, asCurrency, asFloor, asNumberString, asQuarterAndYearDate, asPricePerArea, asDateTime } from '@/helpers/formatter'
 import MainLayout from '@/Layouts/MainLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import Loading from "@/Components/Elements/Loading.vue"
 import FlatActionButtons from '@/Components/Flat/FlatActionButtons/FlatActionButtons.vue'
 import ParamPair from '@/Components/Elements/ParamPair.vue'
+import PriceChangeIndicator from '@/Components/Elements/Price/PriceChangeIndicator.vue'
+import PriceChangeChart from "@/Pages/Flat/partials/PriceChangeChart.vue"
 import Compass from '@/Components/Svg/Compass.vue'
 import FloorLayoutForAFlat from '@/Components/Svg/FloorLayoutForAFlat.vue'
 import ChessLegend from '@/Components/Chess/ChessLegend.vue'
@@ -658,7 +686,7 @@ export default {
     },
   },
   components: {
-    MainLayout, Breadcrumbs, Loading, ParamPair, FlatActionButtons, Compass, FloorLayoutForAFlat, ChessLegend, FlatCell, FinishingCard, ObjectOnMap, AdvantagesBlock, RegularContentContainer
+    MainLayout, Breadcrumbs, Loading, ParamPair, PriceChangeIndicator, PriceChangeChart, FlatActionButtons, Compass, FloorLayoutForAFlat, ChessLegend, FlatCell, FinishingCard, ObjectOnMap, AdvantagesBlock, RegularContentContainer
   },
   setup(props) {
     const breadcrumbs = ref([
@@ -767,6 +795,26 @@ export default {
       Inertia.get('/flat/view', { id: flatId })
     }
 
+    
+    // Local storage for loaded flats
+    const flatsData = ref({})
+
+    // Loading flats by entrance id
+    const loadFlats = async (entranceId) => {
+      if (!flatsData.value[entranceId]) {
+        try {
+          const response = await axios.post(`/entrance/get-chess-flats-by-entrance?id=${ entranceId }`, { id: entranceId })
+          flatsData.value[entranceId] = response.data
+        } catch (error) {
+          console.error("Ошибка загрузки квартир:", error)
+        }
+      }
+    }
+
+    onMounted (() => {
+      loadFlats(props.flat.entrance_id)
+    })
+
     return {
       asCurrency,
       asArea,
@@ -791,7 +839,9 @@ export default {
       focusOn,
       focusOff,
       goToComplex,
-      goToFlat
+      goToFlat,
+      flatsData,
+      loadFlats,
     }
   },
 }

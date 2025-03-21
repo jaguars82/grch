@@ -963,4 +963,14 @@ class Flat extends ActiveRecord
             ->max('floor');
     }
 
+    /**
+     * Get price changes
+     */
+    public function getPriceChanges()
+    {
+        return $this->hasMany(PriceChange::class, ['flat_id' => 'id'])
+            ->andWhere(['>', 'price_cash', 0])
+            ->orderBy(['price_updated_at' => SORT_ASC]);
+    }
+
 }

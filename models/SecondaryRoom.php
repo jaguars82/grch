@@ -171,7 +171,7 @@ class SecondaryRoom extends ActiveRecord
         return [
             [['advertisement_id'], 'required'],
             [['building_number'], 'string', 'max' => 20],
-            [['built_year'], 'string', 'max' => 4],
+            [['built_year'], 'number', 'min' => 1900, 'max' => 2100],
             [['advertisement_id', 'category_id', 'property_type_id', 'building_series_id', 'newbuilding_complex_id', 'newbuilding_id', 'entrance_id', 'flat_id', 'city_id', 'region_id', 'district_id', 'region_district_id', 'street_type_id', 'rooms', 'balcony_amount', 'loggia_amount', 'material_id', 'renovation_id', 'floor', 'section', 'total_floors', 'elevator_passenger_amount', 'elevator_freight_amount', 'bathroom_index', 'quality_index'], 'integer'],
             [['number', 'azimuth'], 'number'],
             [['price', 'unit_price', 'area', 'kitchen_area', 'living_area', 'ceiling_height', 'longitude', 'latitude'], 'double'],

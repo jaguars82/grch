@@ -148,8 +148,10 @@
                   <q-expansion-item
                     class="q-my-sm"
                     v-for="entrance of building.entrances"
+                    :key="entrance.id"
                     dense
                     dense-toggle
+                    @before-show="loadFlats(entrance.id)"
                   >
                     <template v-slot:header>
                       <div class="row items-center full-width">
@@ -176,17 +178,19 @@
                       </div>
                     </template>
 
-                    <div class="bg-grey-3 q-pl-none q-py-sm q-pr-sm rounded-borders overflow-auto relative-position">
+                    <div v-if="flatsData[entrance.id]" class="bg-grey-3 q-pl-none q-py-sm q-pr-sm rounded-borders overflow-auto relative-position">
                       <ChessLegend :statusLabels="flatStatuses" :existingStatuses="entrance.flatStatuses" />
-                      <div class="row q-pl-none relative-position no-wrap w-max-content" v-for="floor of Object.keys(entrance.flats).reverse()">
+                      <div class="row q-pl-none relative-position no-wrap w-max-content" v-for="floor of Object.keys(flatsData[entrance.id]).reverse()" :key="floor">
                         <div class="floor-cell q-pl-sm text-weight-bolder bg-grey-3 text-grey">{{ floor }}</div>
                         <div>
                           <div class="row no-wrap">
-                            <FlatCell v-for="flatId of Object.keys(entrance.flats[floor])" :flat="entrance.flats[floor][flatId]" />
+                            <FlatCell v-for="flatId of Object.keys(flatsData[entrance.id][floor])" :key="flatId" :flat="flatsData[entrance.id][floor][flatId]" />
                           </div>
                         </div>
                       </div>
                     </div>
+
+                    <div v-else class="text-grey q-pa-md">Загрузка данных...</div>
                     
                   </q-expansion-item>
                 </template>
@@ -419,6 +423,7 @@
   
 <script>
 import { ref, computed } from 'vue'
+import axios from 'axios'
 import { Inertia } from '@inertiajs/inertia'
 import { asArea, asCurrency, asFloor, asNumberString, asQuarterAndYearDate, asPricePerArea } from '@/helpers/formatter'
 import MainLayout from '@/Layouts/MainLayout.vue'
@@ -484,6 +489,21 @@ export default {
       imageViewer.value = true
     }
 
+    // Local storage for loaded flats
+    const flatsData = ref({})
+
+    // Loading flats by entrance id
+    const loadFlats = async (entranceId) => {
+      if (!flatsData.value[entranceId]) {
+        try {
+          const response = await axios.post(`/entrance/get-chess-flats-by-entrance?id=${ entranceId }`, { id: entranceId })
+          flatsData.value[entranceId] = response.data
+        } catch (error) {
+          console.error("Ошибка загрузки квартир:", error)
+        }
+      }
+    }
+
     const focusOn = function (event) {
       event.target.classList.add('bg-grey-3')
     }
@@ -521,6 +541,8 @@ export default {
       onImageClick,
       focusOn,
       focusOff,
+      flatsData,
+      loadFlats,
       goToComplex,
       goUrl,
       furnishViewer,
