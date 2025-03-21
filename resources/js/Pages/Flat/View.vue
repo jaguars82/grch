@@ -49,11 +49,12 @@
                 <span v-else>
                   {{ asCurrency(flat.price_cash) }}
                 </span>
+                <PriceChangeIndicator v-if="flat.status === 0 && flat.priceChange.length > 1" :data="flat.priceChange" :size="$q.screen.gt.sm ? 'xl' : 'md'" />
               </p>
               <!-- Prices with discount (if any) -->
               <q-expansion-item
                 header-class="rounded-borders q-px-xs"
-                v-if="flat.allDiscounts.length"
+                v-if="flat.status === 0 && flat.allDiscounts.length"
                 v-model="discountListExpanded"
                 icon="price_change"
                 label="Варианты стоимости"
@@ -271,6 +272,13 @@
               </q-tab-panel>
             </q-tab-panels>
           </div>
+        </template>
+      </RegularContentContainer>
+
+      <!-- Price change chart section -->
+      <RegularContentContainer v-if="flat.priceChange.length > 1" class="q-mt-md q-mx-md" title="Изменение цены">
+        <template v-slot:content>
+          <PriceChangeChart :data="flat.priceChange" />
         </template>
       </RegularContentContainer>
 
@@ -573,6 +581,7 @@
           <p class="q-mb-xs text-h3 text-bold text-blue-8 text-center">
             <span v-if="flat.hasDiscount && flat.priceRange && flat.status === 0">{{ flat.priceRange }}</span>
             <span v-else>{{ asCurrency(flat.price_cash) }}</span>
+            <PriceChangeIndicator v-if="flat.status === 0 && flat.priceChange.length > 1" :data="flat.priceChange" />
           </p>
         </div>
 
@@ -652,6 +661,8 @@ import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import Loading from "@/Components/Elements/Loading.vue"
 import FlatActionButtons from '@/Components/Flat/FlatActionButtons/FlatActionButtons.vue'
 import ParamPair from '@/Components/Elements/ParamPair.vue'
+import PriceChangeIndicator from '@/Components/Elements/Price/PriceChangeIndicator.vue'
+import PriceChangeChart from "@/Pages/Flat/partials/PriceChangeChart.vue"
 import Compass from '@/Components/Svg/Compass.vue'
 import FloorLayoutForAFlat from '@/Components/Svg/FloorLayoutForAFlat.vue'
 import ChessLegend from '@/Components/Chess/ChessLegend.vue'
@@ -675,7 +686,7 @@ export default {
     },
   },
   components: {
-    MainLayout, Breadcrumbs, Loading, ParamPair, FlatActionButtons, Compass, FloorLayoutForAFlat, ChessLegend, FlatCell, FinishingCard, ObjectOnMap, AdvantagesBlock, RegularContentContainer
+    MainLayout, Breadcrumbs, Loading, ParamPair, PriceChangeIndicator, PriceChangeChart, FlatActionButtons, Compass, FloorLayoutForAFlat, ChessLegend, FlatCell, FinishingCard, ObjectOnMap, AdvantagesBlock, RegularContentContainer
   },
   setup(props) {
     const breadcrumbs = ref([

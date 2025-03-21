@@ -28,7 +28,7 @@ class DataBaseRecordController extends Controller
                     ->exists();
 
                 // Create an entry
-                if (!$existingPriceChange && $flat->price_cash > 0) {
+                if (!$existingPriceChange && $flat->price_cash > 0.01) {
                     $priceChange = new PriceChange([
                         'flat_id' => $flat->id,
                         'price_cash' => $flat->price_cash,
@@ -47,7 +47,7 @@ class DataBaseRecordController extends Controller
                     ->exists();
 
                 // Create an entry
-                if (!$existingAreaChange && $flat->area > 0) {
+                if (!$existingAreaChange && $flat->area > 0.01) {
                     $areaChange = new AreaChange([
                         'flat_id' => $flat->id,
                         'area' => $flat->area,

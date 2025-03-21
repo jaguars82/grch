@@ -1419,6 +1419,8 @@ export default {
 .yandex-container {
   width: 100%;
   height: 400px!important;
+  overflow: hidden;
+  position: relative;
   margin-top: -35px;
 }
 </style>

@@ -969,7 +969,8 @@ class Flat extends ActiveRecord
     public function getPriceChanges()
     {
         return $this->hasMany(PriceChange::class, ['flat_id' => 'id'])
-            ->andWhere(['>', 'price_cash', 0]);
+            ->andWhere(['>', 'price_cash', 0])
+            ->orderBy(['price_updated_at' => SORT_ASC]);
     }
 
 }

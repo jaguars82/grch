@@ -312,156 +312,7 @@ class Developer extends \app\models\Developer
      * @param array $newbuildings newbuildings array
      * @param array $flatsData flats data
      */
-    private function insertOrUpdateFlats($newbuildings, $flatsData)
-    {
-        $compositeFlats = [];
-        $savedFlats = [];
-        $savedFlatIds = [];
-
-        foreach ($newbuildings as $key => $newbuilding) {
-            $savedFlats[$key] = $newbuilding->getFlats()->all();
-            $current = ArrayHelper::getColumn($savedFlats[$key], 'id');
-            $savedFlatIds = array_merge($savedFlatIds, $current);
-        }
-
-        $actualFlatIds = [];
-
-        foreach ($flatsData as $flatData) {
-            $houseId = $flatData['houseId'];
-            unset($flatData['houseId']);
-
-            $compositeFlatId = $flatData['compositeFlatId'] ?? null;
-            unset($flatData['compositeFlatId']);
-
-            if ($flat = $this->checkFlatExists($savedFlats[$houseId], $flatData)) {
-                $oldPriceCash = $flat->price_cash;
-                $oldArea = $flat->area;
-
-                // Check for the existance of etries in 'price_change' and 'area_change'
-                $hasPriceChange = PriceChange::find()->where(['flat_id' => $flat->id])->exists();
-                $hasAreaChange = AreaChange::find()->where(['flat_id' => $flat->id])->exists();
-
-                if (!$hasPriceChange || !$hasAreaChange) {
-                    // If entries don't exist, create initial entries
-                    $priceChange = new PriceChange([
-                        'flat_id' => $flat->id,
-                        'price_cash' => $flat->price_cash,
-                        'unit_price_cash' => $flat->unit_price_cash,
-                        'price_credit' => $flat->price_credit ?? null,
-                        'unit_price_credit' => $flat->unit_price_credit ?? null,
-                        'area_snapshot' => $flat->area,
-                        'price_updated_at' => date('Y-m-d H:i:s'),
-                        'is_initial' => true
-                    ]);
-                    $priceChange->save(false);
-
-                    $areaChange = new AreaChange([
-                        'flat_id' => $flat->id,
-                        'area' => $flat->area,
-                        'area_updated_at' => date('Y-m-d H:i:s'),
-                        'is_initial' => true
-                    ]);
-                    $areaChange->save(false);
-                }
-
-                if ((float)$flatData['unit_price_cash'] !== (float)$flat->unit_price_cash
-                    || (float)$flatData['price_cash'] !== (float)$flat->price_cash
-                    || (isset($flatData['unit_price_credit']) && (float)$flatData['unit_price_credit'] !== (float)$flat->unit_price_credit)
-                    || (isset($flatData['price_credit']) && (float)$flatData['price_credit'] !== (float)$flat->price_credit)
-                    || (isset($flatData['area']) && (float)$flatData['area'] !== (float)$flat->area)
-                    || $flatData['status'] != $flat->status
-                    || (isset($flatData['index_on_floor']) && $flatData['index_on_floor'] != $flat->index_on_floor)
-                    || (isset($flatData['is_commercial']) && $flatData['is_commercial'] != $flat->is_commercial)
-                ) {
-                    $status = $flat->status;
-                    $flat->fill($flatData, ['section', 'rooms']);
-                    $flat = \app\models\service\Flat::applyFlatPostionOnFloorLayout($flat, ['status' => $flatData['status']], $status);
-                    $flat->save(false);
-                    $this->updatedFlatsCount++;
-
-                    // Add change_price entry
-                    if ((float)$oldPriceCash !== (float)$flat->price_cash) {
-                        $priceChange = new PriceChange([
-                            'flat_id' => $flat->id,
-                            'price_cash' => $flat->price_cash,
-                            'unit_price_cash' => $flat->unit_price_cash,
-                            'price_credit' => $flat->price_credit ?? null,
-                            'unit_price_credit' => $flat->unit_price_credit ?? null,
-                            'area_snapshot' => $flat->area,
-                            'price_updated_at' => date('Y-m-d H:i:s'),
-                            'is_initial' => false
-                        ]);
-                        $priceChange->save(false);
-                    }
-
-                    // Add change_area entry
-                    if ((float)$oldArea !== (float)$flat->area) {
-                        $areaChange = new AreaChange([
-                            'flat_id' => $flat->id,
-                            'area' => $flat->area,
-                            'area_updated_at' => date('Y-m-d H:i:s'),
-                            'is_initial' => false
-                        ]);
-                        $areaChange->save(false);
-                    }
-                } else {
-                    $flat->touch('updated_at');
-                }
-
-                $actualFlatIds[] = $flat->id;
-            } else {
-                $flat = new Flat($flatData);
-                $flat->newbuilding_id = $newbuildings[$houseId]->id;
-                $flat->rooms = $flatData['rooms'];
-
-                if (!is_null($compositeFlatId)) {
-                    if (isset($compositeFlats[$compositeFlatId])) {
-                        $compositeFlat = $compositeFlats[$compositeFlatId];
-                    } else {
-                        $compositeFlat = new CompositeFlat();
-                        $compositeFlat->save();
-                        $compositeFlats[$compositeFlatId] = $compositeFlat;
-                    }
-
-                    $flat->composite_flat_id = $compositeFlat->id;
-                }
-
-                if (isset($flatData['layout'])) {
-                    $flat->layout = $this->downloadFile($flatData['layout'], $flat);
-                }
-
-                $flat->save(false);
-                $this->insertedFlatsCount++;
-
-                // Create an initial entry in price_change
-                $priceChange = new PriceChange([
-                    'flat_id' => $flat->id,
-                    'price_cash' => $flat->price_cash,
-                    'unit_price_cash' => $flat->unit_price_cash,
-                    'price_credit' => $flat->price_credit ?? null,
-                    'unit_price_credit' => $flat->unit_price_credit ?? null,
-                    'area_snapshot' => $flat->area,
-                    'price_updated_at' => date('Y-m-d H:i:s'),
-                    'is_initial' => true
-                ]);
-                $priceChange->save(false);
-
-                // Create an initial entry in area_change
-                $areaChange = new AreaChange([
-                    'flat_id' => $flat->id,
-                    'area' => $flat->area,
-                    'area_updated_at' => date('Y-m-d H:i:s'),
-                    'is_initial' => true
-                ]);
-                $areaChange->save(false);
-            }
-        }
-
-        $missedFlats = array_diff($savedFlatIds, $actualFlatIds);
-        $this->updateFlatStatus($missedFlats, Flat::STATUS_SOLD);
-    }
-
-    /* private function insertOrUpdateFlats($newbuildings, $flatsData)
+    /*private function insertOrUpdateFlats($newbuildings, $flatsData)
     {
         $compositeFlats = [];
 
@@ -552,6 +403,126 @@ class Developer extends \app\models\Developer
 		$this->updateFlatStatus($missedFlats, Flat::STATUS_SOLD);
 
     } */
+
+    private function insertOrUpdateFlats($newbuildings, $flatsData)
+    {
+        $compositeFlats = [];
+        $savedFlats = [];
+        $savedFlatIds = [];
+
+        foreach ($newbuildings as $key => $newbuilding) {
+            $savedFlats[$key] = $newbuilding->getFlats()->all();
+            $current = ArrayHelper::getColumn($savedFlats[$key], 'id');
+            $savedFlatIds = array_merge($savedFlatIds, $current);
+        }
+
+        $actualFlatIds = [];
+
+        foreach ($flatsData as $flatData) {
+            $houseId = $flatData['houseId'];
+            unset($flatData['houseId']);
+
+            $compositeFlatId = $flatData['compositeFlatId'] ?? null;
+            unset($flatData['compositeFlatId']);
+
+            if ($flat = $this->checkFlatExists($savedFlats[$houseId], $flatData)) {
+                if ((float)$flatData['unit_price_cash'] !== (float)$flat->unit_price_cash
+                    || (float)$flatData['price_cash'] !== (float)$flat->price_cash
+                    || (isset($flatData['unit_price_credit']) && (float)$flatData['unit_price_credit'] !== (float)$flat->unit_price_credit)
+                    || (isset($flatData['price_credit']) && (float)$flatData['price_credit'] !== (float)$flat->price_credit)
+                    || (isset($flatData['area']) && (float)$flatData['area'] !== (float)$flat->area)
+                    || $flatData['status'] != $flat->status
+                    || (isset($flatData['index_on_floor']) && $flatData['index_on_floor'] != $flat->index_on_floor)
+                    || (isset($flatData['is_commercial']) && $flatData['is_commercial'] != $flat->is_commercial)
+                ) {
+                    $status = $flat->status;
+                    $flat->fill($flatData, ['section', 'rooms']);
+                    $flat = \app\models\service\Flat::applyFlatPostionOnFloorLayout($flat, ['status' => $flatData['status']], $status);
+                    $flat->save(false);
+                    $this->updatedFlatsCount++;
+
+                    // Вызов методов для обновления price_change и area_change
+                    $this->updatePriceChange($flat, $flatData);
+                    $this->updateAreaChange($flat, $flatData);
+                } else {
+                    $flat->touch('updated_at');
+                }
+
+                $actualFlatIds[] = $flat->id;
+            } else {
+                $flat = new Flat($flatData);
+                $flat->newbuilding_id = $newbuildings[$houseId]->id;
+                $flat->rooms = $flatData['rooms'];
+                $flat->save(false);
+                $this->insertedFlatsCount++;
+
+                // Вызов методов для обновления price_change и area_change
+                $this->updatePriceChange($flat, $flatData);
+                $this->updateAreaChange($flat, $flatData);
+            }
+        }
+
+        $missedFlats = array_diff($savedFlatIds, $actualFlatIds);
+        $this->updateFlatStatus($missedFlats, Flat::STATUS_SOLD);
+    }
+
+    /**
+     * Обновление таблицы price_change
+     */
+    private function updatePriceChange(Flat $flat, array $flatData)
+    {
+        if (!empty($flat->price_cash) && $flat->price_cash > 0.01) {
+            $lastPriceChange = PriceChange::find()
+                ->where(['flat_id' => $flat->id])
+                ->orderBy(['price_updated_at' => SORT_DESC])
+                ->one();
+            $lastPrice = $lastPriceChange ? $lastPriceChange->price_cash : null;
+
+            if ($lastPrice === null || (float)$lastPrice !== (float)$flat->price_cash) {
+                $movement = $lastPrice === null ? PriceChange::NO_MOVEMENT : (($flat->price_cash > $lastPrice) ? PriceChange::MOVEMENT_UP : PriceChange::MOVEMENT_DOWN);
+
+                $priceChange = new PriceChange([
+                    'flat_id' => $flat->id,
+                    'price_cash' => $flat->price_cash,
+                    'unit_price_cash' => $flat->unit_price_cash,
+                    'price_credit' => $flat->price_credit ?? null,
+                    'unit_price_credit' => $flat->unit_price_credit ?? null,
+                    'area_snapshot' => $flat->area,
+                    'price_updated_at' => date('Y-m-d H:i:s'),
+                    'is_initial' => $lastPrice === null,
+                    'movement' => $movement
+                ]);
+                $priceChange->save(false);
+            }
+        }
+    }
+
+    /**
+     * Обновление таблицы area_change
+     */
+    private function updateAreaChange(Flat $flat, array $flatData)
+    {
+        if (!empty($flat->area) && $flat->area > 0.01) {
+            $lastAreaChange = AreaChange::find()
+                ->where(['flat_id' => $flat->id])
+                ->orderBy(['area_updated_at' => SORT_DESC])
+                ->one();
+            $lastArea = $lastAreaChange ? $lastAreaChange->area : null;
+
+            if ($lastArea === null || (float)$lastArea !== (float)$flat->area) {
+                $movement = $lastArea === null ? AreaChange::NO_MOVEMENT : (($flat->area > $lastArea) ? AreaChange::MOVEMENT_UP : AreaChange::MOVEMENT_DOWN);
+
+                $areaChange = new AreaChange([
+                    'flat_id' => $flat->id,
+                    'area' => $flat->area,
+                    'area_updated_at' => date('Y-m-d H:i:s'),
+                    'is_initial' => $lastArea === null,
+                    'movement' => $movement
+                ]);
+                $areaChange->save(false);
+            }
+        }
+    }
 
 	private function updateFlatStatus($flatIds, $status)
 	{

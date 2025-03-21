@@ -21,8 +21,9 @@
       <div class="text-grey-7">№ <span v-if="flat.number_string" class="text-weight-bolder">{{ flat.number_string }}</span><span v-else class="text-weight-bolder">{{ flat.number }}</span></div>
     </div>
     <div class="q-py-sm" :class="{ 'text-bold': $q.screen.gt.xs, 'text-h6': $q.screen.xs }">
-      <span v-if="flat.has_discount">{{ flat.price_range }}</span>
+      <span v-if="flat.status === 0 && flat.has_discount">{{ flat.price_range }}</span>
       <span v-else>{{ asCurrency(flat.price_cash) }}</span>
+      <PriceChangeIndicator v-if="flat.status === 0 && flat.price_change.length > 1" :data="flat.price_change" size="xs" />
     </div>
     <div class="row justify-between">
       <div class="text-bold text-grey-7 text-body2">{{ asArea(flat.area) }}</div>
@@ -37,9 +38,11 @@
 import { ref, computed } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { asArea, asCurrency, asPricePerArea } from '@/helpers/formatter'
+import PriceChangeIndicator from '@/Components/Elements/Price/PriceChangeIndicator.vue'
 import { flatStatusColors } from '@/composables/model-configurations'
 
 export default {
+  components: { PriceChangeIndicator },
   props: {
     flat: [Object, String],
     currentlyOpened: {

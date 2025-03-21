@@ -12,7 +12,7 @@ class NewAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        'assets/inertia/css/app.css',
+        //'assets/inertia/css/app.css',
         //'https://cdn.jsdelivr.net/npm/quasar@2.7.5/dist/quasar.prod.css',
         'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap',
         'https://fonts.googleapis.com/css2?family=Material+Icons',

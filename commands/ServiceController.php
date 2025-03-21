@@ -11,8 +11,8 @@ use app\models\StatusLabel;
 
 class ServiceController extends Controller
 {
-    public function actionHideZeroPositions() {
-
+    public function actionHideZeroPositions()
+    {
         $NewbuildingComplexes = (new NewbuildingComplex())->find()->all();
 
         foreach($NewbuildingComplexes as $NewbuildingComplex) {
@@ -41,8 +41,8 @@ class ServiceController extends Controller
         }        
     }
 
-    public function actionDisableExpiredActions() {
-
+    public function actionDisableExpiredActions()
+    {
         // $actions = (new News())->actions;
         $actions = News::find()
             ->where(['category' => News::CATEGORY_ACTION])
@@ -74,17 +74,30 @@ class ServiceController extends Controller
     /**
      * delete expired status labels of secondary advertisements
      */
-    public function actionDeleteSecondaryExpiredStatuses ()
+    public function actionDeleteSecondaryExpiredStatuses()
     {
-        $expiredLabels = StatusLabel::find()
-            ->where(['has_expiration_date' => 1])
-            ->andWhere(['<', 'expires_at', new Expression('NOW()')])
-            ->all();
+        $transaction = \Yii::$app->db->beginTransaction();
+        try {
+            foreach (StatusLabel::find()
+                ->where(['has_expiration_date' => 1])
+                ->andWhere(['<', 'expires_at', new Expression('NOW()')])
+                ->batch(100) as $labels) {
 
-        foreach ($expiredLabels as $label) {
-            $advertisement = $label->advertisement;
-            $advertisement->unlink('statusLabels', $label, true);
-            $label->delete();
+                foreach ($labels as $label) {
+                    $advertisement = $label->advertisement;
+                    if ($advertisement) {
+                        $advertisement->unlink('statusLabels', $label, true);
+                    } else {
+                        \Yii::warning("Advertisement not found for StatusLabel ID: {$label->id}");
+                    }
+                }
+            }
+    
+            $transaction->commit();
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
+            \Yii::error("Error deleting expired status labels", ['exception' => $e]);
+            throw $e;
         }
-    }
+    }    
 }

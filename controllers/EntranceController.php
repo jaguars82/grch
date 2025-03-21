@@ -119,6 +119,9 @@ class EntranceController extends Controller
                 },
                 'price_range' => function ($flat) {
                     return $flat->hasDiscount() ? \Yii::$app->formatter->asCurrencyRange(round($flat->allCashPricesWithDiscount[0]['price']), $flat->price_cash) : '';
+                },
+                'price_change' => function ($flat) {
+                    return $flat->priceChanges;
                 }
             ]
         ]);
