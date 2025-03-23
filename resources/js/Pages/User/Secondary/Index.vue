@@ -6,9 +6,13 @@
       <template v-slot:main>
         <RegularContentContainer title="Вторичная недвижимость">
           <template v-slot:content>
+
+            <!-- Create new adv button -->
             <div v-if="user.role !== 'admin'" class="q-mt-md">
               <q-btn color="primary" unelevated label="Создать объявление" icon="post_add" @click="createAdd" />
             </div>
+
+            <!-- Filers -->
             <div class="row q-mt-md" v-if="user.role === 'admin' || user.role === 'manager'">
               <div class="col-1 gt-xs">
                 <q-icon :color="filters.agency === null && filters.agent === null && filters.category === null ? 'grey-5' : 'orange'" size="md" name="filter_alt"></q-icon>
@@ -34,6 +38,8 @@
                 </q-btn>
               </div>
             </div>
+
+            <!-- Data table -->
             <div class="q-pt-md">
               <q-table
                 class="no-shadow datatable"
@@ -70,49 +76,87 @@
                       {{ props.row.create_info }}
                     </q-td>
                     <q-td key="source" :props="props">
-                      <q-icon v-if="props.row.source === 1" name="share" />
-                      <q-icon v-if="props.row.source === 2" name="edit_square" />
+                      <q-icon color="grey-7" v-if="props.row.source === 1" name="share">
+                        <q-tooltip anchor="top middle" self="bottom middle">
+                          Размещено из внешнего источника (фида)
+                        </q-tooltip>
+                      </q-icon>
+                      <q-icon color="grey-7" v-if="props.row.source === 2" name="edit_square">
+                        <q-tooltip anchor="top middle" self="bottom middle">
+                          Размещено вручную
+                        </q-tooltip>
+                      </q-icon>
+                    </q-td>
+                    <q-td key="agent_fee">
+                      <!-- Agent's fee -->
+                      <template v-if="false">
+                      </template>
+                      <template v-else>
+                        <q-btn unelevated size="xs" icon="percent">
+                          <q-menu>
+                            <div class="column q-pa-md options-menu">
+                              <q-input
+                                outlined
+                                dense
+                                v-model="feeForm.amount"
+                              />
+                              <q-btn unelevated color="primary" size="md" label="Установить комиссию" :disable="canSaveFee" @click="saveFee(props.row.id)" v-close-popup />
+                            </div>
+                          </q-menu>
+                        </q-btn>
+                      </template>
                     </q-td>
                     <q-td key="delete" :props="props">
                       <template v-if="props.row.source === 2">
-                        <q-btn icon="delete" @click="openDeleteForm(props.row.id)"/>
+                        <q-btn icon="delete" size="sm" flat round color="negative" @click="openDeleteForm(props.row.id)">
+                          <q-tooltip anchor="top middle" self="center middle">
+                            Удалить объявление
+                          </q-tooltip>
+                        </q-btn>
                       </template>
                     </q-td>
                     <q-td key="status" :props="props">
                       <template v-if="props.row.status">
-                        <q-chip color="primary" class="text-white" v-for="status of props.row.status">
-                          {{ status.type.name }}
-                          <q-icon class="q-pl-xs cursor-pointer" name="close" @click="unsetStatus(props.row.id, status.id)">
-                            <q-tooltip>
+                        <q-chip size="sm" color="primary" class="q-pl-none text-white" v-for="status of props.row.status">
+                          <q-badge v-if="status.has_expiration_date" floating rounded class="q-pa-none" color="orange">
+                            <q-icon name="schedule" color="white"/>
+                            <q-tooltip anchor="top left" self="center middle">
+                              Установлен до {{ asDate(status.expires_at) }}
+                            </q-tooltip>
+                          </q-badge>
+                          <!--<q-icon class="q-pr-xs cursor-pointer" name="close" @click="unsetStatus(props.row.id, status.id)">-->
+                          <q-btn size="xs" dense unelevated round class="q-mr-xs q-pa-none" color="negative" icon="close" @click="unsetStatus(props.row.id, status.id)">
+                            <q-tooltip anchor="top middle" self="bottom middle">
                               Удалить статус
                             </q-tooltip>
-                          </q-icon>
+                          </q-btn>
+                          {{ status.type.name }}
                         </q-chip>
                       </template>
                       <template v-else>
                         <q-btn unelevated size="xs" label="Установить статус">
                           <q-menu>
-                              <div class="column q-pa-md status-menu">
-                                <q-select
-                                  outlined
-                                  dense
-                                  options-dense
-                                  :options="statusOptions"
-                                  v-model="statusLabelForm.status"
-                                >
-                                </q-select>
-                                <q-checkbox v-model="statusLabelForm.statusTermFlag" label="Установить срок действия" />
-                                <q-date
-                                  v-if="statusLabelForm.statusTermFlag"
-                                  class="q-mb-sm no-shadow"
-                                  bordered
-                                  mask="YYYY-MM-DD"
-                                  v-model="statusLabelForm.date"
-                                  :options="dateOptions"
-                                  minimal
-                                />
-                                <q-btn unelevated color="primary" size="md" label="Сохранить статус" :disable="canSaveAddStatus" @click="saveAddStatus(props.row.id)" v-close-popup />
-                              </div>
+                            <div class="column q-pa-md options-menu">
+                              <q-select
+                                outlined
+                                dense
+                                options-dense
+                                :options="statusOptions"
+                                v-model="statusLabelForm.status"
+                              >
+                              </q-select>
+                              <q-checkbox v-model="statusLabelForm.statusTermFlag" label="Установить срок действия" />
+                              <q-date
+                                v-if="statusLabelForm.statusTermFlag"
+                                class="q-mb-sm no-shadow"
+                                bordered
+                                mask="YYYY-MM-DD"
+                                v-model="statusLabelForm.date"
+                                :options="dateOptions"
+                                minimal
+                              />
+                              <q-btn unelevated color="primary" size="md" label="Сохранить статус" :disable="cantSaveAddStatus" @click="saveAddStatus(props.row.id)" v-close-popup />
+                            </div>
                           </q-menu>
                         </q-btn>
                       </template>
@@ -153,7 +197,7 @@
 import { ref, computed, watch } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { date } from 'quasar'
-import { asDateTime, asNumberString, asFloor, asArea, asCurrency, asPricePerArea } from '@/helpers/formatter'
+import { asDate, asDateTime, asNumberString, asFloor, asArea, asCurrency, asPricePerArea } from '@/helpers/formatter'
 import { secondaryCategoryOptionList, idNameObjToOptions, userOptionList } from '@/composables/formatted-and-processed-data'
 import { userInfo } from '@/composables/shared-data'
 import ProfileLayout from '@/Layouts/ProfileLayout.vue'
@@ -188,7 +232,7 @@ export default ({
       type: Object,
       default: {}
     },
-    filter: Array
+    filter: Object
   },
   setup(props) {
     const { user } = userInfo()
@@ -222,12 +266,22 @@ export default ({
 
     const loading = ref(false)
 
-    const pagination = computed(() => {
-      return {
-        page: props.page + 1,
-        rowsPerPage: props.psize,
-        rowsNumber: props.totalRows
-      }
+    const pagination = ref({
+      page: props.page + 1,
+      rowsPerPage: props.psize,
+      rowsNumber: props.totalRows
+    })
+
+    watch(() => props.page, (newPage) => {
+      pagination.value.page = newPage + 1
+    })
+
+    watch(() => props.psize, (newPsize) => {
+      pagination.value.rowsPerPage = newPsize
+    })
+
+    watch(() => props.totalRows, (newTotalRows) => {
+      pagination.value.rowsNumber = newTotalRows
     })
 
     const columns = [
@@ -353,6 +407,22 @@ export default ({
       filters.value.category = null
     }
 
+    /** Agent's fee related */
+    const feeForm = ref({
+      amount: null,
+    })
+        
+    const canSaveFee = computed(() => {
+      let result = true
+      if (!feeForm.value.amount) result = true
+      return result
+    })
+
+    const saveFee = () => {
+      console.log('saving to db')
+    }
+
+    /** Status label related */
     const statusOptions = computed(() => {
       const options = []
       props.labelTypes.forEach(labelType => {
@@ -379,7 +449,7 @@ export default ({
       }
     }
     
-    const canSaveAddStatus = computed(() => {
+    const cantSaveAddStatus = computed(() => {
       let result = false
       if (!statusLabelForm.value.status) result = true
       if (statusLabelForm.value.statusTermFlag && !statusLabelForm.value.date) result = true
@@ -449,13 +519,17 @@ export default ({
       breadcrumbs,
       pagination,
       columns,
+      asDate,
       statusOptions,
       dateOptions,
       statusLabelForm,
-      canSaveAddStatus,
+      cantSaveAddStatus,
       createAdd,
       /*appsGridView,*/
       rows,
+      feeForm,
+      canSaveFee,
+      saveFee,
       saveAddStatus,
       unsetStatus,
       openDeleteForm,
@@ -494,7 +568,7 @@ export default ({
   text-align: center !important;
 }
 
-.status-menu {
+.options-menu {
   width: 322px;
   min-width: 322px !important;
 }
