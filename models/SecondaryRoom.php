@@ -106,6 +106,7 @@ use yii\helpers\ArrayHelper;
  * @property City $city
  * @property District $district
  * @property StreetType $streetType
+ * @property SecondaryRoomFee[] $agentFee
  *
  */
 class SecondaryRoom extends ActiveRecord
@@ -391,6 +392,16 @@ class SecondaryRoom extends ActiveRecord
     public function getImages()
     {
         return $this->hasMany(SecondaryRoomImage::className(), ['secondary_room_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[SecondaryRoomFee]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAgentFee()
+    {
+        return $this->hasMany(SecondaryRoomFee::class, ['secondary_room_id' => 'id']);
     }
     
     /**

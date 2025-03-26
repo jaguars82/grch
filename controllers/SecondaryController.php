@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\District;
 use app\models\SecondaryAdvertisement;
 use app\models\SecondaryRoom;
+use app\models\SecondaryRoomFee;
 use app\models\SecondaryCategory;
 use app\models\StatusLabelType;
 use app\components\traits\CustomRedirects;
@@ -167,6 +168,16 @@ class SecondaryController extends Controller
             }
             $advRow['statusLabels'] = $itemStatusLabels;
             $advRow['secondary_room'] = ArrayHelper::toArray($advertisement->secondaryRooms);
+
+            foreach($advRow['secondary_room'] as &$secondaryRoom) {
+                $secondaryRoom['agentFee'] = ArrayHelper::toArray(
+                    SecondaryRoomFee::find()
+                        ->where(['secondary_room_id' => $secondaryRoom['id']])
+                        ->all()
+                );
+            }
+            unset($secondaryRoom);
+
             $advRow['author_DB'] = !empty($advertisement->author_id) ? ArrayHelper::toArray($advertisement->author) : '';
             
             /**
@@ -268,6 +279,16 @@ class SecondaryController extends Controller
         // Convert related data to arrays
         $advertisementArr['agency'] = ArrayHelper::toArray($advertisement->agency);
         $advertisementArr['secondary_room'] = ArrayHelper::toArray($advertisement->secondaryRooms);
+
+        foreach($advertisementArr['secondary_room'] as &$secondaryRoom) {
+            $secondaryRoom['agentFee'] = ArrayHelper::toArray(
+                SecondaryRoomFee::find()
+                    ->where(['secondary_room_id' => $secondaryRoom['id']])
+                    ->all()
+            );
+        }
+        unset($secondaryRoom);
+
         $advertisementArr['author_DB'] = !empty($advertisement->author_id) ? ArrayHelper::toArray($advertisement->author) : '';
     
         // Decode 'detail' field in all the objects in the advertisement

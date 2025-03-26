@@ -6,7 +6,6 @@
       <template v-slot:main>
         <RegularContentContainer title="Вторичная недвижимость">
           <template v-slot:content>
-
             <!-- Create new adv button -->
             <div v-if="user.role !== 'admin'" class="q-mt-md">
               <q-btn color="primary" unelevated label="Создать объявление" icon="post_add" @click="createAdd" />
@@ -87,23 +86,38 @@
                         </q-tooltip>
                       </q-icon>
                     </q-td>
-                    <q-td key="agent_fee">
+                    <q-td key="agent_fee" class="text-center">
                       <!-- Agent's fee -->
-                      <template v-if="false">
-                      </template>
-                      <template v-else>
-                        <q-btn unelevated size="xs" icon="percent">
-                          <q-menu>
-                            <div class="column q-pa-md options-menu">
-                              <q-input
-                                outlined
-                                dense
-                                v-model="feeForm.amount"
-                              />
-                              <q-btn unelevated color="primary" size="md" label="Установить комиссию" :disable="canSaveFee" @click="saveFee(props.row.id)" v-close-popup />
-                            </div>
-                          </q-menu>
-                        </q-btn>
+                      <template v-if="user.role === 'agent' || user.role === 'manager' || user.role === 'admin'">
+                        <template v-if="props.row.agent_fees.length">
+                          <div class="row no-wrap" v-for="fee in props.row.agent_fees">
+                            {{ fee.fee_amount }}
+                            <q-btn flat class="q-ml-xs" size="xs" round dense color="negative" icon="close" @click="unsetFee(fee.id)">
+                              <q-tooltip anchor="top middle" self="bottom middle">
+                                Удалить комиссию
+                              </q-tooltip>
+                            </q-btn>
+                          </div>
+                        </template>
+                        <template v-else>
+                          <q-btn unelevated size="xs" icon="percent" @mouseenter="initTooltip(props.row.id)">
+                            <q-tooltip v-model="showAddFeeTooltip[props.row.id]" anchor="top middle" self="bottom middle">
+                              Добавить комиссию
+                            </q-tooltip>
+                            <q-menu @beforeShow="showAddFeeTooltip[props.row.id] = false">
+                              <div class="column q-pa-md options-menu">
+                                <q-input
+                                  outlined
+                                  dense
+                                  label="Укажите размер комиссии"
+                                  v-model="feeForm.fee_amount"
+                                  @keypress="onlyNumbersWithDot"
+                                />
+                                <q-btn unelevated color="primary" size="md" label="Установить комиссию" :disable="!canSaveFee" @click="saveFee(props.row.id)" v-close-popup />
+                              </div>
+                            </q-menu>
+                          </q-btn>
+                        </template>
                       </template>
                     </q-td>
                     <q-td key="delete" :props="props">
@@ -194,7 +208,7 @@
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { date } from 'quasar'
 import { asDate, asDateTime, asNumberString, asFloor, asArea, asCurrency, asPricePerArea } from '@/helpers/formatter'
@@ -204,6 +218,7 @@ import ProfileLayout from '@/Layouts/ProfileLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import RegularContentContainer from '@/Components/Layout/RegularContentContainer.vue'
 import GridTableToggle from '@/Components/Elements/GridTableToggle.vue'
+import { useInputValidation } from '@/composables/useInputValidation'
 import useEmitter from '@/composables/use-emitter'
 
 export default ({
@@ -290,6 +305,7 @@ export default ({
       { name: 'deal_type', required: true, align: 'center', label: 'Тип сделки', field: 'deal_type', sortable: true },
       { name: 'create_info', required: true, align: 'left', label: 'Создано', field: 'create_info', sortable: false },
       { name: 'source', align: 'center', label: '', field: 'source', sortable: false },
+      { name: 'fee', align: 'center', label: 'Комиссия', field: 'fee', sortable: false },
       { name: 'delete', align: 'center', label: '', field: 'delete', sortable: false },
       { name: 'status', align: 'center', label: 'Статус', field: 'status', sortable: false },
     ]
@@ -299,6 +315,7 @@ export default ({
       props.advertisements.forEach(row => {
 
         const rooms = []
+        const fees = []
         row.rooms.forEach(room => {
           const category = room.category_DB ? room.category_DB.name : room.category_string ? room.category_string : ''
 
@@ -313,11 +330,18 @@ export default ({
           const streetHouse = room.address ? room.address : locationInfo && locationInfo.address ? locationInfo.address : ''
 
           rooms.push({ title: isFlat ? `${roomTitle} ${category}` : category, location: `${regionDistrict} ${city} ${cityDistrict} ${streetHouse}`, price: asCurrency(room.price) })
+
+          if (room.agent_fee.length) {
+            room.agent_fee.forEach(fee => {
+              fees.push({id: fee.id, fee_type: fee.fee_type, fee_amount: fee.fee_amount, fee_percent: fee.fee_percent})
+            })
+          } 
         })
 
         const processedItem = {
           id: `${row.id}`,
           objects: rooms,
+          agent_fees: fees,
           deal_type: row.deal_type,
           create_info: asDateTime(row.creation_date),
           source: row.creation_type,
@@ -408,18 +432,56 @@ export default ({
     }
 
     /** Agent's fee related */
+    const showAddFeeTooltip = reactive({})
+
+    const initTooltip = (id) => {
+      if (!showAddFeeTooltip.hasOwnProperty(id)) {
+        showAddFeeTooltip[id] = false;
+      }
+    }
+
+    const { onlyNumbersWithDot } = useInputValidation()
+
     const feeForm = ref({
-      amount: null,
+      fee_amount: null,
     })
+
+    const clearFeeForm = () => {
+      feeForm.value = {
+        fee_amount: null,
+      }
+    }
         
     const canSaveFee = computed(() => {
       let result = true
-      if (!feeForm.value.amount) result = true
+      if (!feeForm.value.fee_amount) result = false
       return result
     })
 
-    const saveFee = () => {
-      console.log('saving to db')
+    const saveFee = (advId) => {
+      const fields = {
+        operation: 'setAgentFee',
+        secondary_advertisement_id: advId,
+        fee_amount: feeForm.value.fee_amount,
+        agency: filters.value.agency !== null ? filters.value.agency.value : null,
+        agent: filters.value.agent !== null ? filters.value.agent.value : null,
+        category: filters.value.category !== null ? filters.value.category.value : null,
+      }
+      Inertia.post('/user/secondary/index', fields, { preserveScroll: true })
+      Inertia.on('finish', (e) => {
+        clearFeeForm()
+      })
+    }
+
+    const unsetFee = (feeId) => {
+        const fields = {
+        operation: 'unsetAgentFee',
+        fee_id: feeId,
+        agency: filters.value.agency !== null ? filters.value.agency.value : null,
+        agent: filters.value.agent !== null ? filters.value.agent.value : null,
+        category: filters.value.category !== null ? filters.value.category.value : null,
+      }
+      Inertia.post('/user/secondary/index', fields, { preserveScroll: true })
     }
 
     /** Status label related */
@@ -456,10 +518,10 @@ export default ({
       return result
     })
 
-    const saveAddStatus = (addId) => {
+    const saveAddStatus = (advId) => {
       const fields = {
         operation: 'setStatus',
-        secondary_advertisement_id: addId,
+        secondary_advertisement_id: advId,
         label_type_id: statusLabelForm.value.status.value,
         has_expiration_date: statusLabelForm.value.statusTermFlag,
         expires_at: statusLabelForm.value.date,
@@ -527,9 +589,13 @@ export default ({
       createAdd,
       /*appsGridView,*/
       rows,
+      showAddFeeTooltip,
+      initTooltip,
+      onlyNumbersWithDot,
       feeForm,
       canSaveFee,
       saveFee,
+      unsetFee,
       saveAddStatus,
       unsetStatus,
       openDeleteForm,
