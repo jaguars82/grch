@@ -403,6 +403,9 @@ class Agency extends \app\models\Agency
                     foreach ($room->images as $image) {
                         $image->delete();
                     }
+                    foreach ($room->agentFee as $fee) {
+                        $fee->delete();
+                    }
                     $room->delete();
                 }
                 $advertisementToDelete->delete();

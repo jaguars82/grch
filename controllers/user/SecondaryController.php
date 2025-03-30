@@ -7,6 +7,7 @@ use app\components\SharedDataFilter;
 use app\models\SecondaryAdvertisement;
 use app\models\SecondaryCategory;
 use app\models\SecondaryRoom;
+use app\models\SecondaryRoomFee;
 use app\models\SecondaryRoomImage;
 use app\models\form\SecondaryAdvertisementForm;
 use app\models\form\SecondaryRoomForm;
@@ -170,6 +171,7 @@ class SecondaryController extends Controller
         ]);
     }
 
+
     public function actionIndex()
     {
         if (\Yii::$app->user->identity->role === 'manager') {
@@ -194,6 +196,25 @@ class SecondaryController extends Controller
                     $agentFilter = \Yii::$app->request->post('agent') !== null && !empty(\Yii::$app->request->post('agent')) ? \Yii::$app->request->post('agent') : null;
                     $categoryFilter = \Yii::$app->request->post('category') !== null && !empty(\Yii::$app->request->post('category')) ? \Yii::$app->request->post('category') : null;
                     break;*/
+                case 'setAgentFee':
+                    try {
+                        $transaction = \Yii::$app->db->beginTransaction();
+                        $advertisement = SecondaryAdvertisement::findOne(\Yii::$app->request->post('secondary_advertisement_id'));
+                        foreach ($advertisement->secondaryRooms as $room) {
+                            $agentFee = new SecondaryRoomFee;
+                            $agentFee->attributes = \Yii::$app->request->post();
+                            $agentFee->secondary_room_id = $room->id;
+                            $agentFee->created_user_id = \Yii::$app->user->identity->id;
+                            if (empty($agentFee->fee_type)) {
+                                $agentFee->fee_type = SecondaryRoomFee::TYPE_AMOUNT;
+                            }
+                            $agentFee->save();
+                        }
+                        $transaction->commit();
+                    } catch (Exception $e) {
+                        //return $this->redirectBackWhenException($e);
+                    }
+                    break;
                 case 'setStatus': 
                     try {
                         $transaction = \Yii::$app->db->beginTransaction();
@@ -208,6 +229,10 @@ class SecondaryController extends Controller
                         //return $this->redirectBackWhenException($e);
                     }
                     break;
+                case 'unsetAgentFee':
+                    $agentFee = SecondaryRoomFee::findOne(\Yii::$app->request->post('fee_id'));
+                    $agentFee->delete();
+                    break;
                 case 'unsetStatus':
                     $advertisement = SecondaryAdvertisement::findOne(\Yii::$app->request->post('secondary_advertisement_id'));
                     $statusLabel = StatusLabel::findOne(\Yii::$app->request->post('status_label_id'));
@@ -221,6 +246,12 @@ class SecondaryController extends Controller
                         $advertisement->unlink('statusLabels', $statusLabel, true);
                     }
                     foreach ($advertisement->secondaryRooms as $secondaryRoom) {
+                        foreach ($secondaryRoom->images as $image) {
+                            $image->delete();
+                        }
+                        foreach ($secondaryRoom->agentFee as $fee) {
+                            $fee->delete();
+                        }
                         $secondaryRoom->delete();
                     }
                     $advertisement->delete();
@@ -293,8 +324,8 @@ class SecondaryController extends Controller
             $roomsArray = array();
             foreach ($advertisement->secondaryRooms as $room) {
                 $roomItem = ArrayHelper::toArray($room);
-                //$flatItem['newbuildingComplex'] = ArrayHelper::toArray($flat->newbuilding->newbuildingComplex);
-                //$flatItem['newbuilding'] = ArrayHelper::toArray($flat->newbuilding);
+
+                $roomItem['agent_fee'] = ArrayHelper::toArray($room->agentFee);
 
                 /**
                  * Add information about room params from data base
@@ -346,6 +377,7 @@ class SecondaryController extends Controller
         ]);
     }
 
+    
     public function actionView($id)
     {
         $commercialModel =  $this->findModel($id);

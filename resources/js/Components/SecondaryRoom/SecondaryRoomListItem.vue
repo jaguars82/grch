@@ -39,6 +39,11 @@
           <span v-if="address.streetHouse">{{ address.streetHouse }}</span>
         </p>
         <p class="text-bold text-blue-8 q-mb-xs" :class="{ 'text-h3': $q.screen.xs, 'text-h2': $q.screen.gt.xs }">{{ roomPrice }}</p>
+        <p v-if="room.agentFee.length">
+          <q-chip class="text-bold" rounded outline color="orange" size="md" v-for="fee in room.agentFee">
+            Комиссия: {{ asCurrency(fee.fee_amount) }}
+          </q-chip>
+        </p>
         <p v-if="roomPricePerMeter" class="text-grey-7">
           {{ roomPricePerMeter }}
         </p>
@@ -120,7 +125,7 @@ export default {
       return { fullName, photo }
     })
 
-    return { slide, category, isFlat, roomTitle, roomFloor, roomArea, roomPrice, roomPricePerMeter, creationDate, address, advAuthor }
+    return { asCurrency, slide, category, isFlat, roomTitle, roomFloor, roomArea, roomPrice, roomPricePerMeter, creationDate, address, advAuthor }
   }
 }
 </script>
