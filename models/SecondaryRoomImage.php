@@ -49,4 +49,23 @@ class SecondaryRoomImage extends \yii\db\ActiveRecord
             'filename' => 'Название файла',
         ];
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function beforeDelete()
+    {
+        if (!parent::beforeDelete()) {
+            return false;
+        }
+
+        if (!empty($this->filename)) {
+            $filePath = \Yii::getAlias("@webroot/uploads/$this->filename");
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+        }
+
+        return true;
+    }
 }

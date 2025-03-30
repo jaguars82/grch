@@ -25,7 +25,7 @@ class m230604_160818_create_status_label_tables_and_relations extends Migration
 
         $this->insert('{{%status_label_type}}', [
             'id' => 1,
-            'name' => 'не в рекламе',
+            'name' => 'нет в рекламе',
         ]);
 
         $this->createTable('{{%status_label}}', [

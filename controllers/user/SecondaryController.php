@@ -246,6 +246,12 @@ class SecondaryController extends Controller
                         $advertisement->unlink('statusLabels', $statusLabel, true);
                     }
                     foreach ($advertisement->secondaryRooms as $secondaryRoom) {
+                        foreach ($secondaryRoom->images as $image) {
+                            $image->delete();
+                        }
+                        foreach ($secondaryRoom->agentFee as $fee) {
+                            $fee->delete();
+                        }
                         $secondaryRoom->delete();
                     }
                     $advertisement->delete();

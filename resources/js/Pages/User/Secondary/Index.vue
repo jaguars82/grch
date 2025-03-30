@@ -104,7 +104,7 @@
                             <q-tooltip v-model="showAddFeeTooltip[props.row.id]" anchor="top middle" self="bottom middle">
                               Добавить комиссию
                             </q-tooltip>
-                            <q-menu @beforeShow="showAddFeeTooltip[props.row.id] = false">
+                            <q-menu anchor="bottom left" self="top left" @beforeShow="showAddFeeTooltip[props.row.id] = false">
                               <div class="column q-pa-md options-menu">
                                 <q-input
                                   outlined
