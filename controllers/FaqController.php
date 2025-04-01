@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\AccessControl;
 use app\components\SharedDataFilter;
+use app\components\VisitBehavior;
 
 /**
  * FaqController implements the CRUD actions for Faq model.
@@ -36,6 +37,7 @@ class FaqController extends Controller
             [
                 'class' => SharedDataFilter::class
             ],
+            'visit' => VisitBehavior::class,
         ];
     }
 

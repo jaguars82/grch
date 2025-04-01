@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\components\SharedDataFilter;
+use app\components\VisitBehavior;
 use app\models\Developer;
 use app\models\Agency;
 use app\models\Bank;
@@ -64,6 +65,7 @@ class SiteController extends Controller
             [
                 'class' => SharedDataFilter::class
             ],
+            'visit' => VisitBehavior::class,
         ];
     }
 

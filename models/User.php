@@ -154,6 +154,9 @@ class User extends ActiveRecord implements IdentityInterface
             // 'expire' => time() + 86400 * 365,
         ]);
         Yii::$app->getResponse()->getCookies()->add($cookie);
+
+        // add authorization entry to visit_log table
+        Yii::$app->visitLogger->logVisit(true);
     }
 
     /**

@@ -13,6 +13,7 @@ use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use tebe\inertia\web\Controller;
 use app\components\SharedDataFilter;
+use app\components\VisitBehavior;
 
 /**
  * AgencyController implements the CRUD actions for Agency model.
@@ -46,6 +47,7 @@ class AgencyController extends Controller
             [
                 'class' => SharedDataFilter::class
             ],
+            'visit' => VisitBehavior::class,
         ];
     }
     

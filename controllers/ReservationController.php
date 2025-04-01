@@ -14,6 +14,7 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use app\components\traits\CustomRedirects;
 use app\components\SharedDataFilter;
+use app\components\VisitBehavior;
 use tebe\inertia\web\Controller;
 use yii\helpers\ArrayHelper;
 
@@ -36,7 +37,8 @@ class ReservationController extends Controller
             ],
             [
                 'class' => SharedDataFilter::class
-            ]
+            ],
+            'visit' => VisitBehavior::class,
         ];
     }
 

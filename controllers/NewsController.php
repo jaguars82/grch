@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\components\traits\CustomRedirects;
 use app\components\SharedDataFilter;
+use app\components\VisitBehavior;
 use app\models\Developer;
 use app\models\NewbuildingComplex;
 use app\models\NewsFile;
@@ -55,6 +56,7 @@ class NewsController extends Controller
             [
                 'class' => SharedDataFilter::class
             ],
+            'visit' => VisitBehavior::class,
         ];
     }
 

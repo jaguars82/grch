@@ -13,6 +13,7 @@ use app\components\traits\CustomRedirects;
 use app\models\Bank;
 use app\models\form\BankTariffForm;
 use app\components\SharedDataFilter;
+use app\components\VisitBehavior;
 
 /**
  * BankTariffController implements the CRUD actions for BankTariff model.
@@ -49,6 +50,7 @@ class BankTariffController extends Controller
             [
                 'class' => SharedDataFilter::class
             ],
+            'visit' => VisitBehavior::class,
         ];
     }
 

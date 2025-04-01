@@ -11,6 +11,7 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use app\components\traits\CustomRedirects;
 use app\components\SharedDataFilter;
+use app\components\VisitBehavior;
 
 /**
  * BuildingTypeController implements the CRUD actions for BuildingType model.
@@ -46,6 +47,7 @@ class BuildingTypeController extends Controller
             [
                 'class' => SharedDataFilter::class
             ],
+            'visit' => VisitBehavior::class,
         ];
     }
 
