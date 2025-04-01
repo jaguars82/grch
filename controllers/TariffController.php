@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\components\traits\CustomRedirects;
 use app\components\SharedDataFilter;
+use app\components\VisitBehavior;
 use app\models\Application;
 use app\models\Developer;
 use app\models\Tariff;
@@ -39,6 +40,7 @@ class TariffController extends Controller
             [
                 'class' => SharedDataFilter::class
             ],
+            'visit' => VisitBehavior::class,
         ];
     }
 

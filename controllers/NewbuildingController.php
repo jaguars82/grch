@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\components\exceptions\AppException;
 use app\components\traits\CustomRedirects;
 use app\components\SharedDataFilter;
+use app\components\VisitBehavior;
 use app\models\Newbuilding;
 use app\models\Flat;
 use app\models\NewbuildingComplex;
@@ -45,6 +46,7 @@ class NewbuildingController extends Controller
             [
                 'class' => SharedDataFilter::class
             ],
+            'visit' => VisitBehavior::class,
         ];
     }
 

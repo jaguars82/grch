@@ -14,6 +14,7 @@ use yii\web\NotFoundHttpException;
 use app\models\form\BankCalculationForm;
 use yii\helpers\ArrayHelper;
 use app\components\SharedDataFilter;
+use app\components\VisitBehavior;
 
 /**
  * BankController implements the CRUD actions for Bank model.
@@ -47,6 +48,7 @@ class BankController extends Controller
             [
                 'class' => SharedDataFilter::class
             ],
+            'visit' => VisitBehavior::class,
         ];
     }
     

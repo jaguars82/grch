@@ -13,6 +13,7 @@ use yii\helpers\ArrayHelper;
 use tebe\inertia\web\Controller;
 use yii\web\NotFoundHttpException;
 use app\components\SharedDataFilter;
+use app\components\VisitBehavior;
 
 /**
  * DeveloperController implements the CRUD actions for Developer model.
@@ -49,6 +50,7 @@ class DeveloperController extends Controller
             [
                 'class' => SharedDataFilter::class
             ],
+            'visit' => VisitBehavior::class,
         ];
     }
     

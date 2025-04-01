@@ -10,6 +10,7 @@ use app\models\SecondaryCategory;
 use app\models\StatusLabelType;
 use app\components\traits\CustomRedirects;
 use app\components\SharedDataFilter;
+use app\components\VisitBehavior;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use tebe\inertia\web\Controller;
@@ -43,6 +44,7 @@ class SecondaryController extends Controller
             [
                 'class' => SharedDataFilter::class
             ],
+            'visit' => VisitBehavior::class,
         ];
     }
 

@@ -40,6 +40,10 @@ $config = [
                 Yii::$app->user->identity->afterLogin($event);
             }
         ],
+        'visitLogger' => [
+            'class' => 'app\components\VisitLoggerComponent',
+            'visitTimeout' => 600, // 10 minutes between repeated visits
+        ],
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],

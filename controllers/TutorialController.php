@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\components\SharedDataFilter;
+use app\components\VisitBehavior;
 use app\models\Lesson;
 use app\models\LessonCategory;
 use tebe\inertia\web\Controller;
@@ -30,6 +31,7 @@ class TutorialController extends Controller
             [
                 'class' => SharedDataFilter::class
             ],
+            'visit' => VisitBehavior::class,
         ];
     }
 
