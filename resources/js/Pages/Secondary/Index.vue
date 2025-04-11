@@ -8,13 +8,11 @@
     <template v-slot:main>
       <h3 class="text-center">Вторичная продажа</h3>
       <div class="q-mx-md" v-for="advertisement of advertisements" :key="advertisement.id">
-        <div v-if="advertisement.statusLabels.length" style="margin-bottom: -25px;">
-          <q-chip square color="primary" class="text-white" v-for="status of advertisement.statusLabels">{{ status.type.name }}</q-chip>
-        </div>
         <SecondaryRoomListItem
           v-for="room of advertisement.secondary_room"
           :key="room.id"
           :room="room"
+          :statusLabels="advertisement.statusLabels"
           :created="advertisement.creation_date"
           :author="{
             db: advertisement.author_DB ? advertisement.author_DB : null,

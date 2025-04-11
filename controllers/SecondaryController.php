@@ -162,7 +162,7 @@ class SecondaryController extends Controller
 
         foreach ($advertisements as $advertisement) {
             $advRow = ArrayHelper::toArray($advertisement);
-            $itemStatusLabels = array();
+            $itemStatusLabels = [];
             foreach ($advertisement->statusLabels as $statusLabel) {
                 $labelItem = ArrayHelper::toArray($statusLabel);
                 $labelItem['type'] = ArrayHelper::toArray($statusLabel->labelType);
@@ -281,6 +281,15 @@ class SecondaryController extends Controller
         // Convert related data to arrays
         $advertisementArr['agency'] = ArrayHelper::toArray($advertisement->agency);
         $advertisementArr['secondary_room'] = ArrayHelper::toArray($advertisement->secondaryRooms);
+
+        // Status labels
+        $advStatusLabels = [];
+        foreach ($advertisement->statusLabels as $statusLabel) {
+            $labelItem = ArrayHelper::toArray($statusLabel);
+            $labelItem['type'] = ArrayHelper::toArray($statusLabel->labelType);
+            array_push($advStatusLabels, $labelItem);
+        }
+        $advertisementArr['statusLabels'] = $advStatusLabels;
 
         foreach($advertisementArr['secondary_room'] as &$secondaryRoom) {
             $secondaryRoom['agentFee'] = ArrayHelper::toArray(

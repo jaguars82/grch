@@ -4,7 +4,13 @@
       <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
     </template>
     <template v-slot:main>
-      <h3 class="text-center">Предложение #{{ advertisement.id }}</h3>
+
+      <div class="full-width row justify-start items-center q-px-md">
+        <h3 class="q-mb-sm">Предложение #{{ advertisement.id }}</h3>
+        <div v-if="advertisement.statusLabels.length" class="row q-gutter-sm justify-end" style="margin-left: auto">
+          <StatusLabel v-for="label in advertisement.statusLabels" :key="label.id" :label="label" />
+        </div>
+      </div>
       
       <SecondaryRoomViewItem
         v-for="room of advertisement.secondary_room"
@@ -64,6 +70,7 @@ import { Inertia } from '@inertiajs/inertia'
 import MainLayout from '@/Layouts/MainLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import Loading from "@/Components/Elements/Loading.vue"
+import StatusLabel from '@/Components/Elements/StatusLabel'
 import SecondaryRoomViewItem from "@/Components/SecondaryRoom/SecondaryRoomViewItem.vue"
   
 export default {
@@ -74,7 +81,7 @@ export default {
     }
   },
   components: {
-    MainLayout, Breadcrumbs, Loading, SecondaryRoomViewItem
+    MainLayout, Breadcrumbs, Loading, StatusLabel, SecondaryRoomViewItem
   },
   setup(props) {
 

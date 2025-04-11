@@ -20,6 +20,12 @@
         />
       </q-carousel>
       <q-card-section :class="$q.screen.gt.xs && room.images.length ? 'col-7' : 'col-12'">
+        
+        <!-- Status labels (if any) -->
+        <div v-if="statusLabels.length" class="full-width row justify-end q-mb-sm">
+          <StatusLabel v-for="label in statusLabels" :label="label" />
+        </div>
+
         <inertia-link :href="`/secondary/view?id=${advId}`">
         <p :class="{ 'text-bold': $q.screen.xs, 'text-h5': $q.screen.xs, 'text-h4': $q.screen.sm, 'text-h3': $q.screen.gt.sm }">
           <span v-if="isFlat" class="text-capitalize">{{ roomTitle }}</span>
@@ -62,6 +68,7 @@
 
 <script>
 import { ref, computed } from 'vue'
+import StatusLabel from '@/Components/Elements/StatusLabel'
 import { asDateTime, asNumberString, asFloor, asArea, asCurrency, asPricePerArea } from '@/helpers/formatter'
 
 export default {
@@ -77,8 +84,13 @@ export default {
     },
     advId: {
       type: Number
+    },
+    statusLabels: {
+      type: Array,
+      default: []
     }
   },
+  components: { StatusLabel },
   setup (props) {
     const slide = props.room.images.length ? ref(props.room.images[0].id) : ref(false)
     const category = computed(() => {
