@@ -225,6 +225,31 @@ class SecondaryController extends Controller
                         $statusLabel->save();
                         $advertisement->link('statusLabels', $statusLabel);
                         $transaction->commit();
+
+                        // Send a message to Telegram chat
+                        $messageBody = 'В разделе <a href="https://grch.ru/secondary/index">"Вторичка"</a> для объявления <a href="https://grch.ru/secondary/view?id='.$advertisement->id.'">#'.$advertisement->id.'</a> установлен статус <b>"'.StatusLabelType::getNameById($statusLabel->label_type_id).'"</b>';
+                        if ($statusLabel->has_expiration_date) {
+                            $messageBody .= " (до <b>".date('d.m.Y', strtotime($statusLabel->expires_at))." г.</b> включительно)";
+                        }
+                        $messageBody .= "\n\n<u>Информация об объявлении</u>:";
+                        $messageBody .= "\n".SecondaryAdvertisement::$dealType[$advertisement->deal_type];
+                        // Objects (SecondaryRoom)
+                        foreach ($advertisement->secondaryRooms as $room) {
+                            $messageBody .= ", ".$room->secondaryCategory->name;
+                            if ($room->rooms) {
+                                $messageBody .= ", комнат: <b>".$room->rooms."</b>";
+                            }
+                            if ($room->area) {
+                                $messageBody .= ", площадь: <b>".$room->area."</b> м²";
+                            }
+                            if ($room->price) {
+                                $messageBody .= ", стоимость: <b>".$room->price."</b> ₽";
+                            }
+                        }
+                        $messageBody .= "\n<a href='https://grch.ru/secondary/view?id=".$advertisement->id."'>Перейти к объявлению</a>";
+
+                        \Yii::$app->telegram->sendMessage(-1002573609179, $messageBody);
+
                     } catch (Exception $e) {
                         //return $this->redirectBackWhenException($e);
                     }
@@ -311,17 +336,17 @@ class SecondaryController extends Controller
             ->orderBy(['creation_date' => SORT_DESC])
             ->all();
 
-        $advertisementsArray = array();
+        $advertisementsArray = [];
         foreach ($advertisements as $advertisement) {
             $advertisementItem = ArrayHelper::toArray($advertisement);
-            $itemStatusLabels = array();
+            $itemStatusLabels = [];
             foreach ($advertisement->statusLabels as $statusLabel) {
                 $labelItem = ArrayHelper::toArray($statusLabel);
                 $labelItem['type'] = ArrayHelper::toArray($statusLabel->labelType);
                 array_push($itemStatusLabels, $labelItem);
             }
             $advertisementItem['statusLabels'] = $itemStatusLabels;
-            $roomsArray = array();
+            $roomsArray = [];
             foreach ($advertisement->secondaryRooms as $room) {
                 $roomItem = ArrayHelper::toArray($room);
 

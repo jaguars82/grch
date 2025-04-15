@@ -5,20 +5,23 @@
     :class="{'q-pr-xs': hasExpiration}"
   >
     {{ labelName }}
-    <q-badge rounded class="q-ml-xs q-pa-xs" color="white">
+    <q-badge v-if="hasExpiration" rounded class="q-ml-xs q-px-xs q-py-none" color="white">
       <q-icon
         size="16px"
         color="orange"
-        v-if="hasExpiration"
         name="schedule"
       />
-      <q-tooltip anchor="top left" self="bottom middle">
+      <div class="q-mx-xs text-orange text-h6">
+        <span v-if="countdownText !== 'период истёк'">ещё </span>
+        {{ countdownText }}
+      </div>
+      <!--<q-tooltip anchor="top left" self="bottom middle">
         <div>Установлен до {{ formattedExpirationDate }}</div>
         <div>
           <span v-if="countdownText !== 'Период истёк'">осталось: </span>
           {{ countdownText }}
         </div>
-      </q-tooltip>
+      </q-tooltip>-->
     </q-badge>
   </q-chip>
 </template>

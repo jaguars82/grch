@@ -67,4 +67,14 @@ class StatusLabelType extends \yii\db\ActiveRecord
         return $labelTypes;
     }
 
+    /**
+     * Get status label name by given id
+     * 
+     * @return string
+     */
+    public static function getNameById($labelId)
+    {
+        $labelType = self::findOne($labelId);
+        return $labelType ? $labelType->name : 'n/a';
+    }
 }
