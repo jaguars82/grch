@@ -42,6 +42,14 @@ class SecondaryAdvertisement extends ActiveRecord
 {
     use FillAttributes;
 
+    const DEAL_TYPE_SELL = 1;
+    const DEAL_TYPE_RENT = 2;
+
+    public static $dealType = [
+        self::DEAL_TYPE_SELL => 'продажа',
+        self::DEAL_TYPE_RENT => 'аренда',
+    ];
+
     /**
      * {@inheritdoc}
      */

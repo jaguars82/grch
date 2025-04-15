@@ -47,6 +47,13 @@ $config = [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
+        /*'telegram' => [
+            'class' => 'app\services\TelegramSender',
+            'botToken' => $params['telegramBotKey'],
+        ],*/
+        'telegram' => function() {
+            return \app\services\TelegramSender::create('8130120961:AAGtSzyxl4o6UepJid0crzSU9n3xLzrgBTE');
+        },
         'mailer' => $mailer,
         'log' => [
             //'traceLevel' => YII_DEBUG ? 3 : 0,
