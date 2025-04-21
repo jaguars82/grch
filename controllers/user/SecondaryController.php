@@ -227,6 +227,8 @@ class SecondaryController extends Controller
                         $transaction->commit();
 
                         // Send a message to Telegram chat
+                        $roomParentCategory = null; // We set a common SecondaryRomm parent category for all the secondary rooms (objects) of the current advertisement (for typically we have only one object within an advertisement)
+
                         $messageBody = 'В разделе <a href="https://grch.ru/secondary/index">"Вторичка"</a> для объявления <a href="https://grch.ru/secondary/view?id='.$advertisement->id.'">#'.$advertisement->id.'</a> установлен статус <b>"'.StatusLabelType::getNameById($statusLabel->label_type_id).'"</b>';
                         if ($statusLabel->has_expiration_date) {
                             $messageBody .= " (до <b>".date('d.m.Y', strtotime($statusLabel->expires_at))." г.</b> включительно)";
@@ -235,6 +237,12 @@ class SecondaryController extends Controller
                         $messageBody .= "\n".SecondaryAdvertisement::$dealType[$advertisement->deal_type];
                         // Objects (SecondaryRoom)
                         foreach ($advertisement->secondaryRooms as $room) {
+                            
+                            // define a common parent category for all the rooms (objects) in the advertisement
+                            if (!empty($room->category_id) && is_null($roomParentCategory)) {
+                                $roomParentCategory = SecondaryCategory::$root_category_idies[$room->secondaryCategory->parent_id];
+                            }
+
                             $messageBody .= ", ".$room->secondaryCategory->name;
                             if ($room->rooms) {
                                 $messageBody .= ", комнат: <b>".$room->rooms."</b>";
@@ -247,8 +255,8 @@ class SecondaryController extends Controller
                             }
                         }
                         $messageBody .= "\n<a href='https://grch.ru/secondary/view?id=".$advertisement->id."'>Перейти к объявлению</a>";
-
-                        \Yii::$app->telegram->sendMessage(-1002573609179, $messageBody);
+                        // echo '<pre>'; var_dump($messageBody); echo '</pre>', die;
+                        \Yii::$app->telegram->sendToAllGroups($messageBody, $advertisement->deal_type, $roomParentCategory);
 
                     } catch (Exception $e) {
                         //return $this->redirectBackWhenException($e);
@@ -351,11 +359,12 @@ class SecondaryController extends Controller
                 $roomItem = ArrayHelper::toArray($room);
 
                 $roomItem['agent_fee'] = ArrayHelper::toArray($room->agentFee);
+                $roomItem = $this->processRoomParameters($room, $roomItem);
 
                 /**
                  * Add information about room params from data base
                  */
-                $params = [
+                /*$params = [
                     'category' => 'secondaryCategory', // category (e.g. 'flat', 'house' etc.)
                     'property_type' => 'secondaryPropertyType',
                     'building_series' => 'secondaryBuildingSeries',
@@ -376,7 +385,9 @@ class SecondaryController extends Controller
                     if (!empty($room[$param.'_id'])) {
                         $roomItem[$param.'_DB'] = ArrayHelper::toArray($room[$className]);
                     }
-                }
+                }*/
+                //echo '<pre>'; var_dump($roomItem); echo '</pre>'; die;
+
                 array_push($roomsArray, $roomItem);
             }
             $advertisementItem['rooms'] = $roomsArray;
@@ -402,83 +413,40 @@ class SecondaryController extends Controller
         ]);
     }
 
-    
-    public function actionView($id)
+
+    /**
+     * Processes room parameters and adds corresponding database шт to the room item.
+     *
+     * @param array $room The room data array
+     * @param array $roomItem The room item array to be modified
+     * @return array The modified room item with added parameter references
+     */
+    protected function processRoomParameters(object $room, array $roomItem): array
     {
-        $commercialModel =  $this->findModel($id);
-
-        $commercialArray = ArrayHelper::toArray($commercialModel);
-        $commercialArray['initiator'] = ArrayHelper::toArray($commercialModel->initiator);
-        $commercialArray['initiator']['organization'] = ArrayHelper::toArray($commercialModel->initiator->agency);
-
-        $viewOptions = [
-            'commercial' => $commercialArray,
+        $params = [
+            'category' => 'secondaryCategory', // category (e.g. 'flat', 'house' etc.)
+            'property_type' => 'secondaryPropertyType',
+            'building_series' => 'secondaryBuildingSeries',
+            'newbuilding_complex' => 'newbuildingComplex',
+            'newbuilding' => 'newbuilding',
+            'entrance' => 'entrance',
+            'flat' => 'flat',
+            'renovation' => 'secondaryRenovation',
+            'material' => 'buildingMaterial',
+            'region' => 'region',
+            'region_district' => 'regionDistrict',
+            'city' => 'city',
+            'district' => 'district',
+            'street_type' => 'streetType',
         ];
-        
-        /** Commercial operations */
-        if(\Yii::$app->request->isPost)  {
-            switch(\Yii::$app->request->post('operation')) {
-                /** Generate PDF-file */
-                case 'pdf':
-                    $this->downloadPdf($commercialModel->id);
-                    $viewOptions = array_merge($viewOptions, [
-                        'id' => $commercialModel->id,
-                        'operation' => 'pdf',
-                        'status' => 'ok'
-                    ]);
-                    break;
-                case 'email':
-                    \Yii::$app->mailer->compose()
-                    ->setTo(\Yii::$app->request->post('email'))
-                    ->setFrom([\Yii::$app->params['senderEmail'] => \Yii::$app->params['senderName']])
-                    ->setSubject(\Yii::t('app', 'Коммерческое предложение №  '. $commercialModel->number))
-                    ->setTextBody('Ссылка на страницу коммерческого предложения: https://grch.ru/share/commercial?id='.$commercialModel->id)
-                    ->send();
-                    break;
-                /** Ghange commercial settings */
-                case 'settings':
-                    $commercialModel->settings = json_encode(\Yii::$app->request->post('settings'));
-                    $commercialModel->save();
-                    break;
-                /** Deleting a flat from commercial */
-                case 'removeFlat':
-                    $flat = Flat::find()
-                        ->where(['id' => \Yii::$app->request->post('flatId')])
-                        ->one();
-                    $commercialModel->unlink('flats', $flat, true);
-                    break;
+
+        foreach ($params as $param => $className) {
+            if (!empty($room->{$param.'_id'})) {
+                $roomItem[$param.'_DB'] = ArrayHelper::toArray($room->{$className});
             }
         }
         
-        $flats = $commercialModel->flats;
-        $flatsArray = array();
-        foreach ($flats as $flat) {
-
-            /** creating floor layout with selected flat as svg file */
-            $selectionLayout = (new Layout())->createFloorLayoutWithSelectedFlat($flat);
-
-            $flatItem = ArrayHelper::toArray($flat);
-            $flatItem['floorLayoutImage'] = !is_null($flat->floorLayout) ? $flat->floorLayout->image : NULL;
-            $flatItem['developer'] = ArrayHelper::toArray($flat->developer);
-            $flatItem['newbuildingComplex'] = ArrayHelper::toArray($flat->newbuilding->newbuildingComplex);
-            $flatItem['newbuildingComplex']['address'] = $flat->newbuilding->newbuildingComplex->address;
-            foreach ($flat->furnishes as $key => $furnish) {
-                $finishing = ArrayHelper::toArray($furnish);
-                $finishing['furnishImages'] = $furnish->furnishImages;
-                $flatItem['finishing'][] = ArrayHelper::toArray($finishing);
-            }
-            $flatItem['newbuilding'] = ArrayHelper::toArray($flat->newbuilding);
-            $flatItem['entrance'] = ArrayHelper::toArray($flat->entrance);
-            $flatItem['advantages'] = ArrayHelper::toArray($flat->newbuilding->newbuildingComplex->advantages);
-            array_push($flatsArray, $flatItem);
-        }
-
-        $commercialMode = count($flatsArray) > 1 ? 'multiple' : 'single';
-
-        $viewOptions['flats'] = $flatsArray;
-        $viewOptions['commercialMode'] = $commercialMode;
-
-        return $this->inertia('User/Commercial/View', $viewOptions);
+        return $roomItem;
     }
 
     /**

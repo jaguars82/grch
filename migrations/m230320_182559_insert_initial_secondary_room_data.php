@@ -1,6 +1,7 @@
 <?php
 
 use yii\db\Migration;
+use app\models\SecondaryCategory;
 
 /**
  * Class m230320_182559_insert_initial_secondary_room_data
@@ -13,44 +14,44 @@ class m230320_182559_insert_initial_secondary_room_data extends Migration
     public function safeUp()
     {
         $this->insert('{{%secondary_category}}', [
-            'id' => 1,
+            'id' => SecondaryCategory::ROOT_CATEGORY_FLAT,
             'level' => 1,
-            'name' => 'Жилая недвижимость',
+            'name' => SecondaryCategory::$root_categories[ROOT_CATEGORY_FLAT],
         ]);
         $this->insert('{{%secondary_category}}', [
-            'id' => 2,
+            'id' => SecondaryCategory::ROOT_CATEGORY_HOUSE,
             'level' => 1,
-            'name' => 'Дома, дачи, коттеджи',
+            'name' => SecondaryCategory::$root_categories[ROOT_CATEGORY_HOUSE],
         ]);
         $this->insert('{{%secondary_category}}', [
-            'id' => 3,
+            'id' => SecondaryCategory::ROOT_CATEGORY_PLOT,
             'level' => 1,
-            'name' => 'Земельные участки',
+            'name' => SecondaryCategory::$root_categories[ROOT_CATEGORY_PLOT],
         ]);
         $this->insert('{{%secondary_category}}', [
-            'id' => 4,
+            'id' => SecondaryCategory::ROOT_CATEGORY_COMMERCIAL,
             'level' => 1,
-            'name' => 'Коммерческая недвижимость',
+            'name' => SecondaryCategory::$root_categories[ROOT_CATEGORY_COMMERCIAL],
         ]);
 
         $this->batchInsert('{{%secondary_category}}', ['id', 'level', 'parent_id', 'name', 'alias'], [
-            [5, 2, 1, 'Квартира в новостройке', ''],
-            [6, 2, 1, 'Квартира', ''],
-            [7, 2, 1, 'Комната', ''],
-            [8, 2, 2, 'Дом', 'дом с участком'],
-            [9, 2, 2, 'Часть дома', ''],
-            [10, 2, 2, 'Дача', ''],
-            [11, 2, 2, 'Коттедж', ''],
-            [12, 2, 2, 'Таунхаус', ''],
-            [13, 2, 3, 'Поселений (ИЖС)', 'участок'],
-            [14, 2, 3, 'Сельхозназначения (СНТ, ДНП)', ''],
-            [15, 2, 4, 'Офисное помещение', ''],
-            [16, 2, 4, 'Помещение общественного питания', ''],
-            [17, 2, 4, 'Помещение свободного назначения', ''],
-            [18, 2, 4, 'Производственное помещение', ''],
-            [19, 2, 4, 'Складское помещение', ''],
-            [20, 2, 4, 'Торговое помещение', ''],
-            [21, 2, 4, 'Коммерческая (без уточнения)', 'коммерческая'],
+            [5, 2, SecondaryCategory::ROOT_CATEGORY_FLAT, 'Квартира в новостройке', ''],
+            [6, 2, SecondaryCategory::ROOT_CATEGORY_FLAT, 'Квартира', ''],
+            [7, 2, SecondaryCategory::ROOT_CATEGORY_FLAT, 'Комната', ''],
+            [8, 2, SecondaryCategory::ROOT_CATEGORY_HOUSE, 'Дом', 'дом с участком'],
+            [9, 2, SecondaryCategory::ROOT_CATEGORY_HOUSE, 'Часть дома', ''],
+            [10, 2, SecondaryCategory::ROOT_CATEGORY_HOUSE, 'Дача', ''],
+            [11, 2, SecondaryCategory::ROOT_CATEGORY_HOUSE, 'Коттедж', ''],
+            [12, 2, SecondaryCategory::ROOT_CATEGORY_HOUSE, 'Таунхаус', ''],
+            [13, 2, SecondaryCategory::ROOT_CATEGORY_PLOT, 'Поселений (ИЖС)', 'участок'],
+            [14, 2, SecondaryCategory::ROOT_CATEGORY_PLOT, 'Сельхозназначения (СНТ, ДНП)', ''],
+            [15, 2, SecondaryCategory::ROOT_CATEGORY_COMMERCIAL, 'Офисное помещение', ''],
+            [16, 2, SecondaryCategory::ROOT_CATEGORY_COMMERCIAL, 'Помещение общественного питания', ''],
+            [17, 2, SecondaryCategory::ROOT_CATEGORY_COMMERCIAL, 'Помещение свободного назначения', ''],
+            [18, 2, SecondaryCategory::ROOT_CATEGORY_COMMERCIAL, 'Производственное помещение', ''],
+            [19, 2, SecondaryCategory::ROOT_CATEGORY_COMMERCIAL, 'Складское помещение', ''],
+            [20, 2, SecondaryCategory::ROOT_CATEGORY_COMMERCIAL, 'Торговое помещение', ''],
+            [21, 2, SecondaryCategory::ROOT_CATEGORY_COMMERCIAL, 'Коммерческая (без уточнения)', 'коммерческая'],
         ]);
 
         $this->batchInsert('{{%secondary_property_type}}', ['id', 'name', 'alias'], [
@@ -110,10 +111,10 @@ class m230320_182559_insert_initial_secondary_room_data extends Migration
      */
     public function safeDown()
     {
-        $this->delete('{{%secondary_category}}', ['id' => 1]);
-        $this->delete('{{%secondary_category}}', ['id' => 2]);
-        $this->delete('{{%secondary_category}}', ['id' => 3]);
-        $this->delete('{{%secondary_category}}', ['id' => 4]);
+        $this->delete('{{%secondary_category}}', ['id' => SecondaryCategory::ROOT_CATEGORY_FLAT]);
+        $this->delete('{{%secondary_category}}', ['id' => SecondaryCategory::ROOT_CATEGORY_HOUSE]);
+        $this->delete('{{%secondary_category}}', ['id' => SecondaryCategory::ROOT_CATEGORY_PLOT]);
+        $this->delete('{{%secondary_category}}', ['id' => SecondaryCategory::ROOT_CATEGORY_COMMERCIAL]);
         $this->delete('{{%secondary_category}}', ['id' => 5]);
         $this->delete('{{%secondary_category}}', ['id' => 6]);
         $this->delete('{{%secondary_category}}', ['id' => 7]);
