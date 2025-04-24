@@ -44,6 +44,9 @@ $config = [
             'class' => 'app\components\VisitLoggerComponent',
             'visitTimeout' => 600, // 10 minutes between repeated visits
         ],
+        'locationHelper' => [
+            'class' => 'app\components\LocationHelper',
+        ],
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],

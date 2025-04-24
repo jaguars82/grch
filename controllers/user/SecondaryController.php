@@ -27,6 +27,7 @@ use app\models\District;
 use app\models\StreetType;
 use app\models\StatusLabel;
 use app\models\StatusLabelType;
+use app\models\User;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use tebe\inertia\web\Controller;
@@ -188,14 +189,6 @@ class SecondaryController extends Controller
             $categoryFilter = \Yii::$app->request->post('category') !== null && !empty(\Yii::$app->request->post('category')) ? \Yii::$app->request->post('category') : null;
 
             switch (\Yii::$app->request->post('operation')) {
-                /*case 'filterAdds':
-                    if (null !== \Yii::$app->request->post('agency') && !empty(\Yii::$app->request->post('agency'))) {
-                        $agents = Agency::getUsersByAgency(\Yii::$app->request->post('agency'));
-                    }
-                    $agencyFilter = \Yii::$app->request->post('agency') !== null && !empty(\Yii::$app->request->post('agency')) ? \Yii::$app->request->post('agency') : null;
-                    $agentFilter = \Yii::$app->request->post('agent') !== null && !empty(\Yii::$app->request->post('agent')) ? \Yii::$app->request->post('agent') : null;
-                    $categoryFilter = \Yii::$app->request->post('category') !== null && !empty(\Yii::$app->request->post('category')) ? \Yii::$app->request->post('category') : null;
-                    break;*/
                 case 'setAgentFee':
                     try {
                         $transaction = \Yii::$app->db->beginTransaction();
@@ -229,34 +222,113 @@ class SecondaryController extends Controller
                         // Send a message to Telegram chat
                         $roomParentCategory = null; // We set a common SecondaryRomm parent category for all the secondary rooms (objects) of the current advertisement (for typically we have only one object within an advertisement)
 
-                        $messageBody = 'В разделе <a href="https://grch.ru/secondary/index">"Вторичка"</a> для объявления <a href="https://grch.ru/secondary/view?id='.$advertisement->id.'">#'.$advertisement->id.'</a> установлен статус <b>"'.StatusLabelType::getNameById($statusLabel->label_type_id).'"</b>';
-                        if ($statusLabel->has_expiration_date) {
-                            $messageBody .= " (до <b>".date('d.m.Y', strtotime($statusLabel->expires_at))." г.</b> включительно)";
+                        // Prepare data for message
+                        $advertisementData = [
+                            'id' => $advertisement->id,
+                            'deal_type' => SecondaryAdvertisement::$dealType[$advertisement->deal_type],
+                            'created' => date('d.m.Y', strtotime($advertisement->creation_date)),
+                        ];
+
+                        // Adding information about the advertisement author
+                        $author_name = null;
+                        $author_phone = null;
+                        $author_email = null;
+                        
+                        $author = !empty($advertisement->author_id) ? User::findOne($advertisement->author_id) : null;
+                        
+                        // If didn't found the author among registered users
+                        if ($author === null) {
+                            $authorInfo = json_decode($advertisement->author_info, true);
+                            
+                            $author_name = !empty($authorInfo['name']) ? $authorInfo['name'] : null;
+                            
+                            $author_email = !empty($authorInfo['email']) ? $authorInfo['email'] : null;
+
+                            if (count($authorInfo['phones'])) {
+                                $author_phone = implode(', ', $authorInfo['phones']);
+                            }
+                        } else { // if the author is in the user's base
+                            $author_name = $author->first_name;
+                            if (!empty($author->middle_name)) {
+                                $author_name .= ' '.$author->middle_name;
+                            }
+                            if (!empty($author->last_name)) {
+                                $author_name .= ' '.$author->last_name;
+                            }
+
+                            $author_email = $author->email;
+                            $author_phone = !empty($author->phone) ? $author->phone : null;
                         }
-                        $messageBody .= "\n\n<u>Информация об объявлении</u>:";
-                        $messageBody .= "\n".SecondaryAdvertisement::$dealType[$advertisement->deal_type];
-                        // Objects (SecondaryRoom)
+
+                        $advertisementData['author_name'] = $author_name;
+                        $advertisementData['author_email'] = $author_email;
+                        $advertisementData['author_phone'] = $author_phone;
+
+                        // Secondary rooms
                         foreach ($advertisement->secondaryRooms as $room) {
                             
-                            // define a common parent category for all the rooms (objects) in the advertisement
                             if (!empty($room->category_id) && is_null($roomParentCategory)) {
                                 $roomParentCategory = SecondaryCategory::$root_category_idies[$room->secondaryCategory->parent_id];
                             }
+                            
+                            $roomItem = [
+                                'category_name' => $room->secondaryCategory ? $room->secondaryCategory->name : '',
+                                'deal_code' => $advertisement->deal_type === SecondaryAdvertisement::DEAL_TYPE_SELL ? 'П' : 'А',
+                                'rooms' => $room->rooms ? $room->rooms : '',
+                                'area' => $room->area ? $room->area : '',
+                                'price' => $room->price ? $room->price : '',
+                                'floor' => $room->floor ? $room->floor : '',
+                                'detail' => $room->detail ?  \Yii::$app->formatter->asPlainShortenText($room->detail) : '',
+                                'address' => $room->address,
+                                'location_info' => json_decode($room->location_info, true),
+                            ];
 
-                            $messageBody .= ", ".$room->secondaryCategory->name;
-                            if ($room->rooms) {
-                                $messageBody .= ", комнат: <b>".$room->rooms."</b>";
+                            $roomItem['agent_fee'] = ArrayHelper::toArray($room->agentFee);
+                            $roomItem = $this->processRoomParameters($room, $roomItem);
+
+                            // Get location params
+                            // Region name and code
+                            $regionName = null;
+                            if (array_key_exists('region_DB', $roomItem) && !empty($roomItem['region_DB']['name'])) {
+                                $regionName = $roomItem['region_DB']['name'];
+                            } elseif (array_key_exists('region', $roomItem['location_info']) && !empty($roomItem['location_info']['region'])) {
+                                $regionName = $roomItem['location_info']['region'];
                             }
-                            if ($room->area) {
-                                $messageBody .= ", площадь: <b>".$room->area."</b> м²";
+
+                            $regionCode = \Yii::$app->locationHelper->findRegionKey($regionName) ?? null;
+
+                            // District name and code
+                            $districtName = null;
+                            if (array_key_exists('district_DB', $roomItem) && !empty($roomItem['district_DB']['name'])) {
+                                $districtName = $roomItem['district_DB']['name'];
+                            } elseif (array_key_exists('sub_locality_name', $roomItem['location_info']) && !empty($roomItem['location_info']['sub_locality_name'])) {
+                                $districtName = $roomItem['location_info']['sub_locality_name'];
                             }
-                            if ($room->price) {
-                                $messageBody .= ", стоимость: <b>".$room->price."</b> ₽";
+
+                            $districtCode = \Yii::$app->locationHelper->findDistrictCode($regionCode, $districtName) ?? null;
+
+                            $roomItem['district_code'] = $districtCode;
+
+                            // address string
+                            $addressString = null;
+                            if (!empty($roomItem['address'])) {
+                                $addressString = $roomItem['address'];
+                            } elseif (array_key_exists('address', $roomItem['location_info']) && !empty($roomItem['location_info']['address'])) {
+                                $addressString = $roomItem['location_info']['address'];
                             }
+
+                            $roomItem['address_string'] = $addressString;
+
+                            $advertisementData['rooms'][] = $roomItem;
                         }
-                        $messageBody .= "\n<a href='https://grch.ru/secondary/view?id=".$advertisement->id."'>Перейти к объявлению</a>";
-                        // echo '<pre>'; var_dump($messageBody); echo '</pre>', die;
-                        \Yii::$app->telegram->sendToAllGroups($messageBody, $advertisement->deal_type, $roomParentCategory);
+                        
+                        $statusData = [
+                            'name' => StatusLabelType::getNameById($statusLabel->label_type_id),
+                            'has_expiration' => $statusLabel->has_expiration_date ? true : false,
+                            'expires_at' => date('d.m.Y', strtotime($statusLabel->expires_at)),
+                        ];
+
+                        \Yii::$app->telegram->sendToAllGroups($advertisementData, $statusData, $advertisement->deal_type, $roomParentCategory);
 
                     } catch (Exception $e) {
                         //return $this->redirectBackWhenException($e);
