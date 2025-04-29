@@ -33,7 +33,7 @@
           <img v-else :src="`/uploads/${finishing.furnishImages[0].image}`" />
         </div>
         <div :class="{ 'col-7': finishing.furnishImages && finishing.furnishImages.length > 0, 'col-12': !finishing.furnishImages, 'q-pl-md': true }">
-          {{ finishing.detail }}
+          <div v-html="finishing.detail"></div>
         </div>
       </div>
     </q-card-section>
@@ -52,7 +52,7 @@ export default {
     }
   },
   setup (props) {
-    const slide = ref(props.finishing.furnishImages[0].id)
+    const slide = ref(props.finishing.furnishImages.length ? props.finishing.furnishImages[0].id : null)
     return { slide }
   }
 }

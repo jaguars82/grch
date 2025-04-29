@@ -262,6 +262,7 @@ class Formatter extends BaseFormatter
     {
         return parse_url($url, PHP_URL_HOST);
     }
+
     /**
      * Transform given string to string contains file size value
      */
@@ -271,5 +272,23 @@ class Formatter extends BaseFormatter
             $size = round($size / 1000, 1);
         }
         return $size .' Мб.';
+    }
+
+    /**
+     * Transform the given string into a shorten plain text
+     */
+    public function asPlainShortenText(string $text, int $maxLength = 255)
+    {
+        $text = strip_tags($text);
+        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $text = trim(preg_replace('/\s+/', ' ', $text));
+        $text = preg_replace('/[^\p{L}\p{N}\p{P}\p{Zs}]+/u', '', $text); // remove all 'garbage' symbols
+
+        if (mb_strlen($text) > $maxLength) {
+            $text = mb_substr($text, 0, mb_strrpos(mb_substr($text, 0, $maxLength), ' ')) ?: mb_substr($text, 0, $maxLength);
+            $text .= '…';
+        }
+
+        return $text;
     }
 }

@@ -17,6 +17,25 @@ use Yii;
  */
 class SecondaryCategory extends \yii\db\ActiveRecord
 {
+    const ROOT_CATEGORY_FLAT = 1;
+    const ROOT_CATEGORY_HOUSE = 2;
+    const ROOT_CATEGORY_PLOT = 3;
+    const ROOT_CATEGORY_COMMERCIAL = 4;
+
+    public static $root_category_idies = [
+        self::ROOT_CATEGORY_FLAT => self::ROOT_CATEGORY_FLAT,
+        self::ROOT_CATEGORY_HOUSE => self::ROOT_CATEGORY_HOUSE,
+        self::ROOT_CATEGORY_PLOT => self::ROOT_CATEGORY_PLOT,
+        self::ROOT_CATEGORY_COMMERCIAL => self::ROOT_CATEGORY_COMMERCIAL,
+    ];
+
+    public static $root_categories = [
+        self::ROOT_CATEGORY_FLAT => 'Жилая недвижимость',
+        self::ROOT_CATEGORY_HOUSE => 'Дома, дачи, коттеджи',
+        self::ROOT_CATEGORY_PLOT => 'Земельные участки',
+        self::ROOT_CATEGORY_COMMERCIAL => 'Коммерческая недвижимость',
+    ];
+
     /**
      * {@inheritdoc}
      */
