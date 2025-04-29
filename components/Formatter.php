@@ -279,13 +279,16 @@ class Formatter extends BaseFormatter
      */
     public function asPlainShortenText(string $text, int $maxLength = 255)
     {
-        $text = strip_tags($text); // removing HTML
-        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8'); // Decode entities
-        $text = trim(preg_replace('/\s+/', ' ', $text)); // Normalize spacies
+        $text = strip_tags($text);
+        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $text = trim(preg_replace('/\s+/', ' ', $text));
+        $text = preg_replace('/[^\p{L}\p{N}\p{P}\p{Zs}]+/u', '', $text); // remove all 'garbage' symbols
+
         if (mb_strlen($text) > $maxLength) {
             $text = mb_substr($text, 0, mb_strrpos(mb_substr($text, 0, $maxLength), ' ')) ?: mb_substr($text, 0, $maxLength);
             $text .= '…';
         }
+
         return $text;
     }
 }

@@ -16,8 +16,8 @@ class TelegramSender
     const THREAD_COMMERCIAL_SELL_RENT = 5;
 
     public static $telegram_groups = [
-        /*[
-            'name' => 'ГРЧ (информация)',
+        [
+            'name' => 'ГРЧ (тест/отладка)',
             'id' => -1002573609179,
             'has_threads' => false,
             'templates' => [
@@ -37,7 +37,7 @@ class TelegramSender
                     TPL,
                 ],
             ],
-        ],*/
+        ],
         [
             'name' => 'ГРЧ (нет в рекламе)',
             'id' => -1002445243997,
