@@ -13,6 +13,10 @@ class LocationHelper
         self::REGION_CODE_VORONEZH => ['Воронеж', 'воронеж', 'Воронежская', 'воронежская', 'Воронежская область', 'воронежская область'],
     ];
 
+    /**
+     * Map of districts (both for city districts and region districts) of the region
+     * Important: the last key if districts array - is the defualt district key of a region (we use it if the particular district hasn't been detected)
+     */
     public static $city_districts_map = [
         self::REGION_CODE_VORONEZH => [
             'КМ' => ['Коминтерновский', 'коминтерновский'],
@@ -21,7 +25,12 @@ class LocationHelper
             'ЖД' => ['Железнодорожный', 'железнодорожный'],
             'ЛВ' => ['Левобережный', 'левобережный'],
             'СВ' => ['Советский', 'советский'],
-            'ОБЛ' => [],
+            'СМ' => ['Семилукский', 'cемилукский'],
+            'РМ' => ['Рамонский', 'рамонский'],
+            'НВ' => ['Новоусманский', 'новоусманский'],
+            'ХХ' => ['Хохольский', 'хохольский'],
+            'НД' => ['Нижнедевицкий', 'нижнедевицкий'],
+            'ОБЛ' => [], // - default key
         ]
     ];
 
@@ -44,11 +53,11 @@ class LocationHelper
 
     /**
      * Finds district (or city district) code by region code and district name
+     * If no matches, returns the last (default) key of regions array
      */
     public static function findDistrictCode($regionKey, $inputString)
     {
-        $normalizedInput = mb_strtolower(trim($inputString));
-        
+                
         // Check if the key exists in city_districts_map
         if (!isset(self::$city_districts_map[$regionKey])) {
             return null;
@@ -56,6 +65,12 @@ class LocationHelper
         
         // Get the map of region districts
         $districtsMap = self::$city_districts_map[$regionKey];
+
+        if (is_null($inputString)) {
+            return array_key_last($districtsMap);
+        }
+
+        $normalizedInput = mb_strtolower(trim($inputString));
         
         foreach ($districtsMap as $code => $names) {
             foreach ($names as $name) {
@@ -65,8 +80,8 @@ class LocationHelper
             }
         }
         
-        // If no results
-        return null;
+        // If no results - return the last key (we use it as default)
+        return array_key_last($districtsMap);
     }
 
 }
