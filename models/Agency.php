@@ -175,6 +175,8 @@ class Agency extends \yii\db\ActiveRecord
         return User::find()
             ->where(['agency_id' => $agencyId])
             ->andWhere(['=', 'status', User::STATUS_ACTIVE])
+            ->join('INNER JOIN', 'auth_assignment', 'auth_assignment.user_id = id')
+            ->andWhere(['in', 'auth_assignment.item_name', ['agent', 'manager']])
             ->orderBy(['last_name' => SORT_ASC])
             ->all();
     }

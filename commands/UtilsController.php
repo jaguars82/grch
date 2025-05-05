@@ -3,9 +3,12 @@
 namespace app\commands;
 
 use yii\console\Controller;
+use yii\helpers\ArrayHelper;
 use app\models\Newbuilding;
 use app\models\Entrance;
 use app\models\Flat;
+use app\models\User;
+use app\models\SecondaryAdvertisement;
 
 class UtilsController extends Controller
 {
@@ -54,6 +57,7 @@ class UtilsController extends Controller
         }
     }
 
+
     /**
      * Action to fill 'index_on_floor' field in 'flat' table
      * according to flat's position on the floor
@@ -97,10 +101,91 @@ class UtilsController extends Controller
         }
     }
 
+
+    /**
+     * Clear user's phone numbers from any symbols except digits and '+'
+     */
+    public function actionNormalizeUserPhones ()
+    {
+        $users = User::find()->all();
+
+        $transaction = \Yii::$app->db->beginTransaction();
+
+        try {
+            foreach ($users as $user) {
+                if (!empty($user->phone)) {
+                    $user->phone = preg_replace("/[^0-9+]/", '', $user->phone);
+                    $user->save(false);
+                }
+            }
+            
+            $transaction->commit(); 
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            echo "Ошибка: " . $e->getMessage() . "\n";
+        }
+    }
+
+
+    /**
+     * Tries to find the author of a secondary advertisement by email or phone and (if found) attach his Id to the advertisement
+     */
+    public function actionFetchAdvertisementsAuthors ($agency = null)
+    {
+        $query = SecondaryAdvertisement::find()->where(['author_id' => NULL]);
+        
+        if(!is_null($agency)) {
+            $query->andWhere(['agency_id' => $agency]);
+        }
+
+        $advertisements = $query->all();
+
+        if (is_null($advertisements)) return;
+
+        foreach ($advertisements as $advertisement) {
+            $author_id = null;
+            $authorInfo = ArrayHelper::toArray(json_decode($advertisement->author_info));
+
+            // Try by email
+            if (array_key_exists('email', $authorInfo) && !empty($authorInfo['email'])) {
+                if (!is_null($agency)) {
+                    $authorByMailTry = User::findByEmailAndAgency($authorInfo['email'], $agency);
+                } else {
+                    $authorByMailTry = User::findByEmail($authorInfo['email']);
+                }
+                if (!empty($authorByMailTry)) {
+                    $author_id = $authorByMailTry->id;
+                }
+            }
+
+            // Try by phone
+            if (is_null($author_id) && array_key_exists('phones', $authorInfo) && !empty($authorInfo['phones'])) {
+                foreach ($authorInfo['phones'] as $phone) {
+                    if (!is_null($agency)) {
+                        $authorByPhoneTry = User::findByPhoneAndAgency($phone, $agency);
+                    } else {
+                        $authorByPhoneTry = User::findByPhone($phone);
+                    }
+                    if (!empty($authorByPhoneTry)) {
+                        $author_id = $authorByPhoneTry->id;
+                        break;
+                    }
+                }
+            }
+
+            if (!is_null($author_id)) {
+                $advertisement->author_id = $author_id;
+                $advertisement->save(false);
+            }
+        }
+    }
+
+
     /**
      * command to generate password hash from given password
      */
-    public function actionMakePassHash ($pass) {
+    public function actionMakePassHash ($pass)
+    {
         $hash = \Yii::$app->security->generatePasswordHash($pass);
         echo $hash;
     }
