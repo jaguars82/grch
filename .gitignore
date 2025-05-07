@@ -37,6 +37,7 @@ web/downloads
 
 # private configs
 /config/db.php
+/config/service_db.php
 /config/private_params.php
 /config/mailer.php
 

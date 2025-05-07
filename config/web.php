@@ -2,6 +2,7 @@
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
+$service_db = require __DIR__ . '/service_db.php';
 $mailer = require __DIR__ . '/mailer.php';
 
 $config = [
@@ -80,6 +81,7 @@ $config = [
             'class' => 'yii\rbac\DbManager',
         ],
 	    'db' => $db,
+        'messenger_db' => $service_db['messenger'],
         'formatter' => [
             'class' => 'app\components\Formatter',
             'numberFormatterSymbols' => [
