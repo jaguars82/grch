@@ -325,7 +325,15 @@
                         </div>
                         <template v-if="formfields.book_payment_provided">
                           <div class="col-3">
-                            <q-input outlined type="number" step="0.01" v-model.number="formfields.book_payment_amount" label="Сумма оплаты брони" dense readonly />
+                            <!--<q-input outlined type="number" step="0.01" v-model.number="formfields.book_payment_amount" label="Сумма оплаты брони" dense readonly />-->
+                            <q-select 
+                              outlined
+                              v-model="formfields.book_payment_amount"
+                              :options="bookPaymentAmounts"
+                              label="Сумма оплаты брони"
+                              dense
+                              options-dense
+                            />
                           </div>
                           <div class="col-3 q-pl-sm">
                             <q-select 
@@ -641,6 +649,8 @@ export default {
 
     const statusChangesForm = getApplicationFormParamsByStatus(props.application.status, user.value.role)
 
+    const bookPaymentAmounts = [75000, 150000]
+    
     const bookPaymentOptions = computed(() => {
       return idNameObjToOptions(props.bookPayment)
     })
@@ -708,7 +718,7 @@ export default {
         reservation_conditions: '',
         is_toll: false,
         book_payment_provided: false,
-        book_payment_amount: 75000,
+        book_payment_amount: bookPaymentAmounts.length ? bookPaymentAmounts[0] : 75000,
         book_payment_way: '',
         book_payment_date: '',
         recieptFile: [],
@@ -983,6 +993,7 @@ export default {
       breadcrumbs,
       user,
       loading,
+      bookPaymentAmounts,
       bookPaymentOptions,
       recieptFile,
       onRemoveRecieptFile,
