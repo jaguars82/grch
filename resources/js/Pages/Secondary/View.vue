@@ -23,7 +23,7 @@
             info: advertisement.author_info
         }"
       />          
-
+    <Messenger />
     </template>
 
     <!-- Right Drawer -->
@@ -72,6 +72,7 @@ import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import Loading from "@/Components/Elements/Loading.vue"
 import StatusLabel from '@/Components/Elements/StatusLabel'
 import SecondaryRoomViewItem from "@/Components/SecondaryRoom/SecondaryRoomViewItem.vue"
+import Messenger from "@/Vidgets/Messenger/Messenger.vue"
   
 export default {
   props: {
@@ -81,7 +82,7 @@ export default {
     }
   },
   components: {
-    MainLayout, Breadcrumbs, Loading, StatusLabel, SecondaryRoomViewItem
+    MainLayout, Breadcrumbs, Loading, StatusLabel, SecondaryRoomViewItem, Messenger
   },
   setup(props) {
 
