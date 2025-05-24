@@ -14,7 +14,6 @@ use yii\db\ActiveRecord;
  * @property int $author_id
  * @property string|null $text
  * @property int|null $reply_on_id
- * @property bool $is_delivered
  * @property bool $is_seen_by_interlocutor
  * @property bool $was_edited
  * @property bool $is_archived
@@ -46,7 +45,7 @@ class Message extends ActiveRecord
             [['chat_id', 'author_id'], 'required'],
             [['chat_id', 'thread_id', 'author_id', 'reply_on_id'], 'integer'],
             [['text'], 'string'],
-            [['is_delivered', 'is_seen_by_interlocutor', 'was_edited', 'is_archived', 'is_deleted'], 'boolean'],
+            [['is_seen_by_interlocutor', 'was_edited', 'is_archived', 'is_deleted'], 'boolean'],
             [['created_at', 'updated_at'], 'safe'],
             [['chat_id'], 'exist', 'skipOnError' => true, 'targetClass' => Chat::class, 'targetAttribute' => ['chat_id' => 'id']],
             [['thread_id'], 'exist', 'skipOnError' => true, 'targetClass' => Thread::class, 'targetAttribute' => ['thread_id' => 'id']],
@@ -63,7 +62,6 @@ class Message extends ActiveRecord
             'author_id' => 'Author ID',
             'text' => 'Text',
             'reply_on_id' => 'Reply On ID',
-            'is_delivered' => 'Is Delivered',
             'is_seen_by_interlocutor' => 'Is Seen By Interlocutor',
             'was_edited' => 'Was Edited',
             'is_archived' => 'Is Archived',

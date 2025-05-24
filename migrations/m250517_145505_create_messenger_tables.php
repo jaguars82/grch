@@ -75,7 +75,6 @@ class m250517_145505_create_messenger_tables extends Migration
             'author_id' => $this->integer()->notNull(),
             'text' => $this->text(),
             'reply_on_id' => $this->integer(),
-            'is_delivered' => $this->boolean()->notNull()->defaultValue(false),
             'is_seen_by_interlocutor' => $this->boolean()->notNull()->defaultValue(false),
             'was_edited' => $this->boolean()->notNull()->defaultValue(false),
             'is_archived' => $this->boolean()->notNull()->defaultValue(false),

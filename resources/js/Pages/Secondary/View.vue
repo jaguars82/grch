@@ -22,8 +22,18 @@
             db: advertisement.author_DB ? advertisement.author_DB : null,
             info: advertisement.author_info
         }"
-      />          
-    <Messenger />
+      /> 
+
+      <template v-if="Object.keys(advertisement.author_DB).length">        
+        <Messenger
+          :userId="user.id"
+          mode="url"
+          :urlParams="['id']"
+          :isUserUrlAdmin="user.id === advertisement.author_DB.id ? true : false"
+          :urlAdminId="advertisement.author_DB.id"
+        />
+      </template>
+
     </template>
 
     <!-- Right Drawer -->
@@ -67,6 +77,7 @@
 <script>
 import { ref, computed } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
+import { userInfo } from '@/composables/shared-data'
 import MainLayout from '@/Layouts/MainLayout.vue'
 import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import Loading from "@/Components/Elements/Loading.vue"
@@ -85,6 +96,8 @@ export default {
     MainLayout, Breadcrumbs, Loading, StatusLabel, SecondaryRoomViewItem, Messenger
   },
   setup(props) {
+
+    const { user } = userInfo()
 
     const breadcrumbs = ref([
       {
@@ -140,7 +153,7 @@ export default {
       //Inertia.get('/secondary', { page: page })
     }
 
-    return { breadcrumbs, advAuthor, goBack }
+    return { user, breadcrumbs, advAuthor, goBack }
   }
 }
 </script>
