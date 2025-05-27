@@ -4,6 +4,7 @@ namespace app\models\Messenger;
 
 use Yii;
 use yii\db\ActiveRecord;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "{{%chat}}".
@@ -39,6 +40,23 @@ class Chat extends ActiveRecord
         return Yii::$app->get('messenger_db');
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => new \yii\db\Expression('NOW()'),
+            ],
+        ];
+    }
+
     public function rules()
     {
         return [
@@ -47,6 +65,7 @@ class Chat extends ActiveRecord
             [['details'], 'string'],
             [['type'], 'string', 'max' => 20],
             [['type'], 'in', 'range' => ['private', 'public']],
+            [['type'], 'default', 'value' => 'private'],
             [['icon', 'title', 'url'], 'string', 'max' => 255],
             [['is_url_attached', 'was_edited', 'is_archived', 'is_deleted'], 'boolean'],
             [['created_at', 'updated_at'], 'safe'],

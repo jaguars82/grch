@@ -75,6 +75,7 @@ $config = [
                 'agency/delete/<id:\d+>' => 'agency/delete',
                 'offer/<path:index|update|delete|make|send-email|telegram|download-pdf>' => 'offer/<path>',
                 'offer/<id>' => 'offer/view',
+                'vidgets/messenger/create-message' => 'vidgets/messenger/create-message',
             ],
         ],
 	    'authManager' => [

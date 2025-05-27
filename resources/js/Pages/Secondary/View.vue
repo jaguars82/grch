@@ -1,10 +1,11 @@
 <template>
   <MainLayout :drawers="{ left: { is: false, opened: false }, right: { is: true, opened: $q.platform.is.mobile ? false : true } }">
+    
     <template v-slot:breadcrumbs>
       <Breadcrumbs :links="breadcrumbs"></Breadcrumbs>
     </template>
-    <template v-slot:main>
 
+    <template v-slot:main>
       <div class="full-width row justify-start items-center q-px-md">
         <h3 class="q-mb-sm">Предложение #{{ advertisement.id }}</h3>
         <div v-if="advertisement.statusLabels.length" class="row q-gutter-sm justify-end" style="margin-left: auto">
@@ -24,16 +25,61 @@
         }"
       /> 
 
-      <template v-if="Object.keys(advertisement.author_DB).length">        
+      <!--<template v-if="Object.keys(advertisement.author_DB).length">        
         <Messenger
           :userId="user.id"
+          :userInfo="user"
           mode="url"
           :urlParams="['id']"
           :isUserUrlAdmin="user.id === advertisement.author_DB.id ? true : false"
+          :newInterlocuter="user.id !== advertisement.author_DB.id ? { ...advertisement.author_DB, organization: advertisement.agency } : null"
           :urlAdminId="advertisement.author_DB.id"
+          :chatDetails='{
+            title: `объявление #${advertisement.id} в разделе "Вторичка"`,
+          }'
         />
-      </template>
+      </template>-->
 
+      <!-- Messenger Floating Button -->
+      <q-page-sticky position="bottom-right" :offset="[18, 80]">
+        <q-btn
+          fab
+          class="open-chat-button"
+          v-if="Object.keys(advertisement.author_DB).length"
+          icon="chat"
+          color="orange"
+          @click="messengerDialog = true"
+        >
+          <q-tooltip anchor="top middle" self="center middle">Открыть чаты</q-tooltip>
+        </q-btn>
+      </q-page-sticky>
+
+      <!-- Messenger Dialog -->
+      <q-dialog
+        v-model="messengerDialog"
+        position="right"
+        full-width
+        full-height
+      >
+        <q-card class="q-dialog-plugin shadow-24" style="width: 100%; max-width: 420px;">
+          <q-bar>
+            <div class="text-bold text-grey-7">Мессенджер ГРЧ</div>
+            <q-space />
+            <q-btn dense flat round icon="close" @click="messengerDialog = false" />
+          </q-bar>
+          <Messenger
+            :userId="user.id"
+            :userInfo="user"
+            mode="url"
+            :urlParams="['id']"
+            :isUserUrlAdmin="user.id === advertisement.author_DB.id"
+            :newInterlocuter="user.id !== advertisement.author_DB.id ? { ...advertisement.author_DB, organization: advertisement.agency } : null"
+            :urlAdminId="advertisement.author_DB.id"
+            :chatDetails='{
+              title: `объявление #${advertisement.id} в разделе "Вторичка"` }'
+          />
+        </q-card>
+      </q-dialog>
     </template>
 
     <!-- Right Drawer -->
@@ -126,6 +172,8 @@ export default {
       },
     ])
 
+    const messengerDialog = ref(false)
+
     const advAuthor = computed(() => {
       let fullName = ''
       let photo = ''
@@ -153,7 +201,7 @@ export default {
       //Inertia.get('/secondary', { page: page })
     }
 
-    return { user, breadcrumbs, advAuthor, goBack }
+    return { user, breadcrumbs, advAuthor, messengerDialog, goBack }
   }
 }
 </script>
