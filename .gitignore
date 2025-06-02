@@ -42,6 +42,9 @@ web/downloads
 /config/private_params.php
 /config/mailer.php
 
+# enviroment
+/websocket/.env
+
 # node modules
 /node_modules
 /websocket/node_modules

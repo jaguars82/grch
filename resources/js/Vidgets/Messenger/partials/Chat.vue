@@ -81,7 +81,7 @@ export default {
 
     const fetchInterlocuter = async () => {
       if (typeof chat.value === 'object' && chat.value.type === 'private' && chat.value.interlocuter_id) {
-        const interlocuterField = user.id === chat.value.creator_id ? 'interlocuter_id' : 'creator_id'
+        const interlocuterField = user && user.id !== chat.value.creator_id ? 'interlocuter_id' : 'creator_id'
 
         if (chat.value[interlocuterField]) {
           await execute(

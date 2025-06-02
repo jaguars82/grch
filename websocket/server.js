@@ -1,34 +1,39 @@
+require('dotenv').config();
+
+const fs = require('fs');
+const https = require('https');
 const { Server } = require("socket.io");
-const http = require("http");
 const axios = require('axios');
 
-const server = http.createServer();
-const io = new Server(server, {
+// ssl keys from .env
+const privateKey = fs.readFileSync(process.env.SSL_KEY_PATH, 'utf8');
+const certificate = fs.readFileSync(process.env.SSL_CERT_PATH, 'utf8');
+
+const credentials = { key: privateKey, cert: certificate };
+const httpsServer = https.createServer(credentials);
+
+const io = new Server(httpsServer, {
   cors: {
-    origin: "*", // Specify frontend url on prod, e.g. "https://grch.ru"
+    origin: process.env.CORS_ORIGIN,
     methods: ["GET", "POST"]
   }
 });
 
-// URL of the GRCH agregator
-const API_URL = 'https://grch.ru'; // production
-// const API_URL = 'http://dev.grch.ru'; // development
+const API_URL = process.env.API_URL;
 
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
 
   socket.on("sendMessage", async (message) => {
     try {
-      // Saving to database via API
       const response = await axios.post(`${API_URL}/vidgets/messenger/create-message`, {
         ...message,
       });
-      
+
       if (response.data.success) {
-        // if saved - send the message to clints
         io.emit("receiveMessage", {
           ...message,
-          chat_id: response.data.chatId, // Chat ID from database
+          chat_id: response.data.chatId,
           created_at: response.data.created_at,
           token: response.data.token,
         });
@@ -45,7 +50,7 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = 3000;
-server.listen(PORT, () => {
+const PORT = process.env.PORT || 3000;
+httpsServer.listen(PORT, () => {
   console.log(`Socket.IO server running on port ${PORT}`);
 });
