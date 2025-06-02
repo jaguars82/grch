@@ -2,6 +2,7 @@
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
+$service_db = require __DIR__ . '/service_db.php';
 $mailer = require __DIR__ . '/mailer.php';
 
 $config = [
@@ -50,12 +51,8 @@ $config = [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        /*'telegram' => [
-            'class' => 'app\services\TelegramSender',
-            'botToken' => $params['telegramBotKey'],
-        ],*/
-        'telegram' => function() {
-            return \app\services\TelegramSender::create('8130120961:AAGtSzyxl4o6UepJid0crzSU9n3xLzrgBTE');
+        'telegram' => function() use ($params) {
+            return \app\services\TelegramSender::create($params['telegramBotKey']);
         },
         'mailer' => $mailer,
         'log' => [
@@ -78,12 +75,14 @@ $config = [
                 'agency/delete/<id:\d+>' => 'agency/delete',
                 'offer/<path:index|update|delete|make|send-email|telegram|download-pdf>' => 'offer/<path>',
                 'offer/<id>' => 'offer/view',
+                'vidgets/messenger/create-message' => 'vidgets/messenger/create-message',
             ],
         ],
 	    'authManager' => [
             'class' => 'yii\rbac\DbManager',
         ],
 	    'db' => $db,
+        'messenger_db' => $service_db['messenger'],
         'formatter' => [
             'class' => 'app\components\Formatter',
             'numberFormatterSymbols' => [

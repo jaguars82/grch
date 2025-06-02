@@ -284,6 +284,8 @@ class SecondaryController extends Controller
                             ];
 
                             $roomItem['agent_fee'] = ArrayHelper::toArray($room->agentFee);
+                            
+                            // Add information about room params from data base
                             $roomItem = $this->processRoomParameters($room, $roomItem);
 
                             // Get location params
@@ -298,11 +300,21 @@ class SecondaryController extends Controller
                             $regionCode = \Yii::$app->locationHelper->findRegionKey($regionName) ?? null;
 
                             // District name and code
+                            // First try to find out a district of a city
                             $districtName = null;
                             if (array_key_exists('district_DB', $roomItem) && !empty($roomItem['district_DB']['name'])) {
                                 $districtName = $roomItem['district_DB']['name'];
                             } elseif (array_key_exists('sub_locality_name', $roomItem['location_info']) && !empty($roomItem['location_info']['sub_locality_name'])) {
                                 $districtName = $roomItem['location_info']['sub_locality_name'];
+                            }
+
+                            // Then (if a tistrict of a city hasn't been tetected) try to find out a district of a region
+                            if (is_null($districtName)) {
+                                if (array_key_exists('region_district_DB', $roomItem) && !empty($roomItem['region_district_DB']['name'])) {
+                                    $districtName = $roomItem['region_district_DB']['name'];
+                                } elseif (array_key_exists('district', $roomItem['location_info']) && !empty($roomItem['location_info']['district'])) {
+                                    $districtName = $roomItem['location_info']['district'];
+                                }    
                             }
 
                             $districtCode = \Yii::$app->locationHelper->findDistrictCode($regionCode, $districtName) ?? null;
@@ -431,34 +443,9 @@ class SecondaryController extends Controller
                 $roomItem = ArrayHelper::toArray($room);
 
                 $roomItem['agent_fee'] = ArrayHelper::toArray($room->agentFee);
+                
+                // Add information about room params from data base
                 $roomItem = $this->processRoomParameters($room, $roomItem);
-
-                /**
-                 * Add information about room params from data base
-                 */
-                /*$params = [
-                    'category' => 'secondaryCategory', // category (e.g. 'flat', 'house' etc.)
-                    'property_type' => 'secondaryPropertyType',
-                    'building_series' => 'secondaryBuildingSeries',
-                    'newbuilding_complex' => 'newbuildingComplex',
-                    'newbuilding' => 'newbuilding',
-                    'entrance' => 'entrance',
-                    'flat' => 'flat',
-                    'renovation' => 'secondaryRenovation',
-                    'material' => 'buildingMaterial',
-                    'region' => 'region',
-                    'region_district' => 'regionDistrict',
-                    'city' => 'city',
-                    'district' => 'district',
-                    'street_type' => 'streetType',
-                ];
-
-                foreach ($params as $param => $className) {
-                    if (!empty($room[$param.'_id'])) {
-                        $roomItem[$param.'_DB'] = ArrayHelper::toArray($room[$className]);
-                    }
-                }*/
-                //echo '<pre>'; var_dump($roomItem); echo '</pre>'; die;
 
                 array_push($roomsArray, $roomItem);
             }

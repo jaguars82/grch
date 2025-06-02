@@ -199,6 +199,24 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
+     * Finds user (any) by phone
+     *
+     * @param string $phone
+     * @return static|null
+     */
+    public static function findByPhone($phone)
+    {
+        // Remove all non-digit characters and extract last 10 digits
+        // This handles country codes and different phone number formats
+        $phoneDigits = preg_replace("/[^0-9]/", '', $phone);
+        $phoneDigits = substr($phoneDigits, -10); // Keep only last 10 digits
+        
+        return static::find()
+            ->where(['like', 'phone', '%' . $phoneDigits . '%', false])
+            ->one();
+    }
+
+    /**
      * Finds user (any) by phone and agency
      *
      * @param string $phone
@@ -207,9 +225,13 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findByPhoneAndAgency($phone, $agencyId)
     {
-        $phoneDigits = substr(preg_replace("/[^0-9]/", '', $phone), 1);
+        // Remove all non-digit characters and extract last 10 digits
+        // This handles country codes and different phone number formats
+        $phoneDigits = preg_replace("/[^0-9]/", '', $phone);
+        $phoneDigits = substr($phoneDigits, -10); // Keep only last 10 digits
+        
         return static::find()
-            ->where(['like', 'phone', '%'.$phoneDigits.'%', false])
+            ->where(['like', 'phone', '%' . $phoneDigits . '%', false])
             ->andWhere(['=', 'agency_id', $agencyId])
             ->one();
     }

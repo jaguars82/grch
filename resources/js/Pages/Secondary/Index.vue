@@ -30,6 +30,7 @@
           @update:model-value="goToPage(currentPage)"
         />
       </div>
+      <Messenger />
     </template>
 
     <template v-slot:right-drawer>
@@ -60,6 +61,7 @@ import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue'
 import Loading from "@/Components/Elements/Loading.vue"
 import SecondaryRoomListItem from "@/Components/SecondaryRoom/SecondaryRoomListItem.vue"
 import SecondaryFilter from '@/Pages/Secondary/partials/SecondaryFilter.vue'
+import Messenger from '@/Vidgets/Messenger/Messenger'
 import useEmitter from '@/composables/use-emitter'
   
 export default {
@@ -99,7 +101,7 @@ export default {
     }
   },
   components: {
-    MainLayout, Breadcrumbs, Loading, SecondaryRoomListItem, SecondaryFilter
+    MainLayout, Breadcrumbs, Loading, SecondaryRoomListItem, SecondaryFilter, Messenger
   },
   setup(props) {
     const $q = useQuasar();

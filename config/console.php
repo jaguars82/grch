@@ -2,6 +2,7 @@
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
+$service_db = require __DIR__ . '/service_db.php';
 
 $config = [
     'id' => 'basic-console',
@@ -42,6 +43,7 @@ $config = [
             'class' => 'yii\rbac\DbManager',
         ],
         'db' => $db,
+        'messenger_db' => $service_db['messenger'],
         'formatter' => [
             'defaultTimeZone' => 'Europe/Moscow',
         ],
